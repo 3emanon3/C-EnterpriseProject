@@ -1,19 +1,54 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <link rel="stylesheet" href="project.css" >
-    </head>
-    <body>
-        <p class="corner-text upper-left">MEMBER MANAGEMENT</p>
-        <button class="corner-button upper-left">Click</button>
-    
-        <p class="corner-text upper-right">EVENT</p> 
-        <button class="corner-button upper-right">Click</button>
-    
-        <p class="corner-text lower-left">DONATE</p>
-        <button class="corner-button lower-left">Click</button>
-    
-        <p class="corner-text lower-right">STOCK</p>
-        <button class="corner-button lower-right">Click</button>
-    </body>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Management System</title>
+    <link rel="stylesheet" href="project.css">
+</head>
+<body>
+    <header>
+        <h1>Management System</h1>
+    </header>
+
+    <main class="button-grid">
+        <div class="button-container">
+            <button class="nav-button" data-href="member_management/member_management.html">
+                <div class="button-content">
+                    <span class="button-title">Member Management</span>
+                    <p class="button-description">Manage your members</p>
+                </div>
+            </button>
+        </div>
+
+        <div class="button-container">
+            <button class="nav-button" data-href="Event/event.html">
+                <div class="button-content">
+                    <span class="button-title">Event</span>
+                    <p class="button-description">Manage events</p>
+                </div>
+            </button>
+        </div>
+
+        <div class="button-container">
+            <button class="nav-button" data-href="Donate/donate.html">
+                <div class="button-content">
+                    <span class="button-title">Donate</span>
+                    <p class="button-description">Handle donations</p>
+                </div>
+            </button>
+        </div>
+
+        <div class="button-container">
+            <button class="nav-button" data-href="Stock/stock.html">
+                <div class="button-content">
+                    <span class="button-title">Stock</span>
+                    <p class="button-description">Manage inventory</p>
+                </div>
+            </button>
+        </div>
+    </main>
+
+    <script src="project.js"></script>
+</body>
 </html>
