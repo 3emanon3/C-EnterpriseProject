@@ -1,0 +1,77 @@
+body {
+    height: 100vh; /* Full viewport height */
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4; /* Light background */
+}
+
+.corner-text {
+    position: absolute;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Button Styling */
+.corner-button {
+    position: absolute;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+.corner-button:hover {
+    background-color: #0056b3;
+}
+
+/* Upper Left Corner */
+.upper-left {
+    top: 200px;
+    left: 200px;
+}
+
+/* Upper Right Corner */
+.upper-right {
+    top: 200px;
+    right: 200px;
+}
+
+/* Lower Left Corner */
+.lower-left {
+    bottom: 200px;
+    left: 200px;
+}
+
+/* Lower Right Corner */
+.lower-right {
+    bottom: 200px;
+    right: 200px;
+}
+
+/* Adjust button position below the text */
+.upper-left + .corner-button {
+    top: 250px;
+    left: 200px;
+}
+
+.upper-right + .corner-button {
+    top: 250px;
+    right: 200px;
+}
+
+.lower-left + .corner-button {
+    bottom: 150px;
+    left: 200px;
+}
+
+.lower-right + .corner-button {
+    bottom: 150px;
+    right: 200px;
+}
