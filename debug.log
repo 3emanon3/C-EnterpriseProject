@@ -1,0 +1,49 @@
+2025-02-13 10:22:23: Array
+(
+    [GET] => Array
+        (
+            [test] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?test=1
+    [METHOD] => GET
+)
+
+2025-02-13 10:22:36: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-02-13 10:22:51: Array
+(
+    [GET] => Array
+        (
+            [page] => 1
+            [limit] => 10
+            [table] => members
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?page=1&limit=10&table=members
+    [METHOD] => GET
+)
+
