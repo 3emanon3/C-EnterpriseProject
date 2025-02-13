@@ -3,86 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Member Management System</title>
-    <link rel="stylesheet" href="memeber_management.css">
+    <title>Member Details</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="member_management.css">
 </head>
 <body>
     <div class="container">
-        <h1>Member Management System</h1>
+        <div class="header-actions">
+            <a href="index.html" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Search
+            </a>
+            <button id="printButton" class="btn btn-primary">
+                <i class="fas fa-print"></i> Print Details
+            </button>
+        </div>
 
-        <section class="search-container">
-            <input type="text" id="searchInput" placeholder="Search members..." aria-label="Search members">
-        </section>
+        <div id="printArea">
+            <h1>Member Details</h1>
 
-        <form id="memberForm" action="../check.php" method="POST">
-            <input type="hidden" id="memberId">
-            <fieldset>
-                <legend>Member Details</legend>
-                <div class="form-container">
-                    <div class="form-group">
-                        <label for="memberName">Name</label>
-                        <input type="text" id="memberName" required placeholder="Enter member name">
+            <form id="memberForm" action="db_config.php" method="POST">
+                <input type="hidden" id="memberId" name="id">
+                <fieldset>
+                    <legend>Member Information</legend>
+                    <div class="form-container">
+                        <div class="form-group">
+                            <label for="memberName">Name</label>
+                            <input type="text" id="memberName" name="name" required placeholder="Enter member name">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="memberDOB">Date of Birth</label>
+                            <input type="date" id="memberDOB" name="dob" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="memberAddress">Address</label>
+                            <input type="text" id="memberAddress" name="address" required placeholder="Enter full address">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="memberStatus">Status</label>
+                            <select id="memberStatus" name="status" required>
+                                <option value="">Select Status</option>
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
+                                <option value="Pending">Pending</option>
+                                <option value="VIP">VIP</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="memberPhone">Phone</label>
+                            <input type="tel" id="memberPhone" name="phone" required placeholder="Enter phone number">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="memberEmail">Email</label>
+                            <input type="email" id="memberEmail" name="email" required placeholder="Enter email address">
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="memberDOB">Date of Birth</label>
-                        <input type="date" id="memberDOB" required>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary no-print">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                        <button type="button"  class="btn btn-danger no-print">
+                            <i class="fas fa-trash"></i> Delete Member
+                        </button>
                     </div>
-
-                    <div class="form-group">
-                        <label for="memberAddress">Address</label>
-                        <input type="text" id="memberAddress" required placeholder="Enter full address">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="memberStatus">Status</label>
-                        <select id="memberStatus" required>
-                            <option value="">Select Status</option>
-                            <option value="Active">Active</option>
-                            <option value="Inactive">Inactive</option>
-                            <option value="Pending">Pending</option>
-                            <option value="VIP">VIP</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="memberPhone">Phone</label>
-                        <input type="tel" id="memberPhone" required placeholder="Enter phone number">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="memberEmail">Email</label>
-                        <input type="email" id="memberEmail" required placeholder="Enter email address">
-                    </div>
-                </div>
-
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Save Member</button>
-                    <button type="reset" class="btn btn-warning">Clear Form</button>
-                </div>
-            </fieldset>
-        </form>
-
-        <section class="table-container">
-            <table id="memberTable" aria-label="Member list">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Date of Birth</th>
-                        <th>Address</th>
-                        <th>Status</th>
-                        <th>Phone</th>
-                        <th>Email</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Dynamic Content -->
-                </tbody>
-            </table>
-        </section>
+                </fieldset>
+            </form>
+        </div>
     </div>
-
+    <tbody id="memberTableBody">
+        <!-- Dynamic content will be inserted here -->
+    </tbody>
+    
     <script src="member_management.js"></script>
 </body>
 </html>
