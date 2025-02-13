@@ -9,39 +9,74 @@
 </head>
 <body>
     <div class="container">
-        <h1>Member Management System</h1>
+        <header>
+            <h1>Member Management System</h1>
+            <nav class="system-nav">
+                <button  class="btn btn-primary" onclick="location.href='../project.html'">
+                    <i class="fas fa-home"></i> Back
+                </button>
+                <button  class="btn btn-success" onclick="location.href='member_management.html'">
+                    <i class="fas fa-user-plus"></i> Add New Member
+                </button>
+            </nav>
+        </header>
 
         <section class="search-container">
             <div class="search-wrapper">
-                <input type="text" id="searchInput" placeholder="Search members..." aria-label="Search members">
-                <button id="searchButton" class="btn btn-search">
-                    <i class="fas fa-search"></i> Search
-                </button>
+                <div class="search-input-group">
+                    <i class="fas fa-search search-icon"></i>
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        placeholder="Search members by name, email, or status..." 
+                        aria-label="Search members">
+                    <button id="searchButton" class="btn btn-search">
+                        Search
+                    </button>
+                </div>
             </div>
-            <div id="searchStats" class="search-stats">
-                Total Members: <span id="totalMembers">0</span>
+            <div class="search-stats">
+                <span class="stats-label">Total Members:</span>
+                <span id="totalMembers" class="stats-value">0</span>
             </div>
         </section>
 
         <section class="table-container">
-            <div class="loader" style="display: none;">Loading...</div>
-            <table id="memberTable" aria-label="Member list">
-                <thead>
-                    <tr>
-                        <th data-column="name">Name</th>
-                        <th data-column="dob">Date of Birth</th>
-                        <th data-column="address">Address</th>
-                        <th data-column="status">Status</th>
-                        <th data-column="phone">Phone</th>
-                        <th data-column="email">Email</th>
-                        <th>Change Details</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Dynamic Content -->
-                </tbody>
-            </table>
-            <div class="pagination"></div>
+            <div class="loader">
+                <div class="spinner"></div>
+                <span>Loading members...</span>
+            </div>
+            
+            <div class="table-responsive">
+                <table id="memberTable" aria-label="Member list">
+                    <thead>
+                        <tr>
+                            <th data-column="name">Name <i class="fas fa-sort"></i></th>
+                            <th data-column="dob">Date of Birth <i class="fas fa-sort"></i></th>
+                            <th data-column="address">Address <i class="fas fa-sort"></i></th>
+                            <th data-column="status">Status <i class="fas fa-sort"></i></th>
+                            <th data-column="phone">Phone <i class="fas fa-sort"></i></th>
+                            <th data-column="email">Email <i class="fas fa-sort"></i></th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dynamic Content -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="pagination-container">
+                <div class="pagination"></div>
+                <div class="items-per-page">
+                    <label for="itemsPerPage">Items per page:</label>
+                    <select id="itemsPerPage">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                    </select>
+                </div>
+            </div>
         </section>
     </div>
 
