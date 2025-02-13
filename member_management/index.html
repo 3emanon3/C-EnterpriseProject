@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Member Management System - Search</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="member_management.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Member Management System</h1>
+
+        <section class="search-container">
+            <div class="search-wrapper">
+                <input type="text" id="searchInput" placeholder="Search members..." aria-label="Search members">
+                <button id="searchButton" class="btn btn-search">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </div>
+            <div id="searchStats" class="search-stats">
+                Total Members: <span id="totalMembers">0</span>
+            </div>
+        </section>
+
+        <section class="table-container">
+            <div class="loader" style="display: none;">Loading...</div>
+            <table id="memberTable" aria-label="Member list">
+                <thead>
+                    <tr>
+                        <th data-column="name">Name</th>
+                        <th data-column="dob">Date of Birth</th>
+                        <th data-column="address">Address</th>
+                        <th data-column="status">Status</th>
+                        <th data-column="phone">Phone</th>
+                        <th data-column="email">Email</th>
+                        <th>Change Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Dynamic Content -->
+                </tbody>
+            </table>
+            <div class="pagination"></div>
+        </section>
+    </div>
+
+    <script src="member_search.js"></script>
+</body>
+</html>
