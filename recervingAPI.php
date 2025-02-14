@@ -70,10 +70,8 @@ class DatabaseAPI {
 
         switch($method) {
             case 'GET':
-                if (isset($params['id'])) {
-                    $this->getRecord($table, $params['id']);
-                } else if (isset($params['search'])) {
-                    $this->searchRecords($table, $params);
+                if (isset($_GET['birthdays'])) {
+                    $this->getBirthdays($table, $params);
                 } else {
                     $this->getAllRecords($table, $params);
                 }
@@ -82,6 +80,78 @@ class DatabaseAPI {
                 http_response_code(405);
                 echo json_encode(['error' => 'Method not allowed']);
                 break;
+        }
+    }
+
+    private function getBirthdays($table, $id) {
+        
+        if (!array_key_exists($table, $this->allowedTables)) {
+          throw new Exception('Invalid table name');
+        }
+                
+        if($table!== 'members'){
+            //only members table has birthday
+            http_response_code(404);
+            echo json_encode(['error' => 'Table not found']);
+            return;
+        }else {
+          try {
+
+            date_default_timezone_set('Asia/Kuala_Lumpur');
+            $date = date('n');
+
+            // Get total count for pagination
+            $countQuery = "SELECT COUNT(*) as total FROM `$table` WHERE Birthday = ?";
+            $stmt = $this->dsn->prepare($countQuery);
+
+            if($stmt){
+              $stmt->bind_param('i', $date);
+              if (!$stmt->execute()) {
+                throw new Exception('Failed to execute query: ' . $stmt->error);
+              }
+              $result = $stmt->get_result();
+              $row = $result->fetch_assoc();
+              $totalRecords = $row['total'];
+              $result->free();
+              $stmt->close();
+            }else{
+              throw new Exception('Failed to prepare statement: ' . $this->dsn->error);
+            }
+
+            // Handle pagination
+            $page = max(1, intval($_GET['page'] ?? 1));
+            $limit = max(1, min(100, intval($_GET['limit'] ?? 10))); // Limit between 1 and 100
+            $offset = ($page - 1) * $limit;
+
+            // Prepare and execute main query
+            $query = "SELECT * FROM `$table` WHERE Birthday = ? LIMIT ? OFFSET ?";
+            $stmt = $this->dsn->prepare($query);
+
+            if (!$stmt) {
+              throw new Exception('Failed to prepare statement: ' . $this->dsn->error);
+             }
+
+            $stmt->bind_param('iii', $date, $limit, $offset);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $data = $result->fetch_all(MYSQLI_ASSOC);
+
+            // Calculate total pages
+            $totalPages = ceil($totalRecords / $limit);
+            
+            echo json_encode([
+                'data' => $data,
+                'pagination' => [
+                    'page' => $page,
+                    'limit' => $limit,
+                    'total_records' => $totalRecords,
+                    'total_pages' => $totalPages
+                ]
+            ]);
+          } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => $e->getMessage()]);
+          }
         }
     }
 
@@ -139,57 +209,6 @@ class DatabaseAPI {
                 'error' => 'Database error',
                 'message' => $e->getMessage()
             ]);
-        }
-    }
-
-    private function getRecord($table, $id) {
-        try {
-            $query = "SELECT * FROM `$table` WHERE ID = ?";
-            $stmt = $this->dsn->prepare($query);
-            $stmt->bind_param('i', $id);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            $data = $result->fetch_assoc();
-
-            if ($data) {
-                echo json_encode(['data' => $data]);
-            } else {
-                http_response_code(404);
-                echo json_encode(['error' => 'Record not found']);
-            }
-        } catch (Exception $e) {
-            http_response_code(500);
-            echo json_encode(['error' => $e->getMessage()]);
-        }
-    }
-
-    private function searchRecords($table, $params) {
-        try {
-            $searchTerm = $params['search'] ?? '';
-            $searchFields = $this->allowedTables[$table];
-            
-            $whereConditions = [];
-            $bindValues = [];
-            $bindTypes = '';
-
-            foreach ($searchFields as $field) {
-                $whereConditions[] = "`$field` LIKE ?";
-                $bindValues[] = "%$searchTerm%";
-                $bindTypes .= 's';
-            }
-
-            $query = "SELECT * FROM `$table` WHERE " . implode(' OR ', $whereConditions);
-            $stmt = $this->dsn->prepare($query);
-            $stmt->bind_param($bindTypes, ...$bindValues);
-            $stmt->execute();
-            
-            $result = $stmt->get_result();
-            $data = $result->fetch_all(MYSQLI_ASSOC);
-
-            echo json_encode(['data' => $data]);
-        } catch (Exception $e) {
-            http_response_code(500);
-            echo json_encode(['error' => $e->getMessage()]);
         }
     }
 }

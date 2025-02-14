@@ -68,7 +68,7 @@
                 });
 
                 if (mode === 'birthdays') {
-                    params.append('birthdays', 'true');
+                    params.append('birthdays', 'birthdays');
                 }
 
                 const response = await fetch(`${API_BASE_URL}?${params.toString()}`);
