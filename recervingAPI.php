@@ -104,6 +104,13 @@ class DatabaseAPI {
         }else {
           try {
 
+            $sortColumn = $params['sort'] ?? 'ID';
+            $sortOrder = strtoupper($params['order'] ?? 'ASC');
+
+            if (!$this->validateSortParams($table, $sortColumn, $sortOrder)) {
+              throw new Exception('Invalid sort parameters');
+            }
+
             date_default_timezone_set('Asia/Kuala_Lumpur');
             $date = date('n');
 
@@ -131,7 +138,7 @@ class DatabaseAPI {
             $offset = ($page - 1) * $limit;
 
             // Prepare and execute main query
-            $query = "SELECT * FROM `$table` WHERE Birthday = ? LIMIT ? OFFSET ?";
+            $query = "SELECT * FROM `$table` WHERE Birthday = ? ORDER BY `$sortColumn` $sortOrder LIMIT ? OFFSET ?";
             $stmt = $this->dsn->prepare($query);
 
             if (!$stmt) {
@@ -153,6 +160,10 @@ class DatabaseAPI {
                     'limit' => $limit,
                     'total_records' => $totalRecords,
                     'total_pages' => $totalPages
+                ],
+                'sorting' => [
+                    'column' => $sortColumn,
+                    'order' => $sortOrder
                 ]
             ]);
           } catch (Exception $e) {
