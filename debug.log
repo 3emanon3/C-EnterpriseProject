@@ -4090,3 +4090,42 @@
     [METHOD] => GET
 )
 
+2025-02-14 10:03:43: Array
+(
+    [GET] => Array
+        (
+            [page] => 1
+            [limit] => 10
+            [table] => members
+            [sort] => ID
+            [order] => ASC
+            [birthdays] => birthdays
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?page=1&limit=10&table=members&sort=ID&order=ASC&birthdays=birthdays
+    [METHOD] => GET
+)
+
+2025-02-14 10:03:45: Array
+(
+    [GET] => Array
+        (
+            [page] => 1
+            [limit] => 10
+            [table] => members
+            [sort] => ID
+            [order] => ASC
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?page=1&limit=10&table=members&sort=ID&order=ASC
+    [METHOD] => GET
+)
+
