@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Database Records</title>
     <style>
         table {
@@ -10,21 +11,50 @@
             border-collapse: collapse;
             margin-top: 20px;
         }
-        th, td {
+
+        th,
+        td {
             border: 1px solid #ddd;
             padding: 8px;
             text-align: left;
         }
+
         th {
             background-color: #f2f2f2;
+            cursor: pointer;
+            position: relative;
         }
+
+        th:hover {
+            background-color: #e6e6e6;
+        }
+
+        th::after {
+            content: '↕';
+            position: absolute;
+            right: 8px;
+            opacity: 0.5;
+        }
+
+        th.sorted-asc::after {
+            content: '↓';
+            opacity: 1;
+        }
+
+        th.sorted-desc::after {
+            content: '↑';
+            opacity: 1;
+        }
+
         .pagination {
             margin-top: 20px;
         }
+
         button {
             padding: 5px 10px;
             margin: 0 5px;
         }
+
         .controls {
             margin: 20px 0;
             display: flex;
@@ -33,19 +63,20 @@
         }
     </style>
 </head>
+
 <body>
     <h1>Database Records</h1>
-    
+
     <div class="controls">
         <select id="tableSelect">
             <option value="members">Members</option>
             <option value="applicants types">Applicants Types</option>
         </select>
-        
+
         <button id="showBirthdays" onclick="fetchBirthdays()">Show Birthday Members</button>
         <button id="showAll" onclick="fetchAllRecords()">Show All Records</button>
     </div>
-    
+
     <div id="recordsTable"></div>
     <div class="pagination">
         <button onclick="changePage(-1)">Previous</button>
@@ -58,13 +89,41 @@
         let currentPage = 1;
         let currentTable = 'members';
         let currentMode = 'all'; // 'all' or 'birthdays'
+        let currentSort = "ID";
+        let currentOrder = 'ASC';
 
-        async function fetchRecords(table, page = 1, limit = 10, mode = 'all') {
+        // Predefined columns for each table – adjust as needed.
+        const tableColumns = {
+            'members': [
+                'ID',
+                'Name',
+                'CName',
+                'Designation of Applicant',
+                'Address',
+                'phone_number',
+                'email',
+                'IC',
+                'oldIC',
+                'gender',
+                'componyName',
+                'Birthday',
+                'expired date',
+                'place of birth'
+            ],
+            'applicants types': [
+                'ID',
+                'designation of applicant'
+            ]
+        };
+
+        async function fetchRecords(table, page = 1, limit = 10, mode = 'all', sort = currentSort, order = currentOrder) {
             try {
                 const params = new URLSearchParams({
                     page: page,
                     limit: limit,
-                    table: table
+                    table: table,
+                    sort: sort,
+                    order: order,
                 });
 
                 if (mode === 'birthdays') {
@@ -73,7 +132,7 @@
 
                 const response = await fetch(`${API_BASE_URL}?${params.toString()}`);
                 console.log('Fetching from:', `${API_BASE_URL}?${params.toString()}`);
-                
+
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -92,14 +151,18 @@
                 return;
             }
 
-            const columns = Object.keys(records[0]);
+            // Use predefined columns for the current table
+            const columns = tableColumns[currentTable];
+
+            // Build table header using custom column names
             let tableHTML = '<table><thead><tr>';
-            
             columns.forEach(column => {
-                tableHTML += `<th>${column}</th>`;
+                const sortClass = column === currentSort ? (currentOrder === 'ASC' ? 'sort-asc' : 'sort-desc') : '';
+                tableHTML += `<th class="$sortClass" onclick="handleSort"('${column}')">${column}</th>`;
             });
             tableHTML += '</tr></thead><tbody>';
 
+            // Build table rows following the column order
             records.forEach(record => {
                 tableHTML += '<tr>';
                 columns.forEach(column => {
@@ -107,10 +170,21 @@
                 });
                 tableHTML += '</tr>';
             });
-
             tableHTML += '</tbody></table>';
+
             document.getElementById('recordsTable').innerHTML = tableHTML;
             document.getElementById('currentPage').textContent = `Page ${currentPage}`;
+        }
+
+        function handleSort(column) {
+            if (column === currentSort) {
+                // Toggle sort order if clicking the same column
+                currentOrder = currentOrder === 'ASC' ? 'DESC' : 'ASC';
+            } else {
+                // New column, default to ASC
+                currentSort = column;
+                currentOrder = 'ASC';
+            }
         }
 
         function changePage(delta) {
@@ -139,7 +213,8 @@
         });
 
         // Initial load
-        fetchRecords(currentTable);
+        fetchRecords(currentTable, currentPage, 10, currentMode, currentSort, currentOrder);
     </script>
 </body>
+
 </html>

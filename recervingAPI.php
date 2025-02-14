@@ -83,6 +83,13 @@ class DatabaseAPI {
         }
     }
 
+    private function validateSortParams($table, $sortColumn, $sortOrder) {
+      if (!in_array($sortColumn, $this->allowedTables[$table])) {
+        return false;
+      }
+      return in_array(strtoupper($sortOrder),['ASC', 'DESC']);
+    }
+
     private function getBirthdays($table, $id) {
         
         if (!array_key_exists($table, $this->allowedTables)) {
@@ -162,6 +169,9 @@ class DatabaseAPI {
                 throw new Exception('Invalid table name');
             }
 
+            $sortColumn = $params['sort'] ?? 'ID';
+            $sortOrder = strtoupper($params['order'] ?? 'ASC');
+
             // Get total count for pagination
             $countQuery = "SELECT COUNT(*) as total FROM `$table`";
             $countResult = $this->dsn->query($countQuery);
@@ -173,7 +183,7 @@ class DatabaseAPI {
             $offset = ($page - 1) * $limit;
 
             // Prepare and execute main query
-            $query = "SELECT * FROM `$table` LIMIT ? OFFSET ?";
+            $query = "SELECT * FROM `$table` ORDER BY `$sortColumn` $sortOrder LIMIT ? OFFSET ?";
             $stmt = $this->dsn->prepare($query);
             
             if ($stmt === false) {
@@ -199,6 +209,10 @@ class DatabaseAPI {
                     'limit' => $limit,
                     'total_records' => $totalRecords,
                     'total_pages' => $totalPages
+                ],
+                'sorting' => [
+                    'column' => $sortColumn,
+                    'order' => $sortOrder
                 ]
             ]);
 
