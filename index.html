@@ -44,7 +44,7 @@
     </div>
 
     <script>
-        // CHANGE THIS URL to match your API endpoint
+        // CHANGE THIS URL to match the API endpoint
         const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
         
         let currentPage = 1;
@@ -60,7 +60,13 @@
                     table: table
                 });
 
-                const response = await fetch(`${API_BASE_URL}?${params.toString()}`);
+                const response = await fetch(`${API_BASE_URL}?${params.toString()}`,{
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                });
                 console.log('Fetching from:', `${API_BASE_URL}?${params.toString()}`);
                 
                 if (!response.ok) {
