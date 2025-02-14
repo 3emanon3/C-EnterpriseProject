@@ -1,246 +1,172 @@
 document.addEventListener("DOMContentLoaded", function () {
+    // DOM Elements
     const memberForm = document.getElementById("memberForm");
-    const searchInput = document.getElementById("searchInput");
-    const searchButton = document.getElementById("searchButton");
-    const memberTableBody = document.querySelector("#memberTable tbody");
-    const totalMembersSpan = document.getElementById("totalMembers");
-    const itemsPerPage = 10;
-    let currentPage = 1;
-    let currentSort = { column: 'name', direction: 'asc' };
-    let allMembers = [];
-
-    // Form validation
+    const loadingIndicator = document.getElementById("loadingIndicator");
+    const errorMessages = document.getElementById("errorMessages");
+    const deleteButton = document.getElementById("deleteButton");
+    
+    // Function to validate form fields
     function validateForm() {
-        const name = document.getElementById("memberName").value.trim();
-        const email = document.getElementById("memberEmail").value.trim();
-        const phone = document.getElementById("memberPhone").value.trim();
-        const dob = document.getElementById("memberDOB").value;
+        const requiredFields = {
+            'name': '姓名（英）',
+            'cname': '姓名（中）',
+            'designation': '种类',
+            'address': '地址',
+            'phone_number': '手机号码',
+            'email': '邮箱',
+            'IC': 'IC 号码',
+            'gender': '性别',
+            'birthday': '生日',
+            'expired_date': '过期日期',
+            'place_of_birth': '出生地方'
+        };
         
         const errors = [];
         
-        if (!name) errors.push("Name is required");
-        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            errors.push("Valid email is required");
+        // Check required fields
+        Object.entries(requiredFields).forEach(([field, label]) => {
+            const element = document.getElementById(`member${field.charAt(0).toUpperCase() + field.slice(1)}`);
+            if (!element || !element.value.trim()) {
+                errors.push(`${label}是必填项`);
+            }
+        });
+
+        // Validate email format
+        const email = document.getElementById("memberEmail")?.value.trim();
+        if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            errors.push("邮箱格式不正确");
         }
-        if (!phone || !/^[0-9]{10}$/.test(phone)) {
-            errors.push("Valid 10-digit phone number is required");
+
+        // Validate IC format (assuming format like: 123456-12-1234)
+        const IC = document.getElementById("memberIC")?.value.trim();
+        if (IC && !/^\d{6}-\d{2}-\d{4}$/.test(IC.replace(/[-]/g, '-'))) {
+            errors.push("IC 号码格式不正确 (例: 123456-12-1234)");
         }
-        if (!dob) errors.push("Date of birth is required");
-        
+
         if (errors.length > 0) {
-            showError(errors.join("\n"));
+            showErrors(errors);
             return false;
         }
         return true;
     }
 
-    // UI Feedback functions
     function showLoader() {
-        document.querySelector(".loader").style.display = "block";
+        loadingIndicator.style.display = "block";
     }
 
     function hideLoader() {
-        document.querySelector(".loader").style.display = "none";
+        loadingIndicator.style.display = "none";
+    }
+
+    function showErrors(errors) {
+        errorMessages.innerHTML = errors.map(error => `<div>${error}</div>`).join('');
+        errorMessages.style.display = "block";
     }
 
     function showSuccess(message) {
-        alert(message); // Replace with better UI feedback if desired
+        const successDiv = document.createElement('div');
+        successDiv.className = 'alert alert-success';
+        successDiv.textContent = message;
+        errorMessages.parentNode.insertBefore(successDiv, errorMessages);
+        setTimeout(() => successDiv.remove(), 3000);
     }
 
-    function showError(message) {
-        alert(message); // Replace with better UI feedback if desired
+    function formatPhoneNumber(phone) {
+        return phone.replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3");
     }
 
-    // Member display functions
-    function displayMembers() {
-        const start = (currentPage - 1) * itemsPerPage;
-        const end = start + itemsPerPage;
-        const pageMembers = allMembers.slice(start, end);
-        
-        memberTableBody.innerHTML = '';
-        
-        pageMembers.forEach(member => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${member.name}</td>
-                <td>${formatDate(member.dob)}</td>
-                <td>${member.address}</td>
-                <td><span class="status-badge ${member.status.toLowerCase()}">${member.status}</span></td>
-                <td>${member.phone}</td>
-                <td>${member.email}</td>
-                <td>
-                    <button onclick="editMember(${member.id})" class="btn btn-warning btn-sm">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button onclick="deleteMember(${member.id})" class="btn btn-danger btn-sm">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </td>
-            `;
-            memberTableBody.appendChild(row);
-        });
+    function formatIC(IC) {
+        return IC.replace(/(\d{6})(\d{2})(\d{4})/, "$1-$2-$3");
     }
 
-    // Sorting functions
-    function sortMembers() {
-        allMembers.sort((a, b) => {
-            let valueA = a[currentSort.column];
-            let valueB = b[currentSort.column];
+    if (memberForm) {
+        memberForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            errorMessages.style.display = "none";
             
-            if (typeof valueA === 'string') valueA = valueA.toLowerCase();
-            if (typeof valueB === 'string') valueB = valueB.toLowerCase();
+            if (!validateForm()) return;
             
-            if (valueA < valueB) return currentSort.direction === 'asc' ? -1 : 1;
-            if (valueA > valueB) return currentSort.direction === 'asc' ? 1 : -1;
-            return 0;
-        });
-    }
-
-    // Pagination functions
-    function updatePagination() {
-        const totalPages = Math.ceil(allMembers.length / itemsPerPage);
-        const pagination = document.querySelector('.pagination');
-        pagination.innerHTML = '';
-        
-        // Previous button
-        if (currentPage > 1) {
-            addPaginationButton('Previous', currentPage - 1);
-        }
-        
-        // Page numbers
-        for (let i = 1; i <= totalPages; i++) {
-            addPaginationButton(i.toString(), i, i === currentPage);
-        }
-        
-        // Next button
-        if (currentPage < totalPages) {
-            addPaginationButton('Next', currentPage + 1);
-        }
-    }
-
-    function addPaginationButton(text, page, isActive = false) {
-        const button = document.createElement('button');
-        button.textContent = text;
-        if (isActive) button.classList.add('active');
-        button.addEventListener('click', () => {
-            currentPage = page;
-            displayMembers();
-            updatePagination();
-        });
-        document.querySelector('.pagination').appendChild(button);
-    }
-
-    // Utility functions
-    function formatDate(dateString) {
-        const options = { year: 'numeric', month: 'short', day: 'numeric' };
-        return new Date(dateString).toLocaleDateString(undefined, options);
-    }
-
-    // Event Listeners
-    searchButton.addEventListener("click", () => {
-        fetchMembers(searchInput.value);
-    });
-
-    searchInput.addEventListener("keypress", (e) => {
-        if (e.key === "Enter") {
-            fetchMembers(searchInput.value);
-        }
-    });
-
-    // Table header sorting
-    document.querySelectorAll('th[data-column]').forEach(header => {
-        header.addEventListener('click', () => {
-            const column = header.dataset.column;
-            if (currentSort.column === column) {
-                currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
-            } else {
-                currentSort.column = column;
-                currentSort.direction = 'asc';
+            showLoader();
+            const formData = new FormData(this);
+            
+            formData.set('phone_number', formatPhoneNumber(formData.get('phone_number')));
+            formData.set('IC', formatIC(formData.get('IC')));
+            if (formData.get('oldIC')) {
+                formData.set('oldIC', formatIC(formData.get('oldIC')));
             }
-            sortMembers();
-            displayMembers();
-        });
-    });
 
-    // Initialize
-    fetchMembers();
+            fetch('../recervingAPI.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(result => {
+                hideLoader();
+                if (result.status === 'success') {
+                    showSuccess('会员信息保存成功');
+                    setTimeout(() => window.location.href = '../member_management.html', 2000);
+                } else {
+                    showErrors([result.message || '保存失败']);
+                }
+            })
+            .catch(error => {
+                hideLoader();
+                showErrors(['系统错误，请稍后再试']);
+                console.error('Error:', error);
+            });
+        });
+    }
+
+    if (deleteButton) {
+        deleteButton.addEventListener('click', function () {
+            const memberId = document.getElementById('memberId')?.value;
+            if (!memberId) return;
+
+            if (confirm('确定要删除这个会员吗？')) {
+                showLoader();
+                fetch(`../recervingAPI.php?action=delete&id=${memberId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(result => {
+                    hideLoader();
+                    if (result.status === 'success') {
+                        showSuccess('会员已删除');
+                        setTimeout(() => window.location.href = 'index.html', 2000);
+                    } else {
+                        showErrors([result.message || '删除失败']);
+                    }
+                })
+                .catch(error => {
+                    hideLoader();
+                    showErrors(['系统错误，请稍后再试']);
+                    console.error('Error:', error);
+                });
+            }
+        });
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const memberId = urlParams.get('id');
+    if (memberId) {
+        showLoader();
+        fetch(`../recervingAPI.php?action=get&id=${memberId}`)
+            .then(response => response.json())
+            .then(member => {
+                hideLoader();
+                if (member) {
+                    Object.entries(member).forEach(([key, value]) => {
+                        const element = document.getElementById(`member${key.charAt(0).toUpperCase() + key.slice(1)}`);
+                        if (element) {
+                            element.value = value;
+                        }
+                    });
+                }
+            })
+            .catch(error => {
+                hideLoader();
+                showErrors(['加载会员信息失败']);
+                console.error('Error:', error);
+            });
+    }
 });
-
-// Member CRUD functions
-function editMember(id) {
-    // Implement edit functionality
-    console.log('Edit member:', id);
-}
-
-// Add this to your DOMContentLoaded event listener
-if (document.getElementById('memberForm')) {
-    document.getElementById('memberForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        if (!validateForm()) return;
-
-        const formData = new FormData(this);
-        
-        fetch('db_config.php?action=update', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(result => {
-            if (result.status === 'success') {
-                showSuccess('Member updated successfully');
-                // Refresh the page or redirect back to search
-                window.location.href = 'index.html';
-            } else {
-                showError(result.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error updating member:', error);
-            showError('Failed to update member');
-        });
-    });
-}
-
-function editMember(id) {
-    // Get the member data
-    fetch(`db_config.php?action=get&id=${id}`)
-        .then(response => response.json())
-        .then(member => {
-            // Populate the form
-            document.getElementById('memberId').value = member.id;
-            document.getElementById('memberName').value = member.name;
-            document.getElementById('memberDOB').value = member.dob;
-            document.getElementById('memberAddress').value = member.address;
-            document.getElementById('memberStatus').value = member.status;
-            document.getElementById('memberPhone').value = member.phone;
-            document.getElementById('memberEmail').value = member.email;
-            
-            // Show the form
-            document.getElementById('memberForm').style.display = 'block';
-        })
-        .catch(error => {
-            console.error('Error fetching member:', error);
-            showError('Failed to load member details');
-        });
-}
-
-function deleteMember(id) {
-    if (confirm('Are you sure you want to delete this member?')) {
-        fetch(`member_management.php?action=delete&id=${id}`, {
-            method: 'DELETE'
-        })
-        .then(response => response.json())
-        .then(result => {
-            if (result.status === 'success') {
-                showSuccess('Member deleted successfully');
-                fetchMembers();
-            } else {
-                showError(result.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error deleting member:', error);
-            showError('Failed to delete member');
-        });
-    }
-}

@@ -25,16 +25,26 @@
             padding: 5px 10px;
             margin: 0 5px;
         }
+        .controls {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
     </style>
 </head>
 <body>
     <h1>Database Records</h1>
     
-    <!-- Table selection dropdown -->
-    <select id="tableSelect">
-        <option value="members">Members</option>
-        <option value="applicants types">Applicants Types</option>
-    </select>
+    <div class="controls">
+        <select id="tableSelect">
+            <option value="members">Members</option>
+            <option value="applicants types">Applicants Types</option>
+        </select>
+        
+        <button id="showBirthdays" onclick="fetchBirthdays()">Show Birthday Members</button>
+        <button id="showAll" onclick="fetchAllRecords()">Show All Records</button>
+    </div>
     
     <div id="recordsTable"></div>
     <div class="pagination">
@@ -44,27 +54,28 @@
     </div>
 
     <script>
-        // CHANGE THIS URL to match your API endpoint
         const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
-        
         let currentPage = 1;
         let currentTable = 'members';
+        let currentMode = 'all'; // 'all' or 'birthdays'
 
-        // Fetch records from the API
-        async function fetchRecords(table, page = 1, limit = 10) {
+        async function fetchRecords(table, page = 1, limit = 10, mode = 'all') {
             try {
-
                 const params = new URLSearchParams({
                     page: page,
                     limit: limit,
                     table: table
                 });
 
+                if (mode === 'birthdays') {
+                    params.append('birthdays', 'birthdays');
+                }
+
                 const response = await fetch(`${API_BASE_URL}?${params.toString()}`);
                 console.log('Fetching from:', `${API_BASE_URL}?${params.toString()}`);
                 
                 if (!response.ok) {
-                    throw new Error('HTTP error! status: ${response.status}');
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
                 displayRecords(data);
@@ -74,7 +85,6 @@
             }
         }
 
-        // Display records in the table
         function displayRecords(response) {
             const records = response.data;
             if (!records || records.length === 0) {
@@ -85,13 +95,11 @@
             const columns = Object.keys(records[0]);
             let tableHTML = '<table><thead><tr>';
             
-            // Create table headers
             columns.forEach(column => {
                 tableHTML += `<th>${column}</th>`;
             });
             tableHTML += '</tr></thead><tbody>';
 
-            // Create table rows
             records.forEach(record => {
                 tableHTML += '<tr>';
                 columns.forEach(column => {
@@ -105,16 +113,28 @@
             document.getElementById('currentPage').textContent = `Page ${currentPage}`;
         }
 
-        // Handle page changes
         function changePage(delta) {
             currentPage = Math.max(1, currentPage + delta);
+            fetchRecords(currentTable, currentPage, 10, currentMode);
+        }
+
+        function fetchBirthdays() {
+            currentMode = 'birthdays';
+            currentPage = 1;
+            fetchRecords(currentTable, currentPage, 10, 'birthdays');
+        }
+
+        function fetchAllRecords() {
+            currentMode = 'all';
+            currentPage = 1;
             fetchRecords(currentTable, currentPage);
         }
 
-        // Handle table selection change
         document.getElementById('tableSelect').addEventListener('change', (e) => {
             currentTable = e.target.value;
             currentPage = 1;
+            // Reset to showing all records when table changes
+            currentMode = 'all';
             fetchRecords(currentTable, currentPage);
         });
 
