@@ -13,18 +13,16 @@
             <a href="index.html" class="btn btn-secondary" aria-label="Back to Search">
                 <i class="fas fa-arrow-left"></i> Back to Search
             </a>
-            <button id="printButton" class="btn btn-primary" aria-label="Print Details">
-                <i class="fas fa-print"></i> Print Details
-            </button>
+            
         </div>
 
         <div id="printArea">
-            <h1>Member Details</h1>
+            <h1>会员详情</h1>
             
             <!-- Add error message display area -->
             <div id="errorMessages" class="alert alert-danger" style="display: none;"></div>
 
-            <form id="memberForm" action="member_handler.php" method="POST">
+            <form id="memberForm" action="db_config.php" method="POST"><!--what this for-->
                 <input type="hidden" id="memberId" name="id">
                 <!-- Add CSRF token -->
                 <input type="hidden" name="csrf_token" value="<?php echo generateToken(); ?>">

@@ -13,13 +13,13 @@ body {
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 1600px;
     margin: 0 auto;
     padding: 22px;
     background: white;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    min-height: 80vh;
+    min-height: 95vh;
 }
 
 h1 {
@@ -28,19 +28,31 @@ h1 {
     color: #800000;
 }
 
+.operations-cell {
+    white-space: nowrap;
+    text-align: center;
+}
 
+.operations-cell .btn-group {
+    display: inline-flex;
+    gap: 5px;
+}
+
+.operations-cell .btn {
+    padding: 0.25rem 0.5rem;
+}
 
 
 
 /* Search Section Styles */
 .search-container {
-    margin: 20px 0;
+    margin: 50px 0;
 }
 
 .search-wrapper {
     display: flex;
     gap: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 }
 
 #searchInput {
@@ -48,7 +60,7 @@ h1 {
     padding: 12px;
     border: 2px solid #ddd;
     border-radius: 6px;
-    font-size: 16px;
+    font-size: 26px;
     transition: border-color 0.3s ease;
 }
 
@@ -60,7 +72,7 @@ h1 {
 .search-stats {
     font-size: 0.9em;
     color: #666;
-    margin-top: 5px;
+    margin-top: 15px;
 }
 
 /* Button Styles */

@@ -1,6 +1,6 @@
 <?php
 $host = 'localhost';
-$db   = 'member_management';
+$db   = 'entreprise_test';
 $user = 'root';
 $pass = '';
 $charset = 'utf8mb4';

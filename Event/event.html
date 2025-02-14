@@ -3,64 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Event Management System</title>
+    <title>Event Details</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="event.css">
 </head>
 <body>
     <div class="container">
-        <h1>Event Management System</h1>
-        
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Search events...">
+        <div class="header-actions">
+            <a href="searchEvent.html" class="btn btn-secondary" aria-label="Back to Search">
+                <i class="fas fa-arrow-left"></i> Back to Search
+            </a>
+            <button id="printButton" class="btn btn-primary" aria-label="Print Details">
+                <i class="fas fa-print"></i> Print Details
+            </button>
         </div>
 
-        <form id="eventForm">
-            <input type="hidden" id="eventId">
-            <div class="form-group">
-                <label for="eventName">Event Name:</label>
-                <input type="text" id="eventName" required>
-            </div>
+        <div id="printArea">
+            <h1>Event Details</h1>
             
-            <div class="form-group">
-                <label for="eventDate">Date:</label>
-                <input type="date" id="eventDate" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="eventLocation">Location:</label>
-                <input type="text" id="eventLocation" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="eventType">Event Type:</label>
-                <select id="eventType" required>
-                    <option value="">Select Type</option>
-                    <option value="Conference">Conference</option>
-                    <option value="Workshop">Workshop</option>
-                    <option value="Seminar">Seminar</option>
-                    <option value="Other">Other</option>
-                </select>
-            </div>
+            <div id="errorMessages" class="alert alert-danger" style="display: none;"></div>
 
-            <button type="submit" class="btn btn-primary">Save Event</button>
-            <button type="button" class="btn btn-warning" onclick="clearForm()">Clear Form</button>
-        </form>
+            <form id="eventForm" action="databaseConnection.php" method="POST">
+                <input type="hidden" id="eventId" name="id">
+                <input type="hidden" name="csrf_token" value="<?php echo generateToken(); ?>">
+                
+                <fieldset>
+                    <legend>Event Information</legend>
+                    <div class="form-container">
+                        <div class="form-group">
+                            <label for="eventName">Event Name</label>
+                            <input type="text" id="eventName" name="name" required 
+                                   placeholder="Enter event name" aria-label="Event Name">
+                        </div>
 
-        <table id="eventTable">
-            <thead>
-                <tr>
-                    <th>Event Name</th>
-                    <th>Date</th>
-                    <th>Location</th>
-                    <th>Type</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
+                        <div class="form-group">
+                            <label for="eventDate">Event Date</label>
+                            <input type="datetime-local" id="eventDate" name="date" required 
+                                   aria-label="Event Date and Time">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="eventVenue">Venue</label>
+                            <input type="text" id="eventVenue" name="venue" required 
+                                   placeholder="Enter venue details" aria-label="Event Venue">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="eventStatus">Status</label>
+                            <select id="eventStatus" name="status" required aria-label="Event Status">
+                                <option value="" disabled selected>Select Status</option>
+                                <option value="Upcoming">Upcoming</option>
+                                <option value="Ongoing">Ongoing</option>
+                                <option value="Completed">Completed</option>
+                                <option value="Cancelled">Cancelled</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="eventCapacity">Capacity</label>
+                            <input type="number" id="eventCapacity" name="capacity" required 
+                                   placeholder="Enter maximum capacity" aria-label="Event Capacity"
+                                   min="1">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="eventOrganizer">Organizer</label>
+                            <input type="text" id="eventOrganizer" name="organizer" required 
+                                   placeholder="Enter organizer name" aria-label="Event Organizer">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="eventDescription">Description</label>
+                            <textarea id="eventDescription" name="description" rows="4"
+                                    placeholder="Enter event description" aria-label="Event Description"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" id="saveButton" class="btn btn-primary no-print">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                        <button type="button" id="deleteButton" class="btn btn-danger no-print">
+                            <i class="fas fa-trash"></i> Delete Event
+                        </button>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
     </div>
 
+    <div id="loadingIndicator" class="loading-spinner" style="display: none;">
+        Loading...
+    </div>
+    
     <script src="event.js"></script>
 </body>
 </html>

@@ -3,27 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Member Management System - Search</title>
+    <title>Event Management System - Search</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="member_management.css">
+    <link rel="stylesheet" href="event.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>会员管理系统</h1>
+            <h1>Event Management System</h1>
             <nav class="system-nav">
                 <button class="btn btn-primary" onclick="location.href='../project.html'">
-                    <i class="fas fa-home"></i> 退出
+                    <i class="fas fa-home"></i> Back
                 </button>
-                <button class="btn btn-success" onclick="location.href='member_management.html'">
-                    <i class="fas fa-user-plus"></i> 添加新会员
+                <button class="btn btn-success" onclick="location.href='event.html'">
+                    <i class="fas fa-calendar-plus"></i> Add New Event
                 </button>
-                <button id="printButton" class="btn btn-primary" aria-label="Print Details">
-                    <i class="fas fa-print"></i> 打印详情
-                </button>
-               
             </nav>
-            
         </header>
 
         <section class="search-container">
@@ -33,42 +28,36 @@
                     <input 
                         type="text" 
                         id="searchInput" 
-                        placeholder="Search Members" 
-                        aria-label="Search members">
-                    <button id="searchButton" class="btn btn-search">搜索</button>
+                        placeholder="Search events by name, venue, or status..." 
+                        aria-label="Search events">
+                    <button id="searchButton" class="btn btn-search">
+                        Search
+                    </button>
                 </div>
             </div>
             <div class="search-stats">
-                <span class="stats-label">会员总数:</span>
-                <span id="totalMembers" class="stats-value">0</span>
+                <span class="stats-label">Total Events:</span>
+                <span id="totalEvents" class="stats-value">0</span>
             </div>
         </section>
 
         <section class="table-container">
             <div class="loader">
                 <div class="spinner"></div>
-                <span>正在加载会员...</span>
+                <span>Loading events...</span>
             </div>
             
             <div class="table-responsive">
-                <table id="memberTable" aria-label="Member list">
+                <table id="eventTable" aria-label="Event list">
                     <thead>
                         <tr>
-                            <th>序号</th>
-                            <th>姓名（英）</th>
-                            <th>姓名（中）</th>
-                            <th>种类</th>
-                            <th>地址</th>
-                            <th>手机号码</th>
-                            <th>邮箱</th>
-                            <th>IC 号码</th>
-                            <th>旧 IC 号码 IC</th>
-                            <th>性别</th>
-                            <th>公司名字</th>
-                            <th>生日</th>
-                            <th>过期日期</th>
-                            <th>出生地方</th>
-                            <th>操作</th>
+                            <th data-column="name">Event Name <i class="fas fa-sort"></i></th>
+                            <th data-column="date">Event Date <i class="fas fa-sort"></i></th>
+                            <th data-column="venue">Venue <i class="fas fa-sort"></i></th>
+                            <th data-column="status">Status <i class="fas fa-sort"></i></th>
+                            <th data-column="capacity">Capacity <i class="fas fa-sort"></i></th>
+                            <th data-column="organizer">Organizer <i class="fas fa-sort"></i></th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -80,7 +69,7 @@
             <div class="pagination-container">
                 <div class="pagination"></div>
                 <div class="items-per-page">
-                    <label for="itemsPerPage">每页项目数:</label>
+                    <label for="itemsPerPage">Items per page:</label>
                     <select id="itemsPerPage">
                         <option value="10">10</option>
                         <option value="25">25</option>
@@ -91,6 +80,6 @@
         </section>
     </div>
 
-    <script src="member_search.js"></script>
+    <script src="searchEvent.js"></script>
 </body>
 </html>

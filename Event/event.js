@@ -1,117 +1,110 @@
-let members = JSON.parse(localStorage.getItem('members')) || [];
-const memberForm = document.getElementById('memberForm');
-const memberTable = document.getElementById('memberTable');
+let events = JSON.parse(localStorage.getItem('events')) || [];
+const eventForm = document.getElementById('eventForm');
+const eventTable = document.getElementById('eventTable');
 const searchInput = document.getElementById('searchInput');
 
-// Load members when page loads
+// Load events when the page loads
 document.addEventListener('DOMContentLoaded', () => {
-    renderMembers();
+    renderEvents();
 });
 
 // Search functionality
 searchInput.addEventListener('input', (e) => {
     const searchTerm = e.target.value.toLowerCase();
-    const filteredMembers = members.filter(member => 
-        member.name.toLowerCase().includes(searchTerm) ||
-        member.address.toLowerCase().includes(searchTerm) ||
-        member.email.toLowerCase().includes(searchTerm) ||
-        member.phone.toLowerCase().includes(searchTerm) ||
-        member.status.toLowerCase().includes(searchTerm)
+    const filteredEvents = events.filter(event => 
+        event.name.toLowerCase().includes(searchTerm) ||
+        event.date.toLowerCase().includes(searchTerm) ||
+        event.location.toLowerCase().includes(searchTerm) ||
+        event.type.toLowerCase().includes(searchTerm)
     );
-    renderMembers(filteredMembers);
+    renderEvents(filteredEvents);
 });
 
-// Save or update member
-memberForm.addEventListener('submit', (e) => {
+// Save or update event
+eventForm.addEventListener('submit', (e) => {
     e.preventDefault();
     
-    const memberId = document.getElementById('memberId').value;
-    const member = {
-        id: memberId || Date.now().toString(),
-        name: document.getElementById('memberName').value,
-        dob: document.getElementById('memberDOB').value,
-        address: document.getElementById('memberAddress').value,
-        status: document.getElementById('memberStatus').value,
-        phone: document.getElementById('memberPhone').value,
-        email: document.getElementById('memberEmail').value
+    const eventId = document.getElementById('eventId').value;
+    const event = {
+        id: eventId || Date.now().toString(),
+        name: document.getElementById('eventName').value,
+        date: document.getElementById('eventDate').value,
+        location: document.getElementById('eventLocation').value,
+        type: document.getElementById('eventType').value
     };
 
-    if (memberId) {
-        // Update existing member
-        const index = members.findIndex(m => m.id === memberId);
-        members[index] = member;
+    if (eventId) {
+        // Update existing event
+        const index = events.findIndex(e => e.id === eventId);
+        events[index] = event;
     } else {
-        // Add new member
-        members.push(member);
+        // Add new event
+        events.push(event);
     }
 
     // Save to localStorage
-    localStorage.setItem('members', JSON.stringify(members));
+    localStorage.setItem('events', JSON.stringify(events));
     
     clearForm();
-    renderMembers();
+    renderEvents();
 });
 
-// Render members table
-function renderMembers(membersToRender = members) {
-    const tbody = memberTable.querySelector('tbody');
+// Render events table
+function renderEvents(eventsToRender = events) {
+    const tbody = eventTable.querySelector('tbody');
     tbody.innerHTML = '';
 
-    membersToRender.forEach(member => {
+    eventsToRender.forEach(event => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td>${member.name}</td>
-            <td>${formatDate(member.dob)}</td>
-            <td>${member.address}</td>
-            <td><span class="status-${member.status.toLowerCase()}">${member.status}</span></td>
-            <td>${member.phone}</td>
-            <td>${member.email}</td>
+            <td>${event.name}</td>
+            <td>${formatDate(event.date)}</td>
+            <td>${event.location}</td>
+            <td>${event.type}</td>
             <td class="action-buttons">
-                <button class="btn btn-warning" onclick="editMember('${member.id}')">Edit</button>
-                <button class="btn btn-danger" onclick="deleteMember('${member.id}')">Delete</button>
+                <button class="btn btn-warning" onclick="editEvent('${event.id}')">Edit</button>
+                <button class="btn btn-danger" onclick="deleteEvent('${event.id}')">Delete</button>
             </td>
         `;
         tbody.appendChild(tr);
     });
 
-    // Show message if no members found
-    if (membersToRender.length === 0) {
+    // Show message if no events found
+    if (eventsToRender.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="7" style="text-align: center;">No members found</td>
+                <td colspan="5" style="text-align: center;">No events found</td>
             </tr>
         `;
     }
 }
 
-// Edit member
-function editMember(id) {
-    const member = members.find(m => m.id === id);
-    if (member) {
-        document.getElementById('memberId').value = member.id;
-        document.getElementById('memberName').value = member.name;
-        document.getElementById('memberDOB').value = member.dob;
-        document.getElementById('memberAddress').value = member.address;
-        document.getElementById('memberStatus').value = member.status;
-        document.getElementById('memberPhone').value = member.phone;
-        document.getElementById('memberEmail').value = member.email;
+// Edit event
+function editEvent(id) {
+    const event = events.find(e => e.id === id);
+    if (event) {
+        document.getElementById('eventId').value = event.id;
+        document.getElementById('eventName').value = event.name;
+        document.getElementById('eventDate').value = event.date;
+        document.getElementById('eventLocation').value = event.location;
+        document.getElementById('eventType').value = event.type;
     }
 }
 
-// Delete member
-function deleteMember(id) {
-    const member = members.find(m => m.id === id);
-    if (confirm(`Are you sure you want to delete member "${member.name}"?`)) {
-        members = members.filter(m => m.id !== id);
-        localStorage.setItem('members', JSON.stringify(members));
-        renderMembers();
+// Delete event
+function deleteEvent(id) {
+    const event = events.find(e => e.id === id);
+    if (confirm(`Are you sure you want to delete event "${event.name}"?`)) {
+        events = events.filter(e => e.id !== id);
+        localStorage.setItem('events', JSON.stringify(events));
+        renderEvents();
     }
 }
 
 // Clear form
 function clearForm() {
-    document.getElementById('memberId').value = '';
-    memberForm.reset();
+    document.getElementById('eventId').value = '';
+    eventForm.reset();
 }
 
 // Format date
@@ -119,18 +112,3 @@ function formatDate(dateString) {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateString).toLocaleDateString(undefined, options);
 }
-
-// Input validation
-document.getElementById('memberPhone').addEventListener('input', function(e) {
-    // Remove any non-digit characters
-    let phone = e.target.value.replace(/\D/g, '');
-    
-    // Format as XXX-XXX-XXXX
-    if (phone.length >= 6) {
-        phone = `${phone.slice(0,3)}-${phone.slice(3,6)}-${phone.slice(6)}`;
-    } else if (phone.length >= 3) {
-        phone = `${phone.slice(0,3)}-${phone.slice(3)}`;
-    }
-    
-    e.target.value = phone;
-});
