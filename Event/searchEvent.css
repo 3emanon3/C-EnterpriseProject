@@ -39,7 +39,7 @@ header {
 }
 
 h1 {
-    color: var(--primary-color);
+    color: #f8f9fa;
     font-size: 2rem;
 }
 
