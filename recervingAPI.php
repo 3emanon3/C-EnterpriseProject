@@ -479,90 +479,104 @@ class DatabaseAPI {
     }
 
     private function createRecord($table, $data) {
-      try {
-          // Validate table name
-          if (!array_key_exists($table, $this->allowedTables)) {
-              throw new Exception('Invalid table name');
-          }
-  
-          // Validate input fields against allowed columns
-          $allowedColumns = $this->allowedTables[$table];
-          $filteredData = array_intersect_key($data, array_flip($allowedColumns));
-  
-          if (empty($filteredData)) {
-              throw new Exception('No valid fields provided');
-          }
-  
-          // Build query
-          $columns = array_keys($filteredData);
-          $values = array_values($filteredData);
-          $placeholders = str_repeat('?,', count($values) - 1) . '?';
-          
-          $query = "INSERT INTO `$table` (`" . implode('`, `', $columns) . "`) VALUES ($placeholders)";
-
-          if($table === 'members'){
-            $query = "SELECT `membersID` FROM `members` ORDER BY `ID` DESC LIMIT 1";
+        try {
+            // Validate table name
+            if (!array_key_exists($table, $this->allowedTables)) {
+                throw new Exception('Invalid table name');
+            }
+    
+            // Validate input fields against allowed columns
+            $allowedColumns = $this->allowedTables[$table];
+            $filteredData = array_intersect_key($data, array_flip($allowedColumns));
+    
+            if (empty($filteredData)) {
+                throw new Exception('No valid fields provided');
+            }
+    
+            // Special handling for members table
+            if ($table === 'members') {
+                // Generate new memberID
+                $query = "SELECT `membersID` FROM `members` ORDER BY `ID` DESC LIMIT 1";
+                $stmt = $this->dsn->prepare($query);
+                
+                if ($stmt === false) {
+                    throw new Exception('Failed to prepare statement: ' . $this->dsn->error);
+                }
+                
+                if (!$stmt->execute()) {
+                    throw new Exception('Failed to execute query: ' . $stmt->error);
+                }
+                
+                $result = $stmt->get_result();
+                
+                // Generate new memberID
+                if ($result->num_rows > 0) {
+                    $parts = explode('-', $result->fetch_assoc()['membersID']);
+                    $number = $parts[1];
+                    $newNumber = intval($number) + 1;
+                } else {
+                    // Handle first member case
+                    $newNumber = 1;
+                }
+                
+                $formattedNumber = str_pad($newNumber, 6, '0', STR_PAD_LEFT);
+                date_default_timezone_set('Asia/Kuala_Lumpur');
+                $year = date('Y');
+                $newMembersID = $year . '-' . $formattedNumber;
+                
+                // Add memberID to the filtered data
+                $filteredData['membersID'] = $newMembersID;
+            }
+    
+            // Build query
+            $columns = array_keys($filteredData);
+            $values = array_values($filteredData);
+            $placeholders = str_repeat('?,', count($values) - 1) . '?';
+            
+            $query = "INSERT INTO `$table` (`" . implode('`, `', $columns) . "`) VALUES ($placeholders)";
+            
+            // Prepare and execute statement
             $stmt = $this->dsn->prepare($query);
+            
             if ($stmt === false) {
                 throw new Exception('Failed to prepare statement: ' . $this->dsn->error);
             }
+    
+            // Generate type string for bind_param
+            $types = '';
+            foreach ($values as $value) {
+                if (is_int($value)) $types .= 'i';
+                elseif (is_float($value)) $types .= 'd';
+                else $types .= 's';
+            }
+    
+            // Bind parameters dynamically
+            $bindParams = array_merge([$types], $values);
+            $stmt->bind_param(...$bindParams);
+    
             if (!$stmt->execute()) {
                 throw new Exception('Failed to execute query: ' . $stmt->error);
             }
-            $result = $stmt->get_result();
-            $parts = explode('-', $result->fetch_assoc()['membersID']);
-            $number = $parts[1];
-            $newNumber = intval($number) + 1;
-            $formattedNumber = str_pad($newNumber, 6, '0', STR_PAD_LEFT);
-            date_default_timezone_set('Asia/Kuala_Lumpur');
-            $year = date('Y');
-            $newMembersID = $year . '-' . $formattedNumber;
-
-            $query = "INSERT INTO members ()";
-
-          }
-          
-          // Prepare and execute statement
-          $stmt = $this->dsn->prepare($query);
-          
-          if ($stmt === false) {
-              throw new Exception('Failed to prepare statement: ' . $this->dsn->error);
-          }
-  
-          // Generate type string for bind_param
-          $types = '';
-          foreach ($values as $value) {
-              if (is_int($value)) $types .= 'i';
-              elseif (is_float($value)) $types .= 'd';
-              else $types .= 's';
-          }
-  
-          // Bind parameters dynamically
-          $bindParams = array_merge([$types], $values);
-          $stmt->bind_param(...$bindParams);
-  
-          if (!$stmt->execute()) {
-              throw new Exception('Failed to execute query: ' . $stmt->error);
-          }
-  
-          $insertId = $stmt->insert_id;
-          
-          // Return success response
-          http_response_code(201); // Created
-          echo json_encode([
-              'status' => 'success',
-              'message' => 'Record created successfully',
-              'id' => $insertId
-          ]);
-  
-      } catch (Exception $e) {
-          error_log("Error in createRecord: " . $e->getMessage());
-          http_response_code(500);
-          echo json_encode([
-              'error' => 'Database error',
-              'message' => $e->getMessage()
-          ]);
-      }
+    
+            $insertId = $stmt->insert_id;
+            
+            // Return success response
+            http_response_code(201); // Created
+            echo json_encode([
+                'status' => 'success',
+                'message' => 'Record created successfully',
+                'id' => $insertId,
+                'membersID' => $table === 'members' ? $newMembersID : null
+            ]);
+    
+        } catch (Exception $e) {
+            error_log("Error in createRecord: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode([
+                'error' => 'Database error',
+                'message' => $e->getMessage()
+            ]);
+        }
     }
 
 
