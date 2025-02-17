@@ -154,23 +154,28 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     window.editMember = function(membersID) {
-        window.location.href = `member_management.html?id=${membersID}`;
+        window.location.href = `edit_member.html?id=${membersID}`;
     };
     
     window.deleteMember = function(membersID) {
         if (confirm('确定要删除这个会员吗？')) {
             fetch(`${API_BASE_URL}?action=delete&id=${membersID}`, { method: 'DELETE' })
-            .then(response => response.json())
-            .then(result => {
-                if (result.status === 'success') fetchRecords();
-                else showError(result.message || '删除失败');
-            })
-            .catch(error => {
-                showError('删除时发生错误');
-                console.error('Error:', error);
-            });
+                .then(response => response.json())
+                .then(result => {
+                    if (result.status === 'success') {
+                        alert('删除成功！');
+                        window.location.href = 'member_management.html';  // Redirect after deletion
+                    } else {
+                        showError(result.message || '删除失败');
+                    }
+                })
+                .catch(error => {
+                    showError('删除时发生错误');
+                    console.error('Error:', error);
+                });
         }
     };
+    
 
     function formatPhone(phone) {
         return phone ? String(phone).replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3") : '';

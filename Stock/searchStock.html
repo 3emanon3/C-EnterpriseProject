@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Management System - Search</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="searchStock.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Stock Management System</h1>
+            <nav class="system-nav">
+                <button class="btn btn-primary" onclick="location.href='../project.html'">
+                    <i class="fas fa-home"></i> Back
+                </button>
+                <button class="btn btn-success" onclick="location.href='stock.html'">
+                    <i class="fas fa-box"></i> Add New Stock
+                </button>
+            </nav>
+        </header>
+
+        <section class="search-container">
+            <div class="search-wrapper">
+                <div class="search-input-group">
+                    <i class="fas fa-search search-icon"></i>
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        placeholder="Search stocks by name, category, or status..." 
+                        aria-label="Search stocks">
+                    <button id="searchButton" class="btn btn-search">
+                        Search
+                    </button>
+                </div>
+            </div>
+            <div class="search-stats">
+                <span class="stats-label">Total Stock Items:</span>
+                <span id="totalStocks" class="stats-value">0</span>
+            </div>
+        </section>
+
+        <section class="table-container">
+            <div class="loader">
+                <div class="spinner"></div>
+                <span>Loading stocks...</span>
+            </div>
+            
+            <div class="table-responsive">
+                <table id="stockTable" aria-label="Stock list">
+                    <thead>
+                        <tr>
+                            <th data-column="name">Stock Name <i class="fas fa-sort"></i></th>
+                            <th data-column="category">Category <i class="fas fa-sort"></i></th>
+                            <th data-column="quantity">Quantity <i class="fas fa-sort"></i></th>
+                            <th data-column="supplier">Supplier <i class="fas fa-sort"></i></th>
+                            <th data-column="status">Status <i class="fas fa-sort"></i></th>
+                            <th data-column="lastUpdated">Last Updated <i class="fas fa-sort"></i></th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dynamic Content -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="pagination-container">
+                <div class="pagination"></div>
+                <div class="items-per-page">
+                    <label for="itemsPerPage">Items per page:</label>
+                    <select id="itemsPerPage">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="searchStock.js"></script>
+</body>
+</html>
