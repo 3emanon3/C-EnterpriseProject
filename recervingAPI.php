@@ -104,7 +104,7 @@ class DatabaseAPI {
         }else {
           try {
 
-            date_default_timezone_set('Asia/Kuala_Lumpur');
+            date_default_timezone_set('Asia/Kuala_Lumpur');//////////read
             $date = date('n');
 
             // Get total count for pagination

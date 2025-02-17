@@ -3,9 +3,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const API_BASE_URL = 'http://localhost/projects/Enterprise/C-EnterpriseProject/recervingAPI.php';
     
     // State management
+    let members = [];
+    let filteredMembers = [];
     let currentPage = 1;
     let currentTable = 'members';
-    let allRecords = [];
     let sortColumn = 'ID';
     let sortDirection = 'asc';
     let itemsPerPage = 10;
@@ -13,14 +14,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // DOM Elements
     const elements = {
-        searchInput: document.getElementById("searchInput"),
-        searchButton: document.getElementById("searchButton"),
+        searchInput: document.getElementById('searchInput'),
+        searchButton: document.getElementById('searchButton'),
+        memberTable: document.getElementById('memberTable'),
         tableBody: document.querySelector("#memberTable tbody"),
-        totalRecordsSpan: document.getElementById("totalMembers"),
-        itemsPerPageSelect: document.getElementById("itemsPerPage"),
+        totalMembersSpan: document.getElementById('totalMembers'),
+        itemsPerPageSelect: document.getElementById('itemsPerPage'),
         tableHeaders: document.querySelectorAll("#memberTable th[data-column]"),
-        paginationContainer: document.querySelector(".pagination"),
-        tableSelect: document.getElementById("tableSelect")
+        paginationContainer: document.querySelector('.pagination'),
+        loader: document.querySelector('.loader'),
+        printButton: document.getElementById('printButton')
     };
 
     // Add navigation buttons
@@ -36,7 +39,63 @@ document.addEventListener("DOMContentLoaded", function () {
         `);
     }
 
-    // Main fetch function
+    // Initialize the application
+    async function initialize() {
+        try {
+            await fetchRecords();
+            setupEventListeners();
+        } catch (error) {
+            console.error('Initialization error:', error);
+            showError('Failed to initialize the application');
+        }
+    }
+
+    // Event Listeners Setup
+    function setupEventListeners() {
+        elements.searchButton?.addEventListener('click', () => {
+            currentMode = 'search';
+            handleSearch();
+        });
+
+        elements.searchInput?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                currentMode = 'search';
+                handleSearch();
+            }
+        });
+
+        elements.itemsPerPageSelect?.addEventListener('change', (e) => {
+            itemsPerPage = parseInt(e.target.value);
+            currentPage = 1;
+            updateTable();
+        });
+
+        elements.printButton?.addEventListener('click', printMemberDetails);
+
+        document.getElementById('fetchAllButton')?.addEventListener('click', fetchAllRecords);
+        document.getElementById('fetchBirthdaysButton')?.addEventListener('click', fetchBirthdayRecords);
+
+        // Sort event listeners
+        elements.tableHeaders?.forEach(header => {
+            header.addEventListener('click', () => {
+                const column = header.dataset.column;
+                if (sortColumn === column) {
+                    sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+                } else {
+                    sortColumn = column;
+                    sortDirection = 'asc';
+                }
+                
+                elements.tableHeaders.forEach(h => h.classList.remove('sort-asc', 'sort-desc'));
+                header.classList.add(`sort-${sortDirection}`);
+                
+                sortRecords();
+                updateTable();
+            });
+        });
+    }
+
+    // Fetch records from backend
     async function fetchRecords(searchTerm = '') {
         showLoader();
         try {
@@ -47,60 +106,52 @@ document.addEventListener("DOMContentLoaded", function () {
             });
 
             if (searchTerm) {
-                params.set('search', String(searchTerm).trim());
+                params.append('search', String(searchTerm).trim());
             }
 
-            if (currentMode === 'Birthdays') {
-                params.set('Birthdays', 'true');
+            if (currentMode === 'birthdays') {
+                params.append('birthdays', 'true');
+                params.append('month', new Date().getMonth() + 1);
             }
 
             const response = await fetch(`${API_BASE_URL}?${params.toString()}`);
-            console.log('Fetching URL:', `${API_BASE_URL}?${params.toString()}`); // Debug log
             
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
             const responseData = await response.json();
-            console.log('Response data:', responseData); // Debug log
             
             if (responseData.error) {
                 throw new Error(responseData.error);
             }
 
-            allRecords = responseData.data || [];
-            if (elements.totalRecordsSpan) {
-                elements.totalRecordsSpan.textContent = responseData.pagination?.total_records || allRecords.length;
+            members = responseData.data || [];
+            filteredMembers = [...members];
+            
+            if (elements.totalMembersSpan) {
+                elements.totalMembersSpan.textContent = responseData.pagination?.total_records || members.length;
             }
             
             sortRecords();
-            displayRecordsForCurrentPage();
-            updatePaginationControls();
+            updateTable();
         } catch (error) {
-            console.error('Fetch error:', error); // Debug log
+            console.error('Fetch error:', error);
             showError(`Failed to load records: ${error.message}`);
         } finally {
             hideLoader();
         }
     }
 
-    // Fetch all records
-    async function fetchAllRecords() {
-        currentMode = 'all';
-        currentPage = 1;
-        await fetchRecords();
-    }
-
-    // Fetch birthday records
-    async function fetchBirthdayRecords() {
-        currentMode = 'Birthdays';
-        currentPage = 1;
-        await fetchRecords();
+    // Search functionality
+    function handleSearch() {
+        const searchTerm = elements.searchInput.value.toLowerCase().trim();
+        fetchRecords(searchTerm);
     }
 
     // Sort records
     function sortRecords() {
-        allRecords.sort((a, b) => {
+        filteredMembers.sort((a, b) => {
             let valueA = a[sortColumn] || '';
             let valueB = b[sortColumn] || '';
             
@@ -120,48 +171,49 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Display records for current page
-    function displayRecordsForCurrentPage() {
-        const start = (currentPage - 1) * itemsPerPage;
-        const end = start + itemsPerPage;
-        const recordsToDisplay = allRecords.slice(start, end);
-        console.log('Displaying records:', start, end, recordsToDisplay.length); // Debug log
+    // Table update and pagination
+    function updateTable() {
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const pageMembers = filteredMembers.slice(startIndex, endIndex);
         
-        if (elements.tableBody) {
-            displayRecords(recordsToDisplay);
+        renderTableRows(pageMembers);
+        updatePagination();
+        if (elements.totalMembersSpan) {
+            elements.totalMembersSpan.textContent = filteredMembers.length;
         }
     }
 
-    // Display records in table
-    function displayRecords(records) {
+    function renderTableRows(pageMembers) {
         if (!elements.tableBody) return;
 
-        if (!records || records.length === 0) {
+        if (!pageMembers || pageMembers.length === 0) {
             elements.tableBody.innerHTML = `<tr><td colspan="15" class="no-results">暂无记录</td></tr>`;
             return;
         }
 
-        elements.tableBody.innerHTML = records.map(record => `
+        elements.tableBody.innerHTML = pageMembers.map((member, index) => `
             <tr>
-                <td>${escapeHtml(record.ID)}</td>
-                <td>${escapeHtml(record.Name)}</td>
-                <td>${escapeHtml(record.CName)}</td>
-                <td>${escapeHtml(record['Designation of Applicant'])}</td>
-                <td>${escapeHtml(record.Address)}</td>
-                <td>${formatPhone(record.phone_number)}</td>
-                <td>${escapeHtml(record.email)}</td>
-                <td>${formatIC(record.IC)}</td>
-                <td>${formatIC(record.oldIC)}</td>
-                <td>${escapeHtml(record.gender)}</td>
-                <td>${escapeHtml(record.componyName)}</td>
-                <td>${formatDate(record.Birthday)}</td>
-                <td>${formatDate(record['expired date'])}</td>
-                <td>${escapeHtml(record['place of birth'])}</td>
+                <td>${(currentPage - 1) * itemsPerPage + index + 1}</td>
+                <td>${escapeHtml(member.Name)}</td>
+                <td>${escapeHtml(member.CName)}</td>
+                <td>${escapeHtml(member['Designation of Applicant'])}</td>
+                <td>${escapeHtml(member.Address)}</td>
+                <td>${formatPhone(member.phone_number)}</td>
+                <td>${escapeHtml(member.email)}</td>
+                <td>${formatIC(member.IC)}</td>
+                <td>${formatIC(member.oldIC)}</td>
+                <td>${escapeHtml(member.gender)}</td>
+                <td>${escapeHtml(member.componyName)}</td>
+                <td>${formatDate(member.Birthday)}</td>
+                <td>${formatDate(member['expired date'])}</td>
+                <td>${escapeHtml(member['place of birth'])}</td>
+                <td>${escapeHtml(member.remarks)}</td>
                 <td>
-                    <button class="btn btn-edit" onclick="editMember(${record.ID})">
+                    <button class="btn btn-edit" onclick="editMember(${member.ID})">
                         <i class="fas fa-edit"></i>
                     </button>
-                    <button class="btn btn-delete" onclick="deleteMember(${record.ID})">
+                    <button class="btn btn-delete" onclick="deleteMember(${member.ID})">
                         <i class="fas fa-trash"></i>
                     </button>
                 </td>
@@ -169,150 +221,61 @@ document.addEventListener("DOMContentLoaded", function () {
         `).join('');
     }
 
-    // Pagination controls
-    function updatePaginationControls() {
+    function updatePagination() {
         if (!elements.paginationContainer) return;
     
-        const totalPages = Math.ceil(allRecords.length / itemsPerPage);
+        const totalPages = Math.ceil(filteredMembers.length / itemsPerPage);
         elements.paginationContainer.innerHTML = '';
     
-        // Left arrow button
-        const leftArrow = document.createElement('button');
-        leftArrow.innerHTML = '&lt;'; // Left arrow symbol
-        leftArrow.className = 'pagination-btn';
-        leftArrow.disabled = currentPage === 1;
-        leftArrow.addEventListener('click', () => {
+        // Previous button
+        addPaginationButton('«', currentPage > 1, () => {
             if (currentPage > 1) {
-                changePage(currentPage - 1);
+                currentPage--;
+                updateTable();
             }
         });
     
-        // Current page number
-        const pageNumber = document.createElement('button');
-        pageNumber.textContent = currentPage;
-        pageNumber.className = 'pagination-btn active';
-    
-        // Right arrow button
-        const rightArrow = document.createElement('button');
-        rightArrow.innerHTML = '&gt;'; // Right arrow symbol
-        rightArrow.className = 'pagination-btn';
-        rightArrow.disabled = currentPage === totalPages;
-        rightArrow.addEventListener('click', () => {
-            if (currentPage < totalPages) {
-                changePage(currentPage + 1);
-            }
-        });
-    
-        // Add all elements to the container
-        elements.paginationContainer.appendChild(leftArrow);
-        elements.paginationContainer.appendChild(pageNumber);
-        elements.paginationContainer.appendChild(rightArrow);
-    }
-
-    // Utility functions
-    function formatPhone(phone) {
-        if (!phone) return '';
-        return String(phone).replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3");
-    }
-    
-    function formatIC(ic) {
-        if (!ic) return '';
-        return String(ic).replace(/(\d{6})(\d{2})(\d{4})/, "$1-$2-$3");
-    }
-
-    function formatDate(dateString) {
-        if (!dateString) return '';
-        const date = new Date(dateString);
-        return isNaN(date) ? "" : date.toISOString().split('T')[0];
-    }
-
-    function escapeHtml(str) {
-        if (str === null || str === undefined) return '';
-        return String(str)
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
-    }
-
-    function showLoader() {
-        const loader = document.querySelector('.loader');
-        if (loader) loader.style.display = 'flex';
-    }
-    
-    function hideLoader() {
-        const loader = document.querySelector('.loader');
-        if (loader) loader.style.display = 'none';
-    }
-    
-    function showError(message) {
-        alert(message);
-    }
-
-    // Page navigation
-    function changePage(newPage) {
-        console.log('Changing to page:', newPage); // Debug log
-        const totalPages = Math.ceil(allRecords.length / itemsPerPage);
-        if (newPage < 1 || newPage > totalPages) return;
-        
-        currentPage = newPage;
-        displayRecordsForCurrentPage();
-        updatePaginationControls();
-        
-        // Scroll to top of table
-        elements.tableBody?.closest('table')?.scrollIntoView({ behavior: 'smooth' });
-    }
-
-    // Event Listeners
-    elements.searchButton?.addEventListener("click", () => {
-        currentMode = 'search';
-        fetchRecords(elements.searchInput.value);
-    });
-
-    elements.searchInput?.addEventListener("keypress", (e) => {
-        if (e.key === "Enter") {
-            currentMode = 'search';
-            fetchRecords(elements.searchInput.value);
+        // Page numbers
+        for (let i = 1; i <= totalPages; i++) {
+            addPaginationButton(i, true, () => {
+                currentPage = i;
+                updateTable();
+            }, i === currentPage);
         }
-    });
-
-    elements.itemsPerPageSelect?.addEventListener("change", (e) => {
-        itemsPerPage = parseInt(e.target.value);
-        currentPage = 1;
-        fetchRecords(); // Fetch new records with updated limit
-    });
-
-    elements.tableSelect?.addEventListener('change', (e) => {
-        currentTable = e.target.value;
-        currentPage = 1;
-        currentMode = 'all';
-        fetchRecords();
-    });
-
-    document.getElementById('fetchAllButton')?.addEventListener('click', fetchAllRecords);
-    document.getElementById('fetchBirthdaysButton')?.addEventListener('click', fetchBirthdayRecords);
-
-    // Sort event listeners
-    elements.tableHeaders?.forEach(header => {
-        header.addEventListener('click', () => {
-            const column = header.dataset.column;
-            if (sortColumn === column) {
-                sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
-            } else {
-                sortColumn = column;
-                sortDirection = 'asc';
+    
+        // Next button
+        addPaginationButton('»', currentPage < totalPages, () => {
+            if (currentPage < totalPages) {
+                currentPage++;
+                updateTable();
             }
-            
-            elements.tableHeaders.forEach(h => h.classList.remove('sort-asc', 'sort-desc'));
-            header.classList.add(`sort-${sortDirection}`);
-            
-            sortRecords();
-            displayRecordsForCurrentPage();
         });
-    });
+    }
 
-    // Global functions for inline handlers
+    function addPaginationButton(text, enabled, onClick, isActive = false) {
+        const button = document.createElement('button');
+        button.textContent = text;
+        button.className = `pagination-btn ${isActive ? 'active' : ''} ${!enabled ? 'disabled' : ''}`;
+        if (enabled) {
+            button.addEventListener('click', onClick);
+        }
+        elements.paginationContainer.appendChild(button);
+    }
+
+    // Fetch specific record types
+    async function fetchAllRecords() {
+        currentMode = 'all';
+        currentPage = 1;
+        await fetchRecords();
+    }
+
+    async function fetchBirthdayRecords() {
+        currentMode = 'birthdays';
+        currentPage = 1;
+        await fetchRecords();
+    }
+
+    // Member operations
     window.editMember = function(id) {
         window.location.href = `member_management.html?id=${id}`;
     };
@@ -337,6 +300,49 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
-    // Initialize
-    fetchRecords();
+    // Utility functions
+    function formatPhone(phone) {
+        if (!phone) return '';
+        return String(phone).replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3");
+    }
+    
+    function formatIC(ic) {
+        if (!ic) return '';
+        return String(ic).replace(/(\d{6})(\d{2})(\d{4})/, "$1-$2-$3");
+    }
+
+    function formatDate(dateString) {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        return isNaN(date) ? "" : date.toISOString().split('T')[0];
+    }
+
+    function escapeHtml(unsafe) {
+        if (unsafe === null || unsafe === undefined) return '';
+        return String(unsafe)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    function showLoader() {
+        if (elements.loader) elements.loader.style.display = 'flex';
+    }
+
+    function hideLoader() {
+        if (elements.loader) elements.loader.style.display = 'none';
+    }
+
+    function showError(message) {
+        alert(message);
+    }
+
+    function printMemberDetails() {
+        window.print();
+    }
+
+    // Initialize the application
+    initialize();
 });
