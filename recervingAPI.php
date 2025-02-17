@@ -406,6 +406,10 @@ class DatabaseAPI {
             $sortColumn = $params['sort'] ?? 'ID';
             $sortOrder = strtoupper($params['order'] ?? 'ASC');
 
+            if ($sortColumn === 'membersID') {
+                $sortColumn = 'CAST(REPLACE(membersID, '-', '') AS UNSIGNED)';
+            }
+
             // Get total count for pagination
             $countQuery = "SELECT COUNT(*) as total FROM `$table`";
             $countResult = $this->dsn->query($countQuery);
@@ -481,6 +485,28 @@ class DatabaseAPI {
           $placeholders = str_repeat('?,', count($values) - 1) . '?';
           
           $query = "INSERT INTO `$table` (`" . implode('`, `', $columns) . "`) VALUES ($placeholders)";
+
+          if($table === 'members'){
+            $query = "SELECT `membersID` FROM `members` ORDER BY `ID` DESC LIMIT 1";
+            $stmt = $this->dsn->prepare($query);
+            if ($stmt === false) {
+                throw new Exception('Failed to prepare statement: ' . $this->dsn->error);
+            }
+            if (!$stmt->execute()) {
+                throw new Exception('Failed to execute query: ' . $stmt->error);
+            }
+            $result = $stmt->get_result();
+            $parts = explode('-', $result->fetch_assoc()['membersID']);
+            $number = $parts[1];
+            $newNumber = intval($number) + 1;
+            $formattedNumber = str_pad($newNumber, 6, '0', STR_PAD_LEFT);
+            date_default_timezone_set('Asia/Kuala_Lumpur');
+            $year = date('Y');
+            $newMembersID = $year . '-' . $formattedNumber;
+
+            $query = "INSERT INTO members ()";
+
+          }
           
           // Prepare and execute statement
           $stmt = $this->dsn->prepare($query);
