@@ -76,6 +76,15 @@ class DatabaseAPI {
                     $this->getAllRecords($table, $params);
                 }
                 break;
+            case 'POST':
+                $postData = json_decode(file_get_contents('php://input'), true);
+                if ($postData === null) {
+                    http_response_code(400);
+                    echo json_encode(['error' => 'Invalid JSON data']);
+                    return;
+                }
+                $this->createRecord($table, $postData);
+                break;
             default:
                 http_response_code(405);
                 echo json_encode(['error' => 'Method not allowed']);
@@ -236,6 +245,71 @@ class DatabaseAPI {
             ]);
         }
     }
+
+    private function createRecord($table, $data) {
+      try {
+          // Validate table name
+          if (!array_key_exists($table, $this->allowedTables)) {
+              throw new Exception('Invalid table name');
+          }
+  
+          // Validate input fields against allowed columns
+          $allowedColumns = $this->allowedTables[$table];
+          $filteredData = array_intersect_key($data, array_flip($allowedColumns));
+  
+          if (empty($filteredData)) {
+              throw new Exception('No valid fields provided');
+          }
+  
+          // Build query
+          $columns = array_keys($filteredData);
+          $values = array_values($filteredData);
+          $placeholders = str_repeat('?,', count($values) - 1) . '?';
+          
+          $query = "INSERT INTO `$table` (`" . implode('`, `', $columns) . "`) VALUES ($placeholders)";
+          
+          // Prepare and execute statement
+          $stmt = $this->dsn->prepare($query);
+          
+          if ($stmt === false) {
+              throw new Exception('Failed to prepare statement: ' . $this->dsn->error);
+          }
+  
+          // Generate type string for bind_param
+          $types = '';
+          foreach ($values as $value) {
+              if (is_int($value)) $types .= 'i';
+              elseif (is_float($value)) $types .= 'd';
+              else $types .= 's';
+          }
+  
+          // Bind parameters dynamically
+          $bindParams = array_merge([$types], $values);
+          $stmt->bind_param(...$bindParams);
+  
+          if (!$stmt->execute()) {
+              throw new Exception('Failed to execute query: ' . $stmt->error);
+          }
+  
+          $insertId = $stmt->insert_id;
+          
+          // Return success response
+          http_response_code(201); // Created
+          echo json_encode([
+              'status' => 'success',
+              'message' => 'Record created successfully',
+              'id' => $insertId
+          ]);
+  
+      } catch (Exception $e) {
+          error_log("Error in createRecord: " . $e->getMessage());
+          http_response_code(500);
+          echo json_encode([
+              'error' => 'Database error',
+              'message' => $e->getMessage()
+          ]);
+      }
+  }
 }
 
 // Create API instance and handle request
