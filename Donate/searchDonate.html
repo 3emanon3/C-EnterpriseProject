@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donation Management System - Search</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="searchDonate.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Donation Management System</h1>
+            <nav class="system-nav">
+                <button class="btn btn-primary" onclick="location.href='../home.html'">
+                    <i class="fas fa-home"></i> Back
+                </button>
+                <button class="btn btn-success" onclick="location.href='donate.html'">
+                    <i class="fas fa-hand-holding-heart"></i> Add New Donation
+                </button>
+            </nav>
+        </header>
+
+        <section class="search-container">
+            <div class="search-wrapper">
+                <div class="search-input-group">
+                    <i class="fas fa-search search-icon"></i>
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        placeholder="Search donations by donor, amount, or status..." 
+                        aria-label="Search donations">
+                    <button id="searchButton" class="btn btn-search">
+                        Search
+                    </button>
+                </div>
+            </div>
+            <div class="search-stats">
+                <span class="stats-label">Total Donations:</span>
+                <span id="totalDonations" class="stats-value">0</span>
+            </div>
+        </section>
+
+        <section class="table-container">
+            <div class="loader">
+                <div class="spinner"></div>
+                <span>Loading donations...</span>
+            </div>
+            
+            <div class="table-responsive">
+                <table id="donationTable" aria-label="Donation list">
+                    <thead>
+                        <tr>
+                            <th data-column="donor">Donor Name <i class="fas fa-sort"></i></th>
+                            <th data-column="date">Donation Date <i class="fas fa-sort"></i></th>
+                            <th data-column="amount">Amount <i class="fas fa-sort"></i></th>
+                            <th data-column="method">Payment Method <i class="fas fa-sort"></i></th>
+                            <th data-column="status">Status <i class="fas fa-sort"></i></th>
+                            <th data-column="receiver">Receiver <i class="fas fa-sort"></i></th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dynamic Content -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="pagination-container">
+                <div class="pagination"></div>
+                <div class="items-per-page">
+                    <label for="itemsPerPage">Items per page:</label>
+                    <select id="itemsPerPage">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="searchDonate.js"></script>
+</body>
+</html>

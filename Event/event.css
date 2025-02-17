@@ -27,6 +27,7 @@ body {
     max-width: 800px;
     margin: 2rem auto;
     padding: 20px;
+    min-height: 95vh;
 }
 
 /* Header Actions */
