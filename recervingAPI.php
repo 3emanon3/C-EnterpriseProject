@@ -233,6 +233,12 @@ class DatabaseAPI {
             $sortColumn = $params['sort'] ?? 'ID';
             $sortOrder = strtoupper($params['order'] ?? 'ASC');
 
+            if ($sortColumn === 'membersID') {
+                $sortColumn = "CAST(REPLACE(membersID, '-', '') AS UNSIGNED)";
+            }else {
+                $sortColumn = "`$sortColumn`";
+            }
+
             if (!$this->validateSortParams($table, $sortColumn, $sortOrder)) {
               throw new Exception('Invalid sort parameters');
             }
@@ -264,7 +270,7 @@ class DatabaseAPI {
             $offset = ($page - 1) * $limit;
 
             // Prepare and execute main query
-            $query = "SELECT * FROM `$table` WHERE Birthday = ? ORDER BY `$sortColumn` $sortOrder LIMIT ? OFFSET ?";
+            $query = "SELECT * FROM `$table` WHERE Birthday = ? ORDER BY $sortColumn $sortOrder LIMIT ? OFFSET ?";
             $stmt = $this->dsn->prepare($query);
 
             if (!$stmt) {
@@ -326,6 +332,12 @@ class DatabaseAPI {
          $sortColumn = $params['sort'] ?? 'ID';
             $sortOrder = strtoupper($params['order'] ?? 'ASC');
 
+            if ($sortColumn === 'membersID') {
+                $sortColumn = "CAST(REPLACE(membersID, '-', '') AS UNSIGNED)";
+            }else {
+                $sortColumn = "`$sortColumn`";
+            }
+
             if (!$this->validateSortParams($table, $sortColumn, $sortOrder)) {
               throw new Exception('Invalid sort parameters');
             }
@@ -357,7 +369,7 @@ class DatabaseAPI {
             $offset = ($page - 1) * $limit;
 
             // Prepare and execute main query
-            $query = "SELECT * FROM `$table` WHERE Year(`expired date`) = ? AND Month(`expired date`) = ? ORDER BY `$sortColumn` $sortOrder LIMIT ? OFFSET ?";
+            $query = "SELECT * FROM `$table` WHERE Year(`expired date`) = ? AND Month(`expired date`) = ? ORDER BY $sortColumn $sortOrder LIMIT ? OFFSET ?";
             $stmt = $this->dsn->prepare($query);
 
             if (!$stmt) {
@@ -407,7 +419,9 @@ class DatabaseAPI {
             $sortOrder = strtoupper($params['order'] ?? 'ASC');
 
             if ($sortColumn === 'membersID') {
-                $sortColumn = 'CAST(REPLACE(membersID, '-', '') AS UNSIGNED)';
+                $sortColumn = "CAST(REPLACE(membersID, '-', '') AS UNSIGNED)";
+            }else {
+                $sortColumn = "`$sortColumn`";
             }
 
             // Get total count for pagination
@@ -421,7 +435,7 @@ class DatabaseAPI {
             $offset = ($page - 1) * $limit;
 
             // Prepare and execute main query
-            $query = "SELECT * FROM `$table` ORDER BY `$sortColumn` $sortOrder LIMIT ? OFFSET ?";
+            $query = "SELECT * FROM `$table` ORDER BY $sortColumn $sortOrder LIMIT ? OFFSET ?";
             $stmt = $this->dsn->prepare($query);
             
             if ($stmt === false) {
