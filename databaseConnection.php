@@ -1,8 +1,8 @@
 <?php
 $host = 'localhost';
-$db   = 'enterprise_test';
+$db   = 'entreprise_test';
 $user = 'root';
-$pass = '';
+$pass = '0000';
 $charset = 'utf8mb4';
 
 // Create connection

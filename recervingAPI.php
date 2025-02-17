@@ -3,7 +3,7 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Set headers
+// Set CORS and content headers
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST');
 header('Access-Control-Allow-Headers: Content-Type');
@@ -16,8 +16,13 @@ $requestDebug = [
     'URI' => $_SERVER['REQUEST_URI'],
     'METHOD' => $_SERVER['REQUEST_METHOD']
 ];
-file_put_contents('debug.log', date('Y-m-d H:i:s') . ': ' . print_r($requestDebug, true) . "\n", FILE_APPEND);
+file_put_contents(
+    'debug.log', 
+    date('Y-m-d H:i:s') . ': ' . print_r($requestDebug, true) . "\n", 
+    FILE_APPEND
+);
 
+// Database connection
 require 'databaseConnection.php';
 
 class DatabaseAPI {
@@ -72,6 +77,8 @@ class DatabaseAPI {
             case 'GET':
                 if (isset($_GET['birthdays'])) {
                     $this->getBirthdays($table, $params);
+                } else if (isset($_GET['expired'])) {
+                    $this->getExpired($table, $params);
                 } else {
                     $this->getAllRecords($table, $params);
                 }
@@ -99,7 +106,7 @@ class DatabaseAPI {
       return in_array(strtoupper($sortOrder),['ASC', 'DESC']);
     }
 
-    private function getBirthdays($table, $id) {
+    private function getBirthdays($table, $params) {
         
         if (!array_key_exists($table, $this->allowedTables)) {
           throw new Exception('Invalid table name');
@@ -179,6 +186,103 @@ class DatabaseAPI {
             http_response_code(500);
             echo json_encode(['error' => $e->getMessage()]);
           }
+        }
+    }
+
+    private function getExpired($table, $params) {
+      if (!array_key_exists($table, $this->allowedTables)) {
+        throw new Exception('Invalid table name');
+      }
+
+      if($table!== 'members'){
+        //only members table has birthday
+        http_response_code(404);
+        echo json_encode(['error' => 'Table not found']);
+        return;
+      }
+      
+      try {
+          $sortColumn = $params['sort'] ?? 'ID';
+          $sortOrder = strtoupper($params['order'] ?? 'ASC');
+
+          if (!$this->validateSortParams($table, $sortColumn, $sortOrder)) {
+              throw new Exception('Invalid sort parameters');
+          }
+
+         date_default_timezone_set('Asia/Kuala_Lumpur');
+         $month = date('n');
+         $year = date('Y');
+
+         $sortColumn = $params['sort'] ?? 'ID';
+            $sortOrder = strtoupper($params['order'] ?? 'ASC');
+
+            if (!$this->validateSortParams($table, $sortColumn, $sortOrder)) {
+              throw new Exception('Invalid sort parameters');
+            }
+
+            date_default_timezone_set('Asia/Kuala_Lumpur');
+            $month = date('n');
+            $year = date('Y');
+
+            // Get total count for pagination
+            $countQuery = "SELECT COUNT(*) as total FROM `$table` WHERE Year(`expired date`) = ? AND Month(`expired date`) = ?";
+            $stmt = $this->dsn->prepare($countQuery);
+
+            if($stmt){
+              $stmt->bind_param('ii', $year, $month);
+              if (!$stmt->execute()) {
+                throw new Exception('Failed to execute query: ' . $stmt->error);
+              }
+              $result = $stmt->get_result();
+              $row = $result->fetch_assoc();
+              $totalRecords = $row['total'];
+              $result->free();
+              $stmt->close();
+            }else{
+              throw new Exception('Failed to prepare statement: ' . $this->dsn->error);
+            }
+
+            $page = max(1, intval($_GET['page'] ?? 1));
+            $limit = max(1, min(100, intval($_GET['limit'] ?? 10))); // Limit between 1 and 100
+            $offset = ($page - 1) * $limit;
+
+            // Prepare and execute main query
+            $query = "SELECT * FROM `$table` WHERE Year(`expired date`) = ? AND Month(`expired date`) = ? ORDER BY `$sortColumn` $sortOrder LIMIT ? OFFSET ?";
+            $stmt = $this->dsn->prepare($query);
+
+            if (!$stmt) {
+                throw new Exception('Failed to prepare statement: ' . $this->dsn->error);
+               }
+  
+              $stmt->bind_param('iiii', $year, $month, $limit, $offset);
+              $stmt->execute();
+              $result = $stmt->get_result();
+              $data = $result->fetch_all(MYSQLI_ASSOC);
+  
+              // Calculate total pages
+              $totalPages = ceil($totalRecords / $limit);
+              
+              echo json_encode([
+                  'data' => $data,
+                  'pagination' => [
+                      'page' => $page,
+                      'limit' => $limit,
+                      'total_records' => $totalRecords,
+                      'total_pages' => $totalPages
+                  ],
+                  'sorting' => [
+                      'column' => $sortColumn,
+                      'order' => $sortOrder
+                  ]
+              ]);
+
+      } catch (Exception $e) {
+            error_log("Error in getExpired: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode([
+                'error' => 'Database error',
+                'message' => $e->getMessage()
+            ]);
         }
     }
 
