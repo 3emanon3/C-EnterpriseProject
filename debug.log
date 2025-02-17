@@ -6529,3 +6529,21 @@
     [METHOD] => GET
 )
 
+2025-02-17 07:42:23: Array
+(
+    [GET] => Array
+        (
+            [page] => 1
+            [limit] => 10
+            [table] => members
+            [search] => John
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?page=1&limit=10&table=members&search=John
+    [METHOD] => GET
+)
+
