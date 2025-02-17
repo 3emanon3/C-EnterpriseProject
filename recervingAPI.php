@@ -75,7 +75,9 @@ class DatabaseAPI {
 
         switch($method) {
             case 'GET':
-                if (isset($_GET['birthdays'])) {
+                if (isset($_GET['search'])) {
+                    $this->searchRecords($table, $params);
+                }else if (isset($_GET['birthdays'])) {
                     $this->getBirthdays($table, $params);
                 } else if (isset($_GET['expired'])) {
                     $this->getExpired($table, $params);
@@ -92,6 +94,17 @@ class DatabaseAPI {
                 }
                 $this->createRecord($table, $postData);
                 break;
+            case 'PUT':
+                break;
+            case 'DELETE':
+                $deleteID = $_GET['id'] ?? null;
+                if ($deleteID === null) {
+                    http_response_code(400);
+                    echo json_encode(['error' => 'Missing ID parameter']);
+                    return;
+                }
+                $this->deleteRecord($table, $deleteID);
+                break;
             default:
                 http_response_code(405);
                 echo json_encode(['error' => 'Method not allowed']);
@@ -104,6 +117,103 @@ class DatabaseAPI {
         return false;
       }
       return in_array(strtoupper($sortOrder),['ASC', 'DESC']);
+    }
+
+    private function searchRecords($table, $params) {
+        try {
+            if (!array_key_exists($table, $this->allowedTables)) {
+                throw new Exception('Invalid table name');
+            }
+
+            $searchTerm = $params['search'] ?? '';
+            $sortColumn = $params['sort'] ?? 'ID';
+            $sortOrder = strtoupper($params['order'] ?? 'ASC');
+
+            if (!$this->validateSortParams($table, $sortColumn, $sortOrder)) {
+                throw new Exception('Invalid sort parameters');
+            }
+
+            // Build search conditions for each column
+            $searchConditions = [];
+            $searchValues = [];
+            foreach ($this->allowedTables[$table] as $column) {
+                $searchConditions[] = "`$column` LIKE ?";
+                $searchValues[] = "%$searchTerm%";
+            }
+
+            // Get total count for pagination
+            $countQuery = "SELECT COUNT(*) as total FROM `$table` WHERE " . implode(' OR ', $searchConditions);
+            $stmt = $this->dsn->prepare($countQuery);
+            
+            if ($stmt === false) {
+                throw new Exception('Failed to prepare count statement: ' . $this->dsn->error);
+            }
+
+            $stmt->bind_param(str_repeat('s', count($searchValues)), ...$searchValues);
+            
+            if (!$stmt->execute()) {
+                throw new Exception('Failed to execute count query: ' . $stmt->error);
+            }
+
+            $result = $stmt->get_result();
+            $totalRecords = $result->fetch_assoc()['total'];
+
+            // Handle pagination
+            $page = max(1, intval($params['page'] ?? 1));
+            $limit = max(1, min(100, intval($params['limit'] ?? 10)));
+            $offset = ($page - 1) * $limit;
+
+            // Main search query
+            $query = "SELECT * FROM `$table` WHERE " . implode(' OR ', $searchConditions) . 
+                    " ORDER BY `$sortColumn` $sortOrder LIMIT ? OFFSET ?";
+            
+            $stmt = $this->dsn->prepare($query);
+            
+            if ($stmt === false) {
+                throw new Exception('Failed to prepare search statement: ' . $this->dsn->error);
+            }
+
+            // Bind all search parameters plus limit and offset
+            $bindValues = array_merge($searchValues, [$limit, $offset]);
+            $types = str_repeat('s', count($searchValues)) . 'ii';
+            $stmt->bind_param($types, ...$bindValues);
+
+            if (!$stmt->execute()) {
+                throw new Exception('Failed to execute search query: ' . $stmt->error);
+            }
+
+            $result = $stmt->get_result();
+            $data = $result->fetch_all(MYSQLI_ASSOC);
+
+            // Calculate total pages
+            $totalPages = ceil($totalRecords / $limit);
+            
+            echo json_encode([
+                'data' => $data,
+                'pagination' => [
+                    'page' => $page,
+                    'limit' => $limit,
+                    'total_records' => $totalRecords,
+                    'total_pages' => $totalPages
+                ],
+                'sorting' => [
+                    'column' => $sortColumn,
+                    'order' => $sortOrder
+                ],
+                'search' => [
+                    'term' => $searchTerm,
+                    'matched_records' => count($data)
+                ]
+            ]);
+
+        } catch (Exception $e) {
+            error_log("Error in searchRecords: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode([
+                'error' => 'Database error',
+                'message' => $e->getMessage()
+            ]);
+        }
     }
 
     private function getBirthdays($table, $params) {
@@ -413,7 +523,84 @@ class DatabaseAPI {
               'message' => $e->getMessage()
           ]);
       }
-  }
+    }
+
+
+    private function deleteRecord($table, $deleteID) {
+        try {
+            // Validate table name
+            if (!array_key_exists($table, $this->allowedTables)) {
+                throw new Exception('Invalid table name');
+            }
+    
+            // Check if record exists before deleting
+            $checkQuery = "SELECT ID FROM `$table` WHERE ID = ?";
+            $checkStmt = $this->dsn->prepare($checkQuery);
+            
+            if ($checkStmt === false) {
+                throw new Exception('Failed to prepare check statement: ' . $this->dsn->error);
+            }
+            
+            $checkStmt->bind_param('i', $deleteID);
+            
+            if (!$checkStmt->execute()) {
+                throw new Exception('Failed to execute check query: ' . $checkStmt->error);
+            }
+            
+            $result = $checkStmt->get_result();
+            
+            if ($result->num_rows === 0) {
+                http_response_code(404);
+                echo json_encode([
+                    'error' => 'Record not found',
+                    'message' => "No record found with ID $deleteID"
+                ]);
+                return;
+            }
+    
+            // Build delete query
+            $query = "DELETE FROM `$table` WHERE ID = ?";
+    
+            // Prepare and execute statement
+            $stmt = $this->dsn->prepare($query);
+          
+            if ($stmt === false) {
+                throw new Exception('Failed to prepare delete statement: ' . $this->dsn->error);
+            }
+            
+            $stmt->bind_param('i', $deleteID);
+    
+            if (!$stmt->execute()) {
+                throw new Exception('Failed to execute delete query: ' . $stmt->error);
+            }
+    
+            // Check if any rows were affected
+            if ($stmt->affected_rows === 0) {
+                http_response_code(400);
+                echo json_encode([
+                    'error' => 'Delete failed',
+                    'message' => 'No records were deleted'
+                ]);
+                return;
+            }
+    
+            // Return success response
+            http_response_code(200);
+            echo json_encode([
+                'status' => 'success',
+                'message' => 'Record deleted successfully',
+                'id' => $deleteID
+            ]);
+    
+        } catch (Exception $e) {
+            error_log("Error in deleteRecord: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode([
+                'error' => 'Database error',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
 }
 
 // Create API instance and handle request
