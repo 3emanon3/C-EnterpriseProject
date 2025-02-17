@@ -127,14 +127,20 @@ document.addEventListener("DOMContentLoaded", function () {
             <tr>
               
                 <td>${escapeHtml(member.membersID)}</td>
-                <td>${escapeHtml(member.Name)}</td>
+               <td>${escapeHtml(member.Name)}</td>
                 <td>${escapeHtml(member.CName)}</td>
-                <td>${escapeHtml(member.Designation of Application)}</td>
+                <td>${escapeHtml(member['Designation of Applicant'])}</td>
                 <td>${escapeHtml(member.Address)}</td>
                 <td>${formatPhone(member.phone_number)}</td>
                 <td>${escapeHtml(member.email)}</td>
+                <td>${formatIC(member.IC)}</td>
+                <td>${formatIC(member.oldIC)}</td>
+                <td>${escapeHtml(member.gender)}</td>
+                <td>${escapeHtml(member.componyName)}</td>
                 <td>${formatDate(member.Birthday)}</td>
-                <td>${escapeHtml(member.expired_date)}</td>
+                <td>${formatDate(member['expired date'])}</td>
+                <td>${escapeHtml(member['place of birth'])}</td>
+                <td>${escapeHtml(member.remarks)}</td>
                 <td>
                     <button class="btn btn-edit" onclick="editMember(${member.membersID})">
                         <i class="fas fa-edit"></i>
@@ -168,6 +174,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function formatPhone(phone) {
         return phone ? String(phone).replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3") : '';
+    }
+
+    function formatIC(ic) {
+        if (!ic) return '';
+        return String(ic).replace(/(\d{6})(\d{2})(\d{4})/, "$1-$2-$3");
     }
 
     function formatDate(dateString) {

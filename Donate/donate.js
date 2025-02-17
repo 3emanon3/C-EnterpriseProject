@@ -1,134 +1,162 @@
-let donations = JSON.parse(localStorage.getItem('donations')) || [];
-const donationForm = document.getElementById('donationForm');
-const donationTable = document.getElementById('donationTable');
-const searchInput = document.getElementById('searchInput');
+const API_BASE_URL = 'http://localhost/projects/Enterprise/C-EnterpriseProject/recervingAPI.php';
 
-// Load donations when page loads
-document.addEventListener('DOMContentLoaded', () => {
-    renderDonations();
-});
+class DonationManager {
+    constructor() {
+        this.donationId = new URLSearchParams(window.location.search).get('id');
+        this.form = document.getElementById('donationForm');
+        this.errorMessages = document.getElementById('errorMessages');
+        this.loadingIndicator = document.getElementById('loadingIndicator');
+        this.printButton = document.getElementById('printButton');
+        this.deleteButton = document.getElementById('deleteButton');
 
-// Search functionality
-searchInput.addEventListener('input', (e) => {
-    const searchTerm = e.target.value.toLowerCase();
-    const filteredDonations = donations.filter(donation => 
-        donation.donorName.toLowerCase().includes(searchTerm) ||
-        donation.email.toLowerCase().includes(searchTerm) ||
-        donation.category.toLowerCase().includes(searchTerm) ||
-        donation.paymentMethod.toLowerCase().includes(searchTerm)
-    );
-    renderDonations(filteredDonations);
-});
-
-// Save or update donation
-donationForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    
-    const donationId = document.getElementById('donationId').value;
-    const donation = {
-        id: donationId || Date.now().toString(),
-        donorName: document.getElementById('donorName').value,
-        amount: parseFloat(document.getElementById('amount').value),
-        donationDate: document.getElementById('donationDate').value,
-        paymentMethod: document.getElementById('paymentMethod').value,
-        category: document.getElementById('category').value,
-        email: document.getElementById('email').value,
-        phone: document.getElementById('phone').value,
-        notes: document.getElementById('notes').value
-    };
-
-    if (donationId) {
-        // Update existing donation
-        const index = donations.findIndex(d => d.id === donationId);
-        donations[index] = donation;
-    } else {
-        // Add new donation
-        donations.push(donation);
+        this.initializeEventListeners();
+        if (this.donationId) {
+            this.loadDonationDetails();
+        }
     }
 
-    // Save to localStorage
-    localStorage.setItem('donations', JSON.stringify(donations));
-    
-    clearForm();
-    renderDonations();
-});
+    initializeEventListeners() {
+        // Form submission
+        this.form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.saveDonation();
+        });
 
-// Render donations table
-function renderDonations(donationsToRender = donations) {
-    const tbody = donationTable.querySelector('tbody');
-    tbody.innerHTML = '';
+        // Print button
+        this.printButton.addEventListener('click', () => {
+            window.print();
+        });
 
-    donationsToRender.forEach(donation => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td>${donation.donorName}</td>
-            <td>$${donation.amount.toFixed(2)}</td>
-            <td>${formatDate(donation.donationDate)}</td>
-            <td>${donation.paymentMethod}</td>
-            <td>${donation.category}</td>
-            <td>${donation.email}</td>
-            <td class="action-buttons">
-                <button class="btn btn-warning" onclick="editDonation('${donation.id}')">Edit</button>
-                <button class="btn btn-danger" onclick="deleteDonation('${donation.id}')">Delete</button>
-            </td>
-        `;
-        tbody.appendChild(tr);
-    });
+        // Delete button
+        this.deleteButton.addEventListener('click', () => {
+            this.deleteDonation();
+        });
 
-    if (donationsToRender.length === 0) {
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="7" style="text-align: center;">No donations found</td>
-            </tr>
-        `;
+        // Set minimum date for donation date input
+        const dateInput = document.getElementById('donationDate');
+        const today = new Date();
+        today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+        dateInput.min = today.toISOString().slice(0, 16);
     }
-}
 
-// Edit donation
-function editDonation(id) {
-    const donation = donations.find(d => d.id === id);
-    if (donation) {
+    showLoading() {
+        this.loadingIndicator.style.display = 'block';
+    }
+
+    hideLoading() {
+        this.loadingIndicator.style.display = 'none';
+    }
+
+    showError(message) {
+        this.errorMessages.textContent = message;
+        this.errorMessages.style.display = 'block';
+        setTimeout(() => {
+            this.errorMessages.style.display = 'none';
+        }, 5000);
+    }
+
+    async loadDonationDetails() {
+        this.showLoading();
+        try {
+            const response = await fetch(`${API_BASE_URL}?action=getDonation&id=${this.donationId}`);
+            const data = await response.json();
+
+            if (data.status === 'success') {
+                this.populateForm(data.donation);
+            } else {
+                this.showError('Failed to load donation details.');
+            }
+        } catch (error) {
+            console.error('Error loading donation details:', error);
+            this.showError('Failed to connect to the server.');
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    populateForm(donation) {
         document.getElementById('donationId').value = donation.id;
-        document.getElementById('donorName').value = donation.donorName;
-        document.getElementById('amount').value = donation.amount;
-        document.getElementById('donationDate').value = donation.donationDate;
-        document.getElementById('paymentMethod').value = donation.paymentMethod;
-        document.getElementById('category').value = donation.category;
-        document.getElementById('email').value = donation.email;
-        document.getElementById('phone').value = donation.phone;
-        document.getElementById('notes').value = donation.notes;
+        document.getElementById('donorName').value = donation.donor_name;
+        document.getElementById('donationDate').value = donation.donation_date.replace(' ', 'T');
+        document.getElementById('donationAmount').value = donation.amount;
+        document.getElementById('paymentMethod').value = donation.payment_method;
+        document.getElementById('donationStatus').value = donation.status;
+        document.getElementById('donorEmail').value = donation.donor_email;
+        document.getElementById('donationMessage').value = donation.message || '';
+    }
+
+    async saveDonation() {
+        this.showLoading();
+        try {
+            const formData = new FormData(this.form);
+            const method = this.donationId ? 'PUT' : 'POST';
+
+            const response = await fetch(`${API_BASE_URL}?action=saveDonation`, {
+                method: method,
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (data.status === 'success') {
+                alert('Donation saved successfully!');
+                window.location.href = 'searchDonate.html';
+            } else {
+                this.showError(data.message || 'Failed to save donation.');
+            }
+        } catch (error) {
+            console.error('Error saving donation:', error);
+            this.showError('Failed to connect to the server.');
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    async deleteDonation() {
+        if (!this.donationId || !confirm('Are you sure you want to delete this donation?')) {
+            return;
+        }
+
+        this.showLoading();
+        try {
+            const response = await fetch(`${API_BASE_URL}?action=deleteDonation&id=${this.donationId}`, {
+                method: 'DELETE'
+            });
+
+            const data = await response.json();
+
+            if (data.status === 'success') {
+                alert('Donation deleted successfully!');
+                window.location.href = 'searchDonate.html';
+            } else {
+                this.showError(data.message || 'Failed to delete donation.');
+            }
+        } catch (error) {
+            console.error('Error deleting donation:', error);
+            this.showError('Failed to connect to the server.');
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    validateForm() {
+        const form = this.form;
+        const donationDate = new Date(form.donation_date.value);
+        const now = new Date();
+
+        if (donationDate > now) {
+            this.showError('Donation date cannot be in the future.');
+            return false;
+        }
+
+        if (parseFloat(form.amount.value) <= 0) {
+            this.showError('Donation amount must be greater than 0.');
+            return false;
+        }
+
+        return true;
     }
 }
 
-// Delete donation
-function deleteDonation(id) {
-    const donation = donations.find(d => d.id === id);
-    if (confirm(`Are you sure you want to delete this donation from ${donation.donorName}?`)) {
-        donations = donations.filter(d => d.id !== id);
-        localStorage.setItem('donations', JSON.stringify(donations));
-        renderDonations();
-    }
-}
-
-// Clear form
-function clearForm() {
-    document.getElementById('donationId').value = '';
-    donationForm.reset();
-}
-
-// Format date
-function formatDate(dateString) {
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString(undefined, options);
-}
-
-// Format phone number
-document.getElementById('phone').addEventListener('input', function(e) {
-    let phone = e.target.value.replace(/\D/g, '');
-    if (phone.length >= 6) {
-        phone = `${phone.slice(0,3)}-${phone.slice(3,6)}-${phone.slice(6)}`;
-    } else if (phone.length >= 3) {
-        phone = `${phone.slice(0,3)}-${phone.slice(3)}`;
-    }
-    e.target.value = phone;
-});
+// Initialize the donation manager
+const donationManager = new DonationManager();

@@ -131,12 +131,12 @@ h1 {
 }
 
 .btn-edit {
-    background-color: #2ecc71;
+    background-color: #8a0000;
     color: white;
 }
 
 .btn-edit:hover {
-    background-color: #27ae60;
+    background-color: #7c0303;
 }
 
 .btn-delete {
