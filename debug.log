@@ -47,9 +47,6 @@
     [METHOD] => GET
 )
 
-<<<<<<< HEAD
-2025-02-14 02:57:36: Array
-=======
 2025-02-13 10:40:46: Array
 (
     [GET] => Array
@@ -1003,7 +1000,6 @@
 )
 
 2025-02-14 03:48:21: Array
->>>>>>> 8d5b764132e878485e74ade1e78dd9960f04193f
 (
     [GET] => Array
         (
@@ -4090,6 +4086,7 @@
     [METHOD] => GET
 )
 
+<<<<<<< HEAD
 2025-02-14 10:10:31: Array
 (
     [GET] => Array
@@ -4114,12 +4111,25 @@
             [table] => members
             [page] => 1
             [limit] => 50
+=======
+2025-02-14 10:03:43: Array
+(
+    [GET] => Array
+        (
+            [page] => 1
+            [limit] => 10
+            [table] => members
+            [sort] => ID
+            [order] => ASC
+            [birthdays] => birthdays
+>>>>>>> da34f2967b8aaa7716c5431bbbbc9a9bca21bbfe
         )
 
     [POST] => Array
         (
         )
 
+<<<<<<< HEAD
     [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=50
     [METHOD] => GET
 )
@@ -4148,12 +4158,68 @@
             [table] => members
             [page] => 1
             [limit] => 10
+=======
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?page=1&limit=10&table=members&sort=ID&order=ASC&birthdays=birthdays
+    [METHOD] => GET
+)
+
+2025-02-14 10:03:45: Array
+(
+    [GET] => Array
+        (
+            [page] => 1
+            [limit] => 10
+            [table] => members
+            [sort] => ID
+            [order] => ASC
         )
 
     [POST] => Array
         (
         )
 
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?page=1&limit=10&table=members&sort=ID&order=ASC
+    [METHOD] => GET
+)
+
+2025-02-14 10:18:36: Array
+(
+    [GET] => Array
+        (
+            [page] => 2
+            [limit] => 10
+            [table] => members
+            [birthdays] => birthdays
+            [sort] => Name
+            [order] => DESC
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?page=2&limit=10&table=members&birthdays=birthdays&sort=Name&order=DESC
+    [METHOD] => GET
+)
+
+2025-02-14 10:18:58: Array
+(
+    [GET] => Array
+        (
+            [page] => 2
+            [limit] => 10
+            [table] => members
+            [birthdays] => birthdays
+            [sort] => Name
+            [order] => DESC
+>>>>>>> da34f2967b8aaa7716c5431bbbbc9a9bca21bbfe
+        )
+
+    [POST] => Array
+        (
+        )
+
+<<<<<<< HEAD
     [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10
     [METHOD] => GET
 )
@@ -4487,12 +4553,29 @@
             [table] => members
             [page] => 1
             [limit] => 10
+=======
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?page=2&limit=10&table=members&birthdays=birthdays&sort=Name&order=DESC
+    [METHOD] => GET
+)
+
+2025-02-14 10:19:10: Array
+(
+    [GET] => Array
+        (
+            [page] => 2
+            [limit] => 10
+            [table] => members
+            [birthdays] => birthdays
+            [sort] => Name
+            [order] => DESC
+>>>>>>> da34f2967b8aaa7716c5431bbbbc9a9bca21bbfe
         )
 
     [POST] => Array
         (
         )
 
+<<<<<<< HEAD
     [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10
     [METHOD] => GET
 )
@@ -4549,12 +4632,49 @@
             [table] => members
             [page] => 1
             [limit] => 10
+=======
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?page=2&limit=10&table=members&birthdays=birthdays&sort=Name&order=DESC
+    [METHOD] => GET
+)
+
+2025-02-14 10:21:28: Array
+(
+    [GET] => Array
+        (
+            [page] => 2
+            [limit] => 10
+            [table] => members
+            [birthdays] => birthdays
+            [sort] => Name
+            [order] => DESC
         )
 
     [POST] => Array
         (
         )
 
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?page=2&limit=10&table=members&birthdays=birthdays&sort=Name&order=DESC
+    [METHOD] => GET
+)
+
+2025-02-14 10:21:43: Array
+(
+    [GET] => Array
+        (
+            [page] => 1
+            [limit] => 10
+            [table] => members
+            [birthdays] => birthdays
+            [sort] => Name
+            [order] => DESC
+>>>>>>> da34f2967b8aaa7716c5431bbbbc9a9bca21bbfe
+        )
+
+    [POST] => Array
+        (
+        )
+
+<<<<<<< HEAD
     [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10
     [METHOD] => GET
 )
@@ -5525,6 +5645,9 @@
         )
 
     [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?search=
+=======
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?page=1&limit=10&table=members&birthdays=birthdays&sort=Name&order=DESC
+>>>>>>> da34f2967b8aaa7716c5431bbbbc9a9bca21bbfe
     [METHOD] => GET
 )
 
