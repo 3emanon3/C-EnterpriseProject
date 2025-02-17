@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Function to validate form fields
     function validateForm() {
         const requiredFields = {
+            'membersID': '会员ID',
             'name': '姓名（英）',
             'cname': '姓名（中）',
             'designation': '种类',
@@ -18,7 +19,8 @@ document.addEventListener("DOMContentLoaded", function () {
             'gender': '性别',
             'birthday': '生日',
             'expired_date': '过期日期',
-            'place_of_birth': '出生地方'
+            'place_of_birth': '出生地方',
+            'remarks':'备注'
         };
         
         const errors = [];
@@ -59,9 +61,17 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function showErrors(errors) {
-        errorMessages.innerHTML = errors.map(error => `<div>${error}</div>`).join('');
+        errorMessages.innerHTML = `
+            <div class="alert alert-danger">
+                <strong>请检查以下错误：</strong>
+                <ul>
+                    ${errors.map(error => `<li>${error}</li>`).join('')}
+                </ul>
+            </div>`;
         errorMessages.style.display = "block";
+        window.scrollTo({ top: 0, behavior: "smooth" });
     }
+    
 
     function showSuccess(message) {
         const successDiv = document.createElement('div');

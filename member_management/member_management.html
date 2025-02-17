@@ -10,9 +10,9 @@
 <body>
     <div class="container">
         <div class="header-actions">
-            <a href="index.html" class="btn btn-secondary" aria-label="Back to Search">
-                <i class="fas fa-arrow-left"></i> 返回搜索
-            </a>
+            <button class="btn btn-primary" onclick="location.href='index.html'">
+                <i class="fas fa-home"></i> 返回搜索
+            </button>
         </div>
 
         <div id="printArea">
@@ -21,54 +21,59 @@
             <div id="errorMessages" class="alert alert-danger" style="display: none;"></div>
 
             <form id="memberForm" action="../recervingAPI.php" method="POST">
-                <input type="hidden" id="memberId" name="id">
+                <input type="hidden" id="ID" name="ID">
                 
                 <fieldset>
                     <legend>会员信息</legend>
                     <div class="form-container">
                         <div class="form-group">
-                            <label for="memberName">姓名（英）</label>
-                            <input type="text" id="memberName" name="name" required>
+                            <label for="membersID">会员ID</label>
+                            <input type="text" id="membersID" name="membersID" required>
                         </div>
 
                         <div class="form-group">
-                            <label for="memberCName">姓名（中）</label>
-                            <input type="text" id="memberCName" name="cname" required>
+                            <label for="Name">姓名（英）</label>
+                            <input type="text" id="Name" name="Name" required>
                         </div>
 
                         <div class="form-group">
-                            <label for="designation">种类</label>
-                            <input type="text" id="designation" name="designation" required>
+                            <label for="CName">姓名（中）</label>
+                            <input type="text" id="CName" name="CName" required>
                         </div>
 
                         <div class="form-group">
-                            <label for="memberAddress">地址</label>
-                            <input type="text" id="memberAddress" name="address" required>
+                            <label for="Designation">种类</label>
+                            <input type="text" id="Designation" name="Designation of Applicant" required>
                         </div>
 
                         <div class="form-group">
-                            <label for="memberPhone">手机号码</label>
-                            <input type="tel" id="memberPhone" name="phone_number" required>
+                            <label for="Address">地址</label>
+                            <input type="text" id="Address" name="Address" required>
                         </div>
 
                         <div class="form-group">
-                            <label for="memberEmail">邮箱</label>
-                            <input type="email" id="memberEmail" name="email" required>
+                            <label for="phone_number">手机号码</label>
+                            <input type="tel" id="phone_number" name="phone_number" required>
                         </div>
 
                         <div class="form-group">
-                            <label for="memberIC">IC 号码</label>
-                            <input type="text" id="memberIC" name="ic" required>
+                            <label for="email">邮箱</label>
+                            <input type="email" id="email" name="email" required>
                         </div>
 
                         <div class="form-group">
-                            <label for="memberOldIC">旧 IC 号码</label>
-                            <input type="text" id="memberOldIC" name="oldic">
+                            <label for="IC">IC 号码</label>
+                            <input type="text" id="IC" name="IC" required>
                         </div>
 
                         <div class="form-group">
-                            <label for="memberGender">性别</label>
-                            <select id="memberGender" name="gender" required>
+                            <label for="oldIC">旧 IC 号码</label>
+                            <input type="text" id="oldIC" name="oldIC">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="gender">性别</label>
+                            <select id="gender" name="gender" required>
                                 <option value="">请选择</option>
                                 <option value="男">男</option>
                                 <option value="女">女</option>
@@ -76,32 +81,34 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="companyName">公司名字</label>
-                            <input type="text" id="companyName" name="componyName">
+                            <label for="componyName">公司名字</label>
+                            <input type="text" id="componyName" name="componyName">
                         </div>
 
                         <div class="form-group">
-                            <label for="memberBirthday">生日</label>
-                            <input type="date" id="memberBirthday" name="birthday" required>
+                            <label for="Birthday">生日</label>
+                            <input type="date" id="Birthday" name="Birthday" required>
                         </div>
 
                         <div class="form-group">
-                            <label for="expiredDate">过期日期</label>
-                            <input type="date" id="expiredDate" name="expired_date" required>
+                            <label for="expired_date">过期日期</label>
+                            <input type="date" id="expired_date" name="expired date" required>
                         </div>
 
                         <div class="form-group">
-                            <label for="birthPlace">出生地方</label>
-                            <input type="text" id="birthPlace" name="place_of_birth" required>
+                            <label for="place_of_birth">出生地方</label>
+                            <input type="text" id="place_of_birth" name="place of birth" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="remarks">备注</label>
+                            <input type="text" id="remarks" name="remarks" required>
                         </div>
                     </div>
 
                     <div class="form-actions">
                         <button type="submit" id="saveButton" class="btn btn-primary no-print">
                             <i class="fas fa-save"></i> 保存
-                        </button>
-                        <button type="button" id="deleteButton" class="btn btn-danger no-print">
-                            <i class="fas fa-trash"></i> 删除
                         </button>
                     </div>
                 </fieldset>
