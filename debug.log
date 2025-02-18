@@ -7181,3 +7181,412 @@
     [METHOD] => GET
 )
 
+2025-02-18 05:47:00: Array
+(
+    [GET] => Array
+        (
+            [member] => 
+        )
+
+    [POST] => Array
+        (
+            [{
+>>_____"Name":_"John_Doe",
+>>_____"CName":_"Doe_Enterprises",
+>>_____"Designation_of_Applicant":_"Manager",
+>>_____"Address":_"123_Main_St",
+>>_____"phone_number":_"1234567890",
+>>_____"email":_"john@example_com",
+>>_____"IC":_"A1234567",
+>>_____"oldIC":_"B7654321",
+>>_____"gender":_"Male",___
+>>_____"componyName":_"Doe_Corp",
+>>_____"Birthday":_"5",
+>>_____"expired_date":_"2025-12-31",
+>>_____"place_of_birth":_"CityName",
+>>_____"remarks":_"New_member"
+>>___}] => 
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?member
+    [METHOD] => POST
+)
+
+2025-02-18 05:47:12: Array
+(
+    [GET] => Array
+        (
+            [members] => 
+        )
+
+    [POST] => Array
+        (
+            [{
+>>_____"Name":_"John_Doe",
+>>_____"CName":_"Doe_Enterprises",
+>>_____"Designation_of_Applicant":_"Manager",
+>>_____"Address":_"123_Main_St",
+>>_____"phone_number":_"1234567890",
+>>_____"email":_"john@example_com",
+>>_____"IC":_"A1234567",
+>>_____"oldIC":_"B7654321",
+>>_____"gender":_"Male",___
+>>_____"componyName":_"Doe_Corp",
+>>_____"Birthday":_"5",
+>>_____"expired_date":_"2025-12-31",
+>>_____"place_of_birth":_"CityName",
+>>_____"remarks":_"New_member"
+>>___}] => 
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?members
+    [METHOD] => POST
+)
+
+2025-02-18 05:47:23: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+        )
+
+    [POST] => Array
+        (
+            [{
+>>_____"Name":_"John_Doe",
+>>_____"CName":_"Doe_Enterprises",
+>>_____"Designation_of_Applicant":_"Manager",
+>>_____"Address":_"123_Main_St",
+>>_____"phone_number":_"1234567890",
+>>_____"email":_"john@example_com",
+>>_____"IC":_"A1234567",
+>>_____"oldIC":_"B7654321",
+>>_____"gender":_"Male",___
+>>_____"componyName":_"Doe_Corp",
+>>_____"Birthday":_"5",
+>>_____"expired_date":_"2025-12-31",
+>>_____"place_of_birth":_"CityName",
+>>_____"remarks":_"New_member"
+>>___}] => 
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members
+    [METHOD] => POST
+)
+
+2025-02-18 05:48:43: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members
+    [METHOD] => POST
+)
+
+2025-02-18 05:49:01: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members
+    [METHOD] => POST
+)
+
+2025-02-18 05:49:10: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members
+    [METHOD] => POST
+)
+
+2025-02-18 05:49:27: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members
+    [METHOD] => POST
+)
+
+2025-02-18 05:50:18: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members
+    [METHOD] => POST
+)
+
+2025-02-18 07:29:04: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [ID] => 103
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&ID=103
+    [METHOD] => PUT
+)
+
+2025-02-18 07:30:21: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [ID] => 103
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&ID=103
+    [METHOD] => PUT
+)
+
+2025-02-18 07:32:59: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [ID] => 103
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&ID=103
+    [METHOD] => PUT
+)
+
+2025-02-18 07:33:40: Array
+(
+    [GET] => Array
+        (
+            [page] => 1
+            [limit] => 10
+            [table] => members
+            [search] => John
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?page=1&limit=10&table=members&search=John
+    [METHOD] => GET
+)
+
+2025-02-18 07:33:43: Array
+(
+    [GET] => Array
+        (
+            [page] => 1
+            [limit] => 10
+            [table] => members
+            [sort] => membersID
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?page=1&limit=10&table=members&sort=membersID
+    [METHOD] => GET
+)
+
+2025-02-18 07:33:44: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [birthdays] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&birthdays=true
+    [METHOD] => GET
+)
+
+2025-02-18 07:33:49: Array
+(
+    [GET] => Array
+        (
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php
+    [METHOD] => GET
+)
+
+2025-02-18 07:34:53: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [ID] => 103
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&ID=103
+    [METHOD] => PUT
+)
+
+2025-02-18 07:35:13: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [ID] => 103
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&ID=103
+    [METHOD] => PUT
+)
+
+2025-02-18 07:35:17: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [ID] => 103
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&ID=103
+    [METHOD] => PUT
+)
+
+2025-02-18 07:36:17: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members
+    [METHOD] => POST
+)
+
+2025-02-18 07:36:37: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [ID] => 103
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&ID=103
+    [METHOD] => PUT
+)
+
+2025-02-18 07:36:54: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [ID] => 103
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&ID=103
+    [METHOD] => PUT
+)
+
+2025-02-18 07:46:51: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [ID] => 103
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&ID=103
+    [METHOD] => PUT
+)
+
+2025-02-18 07:48:11: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [ID] => 103
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&ID=103
+    [METHOD] => PUT
+)
+

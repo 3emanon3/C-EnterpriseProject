@@ -94,6 +94,9 @@ class DatabaseAPI {
             case 'POST':
                 $this->handlePostRequest($table);
                 break;
+            case 'PUT':
+                $this->handlePutRequest($table);
+                break;
             case 'DELETE':
                 $this->handleDeleteRequest($table);
                 break;
@@ -164,40 +167,6 @@ class DatabaseAPI {
     }
 
     /**
-     * Get birthday records for current month
-     */
-    private function getBirthdays($table, $params) {
-        if ($table !== 'members') {
-            $this->sendError('Invalid table for birthday query', self::HTTP_BAD_REQUEST);
-            return;
-        }
-
-        $currentMonth = date('n');
-        $baseQuery = "SELECT * FROM `$table` WHERE Birthday = ?";
-        $countQuery = "SELECT COUNT(*) as total FROM `$table` WHERE Birthday = ?";
-        
-        $this->executeQuery($table, $baseQuery, $countQuery, [$currentMonth], 'i');
-    }
-
-    /**
-     * Get expired records for current month
-     */
-    private function getExpired($table, $params) {
-        if ($table !== 'members') {
-            $this->sendError('Invalid table for expiry query', self::HTTP_BAD_REQUEST);
-            return;
-        }
-
-        $currentMonth = date('n');
-        $currentYear = date('Y');
-        
-        $baseQuery = "SELECT * FROM `$table` WHERE YEAR(`expired date`) = ? AND MONTH(`expired date`) = ?";
-        $countQuery = "SELECT COUNT(*) as total FROM `$table` WHERE YEAR(`expired date`) = ? AND MONTH(`expired date`) = ?";
-        
-        $this->executeQuery($table, $baseQuery, $countQuery, [$currentYear, $currentMonth], 'ii');
-    }
-
-    /**
      * Get all records with pagination and sorting
      */
     private function getAllRecords($table, $params) {
@@ -240,6 +209,41 @@ class DatabaseAPI {
                 'id' => $insertId,
                 'membersID' => $table === 'members' ? $filteredData['membersID'] : null
             ], self::HTTP_CREATED);
+        } catch (Exception $e) {
+            $this->sendError($e->getMessage());
+        }
+    }
+
+    /**
+     * Update an existing record
+     */
+    private function handlePutRequest($table) {
+        try {
+            $id = $_GET["ID"] ?? null;
+            if ($id === null){
+                $this->sendError('Missing ID parameter', self::HTTP_BAD_REQUEST);
+                return;
+            }
+
+            if(!$this->recordExists($table, $id)) {
+                $this->sendError("Record not found with ID $id", self::HTTP_NOT_FOUND);
+                return;
+            }
+
+            $data = json_decode(file_get_contents('php://input'), true);
+            if($data === null) {
+                $this->sendError('Invalid JSON data', self::HTTP_BAD_REQUEST);
+                return;
+            }
+
+            $filteredData = $this->filterAllowedFields($table, $data);
+            $this->updateRecord($table, $id, $filteredData);
+
+            $this->sendResponse([
+                'status' => 'success',
+                'message' => 'Record updated successfully',
+                'id' => $id
+            ]);
         } catch (Exception $e) {
             $this->sendError($e->getMessage());
         }
@@ -388,6 +392,24 @@ class DatabaseAPI {
         
         $stmt = $this->prepareAndExecute($query, $values, $types);
         return $stmt->insert_id;
+    }
+
+    private function updateRecord($table, $id, $data) {
+        $updates = [];
+        $values = [];
+        $types = '';
+
+        foreach ($data as $column => $value) {
+            $updates[] = "`$column` = ?";
+            $values[] = $value;
+            $types .= is_int($value) ? 'i' : (is_float($value) ? 'd' : 's');
+        }
+
+        $query = "UPDATE `$table` SET " . implode(', ', $updates) . " WHERE ID = ?";
+        $values[] = $id;
+        $types .= 'i';
+
+        $this->prepareAndExecute($query, $values, $types);
     }
 
     private function deleteRecord($table, $id) {
