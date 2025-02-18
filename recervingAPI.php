@@ -30,11 +30,12 @@ require 'databaseConnection.php';
 class DatabaseAPI {
     private $dsn;
     private $allowedTables = [
+        'members' => ['ID', 'membersID', 'Name', 'CName', 'Designation of Applicant', 'Address', 'phone_number', 'email', 'IC', 'oldIC', 'gender', 'componyName', 'Birthday', 'expired date', 'place of birth', 'remarks'],
+        'applicants types' => ['ID', 'designation of applicant'],
         'vmembers' => ['ID', 'membersID', 'Name', 'CName', 'designation of applicant', 'Address', 'phone_number', 'email', 'IC', 'oldIC', 'gender', 'componyName', 'Birthday', 'expired date', 'place of birth', 'remarks'],
-        'applicants types' => ['ID', 'designation of applicant']
     ];
     private $specialConditions = [
-        'vmembers' => [
+        'members' => [
             'Birthday' =>[
                 'conditions'=>['Birthday = MONTH(CURDATE()) '],
             ], 
@@ -69,10 +70,6 @@ class DatabaseAPI {
 
             $method = $_SERVER['REQUEST_METHOD'];
             $table = $_GET['table'] ?? '';
-            
-            if($table === 'members'){
-                $table = 'vmembers';
-            }
             
             if (!$this->isValidTable($table)) {
                 $this->sendError('Table not found', self::HTTP_NOT_FOUND, ['available_tables' => array_keys($this->allowedTables)]);
@@ -164,6 +161,7 @@ class DatabaseAPI {
         $searchTerm = $params['search'] ?? '';
         $conditions = $this->buildSearchConditions($table, $searchTerm);
         
+        $table = $table === 'vmembers' ? 'members' : $table;
         $baseQuery = "SELECT * FROM `$table` WHERE " . $conditions['sql'];
         $countQuery = "SELECT COUNT(*) as total FROM `$table` WHERE " . $conditions['sql'];
         
@@ -174,18 +172,26 @@ class DatabaseAPI {
      * Get all records with pagination and sorting
      */
     private function getAllRecords($table, $params) {
+        
+        $table1 = $table;
+
+        if($table === 'members') {
+            $table1 = 'members';
+            $table = 'vmembers';
+        }
 
         $baseQuery = "SELECT * FROM `$table` WHERE 1";
         $countQuery = "SELECT COUNT(*) as total FROM `$table` WHERE 1";
 
-        foreach ($this->specialConditions[$table] as $conditionKey => $condition) {
+        foreach ($this->specialConditions[$table1] as $conditionKey => $condition) {
             if (isset($params[$conditionKey])) {
-                $baseQuery = $baseQuery . " AND " . $this->specialConditions[$table][$conditionKey]['conditions'][0];
-                $countQuery = $countQuery . " AND " . $this->specialConditions[$table][$conditionKey]['conditions'][0];
+                $baseQuery = $baseQuery . " AND " . $this->specialConditions[$table1][$conditionKey]['conditions'][0];
+                $countQuery = $countQuery . " AND " . $this->specialConditions[$table1][$conditionKey]['conditions'][0];
             }
         }
         
-        $this->executeQuery($table, $baseQuery, $countQuery);
+
+        $this->executeQuery($table1, $baseQuery, $countQuery);
     }
 
     /**
