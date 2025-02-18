@@ -35,7 +35,7 @@ class DatabaseAPI {
     ];
     private $specialConditions = [
         'members' => [
-            'birthdays' =>[
+            'Birthday' =>[
                 'conditions'=>['Birthday = MONTH(CURDATE()) '],
             ], 
             'expired' => [
