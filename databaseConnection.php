@@ -7,7 +7,4 @@ $charset = 'utf8mb4';
 
 // Create connection
 $dsn = mysqli_connect($host, $user, $pass, $db);
-
-
-
 ?>

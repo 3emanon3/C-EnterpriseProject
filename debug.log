@@ -6637,3 +6637,547 @@
     [METHOD] => GET
 )
 
+2025-02-17 10:56:29: Array
+(
+    [GET] => Array
+        (
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php
+    [METHOD] => GET
+)
+
+2025-02-18 02:48:31: Array
+(
+    [GET] => Array
+        (
+            [page] => 1
+            [limit] => 10
+            [table] => members
+            [search] => John
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?page=1&limit=10&table=members&search=John
+    [METHOD] => GET
+)
+
+2025-02-18 02:48:33: Array
+(
+    [GET] => Array
+        (
+            [page] => 1
+            [limit] => 10
+            [table] => members
+            [sort] => membersID
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?page=1&limit=10&table=members&sort=membersID
+    [METHOD] => GET
+)
+
+2025-02-18 02:48:34: Array
+(
+    [GET] => Array
+        (
+            [page] => 1
+            [limit] => 10
+            [table] => members
+            [sort] => membersID
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?page=1&limit=10&table=members&sort=membersID
+    [METHOD] => GET
+)
+
+2025-02-18 03:53:25: Array
+(
+    [GET] => Array
+        (
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php
+    [METHOD] => GET
+)
+
+2025-02-18 03:54:03: Array
+(
+    [GET] => Array
+        (
+            [test] => 
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?test
+    [METHOD] => GET
+)
+
+2025-02-18 03:54:09: Array
+(
+    [GET] => Array
+        (
+            [test] => test
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?test=test
+    [METHOD] => GET
+)
+
+2025-02-18 03:56:52: Array
+(
+    [GET] => Array
+        (
+            [table] => pokemon
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=pokemon
+    [METHOD] => GET
+)
+
+2025-02-18 04:30:42: Array
+(
+    [GET] => Array
+        (
+            [page] => 1
+            [limit] => 10
+            [table] => members
+            [sort] => ID
+            [order] => ASC
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?page=1&limit=10&table=members&sort=ID&order=ASC
+    [METHOD] => GET
+)
+
+2025-02-18 04:31:00: Array
+(
+    [GET] => Array
+        (
+            [birthday] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?birthday=true
+    [METHOD] => GET
+)
+
+2025-02-18 04:31:02: Array
+(
+    [GET] => Array
+        (
+            [birthday] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?birthday=true
+    [METHOD] => GET
+)
+
+2025-02-18 04:31:07: Array
+(
+    [GET] => Array
+        (
+            [birthday] => birthday
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?birthday=birthday
+    [METHOD] => GET
+)
+
+2025-02-18 04:31:13: Array
+(
+    [GET] => Array
+        (
+            [birthdays] => birthdays
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?birthdays=birthdays
+    [METHOD] => GET
+)
+
+2025-02-18 04:31:39: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members
+    [METHOD] => GET
+)
+
+2025-02-18 04:31:50: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [birthday] => birthday
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&birthday=birthday
+    [METHOD] => GET
+)
+
+2025-02-18 04:31:57: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [birthdays] => birthdays
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&birthdays=birthdays
+    [METHOD] => GET
+)
+
+2025-02-18 04:32:05: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [birthdays] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&birthdays=true
+    [METHOD] => GET
+)
+
+2025-02-18 05:16:44: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [birthdays] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&birthdays=true
+    [METHOD] => GET
+)
+
+2025-02-18 05:16:57: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [birthdays] => true
+            [expire] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&birthdays=true&expire=true
+    [METHOD] => GET
+)
+
+2025-02-18 05:17:02: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [birthdays] => true
+            [expired] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&birthdays=true&expired=true
+    [METHOD] => GET
+)
+
+2025-02-18 05:17:17: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [birthdays] => true
+            [expired] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&birthdays=true&expired=true
+    [METHOD] => GET
+)
+
+2025-02-18 05:18:30: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members
+    [METHOD] => GET
+)
+
+2025-02-18 05:18:32: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members
+    [METHOD] => GET
+)
+
+2025-02-18 05:26:13: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members
+    [METHOD] => GET
+)
+
+2025-02-18 05:26:20: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [birthday] => birthday
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&birthday=birthday
+    [METHOD] => GET
+)
+
+2025-02-18 05:26:29: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [birthday] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&birthday=true
+    [METHOD] => GET
+)
+
+2025-02-18 05:26:42: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [birthdays] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&birthdays=true
+    [METHOD] => GET
+)
+
+2025-02-18 05:27:42: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [birthdays] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&birthdays=true
+    [METHOD] => GET
+)
+
+2025-02-18 05:27:50: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [birthdays] => true
+            [expired] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&birthdays=true&expired=true
+    [METHOD] => GET
+)
+
+2025-02-18 05:31:25: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [birthdays] => true
+            [expired] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&birthdays=true&expired=true
+    [METHOD] => GET
+)
+
+2025-02-18 05:32:21: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [birthdays] => true
+            [expired] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&birthdays=true&expired=true
+    [METHOD] => GET
+)
+
+2025-02-18 05:32:36: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [expired] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&expired=true
+    [METHOD] => GET
+)
+
+2025-02-18 05:32:38: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [expired] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&expired=true
+    [METHOD] => GET
+)
+
+2025-02-18 05:32:49: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [birthdays] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&birthdays=true
+    [METHOD] => GET
+)
+

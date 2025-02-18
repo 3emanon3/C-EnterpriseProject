@@ -1,6 +1,8 @@
 <?php
 // Enable error reporting for debugging
+//make it report all errors no matters how small is it
 error_reporting(E_ALL);
+//display errors become
 ini_set('display_errors', 1);
 
 // Set CORS and content headers
@@ -31,633 +33,394 @@ class DatabaseAPI {
         'members' => ['ID', 'membersID', 'Name', 'CName', 'Designation of Applicant', 'Address', 'phone_number', 'email', 'IC', 'oldIC', 'gender', 'componyName', 'Birthday', 'expired date', 'place of birth', 'remarks'],
         'applicants types' => ['ID', 'designation of applicant']
     ];
+    private $specialConditions = [
+        'members' => [
+            'birthdays' =>[
+                'conditions'=>['Birthday = MONTH(CURDATE()) '],
+            ], 
+            'expired' => [
+                'conditions'=>['(YEAR(`expired date`) < YEAR(CURDATE())) OR (YEAR(`expired date`) = YEAR(CURDATE()) AND MONTH(`expired date`) <= MONTH(CURDATE())) '],
+            ]
+        ]
+    ];
+
+    // Response status constants
+    private const HTTP_OK = 200;
+    private const HTTP_CREATED = 201;
+    private const HTTP_BAD_REQUEST = 400;
+    private const HTTP_NOT_FOUND = 404;
+    private const HTTP_METHOD_NOT_ALLOWED = 405;
+    private const HTTP_SERVER_ERROR = 500;
 
     public function __construct($dsn) {
         $this->dsn = $dsn;
-        
-        // Test database connection
+        $this->validateDatabaseConnection();
+    }
+
+    /**
+     * Main request handler
+     */
+    public function handleRequest() {
         try {
-            $this->dsn->query("SELECT 1");
+            if (isset($_GET['test'])) {
+                $this->handleTestEndpoint();
+                return;
+            }
+
+            $method = $_SERVER['REQUEST_METHOD'];
+            $table = $_GET['table'] ?? '';
+            
+            if (!$this->isValidTable($table)) {
+                $this->sendError('Table not found', self::HTTP_NOT_FOUND, ['available_tables' => array_keys($this->allowedTables)]);
+                return;
+            }
+
+            $this->processRequest($method, $table);
         } catch (Exception $e) {
-            error_log("Database connection failed: " . $e->getMessage());
-            http_response_code(500);
-            echo json_encode(['error' => 'Database connection failed']);
-            exit;
+            $this->sendError($e->getMessage());
         }
     }
 
-    public function handleRequest() {
-        // Test endpoint for debugging
-        if (isset($_GET['test'])) {
-            echo json_encode([
-                'status' => 'API is running',
-                'received_params' => $_GET,
-                'tables_available' => array_keys($this->allowedTables)
-            ]);
-            return;
-        }
-
-        $method = $_SERVER['REQUEST_METHOD'];
-        
-        // Get table from query parameter
-        $table = $_GET['table'] ?? '';
-
-        if (!array_key_exists($table, $this->allowedTables)) {
-            http_response_code(404);
-            echo json_encode([
-                'error' => 'Table not found',
-                'available_tables' => array_keys($this->allowedTables)
-            ]);
-            return;
-        }
-
+    /**
+     * Process the incoming request based on HTTP method
+     */
+    private function processRequest($method, $table) {
         $params = $_GET;
 
         switch($method) {
             case 'GET':
-                if (isset($_GET['search'])) {
-                    $this->searchRecords($table, $params);
-                }else if (isset($_GET['birthdays'])) {
-                    $this->getBirthdays($table, $params);
-                } else if (isset($_GET['expired'])) {
-                    $this->getExpired($table, $params);
-                } else {
-                    $this->getAllRecords($table, $params);
-                }
+                $this->handleGetRequest($table, $params);
                 break;
             case 'POST':
-                $postData = json_decode(file_get_contents('php://input'), true);
-                if ($postData === null) {
-                    http_response_code(400);
-                    echo json_encode(['error' => 'Invalid JSON data']);
-                    return;
-                }
-                $this->createRecord($table, $postData);
-                break;
-            case 'PUT':
+                $this->handlePostRequest($table);
                 break;
             case 'DELETE':
-                $deleteID = $_GET['id'] ?? null;
-                if ($deleteID === null) {
-                    http_response_code(400);
-                    echo json_encode(['error' => 'Missing ID parameter']);
-                    return;
-                }
-                $this->deleteRecord($table, $deleteID);
+                $this->handleDeleteRequest($table);
                 break;
             default:
-                http_response_code(405);
-                echo json_encode(['error' => 'Method not allowed']);
+                $this->sendError('Method not allowed', self::HTTP_METHOD_NOT_ALLOWED);
                 break;
         }
     }
 
-    private function validateSortParams($table, $sortColumn, $sortOrder) {
-      if (!in_array($sortColumn, $this->allowedTables[$table])) {
-        return false;
-      }
-      return in_array(strtoupper($sortOrder),['ASC', 'DESC']);
+    /**
+     * Handle different types of GET requests
+     */
+    private function handleGetRequest($table, $params) {
+        if (isset($params['search'])) {
+            $this->searchRecords($table, $params);
+        } else {
+            $this->getAllRecords($table, $params);
+        }
     }
 
+    /**
+     * Generic query executor with pagination and sorting
+     */
+    private function executeQuery($table, $baseQuery, $countQuery, $params = [], $types = '') {
+        try {
+            // Get total count
+            $countStmt = $this->prepareAndExecute($countQuery, $params, $types);
+            $totalRecords = $countStmt->get_result()->fetch_assoc()['total'];
+
+            // Handle pagination and sorting
+            $page = max(1, intval($_GET['page'] ?? 1));
+            $limit = max(1, min(100, intval($_GET['limit'] ?? 10)));
+            $offset = ($page - 1) * $limit;
+            
+            $sortColumn = $this->getSortColumn($_GET['sort'] ?? 'ID');
+            $sortOrder = $this->validateSortOrder($_GET['order'] ?? 'ASC');
+
+            // Execute main query
+            $fullQuery = $baseQuery . " ORDER BY $sortColumn $sortOrder LIMIT ? OFFSET ?";
+            $params[] = $limit;
+            $params[] = $offset;
+            $types .= 'ii';
+
+            $stmt = $this->prepareAndExecute($fullQuery, $params, $types);
+            $data = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+            $this->sendResponse([
+                'data' => $data,
+                'pagination' => $this->getPaginationInfo($page, $limit, $totalRecords),
+                'sorting' => ['column' => $sortColumn, 'order' => $sortOrder]
+            ]);
+        } catch (Exception $e) {
+            $this->sendError($e->getMessage());
+        }
+    }
+
+    /**
+     * Search records with pagination and sorting
+     */
     private function searchRecords($table, $params) {
-        try {
-            if (!array_key_exists($table, $this->allowedTables)) {
-                throw new Exception('Invalid table name');
-            }
-
-            $searchTerm = $params['search'] ?? '';
-            $sortColumn = $params['sort'] ?? 'ID';
-            $sortOrder = strtoupper($params['order'] ?? 'ASC');
-
-            if (!$this->validateSortParams($table, $sortColumn, $sortOrder)) {
-                throw new Exception('Invalid sort parameters');
-            }
-
-            // Build search conditions for each column
-            $searchConditions = [];
-            $searchValues = [];
-            foreach ($this->allowedTables[$table] as $column) {
-                $searchConditions[] = "`$column` LIKE ?";
-                $searchValues[] = "%$searchTerm%";
-            }
-
-            // Get total count for pagination
-            $countQuery = "SELECT COUNT(*) as total FROM `$table` WHERE " . implode(' OR ', $searchConditions);
-            $stmt = $this->dsn->prepare($countQuery);
-            
-            if ($stmt === false) {
-                throw new Exception('Failed to prepare count statement: ' . $this->dsn->error);
-            }
-
-            $stmt->bind_param(str_repeat('s', count($searchValues)), ...$searchValues);
-            
-            if (!$stmt->execute()) {
-                throw new Exception('Failed to execute count query: ' . $stmt->error);
-            }
-
-            $result = $stmt->get_result();
-            $totalRecords = $result->fetch_assoc()['total'];
-
-            // Handle pagination
-            $page = max(1, intval($params['page'] ?? 1));
-            $limit = max(1, min(100, intval($params['limit'] ?? 10)));
-            $offset = ($page - 1) * $limit;
-
-            // Main search query
-            $query = "SELECT * FROM `$table` WHERE " . implode(' OR ', $searchConditions) . 
-                    " ORDER BY `$sortColumn` $sortOrder LIMIT ? OFFSET ?";
-            
-            $stmt = $this->dsn->prepare($query);
-            
-            if ($stmt === false) {
-                throw new Exception('Failed to prepare search statement: ' . $this->dsn->error);
-            }
-
-            // Bind all search parameters plus limit and offset
-            $bindValues = array_merge($searchValues, [$limit, $offset]);
-            $types = str_repeat('s', count($searchValues)) . 'ii';
-            $stmt->bind_param($types, ...$bindValues);
-
-            if (!$stmt->execute()) {
-                throw new Exception('Failed to execute search query: ' . $stmt->error);
-            }
-
-            $result = $stmt->get_result();
-            $data = $result->fetch_all(MYSQLI_ASSOC);
-
-            // Calculate total pages
-            $totalPages = ceil($totalRecords / $limit);
-            
-            echo json_encode([
-                'data' => $data,
-                'pagination' => [
-                    'page' => $page,
-                    'limit' => $limit,
-                    'total_records' => $totalRecords,
-                    'total_pages' => $totalPages
-                ],
-                'sorting' => [
-                    'column' => $sortColumn,
-                    'order' => $sortOrder
-                ],
-                'search' => [
-                    'term' => $searchTerm,
-                    'matched_records' => count($data)
-                ]
-            ]);
-
-        } catch (Exception $e) {
-            error_log("Error in searchRecords: " . $e->getMessage());
-            http_response_code(500);
-            echo json_encode([
-                'error' => 'Database error',
-                'message' => $e->getMessage()
-            ]);
-        }
-    }
-
-    private function getBirthdays($table, $params) {
+        $searchTerm = $params['search'] ?? '';
+        $conditions = $this->buildSearchConditions($table, $searchTerm);
         
-        if (!array_key_exists($table, $this->allowedTables)) {
-          throw new Exception('Invalid table name');
-        }
-                
-        if($table!== 'members'){
-            //only members table has birthday
-            http_response_code(404);
-            echo json_encode(['error' => 'Table not found']);
+        $baseQuery = "SELECT * FROM `$table` WHERE " . $conditions['sql'];
+        $countQuery = "SELECT COUNT(*) as total FROM `$table` WHERE " . $conditions['sql'];
+        
+        $this->executeQuery($table, $baseQuery, $countQuery, $conditions['params'], $conditions['types']);
+    }
+
+    /**
+     * Get birthday records for current month
+     */
+    private function getBirthdays($table, $params) {
+        if ($table !== 'members') {
+            $this->sendError('Invalid table for birthday query', self::HTTP_BAD_REQUEST);
             return;
-        }else {
-          try {
-
-            $sortColumn = $params['sort'] ?? 'ID';
-            $sortOrder = strtoupper($params['order'] ?? 'ASC');
-
-            if ($sortColumn === 'membersID') {
-                $sortColumn = "CAST(REPLACE(membersID, '-', '') AS UNSIGNED)";
-            }else {
-                $sortColumn = "`$sortColumn`";
-            }
-
-            if (!$this->validateSortParams($table, $sortColumn, $sortOrder)) {
-              throw new Exception('Invalid sort parameters');
-            }
-
-            date_default_timezone_set('Asia/Kuala_Lumpur');
-            $date = date('n');
-
-            // Get total count for pagination
-            $countQuery = "SELECT COUNT(*) as total FROM `$table` WHERE Birthday = ?";
-            $stmt = $this->dsn->prepare($countQuery);
-
-            if($stmt){
-              $stmt->bind_param('i', $date);
-              if (!$stmt->execute()) {
-                throw new Exception('Failed to execute query: ' . $stmt->error);
-              }
-              $result = $stmt->get_result();
-              $row = $result->fetch_assoc();
-              $totalRecords = $row['total'];
-              $result->free();
-              $stmt->close();
-            }else{
-              throw new Exception('Failed to prepare statement: ' . $this->dsn->error);
-            }
-
-            // Handle pagination
-            $page = max(1, intval($_GET['page'] ?? 1));
-            $limit = max(1, min(100, intval($_GET['limit'] ?? 10))); // Limit between 1 and 100
-            $offset = ($page - 1) * $limit;
-
-            // Prepare and execute main query
-            $query = "SELECT * FROM `$table` WHERE Birthday = ? ORDER BY $sortColumn $sortOrder LIMIT ? OFFSET ?";
-            $stmt = $this->dsn->prepare($query);
-
-            if (!$stmt) {
-              throw new Exception('Failed to prepare statement: ' . $this->dsn->error);
-             }
-
-            $stmt->bind_param('iii', $date, $limit, $offset);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            $data = $result->fetch_all(MYSQLI_ASSOC);
-
-            // Calculate total pages
-            $totalPages = ceil($totalRecords / $limit);
-            
-            echo json_encode([
-                'data' => $data,
-                'pagination' => [
-                    'page' => $page,
-                    'limit' => $limit,
-                    'total_records' => $totalRecords,
-                    'total_pages' => $totalPages
-                ],
-                'sorting' => [
-                    'column' => $sortColumn,
-                    'order' => $sortOrder
-                ]
-            ]);
-          } catch (Exception $e) {
-            http_response_code(500);
-            echo json_encode(['error' => $e->getMessage()]);
-          }
         }
+
+        $currentMonth = date('n');
+        $baseQuery = "SELECT * FROM `$table` WHERE Birthday = ?";
+        $countQuery = "SELECT COUNT(*) as total FROM `$table` WHERE Birthday = ?";
+        
+        $this->executeQuery($table, $baseQuery, $countQuery, [$currentMonth], 'i');
     }
 
+    /**
+     * Get expired records for current month
+     */
     private function getExpired($table, $params) {
-      if (!array_key_exists($table, $this->allowedTables)) {
-        throw new Exception('Invalid table name');
-      }
-
-      if($table!== 'members'){
-        //only members table has birthday
-        http_response_code(404);
-        echo json_encode(['error' => 'Table not found']);
-        return;
-      }
-      
-      try {
-          $sortColumn = $params['sort'] ?? 'ID';
-          $sortOrder = strtoupper($params['order'] ?? 'ASC');
-
-          if (!$this->validateSortParams($table, $sortColumn, $sortOrder)) {
-              throw new Exception('Invalid sort parameters');
-          }
-
-         date_default_timezone_set('Asia/Kuala_Lumpur');
-         $month = date('n');
-         $year = date('Y');
-
-         $sortColumn = $params['sort'] ?? 'ID';
-            $sortOrder = strtoupper($params['order'] ?? 'ASC');
-
-            if ($sortColumn === 'membersID') {
-                $sortColumn = "CAST(REPLACE(membersID, '-', '') AS UNSIGNED)";
-            }else {
-                $sortColumn = "`$sortColumn`";
-            }
-
-            if (!$this->validateSortParams($table, $sortColumn, $sortOrder)) {
-              throw new Exception('Invalid sort parameters');
-            }
-
-            date_default_timezone_set('Asia/Kuala_Lumpur');
-            $month = date('n');
-            $year = date('Y');
-
-            // Get total count for pagination
-            $countQuery = "SELECT COUNT(*) as total FROM `$table` WHERE Year(`expired date`) = ? AND Month(`expired date`) = ?";
-            $stmt = $this->dsn->prepare($countQuery);
-
-            if($stmt){
-              $stmt->bind_param('ii', $year, $month);
-              if (!$stmt->execute()) {
-                throw new Exception('Failed to execute query: ' . $stmt->error);
-              }
-              $result = $stmt->get_result();
-              $row = $result->fetch_assoc();
-              $totalRecords = $row['total'];
-              $result->free();
-              $stmt->close();
-            }else{
-              throw new Exception('Failed to prepare statement: ' . $this->dsn->error);
-            }
-
-            $page = max(1, intval($_GET['page'] ?? 1));
-            $limit = max(1, min(100, intval($_GET['limit'] ?? 10))); // Limit between 1 and 100
-            $offset = ($page - 1) * $limit;
-
-            // Prepare and execute main query
-            $query = "SELECT * FROM `$table` WHERE Year(`expired date`) = ? AND Month(`expired date`) = ? ORDER BY $sortColumn $sortOrder LIMIT ? OFFSET ?";
-            $stmt = $this->dsn->prepare($query);
-
-            if (!$stmt) {
-                throw new Exception('Failed to prepare statement: ' . $this->dsn->error);
-               }
-  
-              $stmt->bind_param('iiii', $year, $month, $limit, $offset);
-              $stmt->execute();
-              $result = $stmt->get_result();
-              $data = $result->fetch_all(MYSQLI_ASSOC);
-  
-              // Calculate total pages
-              $totalPages = ceil($totalRecords / $limit);
-              
-              echo json_encode([
-                  'data' => $data,
-                  'pagination' => [
-                      'page' => $page,
-                      'limit' => $limit,
-                      'total_records' => $totalRecords,
-                      'total_pages' => $totalPages
-                  ],
-                  'sorting' => [
-                      'column' => $sortColumn,
-                      'order' => $sortOrder
-                  ]
-              ]);
-
-      } catch (Exception $e) {
-            error_log("Error in getExpired: " . $e->getMessage());
-            http_response_code(500);
-            echo json_encode([
-                'error' => 'Database error',
-                'message' => $e->getMessage()
-            ]);
+        if ($table !== 'members') {
+            $this->sendError('Invalid table for expiry query', self::HTTP_BAD_REQUEST);
+            return;
         }
+
+        $currentMonth = date('n');
+        $currentYear = date('Y');
+        
+        $baseQuery = "SELECT * FROM `$table` WHERE YEAR(`expired date`) = ? AND MONTH(`expired date`) = ?";
+        $countQuery = "SELECT COUNT(*) as total FROM `$table` WHERE YEAR(`expired date`) = ? AND MONTH(`expired date`) = ?";
+        
+        $this->executeQuery($table, $baseQuery, $countQuery, [$currentYear, $currentMonth], 'ii');
     }
 
+    /**
+     * Get all records with pagination and sorting
+     */
     private function getAllRecords($table, $params) {
-        try {
-            // Validate table name to prevent SQL injection
-            if (!array_key_exists($table, $this->allowedTables)) {
-                throw new Exception('Invalid table name');
+
+        $baseQuery = "SELECT * FROM `$table` WHERE 1";
+        $countQuery = "SELECT COUNT(*) as total FROM `$table` WHERE 1";
+
+        foreach ($this->specialConditions[$table] as $conditionKey => $condition) {
+            if (isset($params[$conditionKey])) {
+                $baseQuery = $baseQuery . " AND " . $this->specialConditions[$table][$conditionKey]['conditions'][0];
+                $countQuery = $countQuery . " AND " . $this->specialConditions[$table][$conditionKey]['conditions'][0];
             }
-
-            $sortColumn = $params['sort'] ?? 'ID';
-            $sortOrder = strtoupper($params['order'] ?? 'ASC');
-
-            if ($sortColumn === 'membersID') {
-                $sortColumn = "CAST(REPLACE(membersID, '-', '') AS UNSIGNED)";
-            }else {
-                $sortColumn = "`$sortColumn`";
-            }
-
-            // Get total count for pagination
-            $countQuery = "SELECT COUNT(*) as total FROM `$table`";
-            $countResult = $this->dsn->query($countQuery);
-            $totalRecords = $countResult->fetch_assoc()['total'];
-
-            // Handle pagination
-            $page = max(1, intval($params['page'] ?? 1));
-            $limit = max(1, min(100, intval($params['limit'] ?? 10))); // Limit between 1 and 100
-            $offset = ($page - 1) * $limit;
-
-            // Prepare and execute main query
-            $query = "SELECT * FROM `$table` ORDER BY $sortColumn $sortOrder LIMIT ? OFFSET ?";
-            $stmt = $this->dsn->prepare($query);
-            
-            if ($stmt === false) {
-                throw new Exception('Failed to prepare statement: ' . $this->dsn->error);
-            }
-
-            $stmt->bind_param('ii', $limit, $offset);
-            
-            if (!$stmt->execute()) {
-                throw new Exception('Failed to execute query: ' . $stmt->error);
-            }
-
-            $result = $stmt->get_result();
-            $data = $result->fetch_all(MYSQLI_ASSOC);
-
-            // Calculate total pages
-            $totalPages = ceil($totalRecords / $limit);
-            
-            echo json_encode([
-                'data' => $data,
-                'pagination' => [
-                    'page' => $page,
-                    'limit' => $limit,
-                    'total_records' => $totalRecords,
-                    'total_pages' => $totalPages
-                ],
-                'sorting' => [
-                    'column' => $sortColumn,
-                    'order' => $sortOrder
-                ]
-            ]);
-
-        } catch (Exception $e) {
-            error_log("Error in getAllRecords: " . $e->getMessage());
-            http_response_code(500);
-            echo json_encode([
-                'error' => 'Database error',
-                'message' => $e->getMessage()
-            ]);
         }
+        
+        $this->executeQuery($table, $baseQuery, $countQuery);
     }
 
-    private function createRecord($table, $data) {
+    /**
+     * Create a new record
+     */
+    private function handlePostRequest($table) {
         try {
-            // Validate table name
-            if (!array_key_exists($table, $this->allowedTables)) {
-                throw new Exception('Invalid table name');
+            $data = json_decode(file_get_contents('php://input'), true);
+            if ($data === null) {
+                $this->sendError('Invalid JSON data', self::HTTP_BAD_REQUEST);
+                return;
             }
-    
-            // Validate input fields against allowed columns
-            $allowedColumns = $this->allowedTables[$table];
-            $filteredData = array_intersect_key($data, array_flip($allowedColumns));
-    
-            if (empty($filteredData)) {
-                throw new Exception('No valid fields provided');
-            }
-    
-            // Special handling for members table
+
+            $filteredData = $this->filterAllowedFields($table, $data);
+            
             if ($table === 'members') {
-                // Generate new memberID
-                $query = "SELECT `membersID` FROM `members` ORDER BY `ID` DESC LIMIT 1";
-                $stmt = $this->dsn->prepare($query);
-                
-                if ($stmt === false) {
-                    throw new Exception('Failed to prepare statement: ' . $this->dsn->error);
-                }
-                
-                if (!$stmt->execute()) {
-                    throw new Exception('Failed to execute query: ' . $stmt->error);
-                }
-                
-                $result = $stmt->get_result();
-                
-                // Generate new memberID
-                if ($result->num_rows > 0) {
-                    $parts = explode('-', $result->fetch_assoc()['membersID']);
-                    $number = $parts[1];
-                    $newNumber = intval($number) + 1;
-                } else {
-                    // Handle first member case
-                    $newNumber = 1;
-                }
-                
-                $formattedNumber = str_pad($newNumber, 6, '0', STR_PAD_LEFT);
-                date_default_timezone_set('Asia/Kuala_Lumpur');
-                $year = date('Y');
-                $newMembersID = $year . '-' . $formattedNumber;
-                
-                // Add memberID to the filtered data
-                $filteredData['membersID'] = $newMembersID;
+                $filteredData['membersID'] = $this->generateNewMemberId();
             }
-    
-            // Build query
-            $columns = array_keys($filteredData);
-            $values = array_values($filteredData);
-            $placeholders = str_repeat('?,', count($values) - 1) . '?';
+
+            $insertId = $this->insertRecord($table, $filteredData);
             
-            $query = "INSERT INTO `$table` (`" . implode('`, `', $columns) . "`) VALUES ($placeholders)";
-            
-            // Prepare and execute statement
-            $stmt = $this->dsn->prepare($query);
-            
-            if ($stmt === false) {
-                throw new Exception('Failed to prepare statement: ' . $this->dsn->error);
-            }
-    
-            // Generate type string for bind_param
-            $types = '';
-            foreach ($values as $value) {
-                if (is_int($value)) $types .= 'i';
-                elseif (is_float($value)) $types .= 'd';
-                else $types .= 's';
-            }
-    
-            // Bind parameters dynamically
-            $bindParams = array_merge([$types], $values);
-            $stmt->bind_param(...$bindParams);
-    
-            if (!$stmt->execute()) {
-                throw new Exception('Failed to execute query: ' . $stmt->error);
-            }
-    
-            $insertId = $stmt->insert_id;
-            
-            // Return success response
-            http_response_code(201); // Created
-            echo json_encode([
+            $this->sendResponse([
                 'status' => 'success',
                 'message' => 'Record created successfully',
                 'id' => $insertId,
-                'membersID' => $table === 'members' ? $newMembersID : null
-            ]);
-    
+                'membersID' => $table === 'members' ? $filteredData['membersID'] : null
+            ], self::HTTP_CREATED);
         } catch (Exception $e) {
-            error_log("Error in createRecord: " . $e->getMessage());
-            http_response_code(500);
-            echo json_encode([
-                'error' => 'Database error',
-                'message' => $e->getMessage()
-            ]);
+            $this->sendError($e->getMessage());
         }
     }
 
-
-    private function deleteRecord($table, $deleteID) {
+    /**
+     * Delete a record
+     */
+    private function handleDeleteRequest($table) {
         try {
-            // Validate table name
-            if (!array_key_exists($table, $this->allowedTables)) {
-                throw new Exception('Invalid table name');
-            }
-    
-            // Check if record exists before deleting
-            $checkQuery = "SELECT ID FROM `$table` WHERE ID = ?";
-            $checkStmt = $this->dsn->prepare($checkQuery);
-            
-            if ($checkStmt === false) {
-                throw new Exception('Failed to prepare check statement: ' . $this->dsn->error);
-            }
-            
-            $checkStmt->bind_param('i', $deleteID);
-            
-            if (!$checkStmt->execute()) {
-                throw new Exception('Failed to execute check query: ' . $checkStmt->error);
-            }
-            
-            $result = $checkStmt->get_result();
-            
-            if ($result->num_rows === 0) {
-                http_response_code(404);
-                echo json_encode([
-                    'error' => 'Record not found',
-                    'message' => "No record found with ID $deleteID"
-                ]);
+            $id = $_GET['id'] ?? null;
+            if ($id === null) {
+                $this->sendError('Missing ID parameter', self::HTTP_BAD_REQUEST);
                 return;
             }
-    
-            // Build delete query
-            $query = "DELETE FROM `$table` WHERE ID = ?";
-    
-            // Prepare and execute statement
-            $stmt = $this->dsn->prepare($query);
-          
-            if ($stmt === false) {
-                throw new Exception('Failed to prepare delete statement: ' . $this->dsn->error);
-            }
-            
-            $stmt->bind_param('i', $deleteID);
-    
-            if (!$stmt->execute()) {
-                throw new Exception('Failed to execute delete query: ' . $stmt->error);
-            }
-    
-            // Check if any rows were affected
-            if ($stmt->affected_rows === 0) {
-                http_response_code(400);
-                echo json_encode([
-                    'error' => 'Delete failed',
-                    'message' => 'No records were deleted'
-                ]);
+
+            if (!$this->recordExists($table, $id)) {
+                $this->sendError("Record not found with ID $id", self::HTTP_NOT_FOUND);
                 return;
             }
-    
-            // Return success response
-            http_response_code(200);
-            echo json_encode([
+
+            $this->deleteRecord($table, $id);
+            
+            $this->sendResponse([
                 'status' => 'success',
                 'message' => 'Record deleted successfully',
-                'id' => $deleteID
+                'id' => $id
             ]);
-    
         } catch (Exception $e) {
-            error_log("Error in deleteRecord: " . $e->getMessage());
-            http_response_code(500);
-            echo json_encode([
-                'error' => 'Database error',
-                'message' => $e->getMessage()
-            ]);
+            $this->sendError($e->getMessage());
         }
+    }
+
+    /**
+     * Utility methods
+     */
+    private function validateDatabaseConnection() {
+        try {
+            $this->dsn->query("SELECT 1");
+        } catch (Exception $e) {
+            $this->sendError('Database connection failed', self::HTTP_SERVER_ERROR);
+            exit;
+        }
+    }
+
+    private function isValidTable($table) {
+        return array_key_exists($table, $this->allowedTables);
+    }
+
+    private function prepareAndExecute($query, $params = [], $types = '') {
+        $stmt = $this->dsn->prepare($query);
+        if ($stmt === false) {
+            throw new Exception('Failed to prepare statement: ' . $this->dsn->error);
+        }
+        
+        if (!empty($params)) {
+            $stmt->bind_param($types, ...$params);
+        }
+        
+        if (!$stmt->execute()) {
+            throw new Exception('Failed to execute query: ' . $stmt->error);
+        }
+        
+        return $stmt;
+    }
+
+    private function getSortColumn($column) {
+        return $column === 'membersID' 
+            ? "CAST(REPLACE(membersID, '-', '') AS UNSIGNED)" 
+            : "`$column`";
+    }
+
+    private function validateSortOrder($order) {
+        return in_array(strtoupper($order), ['ASC', 'DESC']) ? strtoupper($order) : 'ASC';
+    }
+
+    private function getPaginationInfo($page, $limit, $totalRecords) {
+        return [
+            'page' => $page,
+            'limit' => $limit,
+            'total_records' => $totalRecords,
+            'total_pages' => ceil($totalRecords / $limit)
+        ];
+    }
+
+    private function filterAllowedFields($table, $data) {
+        $filtered = array_intersect_key($data, array_flip($this->allowedTables[$table]));
+        if (empty($filtered)) {
+            throw new Exception('No valid fields provided');
+        }
+        return $filtered;
+    }
+
+    private function generateNewMemberId() {
+        $query = "SELECT `membersID` FROM `members` ORDER BY `ID` DESC LIMIT 1";
+        $result = $this->prepareAndExecute($query)->get_result();
+        
+        if ($result->num_rows > 0) {
+            $parts = explode('-', $result->fetch_assoc()['membersID']);
+            $newNumber = intval($parts[1]) + 1;
+        } else {
+            $newNumber = 1;
+        }
+        
+        return date('Y') . '-' . str_pad($newNumber, 6, '0', STR_PAD_LEFT);
+    }
+
+    private function buildSearchConditions($table, $searchTerm) {
+        $conditions = [];
+        $params = [];
+        $types = '';
+        
+        foreach ($this->allowedTables[$table] as $column) {
+            $conditions[] = "`$column` LIKE ?";
+            $params[] = "%$searchTerm%";
+            $types .= 's';
+        }
+        
+        return [
+            'sql' => implode(' OR ', $conditions),
+            'params' => $params,
+            'types' => $types
+        ];
+    }
+
+    private function recordExists($table, $id) {
+        $stmt = $this->prepareAndExecute(
+            "SELECT ID FROM `$table` WHERE ID = ?",
+            [$id],
+            'i'
+        );
+        return $stmt->get_result()->num_rows > 0;
+    }
+
+    private function insertRecord($table, $data) {
+        $columns = array_keys($data);
+        $values = array_values($data);
+        $placeholders = str_repeat('?,', count($values) - 1) . '?';
+        
+        $query = "INSERT INTO `$table` (`" . implode('`, `', $columns) . "`) VALUES ($placeholders)";
+        
+        $types = '';
+        foreach ($values as $value) {
+            $types .= is_int($value) ? 'i' : (is_float($value) ? 'd' : 's');
+        }
+        
+        $stmt = $this->prepareAndExecute($query, $values, $types);
+        return $stmt->insert_id;
+    }
+
+    private function deleteRecord($table, $id) {
+        $this->prepareAndExecute(
+            "DELETE FROM `$table` WHERE ID = ?",
+            [$id],
+            'i'
+        );
+    }
+
+    private function sendResponse($data, $statusCode = self::HTTP_OK) {
+        http_response_code($statusCode);
+        echo json_encode($data);
+    }
+
+    private function sendError($message, $statusCode = self::HTTP_SERVER_ERROR, $additional = []) {
+        error_log("API Error: $message");
+        http_response_code($statusCode);
+        echo json_encode(array_merge(
+            ['error' => 'Database error', 'message' => $message],
+            $additional
+        ));
+    }
+
+    private function handleTestEndpoint() {
+        $this->sendResponse([
+            'status' => 'API is running',
+            'received_params' => $_GET,
+            'tables_available' => array_keys($this->allowedTables)
+        ]);
     }
 }
 
 // Create API instance and handle request
 $api = new DatabaseAPI($dsn);
 $api->handleRequest();
-?>
