@@ -30,11 +30,11 @@ require 'databaseConnection.php';
 class DatabaseAPI {
     private $dsn;
     private $allowedTables = [
-        'members' => ['ID', 'membersID', 'Name', 'CName', 'Designation of Applicant', 'Address', 'phone_number', 'email', 'IC', 'oldIC', 'gender', 'componyName', 'Birthday', 'expired date', 'place of birth', 'remarks'],
+        'vmembers' => ['ID', 'membersID', 'Name', 'CName', 'designation of applicant', 'Address', 'phone_number', 'email', 'IC', 'oldIC', 'gender', 'componyName', 'Birthday', 'expired date', 'place of birth', 'remarks'],
         'applicants types' => ['ID', 'designation of applicant']
     ];
     private $specialConditions = [
-        'members' => [
+        'vmembers' => [
             'Birthday' =>[
                 'conditions'=>['Birthday = MONTH(CURDATE()) '],
             ], 
@@ -69,6 +69,10 @@ class DatabaseAPI {
 
             $method = $_SERVER['REQUEST_METHOD'];
             $table = $_GET['table'] ?? '';
+            
+            if($table === 'members'){
+                $table = 'vmembers';
+            }
             
             if (!$this->isValidTable($table)) {
                 $this->sendError('Table not found', self::HTTP_NOT_FOUND, ['available_tables' => array_keys($this->allowedTables)]);
