@@ -33,7 +33,8 @@ class DatabaseAPI {
         'members' => ['ID', 'membersID', 'Name', 'CName', 'Designation of Applicant', 'Address', 'phone_number', 'email', 'IC', 'oldIC', 'gender', 'componyName', 'Birthday', 'expired date', 'place of birth', 'remarks'],
         'applicants types' => ['ID', 'designation of applicant'],
         'vmembers' => ['ID', 'membersID', 'Name', 'CName', 'designation of applicant', 'Address', 'phone_number', 'email', 'IC', 'oldIC', 'gender', 'componyName', 'Birthday', 'expired date', 'place of birth', 'remarks'],
-        'donation' => ['ID', 'Name/Company Name', 'donationTypes', 'Bank', 'membership', 'paymentDate', 'official receipt no', 'amount', 'Remarks']
+        'donation' => ['ID', 'Name/Company Name', 'donationTypes', 'Bank', 'membership', 'paymentDate', 'official receipt no', 'amount', 'Remarks'],
+        'vdonation' => ['ID', 'Name/Company Name', 'donationTypes', 'Bank', 'membership', 'paymentDate', 'official receipt no', 'amount', 'Remarks']
     ];
     private $specialConditions = [
         'members' => [
@@ -186,6 +187,10 @@ class DatabaseAPI {
         if($table === 'members') {
             $table1 = 'members';
             $table = 'vmembers';
+        }
+        IF($table === 'donation') {
+            $table1 = 'donation';
+            $table = 'vdonation';
         }
 
         $baseQuery = "SELECT * FROM `$table` WHERE 1";

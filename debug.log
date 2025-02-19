@@ -8019,3 +8019,20 @@
     [METHOD] => DELETE
 )
 
+2025-02-19 05:48:57: Array
+(
+    [GET] => Array
+        (
+            [page] => 1
+            [limit] => 10
+            [table] => donation
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?page=1&limit=10&table=donation
+    [METHOD] => GET
+)
+
