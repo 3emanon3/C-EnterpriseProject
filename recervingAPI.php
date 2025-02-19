@@ -33,6 +33,7 @@ class DatabaseAPI {
         'members' => ['ID', 'membersID', 'Name', 'CName', 'Designation of Applicant', 'Address', 'phone_number', 'email', 'IC', 'oldIC', 'gender', 'componyName', 'Birthday', 'expired date', 'place of birth', 'remarks'],
         'applicants types' => ['ID', 'designation of applicant'],
         'vmembers' => ['ID', 'membersID', 'Name', 'CName', 'designation of applicant', 'Address', 'phone_number', 'email', 'IC', 'oldIC', 'gender', 'componyName', 'Birthday', 'expired date', 'place of birth', 'remarks'],
+        'donation' => ['ID', 'Name/Company Name', 'donationTypes', 'Bank', 'membership', 'paymentDate', 'official receipt no', 'amount', 'Remarks']
     ];
     private $specialConditions = [
         'members' => [
@@ -190,15 +191,17 @@ class DatabaseAPI {
         $baseQuery = "SELECT * FROM `$table` WHERE 1";
         $countQuery = "SELECT COUNT(*) as total FROM `$table` WHERE 1";
 
-        foreach ($this->specialConditions[$table1] as $conditionKey => $condition) {
-            if (isset($params[$conditionKey])) {
-                $baseQuery = $baseQuery . " AND " . $this->specialConditions[$table1][$conditionKey]['conditions'][0];
-                $countQuery = $countQuery . " AND " . $this->specialConditions[$table1][$conditionKey]['conditions'][0];
+        if(array_key_exists($table1, $this->specialConditions)) {
+            foreach ($this->specialConditions[$table1] as $conditionKey => $condition) {
+                if (isset($params[$conditionKey])) {
+                    $baseQuery = $baseQuery . " AND " . $this->specialConditions[$table1][$conditionKey]['conditions'][0];
+                    $countQuery = $countQuery . " AND " . $this->specialConditions[$table1][$conditionKey]['conditions'][0];
 
-                if (isset($condition['params'])) {
-                    foreach ($condition['params'] as $param) {
-                        $queryParams[] = $params[$param];
-                        $queryTypes .= $condition['type'];
+                    if (isset($condition['params'])) {
+                        foreach ($condition['params'] as $param) {
+                            $queryParams[] = $params[$param];
+                            $queryTypes .= $condition['type'];
+                        }
                     }
                 }
             }
@@ -272,7 +275,7 @@ class DatabaseAPI {
      */
     private function handleDeleteRequest($table) {
         try {
-            $id = $_GET['id'] ?? null;
+            $id = $_GET['ID'] ?? null;
             if ($id === null) {
                 $this->sendError('Missing ID parameter', self::HTTP_BAD_REQUEST);
                 return;
