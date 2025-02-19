@@ -41,7 +41,12 @@ class DatabaseAPI {
             ], 
             'expired' => [
                 'conditions'=>['(YEAR(`expired date`) < YEAR(CURDATE())) OR (YEAR(`expired date`) = YEAR(CURDATE()) AND MONTH(`expired date`) <= MONTH(CURDATE())) '],
-            ]
+            ],
+            'applicant' => [
+                'conditions'=>['`designation of applicant` = ? '],
+                'params' => ['applicant'],
+                'type' => 'i'
+            ],
         ]
     ];
 
@@ -174,6 +179,8 @@ class DatabaseAPI {
     private function getAllRecords($table, $params) {
         
         $table1 = $table;
+        $queryParams = [];
+        $queryTypes = '';
 
         if($table === 'members') {
             $table1 = 'members';
@@ -187,11 +194,18 @@ class DatabaseAPI {
             if (isset($params[$conditionKey])) {
                 $baseQuery = $baseQuery . " AND " . $this->specialConditions[$table1][$conditionKey]['conditions'][0];
                 $countQuery = $countQuery . " AND " . $this->specialConditions[$table1][$conditionKey]['conditions'][0];
+
+                if (isset($condition['params'])) {
+                    foreach ($condition['params'] as $param) {
+                        $queryParams[] = $params[$param];
+                        $queryTypes .= $condition['type'];
+                    }
+                }
             }
         }
         
 
-        $this->executeQuery($table1, $baseQuery, $countQuery);
+        $this->executeQuery($table1, $baseQuery, $countQuery, $queryParams, $queryTypes);
     }
 
     /**
@@ -206,18 +220,12 @@ class DatabaseAPI {
             }
 
             $filteredData = $this->filterAllowedFields($table, $data);
-            
-            if ($table === 'members') {
-                $filteredData['membersID'] = $this->generateNewMemberId();
-            }
-
             $insertId = $this->insertRecord($table, $filteredData);
             
             $this->sendResponse([
                 'status' => 'success',
                 'message' => 'Record created successfully',
                 'id' => $insertId,
-                'membersID' => $table === 'members' ? $filteredData['membersID'] : null
             ], self::HTTP_CREATED);
         } catch (Exception $e) {
             $this->sendError($e->getMessage());
