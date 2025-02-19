@@ -33,7 +33,12 @@ class DatabaseAPI {
         'members' => ['ID', 'membersID', 'Name', 'CName', 'Designation of Applicant', 'Address', 'phone_number', 'email', 'IC', 'oldIC', 'gender', 'componyName', 'Birthday', 'expired date', 'place of birth', 'remarks'],
         'applicants types' => ['ID', 'designation of applicant'],
         'vmembers' => ['ID', 'membersID', 'Name', 'CName', 'designation of applicant', 'Address', 'phone_number', 'email', 'IC', 'oldIC', 'gender', 'componyName', 'Birthday', 'expired date', 'place of birth', 'remarks'],
-        'donation' => ['ID', 'Name/Company Name', 'donationTypes', 'Bank', 'membership', 'paymentDate', 'official receipt no', 'amount', 'Remarks']
+        'donation' => ['ID', 'Name/Company Name', 'donationTypes', 'Bank', 'membership', 'paymentDate', 'official receipt no', 'amount', 'Remarks'],
+        'vdonation' => ['ID', 'Name/Company Name', 'donationTypes', 'Bank', 'membership', 'paymentDate', 'official receipt no', 'amount', 'Remarks'],
+        'stock' => ['ID', 'Name', 'stock', 'Price', 'Remarks'],
+        'soldrecord' => ['ID', 'Book', 'membership', 'Name/Company Name', 'quantity_in', 'quantity_out', 'InvoiceNo	Date', 'price', 'Remarks'],
+        'vsoldrecord' => ['ID', 'bookName', 'Name/Compony Name', 'Designation of Applicant', 'quantity_in', 'quantity_out', 'InvoiceNo', 'Date', 'price', 'Remarks']
+
     ];
     private $specialConditions = [
         'members' => [
@@ -186,6 +191,14 @@ class DatabaseAPI {
         if($table === 'members') {
             $table1 = 'members';
             $table = 'vmembers';
+        }
+        if($table === 'donation') {
+            $table1 = 'donation';
+            $table = 'vdonation';
+        }
+        if($table === 'soldrecord') {
+            $table1 = 'soldrecord';
+            $table = 'vsoldrecord';
         }
 
         $baseQuery = "SELECT * FROM `$table` WHERE 1";
