@@ -2,7 +2,6 @@ const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI
 
 document.addEventListener("DOMContentLoaded", function () {
     const searchInput = document.getElementById("searchInput");
-    const searchButton = document.getElementById("searchButton");
     const stockTableBody = document.querySelector("#stockTable tbody");
     const totalStocks = document.getElementById("totalStocks");
     const loader = document.querySelector(".loader");
@@ -12,7 +11,19 @@ document.addEventListener("DOMContentLoaded", function () {
     let stockData = [];
     let itemsPerPage = parseInt(itemsPerPageSelect.value);
     let currentPage = 1;
-    let debounceTimer;
+
+    // Debounce function to limit API calls during rapid typing
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
 
     async function fetchStocks(query = "") {
         loader.style.display = "block";
@@ -20,9 +31,9 @@ document.addEventListener("DOMContentLoaded", function () {
         
         let url = "";
         if (query.trim() === "") {
-            url = `${API_BASE_URL}?table=stock&limit=10&page=1`;
+            url = `${API_BASE_URL}?table=stock&limit=${itemsPerPage}&page=${currentPage}`;
         } else {
-            url = `${API_BASE_URL}?table=stock&limit=10&page=1&search=${query}`;
+            url = `${API_BASE_URL}?table=stock&limit=${itemsPerPage}&page=${currentPage}&search=${query}`;
         }
         
         try {
@@ -40,13 +51,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function displayStocks(stocks) {
         stockTableBody.innerHTML = "";
-        stocks.slice(0, itemsPerPage).forEach(stock => {
+        stocks.forEach(stock => {
             const row = document.createElement("tr");
             row.innerHTML = `
                 <td>${stock.ID}</td>
+                <td>${stock["Product ID"]}</td>
                 <td>${stock.Name}</td>
                 <td>${stock.stock}</td>
-                <td>${stock.price}</td>
+                <td>${stock.Price}</td>
+                <td>${stock.Publisher}</td>
                 <td>${stock.Remarks}</td>
                 <td>
                     <button class="btn btn-edit" onclick="editStock(${stock.id})">Edit</button>
@@ -57,19 +70,35 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    searchButton.addEventListener("click", function () {
-        fetchStocks(searchInput.value);
-    });
-
-    searchInput.addEventListener("keyup", function (event) {
-        if (event.key === "Enter") {
+    prevPageButton.addEventListener("click", function () {
+        if (currentPage > 1) {
+            currentPage -= 1;
             fetchStocks(searchInput.value);
         }
     });
 
+    nextPageButton.addEventListener("click", function () {
+        currentPage += 1;
+        fetchStocks(searchInput.value);
+    });
+
+    // Remove searchButton event listener since we'll use real-time search
+    
+    // Update search input to use debounced real-time search
+    const debouncedSearch = debounce((searchText) => {
+        currentPage = 1; // Reset to first page when searching
+        fetchStocks(searchText);
+    }, 300); // 300ms delay
+
+    searchInput.addEventListener("input", function() {
+        debouncedSearch(this.value);
+    });
+
+    // Update itemsPerPage handler to refresh data immediately
     itemsPerPageSelect.addEventListener("change", function () {
         itemsPerPage = parseInt(this.value);
-        displayStocks(stockData);
+        currentPage = 1; // Reset to first page when changing items per page
+        fetchStocks(searchInput.value);
     });
 
     window.editStock = function (id) {
@@ -82,7 +111,7 @@ document.addEventListener("DOMContentLoaded", function () {
             try {
                 const response = await fetch(`${API_BASE_URL}?id=${id}`, { method: "DELETE" });
                 if (response.ok) {
-                    fetchStocks();
+                    fetchStocks(searchInput.value);
                 } else {
                     alert("Failed to delete stock item.");
                 }
@@ -92,5 +121,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
+    // Initial fetch
     fetchStocks();
 });
