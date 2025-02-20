@@ -697,7 +697,7 @@ const data = await response.json();
                 <td>${escapeHtml(member.membersID)}</td>
                 <td>${escapeHtml(member.Name)}</td>
                 <td>${escapeHtml(member.CName)}</td>
-                <td>${escapeHtml(member['Designation of Applicant'])}</td>
+                <td>${escapeHtml(member['designation of applicant'])}</td>
                 <td>${escapeHtml(member.Address)}</td>
                 <td>${formatPhone(member.phone_number)}</td>
                 <td>${escapeHtml(member.email)}</td>
