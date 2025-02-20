@@ -122,7 +122,9 @@ class DatabaseAPI {
      * Handle different types of GET requests
      */
     private function handleGetRequest($table, $params) {
-        if (isset($params['search'])) {
+        if(isset($params['ID'])) {
+            $this->getSingleRecord($table, $params['ID']);
+        } else if (isset($params['search'])) {
             $this->searchRecords($table, $params);
         } else {
             $this->getAllRecords($table, $params);
@@ -165,6 +167,25 @@ class DatabaseAPI {
         }
     }
 
+
+    /**
+     * Get a single record by ID
+     */
+    private function getSingleRecord($table, $id) {
+        $stmt = $this->prepareAndExecute(
+            "SELECT * FROM `$table` WHERE ID = ?",
+            [$id],
+            'i'
+        );
+        
+        $data = $stmt->get_result()->fetch_assoc();
+        if ($data === null) {
+            $this->sendError("Record not found with ID $id", self::HTTP_NOT_FOUND);
+            return;
+        }
+        
+        $this->sendResponse($data);
+    }
     /**
      * Search records with pagination and sorting
      */
