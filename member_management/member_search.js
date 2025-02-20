@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const API_BASE_URL = 'http://localhost/projects/Enterprise/C-EnterpriseProject/recervingAPI.php';
+    const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
     
     // State variables
     let members = [];
@@ -710,10 +710,10 @@ const data = await response.json();
                 <td>${escapeHtml(member['place of birth'])}</td>
                 <td>${escapeHtml(member.remarks)}</td>
                 <td>
-                    <button class="btn btn-edit" onclick="editMember(${member.membersID})">
+                    <button class="btn btn-edit" onclick="editMember(${member.ID})">
                         <i class="fas fa-edit"></i>
                     </button>
-                    <button class="btn btn-delete" onclick="deleteMember(${member.membersID})">
+                    <button class="btn btn-delete" onclick="deleteMember(${member.ID})">
                         <i class="fas fa-trash"></i>
                     </button>
                 </td>
@@ -822,9 +822,9 @@ const data = await response.json();
     };
     
 
-    window.deleteMember = function(membersID) {
+    window.deleteMember = function(ID) {
         if (confirm('确定要删除这个会员吗？')) {
-            fetch(`${API_BASE_URL}?action=delete&id=${membersID}`, { 
+            fetch(`${API_BASE_URL}?table=members&ID=${ID}`, { 
                 method: 'DELETE' 
             })
             .then(response => response.json())
