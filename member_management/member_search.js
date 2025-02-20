@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
+    const API_BASE_URL = 'http://localhost/projects/Enterprise/C-EnterpriseProject/recervingAPI.php';
     
     // State variables
     let members = [];
