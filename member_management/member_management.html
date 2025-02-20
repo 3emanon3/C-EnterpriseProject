@@ -3,123 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>会员详情</title>
+    <title>添加新会员</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="member_management.css">
 </head>
 <body>
     <div class="container">
         <div class="header-actions">
-            <button class="btn btn-primary" onclick="location.href='index.html'">
+            <button class="btn btn-primary" onclick="location.href='member_search.html'">
                 <i class="fas fa-home"></i> 返回搜索
             </button>
         </div>
 
-        <div id="printArea">
-            <h1>会员详情</h1>
-            
-            <div id="errorMessages" class="alert alert-danger" style="display: none;"></div>
+        <h1>添加新会员</h1>
+        
+        <div id="errorMessages" class="alert alert-danger" style="display: none;"></div>
 
-            <form id="memberForm" action="../recervingAPI.php" method="POST">
-                <input type="hidden" id="ID" name="ID">
-                
-                <fieldset>
-                    <legend>会员信息</legend>
-                    <div class="form-container">
-                        <div class="form-group">
-                            <label for="membersID">会员ID</label>
-                            <input type="text" id="membersID" name="membersID" required>
-                        </div>
+        <form id="addMemberForm">
+            <fieldset>
+                <legend>会员信息</legend>
+                <div class="form-container">
+                    
 
-                        <div class="form-group">
-                            <label for="Name">姓名（英）</label>
-                            <input type="text" id="Name" name="Name" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="CName">姓名（中）</label>
-                            <input type="text" id="CName" name="CName" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="Designation">种类</label>
-                            <input type="text" id="Designation" name="Designation of Applicant" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="Address">地址</label>
-                            <input type="text" id="Address" name="Address" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="phone_number">手机号码</label>
-                            <input type="tel" id="phone_number" name="phone_number" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="email">邮箱</label>
-                            <input type="email" id="email" name="email" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="IC">IC 号码</label>
-                            <input type="text" id="IC" name="IC" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="oldIC">旧 IC 号码</label>
-                            <input type="text" id="oldIC" name="oldIC">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="gender">性别</label>
-                            <select id="gender" name="gender" required>
-                                <option value="">请选择</option>
-                                <option value="男">男</option>
-                                <option value="女">女</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="componyName">公司名字</label>
-                            <input type="text" id="componyName" name="componyName">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="Birthday">生日</label>
-                            <input type="date" id="Birthday" name="Birthday" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="expired_date">过期日期</label>
-                            <input type="date" id="expired_date" name="expired date" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="place_of_birth">出生地方</label>
-                            <input type="text" id="place_of_birth" name="place of birth" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="remarks">备注</label>
-                            <input type="text" id="remarks" name="remarks" required>
-                        </div>
+                    <div class="form-group">
+                        <label for="Name">姓名（英）</label>
+                        <input type="text" id="Name" name="Name" autocomplete="text" required>
                     </div>
 
-                    <div class="form-actions">
-                        <button type="submit" id="saveButton" class="btn btn-primary no-print">
-                            <i class="fas fa-save"></i> 保存
-                        </button>
+                    <div class="form-group">
+                        <label for="CName">姓名（中）</label>
+                        <input type="text" id="CName" name="CName" autocomplete="text"required>
                     </div>
-                </fieldset>
-            </form>
-        </div>
+
+                    <div class="form-group">
+                        <label for="Designation">种类</label>
+                        <select id="designation" name="designation" required>
+                            <option value="">请选择</option>
+                            <option value="1">会员</option>
+                            <option value="2">非会员</option>
+                            <option value="3">外国人</option>
+                            <option value="4">拒绝继续</option>
+                        </select> 
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Address">地址</label>
+                        <input type="text" id="Address" name="Address" autocomplete="text" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone_number">手机号码</label>
+                        <input type="tel" id="phone_number" name="phone_number" autocomplete="tel"required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">邮箱</label>
+                        <input type="email" id="email" name="email" autocomplete="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="IC">IC 号码</label>
+                        <input type="text" id="IC" name="IC" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="oldIC">旧 IC 号码</label>
+                        <input type="text" id="oldIC" name="oldIC" autocomplete="text">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gender">性别</label>
+                        <select id="gender" name="gender" required>
+                            <option value="">请选择</option>
+                            <option value="男">男</option>
+                            <option value="女">女</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="componyName">公司名字</label>
+                        <input type="text" id="componyName" name="componyName" autocomplete="text">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Birthday">生日</label>
+                        <input type="date" id="Birthday" name="Birthday" autocomplete="date" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="expired_date">过期日期</label>
+                        <input type="date" id="expired_date" name="expired_date" autocomplete="date" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="place_of_birth">出生地方</label>
+                        <input type="text" id="place_of_birth" name="place_of_birth" autocomplete="text" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="remarks">备注</label>
+                        <input type="text" id="remarks" name="remarks" autocomplete="text">
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> 添加会员
+                    </button>
+                </div>
+            </fieldset>
+        </form>
     </div>
 
     <div id="loadingIndicator" class="loading-spinner" style="display: none;">
         加载中...
     </div>
-    
+
     <script src="member_management.js"></script>
 </body>
 </html>
