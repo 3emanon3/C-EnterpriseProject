@@ -10263,6 +10263,7 @@
     [METHOD] => GET
 )
 
+<<<<<<< HEAD
 2025-02-19 10:27:47: Array
 (
     [GET] => Array
@@ -10468,6 +10469,9 @@
 )
 
 2025-02-20 02:43:53: Array
+=======
+2025-02-20 02:46:54: Array
+>>>>>>> 8df107768bb70361c63f5ba7433a58afac122b89
 (
     [GET] => Array
         (
@@ -10478,6 +10482,7 @@
         (
         )
 
+<<<<<<< HEAD
     [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members
     [METHOD] => POST
 )
@@ -10489,12 +10494,24 @@
             [table] => stock
             [limit] => 10
             [page] => 1
+=======
+    [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?table=members
+    [METHOD] => POST
+)
+
+2025-02-20 03:01:31: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+>>>>>>> 8df107768bb70361c63f5ba7433a58afac122b89
         )
 
     [POST] => Array
         (
         )
 
+<<<<<<< HEAD
     [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
     [METHOD] => GET
 )
@@ -10506,12 +10523,24 @@
             [table] => stock
             [limit] => 10
             [page] => 1
+=======
+    [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?table=members
+    [METHOD] => POST
+)
+
+2025-02-20 03:03:57: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+>>>>>>> 8df107768bb70361c63f5ba7433a58afac122b89
         )
 
     [POST] => Array
         (
         )
 
+<<<<<<< HEAD
     [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
     [METHOD] => GET
 )
@@ -10523,12 +10552,28 @@
             [table] => stock
             [limit] => 10
             [page] => 1
+=======
+    [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?table=members
+    [METHOD] => POST
+)
+
+2025-02-20 03:11:26: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [order] => asc
+>>>>>>> 8df107768bb70361c63f5ba7433a58afac122b89
         )
 
     [POST] => Array
         (
         )
 
+<<<<<<< HEAD
     [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
     [METHOD] => GET
 )
@@ -10540,12 +10585,28 @@
             [table] => stock
             [limit] => 10
             [page] => 1
+=======
+    [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&order=asc
+    [METHOD] => GET
+)
+
+2025-02-20 03:11:51: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => Designation of Applicant
+            [order] => asc
+>>>>>>> 8df107768bb70361c63f5ba7433a58afac122b89
         )
 
     [POST] => Array
         (
         )
 
+<<<<<<< HEAD
     [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
     [METHOD] => GET
 )
@@ -10557,12 +10618,28 @@
             [table] => stock
             [limit] => 10
             [page] => 1
+=======
+    [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=Designation+of+Applicant&order=asc
+    [METHOD] => GET
+)
+
+2025-02-20 03:11:51: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => Designation of Applicant
+            [order] => desc
+>>>>>>> 8df107768bb70361c63f5ba7433a58afac122b89
         )
 
     [POST] => Array
         (
         )
 
+<<<<<<< HEAD
     [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
     [METHOD] => GET
 )
@@ -10574,12 +10651,28 @@
             [table] => stock
             [limit] => 10
             [page] => 1
+=======
+    [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=Designation+of+Applicant&order=desc
+    [METHOD] => GET
+)
+
+2025-02-20 03:11:52: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => Designation of Applicant
+            [order] => asc
+>>>>>>> 8df107768bb70361c63f5ba7433a58afac122b89
         )
 
     [POST] => Array
         (
         )
 
+<<<<<<< HEAD
     [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
     [METHOD] => GET
 )
@@ -10591,12 +10684,28 @@
             [table] => stock
             [limit] => 10
             [page] => 1
+=======
+    [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=Designation+of+Applicant&order=asc
+    [METHOD] => GET
+)
+
+2025-02-20 03:11:54: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => Designation of Applicant
+            [order] => desc
+>>>>>>> 8df107768bb70361c63f5ba7433a58afac122b89
         )
 
     [POST] => Array
         (
         )
 
+<<<<<<< HEAD
     [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
     [METHOD] => GET
 )
@@ -10608,12 +10717,25 @@
             [table] => stock
             [limit] => 10
             [page] => 1
+=======
+    [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=Designation+of+Applicant&order=desc
+    [METHOD] => GET
+)
+
+2025-02-20 03:21:26: Array
+(
+    [GET] => Array
+        (
+            [action] => delete
+            [id] => 2020
+>>>>>>> 8df107768bb70361c63f5ba7433a58afac122b89
         )
 
     [POST] => Array
         (
         )
 
+<<<<<<< HEAD
     [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
     [METHOD] => GET
 )
@@ -10625,12 +10747,28 @@
             [table] => stock
             [limit] => 10
             [page] => 1
+=======
+    [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?action=delete&id=2020
+    [METHOD] => DELETE
+)
+
+2025-02-20 03:21:29: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [order] => asc
+>>>>>>> 8df107768bb70361c63f5ba7433a58afac122b89
         )
 
     [POST] => Array
         (
         )
 
+<<<<<<< HEAD
     [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
     [METHOD] => GET
 )
@@ -10642,12 +10780,25 @@
             [table] => stock
             [limit] => 10
             [page] => 1
+=======
+    [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&order=asc
+    [METHOD] => GET
+)
+
+2025-02-20 03:21:33: Array
+(
+    [GET] => Array
+        (
+            [action] => delete
+            [id] => null
+>>>>>>> 8df107768bb70361c63f5ba7433a58afac122b89
         )
 
     [POST] => Array
         (
         )
 
+<<<<<<< HEAD
     [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
     [METHOD] => GET
 )
@@ -10659,12 +10810,28 @@
             [table] => stock
             [limit] => 10
             [page] => 1
+=======
+    [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?action=delete&id=null
+    [METHOD] => DELETE
+)
+
+2025-02-20 03:31:24: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [order] => asc
+>>>>>>> 8df107768bb70361c63f5ba7433a58afac122b89
         )
 
     [POST] => Array
         (
         )
 
+<<<<<<< HEAD
     [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
     [METHOD] => GET
 )
@@ -10676,13 +10843,473 @@
             [table] => stock
             [limit] => 10
             [page] => 1
+=======
+    [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&order=asc
+    [METHOD] => GET
+)
+
+2025-02-20 03:32:02: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [order] => asc
+>>>>>>> 8df107768bb70361c63f5ba7433a58afac122b89
         )
 
     [POST] => Array
         (
         )
 
+<<<<<<< HEAD
     [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+=======
+    [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&order=asc
+    [METHOD] => GET
+)
+
+2025-02-20 03:47:24: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [order] => asc
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&order=asc
+    [METHOD] => GET
+)
+
+2025-02-20 03:49:18: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [order] => asc
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&order=asc
+    [METHOD] => GET
+)
+
+2025-02-20 03:49:36: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [order] => asc
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&order=asc
+    [METHOD] => GET
+)
+
+2025-02-20 03:49:46: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [order] => asc
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&order=asc
+    [METHOD] => GET
+)
+
+2025-02-20 03:49:47: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [order] => asc
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&order=asc
+    [METHOD] => GET
+)
+
+2025-02-20 03:49:47: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [order] => asc
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&order=asc
+    [METHOD] => GET
+)
+
+2025-02-20 03:49:47: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [order] => asc
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&order=asc
+    [METHOD] => GET
+)
+
+2025-02-20 03:49:47: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [order] => asc
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&order=asc
+    [METHOD] => GET
+)
+
+2025-02-20 03:49:48: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [order] => asc
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&order=asc
+    [METHOD] => GET
+)
+
+2025-02-20 03:49:48: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [order] => asc
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&order=asc
+    [METHOD] => GET
+)
+
+2025-02-20 03:49:48: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [order] => asc
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&order=asc
+    [METHOD] => GET
+)
+
+2025-02-20 03:49:50: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [order] => asc
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&order=asc
+    [METHOD] => GET
+)
+
+2025-02-20 03:49:51: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [order] => asc
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&order=asc
+    [METHOD] => GET
+)
+
+2025-02-20 03:49:57: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [order] => asc
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&order=asc
+    [METHOD] => GET
+)
+
+2025-02-20 03:49:57: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [order] => asc
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&order=asc
+    [METHOD] => GET
+)
+
+2025-02-20 03:51:30: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?table=members
+    [METHOD] => POST
+)
+
+2025-02-20 03:54:16: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?table=members
+    [METHOD] => POST
+)
+
+2025-02-20 03:54:20: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?table=members
+    [METHOD] => POST
+)
+
+2025-02-20 04:19:22: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?table=members
+    [METHOD] => POST
+)
+
+2025-02-20 04:19:24: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [order] => asc
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&order=asc
+    [METHOD] => GET
+)
+
+2025-02-20 04:19:35: Array
+(
+    [GET] => Array
+        (
+            [id] => null
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?id=null
+    [METHOD] => GET
+)
+
+2025-02-20 04:32:10: Array
+(
+    [GET] => Array
+        (
+            [id] => null
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?id=null
+    [METHOD] => GET
+)
+
+2025-02-20 04:32:20: Array
+(
+    [GET] => Array
+        (
+            [action] => delete
+            [id] => null
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?action=delete&id=null
+    [METHOD] => DELETE
+)
+
+2025-02-20 04:32:41: Array
+(
+    [GET] => Array
+        (
+            [action] => delete
+            [id] => 2023
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?action=delete&id=2023
+    [METHOD] => DELETE
+)
+
+2025-02-20 04:33:03: Array
+(
+    [GET] => Array
+        (
+            [id] => null
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/Enterprise/C-EnterpriseProject/recervingAPI.php?id=null
+>>>>>>> 8df107768bb70361c63f5ba7433a58afac122b89
     [METHOD] => GET
 )
 

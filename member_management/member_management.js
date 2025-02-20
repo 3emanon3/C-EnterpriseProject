@@ -78,7 +78,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
      // Validate Designation
-       const designationField = document.getElementById('designation');
+       const designationField = document.getElementById('designation_of_applicant');
+       if (!designationField) {
+        console.error("Element 'designation_of_applicant' not found.");
+        return false;
+    }
        const designationValue = designationField.value;
         if (designationValue < 1 || designationValue > 4) {
         isValid = false;
@@ -107,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function() {
         data.action = 'add_member';
     
         // Debug: Log the JSON data to be sent
-        console.log('Submitting JSON data:', data);
+        console.log('Submitting JSON data:', JSON.stringify(data, null, 2));
     
         try {
             showLoading();
@@ -143,7 +147,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         } catch (error) {
-            showError('系统错误: ' + error.message);
+            if (error.name === 'TypeError') {
+                showError('网络连接失败，请检查网络');
+            } else {
+                showError('系统错误: ' + error.message);
+            }
             console.error('Full error:', error);
         } finally {
             hideLoading();
