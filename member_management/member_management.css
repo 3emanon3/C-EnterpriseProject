@@ -199,8 +199,11 @@ legend {
 
 /* Table Styles */
 .table-container {
+    width: 100%;
     overflow-x: auto;
+    position: relative;
     margin-top: 20px;
+    border: 1px solid #ddd;
 }
 
 table {
@@ -524,12 +527,7 @@ tr:hover {
     box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1);
 }
 
-/* Resizable columns styles */
-.resizable-table th {
-    position: relative;
-    padding-right: 20px; /* Space for the resizer */
-    user-select: none;
-}
+
 
 .resizer {
     position: absolute;
@@ -537,10 +535,9 @@ tr:hover {
     top: 0;
     height: 100%;
     width: 5px;
-    background: rgba(0, 0, 0, 0.1);
     cursor: col-resize;
-    opacity: 0;
-    transition: opacity 0.3s;
+    user-select: none;
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .resizer:hover,
@@ -557,13 +554,165 @@ tr:hover {
 
 /* Ensure table doesn't collapse during resize */
 .resizable-table {
-    table-layout: fixed;
     width: 100%;
+    min-width: 1200px; /* Minimum width to prevent squishing */
+    border-collapse: collapse;
+    table-layout: fixed;
 }
 
-.resizable-table th,
-.resizable-table td {
+/* Resizable columns styles */
+.resizable-table th {
+    position: sticky;
+    top: 0;
+    background: #8b0000; /* Dark red background */
+    color: white;
+    z-index: 10;
+    padding: 10px;
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.resizable-table td {
+    padding: 8px;
+    border: 1px solid #ddd;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* For small screens (mobile) */
+@media (max-width: 600px) {
+    body {
+        background-color: 800000;
+    }
+}
+
+/* For medium screens (tablets) */
+@media (min-width: 601px) and (max-width: 1024px) {
+    body {
+        background-color: 800000;
+    }
+}
+
+/* For large screens (desktops) */
+@media (min-width: 1025px) {
+    body {
+        background-color: 800000;
+    }
+}
+
+/* Scroll Controls */
+.scroll-controls-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 8px;
+    position: relative;
+    transition: opacity 0.3s ease;
+}
+
+.scroll-controls-container.hidden {
+    opacity: 0.3;
+}
+
+.scroll-track {
+    height: 8px;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    position: relative;
+    cursor: pointer;
+    margin-bottom: 4px;
+}
+
+.scroll-thumb {
+    position: absolute;
+    height: 100%;
+    background-color: #007bff;
+    border-radius: 4px;
+    top: 0;
+    cursor: grab;
+    transition: background-color 0.2s;
+}
+
+.scroll-thumb:hover {
+    background-color: #0056b3;
+}
+
+.scroll-thumb.dragging {
+    cursor: grabbing;
+    background-color: #0056b3;
+}
+
+.scroll-indicator {
+    display: flex;
+    justify-content: flex-end;
+    font-size: 12px;
+    color: #666;
+}
+
+.scroll-position-text {
+    background-color: #f0f0f0;
+    padding: 1px 8px;
+    border-radius: 10px;
+    font-weight: 500;
+}
+
+/* Table Container Styling */
+.table-container {
+    overflow-x: auto;
+    position: relative;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+    scrollbar-width: thin; /* For Firefox */
+}
+
+/* Custom scrollbar styling for Webkit browsers */
+.table-container::-webkit-scrollbar {
+    height: 6px;
+}
+
+.table-container::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 3px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+    background: #c0c0c0;
+    border-radius: 3px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+    background: #a0a0a0;
+}
+
+/* Additional helper for when table is being resized */
+.table-container.resizing {
+    cursor: col-resize;
+    user-select: none;
+}
+
+/* Visual guide when scrolling is available */
+@keyframes pulseHint {
+    0% { opacity: 0.3; }
+    50% { opacity: 0.7; }
+    100% { opacity: 0.3; }
+}
+
+.table-container::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 10px;
+    background: linear-gradient(to right, transparent, rgba(0,0,0,0.05));
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.table-container.has-overflow::after {
+    opacity: 1;
+    animation: pulseHint 2s infinite;
 }

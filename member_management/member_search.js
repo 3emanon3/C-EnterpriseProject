@@ -30,6 +30,303 @@ document.addEventListener("DOMContentLoaded", function () {
         table: document.getElementById('memberTable')
     };
 
+  // Initialize resizable columns
+  function initializeResizableColumns() {
+    const headers = elements.tableHeaders;
+    
+    // Set initial column widths
+    function initializeColumnWidths() {
+        try {
+            const savedWidths = JSON.parse(localStorage.getItem('columnWidths') || '{}');
+            
+            headers.forEach(header => {
+                const column = header.dataset.column;
+                if (savedWidths[column]) {
+                    header.style.width = savedWidths[column];
+                } else {
+                    // Set default widths based on column type
+                    switch (column) {
+                        case 'membersID':
+                        case 'gender':
+                            header.style.width = '80px';
+                            break;
+                        case 'Name':
+                        case 'CName':
+                        case 'email':
+                            header.style.width = '150px';
+                            break;
+                        case 'Address':
+                        case 'remarks':
+                            header.style.width = '200px';
+                            break;
+                        case 'phone_number':
+                        case 'IC':
+                        case 'oldIC':
+                            header.style.width = '120px';
+                            break;
+                        default:
+                            header.style.width = '100px';
+                    }
+                }
+            });
+        } catch (error) {
+            console.error('Error initializing column widths:', error);
+            // Set default widths if there's an error
+            headers.forEach(header => header.style.width = '100px');
+        }
+    }
+
+    // Save column widths
+    function saveColumnWidths() {
+        try {
+            const widths = {};
+            headers.forEach(header => {
+                widths[header.dataset.column] = header.style.width;
+            });
+            localStorage.setItem('columnWidths', JSON.stringify(widths));
+        } catch (error) {
+            console.error('Error saving column widths:', error);
+        }
+    }
+
+    // Add resizers to headers
+    headers.forEach(header => {
+        // Create resizer element if it doesn't exist
+        let resizer = header.querySelector('.resizer');
+        if (!resizer) {
+            resizer = document.createElement('div');
+            resizer.className = 'resizer';
+            header.appendChild(resizer);
+        }
+
+        let startX, startWidth;
+
+        resizer.addEventListener('mousedown', function(e) {
+            startX = e.pageX;
+            startWidth = header.offsetWidth;
+            isResizing = true;
+            
+            const tableContainer = elements.table.closest('.table-container');
+            if (tableContainer) {
+                tableContainer.classList.add('resizing');
+            }
+
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', onMouseUp);
+            e.preventDefault();
+        });
+
+        function onMouseMove(e) {
+            if (!isResizing) return;
+            
+            const width = startWidth + (e.pageX - startX);
+            if (width >= 50) { // Minimum width
+                header.style.width = `${width}px`;
+            }
+        }
+
+        function onMouseUp() {
+            isResizing = false;
+            const tableContainer = elements.table.closest('.table-container');
+            if (tableContainer) {
+                tableContainer.classList.remove('resizing');
+            }
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+            saveColumnWidths();
+        }
+    });
+
+    // Initialize widths
+    initializeColumnWidths();
+}
+
+
+
+function initializeTableScrollControls() {
+    const tableContainer = document.querySelector('.table-container');
+    if (!tableContainer) {
+        console.error('Table container not found');
+        return;
+    }
+    
+    // Create scroll controls
+    const scrollControlsContainer = document.createElement('div');
+    scrollControlsContainer.className = 'scroll-controls-container';
+    scrollControlsContainer.innerHTML = `
+        <div class="scroll-track">
+            <div class="scroll-thumb"></div>
+        </div>
+        <div class="scroll-indicator">
+            <span class="scroll-position-text">0%</span>
+        </div>
+    `;
+    
+    // Insert controls before table container
+    tableContainer.parentNode.insertBefore(scrollControlsContainer, tableContainer);
+    
+    // Get control elements
+    const scrollTrack = scrollControlsContainer.querySelector('.scroll-track');
+    const scrollThumb = scrollControlsContainer.querySelector('.scroll-thumb');
+    const scrollPositionText = scrollControlsContainer.querySelector('.scroll-position-text');
+    
+    if (!scrollThumb || !scrollTrack || !scrollPositionText) {
+        console.error('Scroll control elements not found');
+        return;
+    }
+    
+    // Update scroll position indicator
+    function updateScrollPosition() {
+        const scrollWidth = tableContainer.scrollWidth - tableContainer.clientWidth;
+        if (scrollWidth <= 0) {
+            scrollThumb.style.width = '100%';
+            scrollThumb.style.left = '0';
+            scrollPositionText.textContent = '0%';
+            scrollControlsContainer.classList.add('hidden');
+            return;
+        }
+        
+        scrollControlsContainer.classList.remove('hidden');
+        const scrollPercent = (tableContainer.scrollLeft / scrollWidth) * 100;
+        const thumbWidth = Math.max((tableContainer.clientWidth / tableContainer.scrollWidth) * 100, 10);
+        
+        // Update thumb position and width
+        scrollThumb.style.width = `${thumbWidth}%`;
+        scrollThumb.style.left = `${scrollPercent * (100 - thumbWidth) / 100}%`;
+        
+        // Update scroll percentage text
+        scrollPositionText.textContent = `${Math.round(scrollPercent)}%`;
+    }
+    
+    // Track click - Jump to position
+    scrollTrack.addEventListener('click', (e) => {
+        // Ignore if clicked on thumb
+        if (e.target === scrollThumb) return;
+        
+        const trackRect = scrollTrack.getBoundingClientRect();
+        const clickPosition = (e.clientX - trackRect.left) / trackRect.width;
+        
+        // Calculate scroll position
+        const scrollWidth = tableContainer.scrollWidth - tableContainer.clientWidth;
+        const newScrollLeft = scrollWidth * clickPosition;
+        
+        // Smooth scroll to position
+        tableContainer.scrollTo({
+            left: newScrollLeft,
+            behavior: 'smooth'
+        });
+    });
+    
+    // Thumb drag functionality
+    let isDragging = false;
+    let startX, startScrollLeft;
+    
+    scrollThumb.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        startX = e.clientX;
+        startScrollLeft = tableContainer.scrollLeft;
+        scrollThumb.classList.add('dragging');
+        document.body.style.cursor = 'grabbing';
+        
+        // Prevent text selection during drag
+        document.body.style.userSelect = 'none';
+        e.preventDefault();
+    });
+    
+    document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        
+        const trackRect = scrollTrack.getBoundingClientRect();
+        const scrollWidth = tableContainer.scrollWidth - tableContainer.clientWidth;
+        
+        // Calculate movement ratio
+        const dx = e.clientX - startX;
+        const moveRatio = dx / trackRect.width;
+        
+        // Apply scroll
+        tableContainer.scrollLeft = startScrollLeft + (moveRatio * scrollWidth);
+    });
+    
+    document.addEventListener('mouseup', () => {
+        if (isDragging) {
+            isDragging = false;
+            scrollThumb.classList.remove('dragging');
+            document.body.style.cursor = '';
+            document.body.style.userSelect = '';
+        }
+    });
+    
+    // Add mousewheel horizontal scrolling with shift key
+    tableContainer.addEventListener('wheel', (e) => {
+        if (e.shiftKey) {
+            e.preventDefault();
+            tableContainer.scrollLeft += e.deltaY;
+        }
+    });
+    
+    // Add keyboard support with table focus check
+    document.addEventListener('keydown', (e) => {
+        if (document.activeElement.tagName === 'INPUT') return;
+        
+        // Check if table is in viewport
+        const rect = tableContainer.getBoundingClientRect();
+        const isInViewport = rect.top >= 0 &&
+                           rect.left >= 0 &&
+                           rect.bottom <= window.innerHeight &&
+                           rect.right <= window.innerWidth;
+        
+        if (!isInViewport) return;
+        
+        if (e.key === 'ArrowLeft') {
+            tableContainer.scrollBy({
+                left: -50,
+                behavior: 'smooth'
+            });
+            e.preventDefault();
+        } else if (e.key === 'ArrowRight') {
+            tableContainer.scrollBy({
+                left: 50,
+                behavior: 'smooth'
+            });
+            e.preventDefault();
+        }
+    });
+    
+    // Track scroll events with debounce
+    let scrollTimeout;
+    tableContainer.addEventListener('scroll', () => {
+        if (scrollTimeout) clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(updateScrollPosition, 10);
+    });
+    
+    // Handle window resize with debounce
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+        if (resizeTimeout) clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(updateScrollPosition, 100);
+    });
+    
+    // Initialize position
+    updateScrollPosition();
+
+    // Add horizontal touch scroll support
+    let touchStartX = 0;
+    let touchScrollLeft = 0;
+
+    tableContainer.addEventListener('touchstart', (e) => {
+        touchStartX = e.touches[0].clientX;
+        touchScrollLeft = tableContainer.scrollLeft;
+        // Prevent page scroll while in table
+        e.preventDefault();
+    }, { passive: false });
+
+    tableContainer.addEventListener('touchmove', (e) => {
+        const dx = touchStartX - e.touches[0].clientX;
+        tableContainer.scrollLeft = touchScrollLeft + dx;
+        e.preventDefault();
+    }, { passive: false });
+}
+
     async function handleListAllMembers() {
         showLoader();
         try {
@@ -120,167 +417,10 @@ document.addEventListener("DOMContentLoaded", function () {
         fetchRecords(currentSearchType);
     }
 
-// Improved column resizing functionality
-function setupResizableColumns() {
-    const table = document.getElementById('memberTable');
-    const tableContainer = table.closest('.table-container') || table.parentElement;
-    
-    // Make sure table has position relative for proper positioning
-    if (tableContainer) {
-        tableContainer.style.position = 'relative';
-        tableContainer.style.overflow = 'auto';
-    }
-    
-    const headers = table.querySelectorAll('th');
-    
-    // Set initial widths based on content or saved preferences
-    headers.forEach(header => {
-        // Use saved width or default based on content
-        if (!header.style.width) {
-            // Provide sensible default widths based on column type
-            const column = header.dataset.column || header.textContent.trim();
-            let defaultWidth;
-            
-            // Assign appropriate widths based on column content type
-            if (['membersID', 'gender', 'Birthday'].includes(column)) {
-                defaultWidth = '80px';  // Narrow columns
-            } else if (['Name', 'CName', 'email'].includes(column)) {
-                defaultWidth = '120px'; // Medium columns
-            } else if (['Address', 'remarks'].includes(column)) {
-                defaultWidth = '150px'; // Wide columns
-            } else {
-                defaultWidth = '100px'; // Default
-            }
-            
-            header.style.width = defaultWidth;
-        }
-        
-        // Set min-width to prevent columns from collapsing too small
-        header.style.minWidth = '50px';
-    });
-    
-    // Add visual resizer elements to each header
-    headers.forEach(header => {
-        // Remove any existing resizers to avoid duplicates
-        const existingResizer = header.querySelector('.column-resizer');
-        if (existingResizer) {
-            existingResizer.remove();
-        }
-        
-        // Create and style the resizer element
-        const resizer = document.createElement('div');
-        resizer.classList.add('column-resizer');
-        resizer.style.position = 'absolute';
-        resizer.style.top = '0';
-        resizer.style.left = '0';
-        resizer.style.width = '5px';
-        resizer.style.height = '100%';
-        resizer.style.cursor = 'col-resize';
-        resizer.style.zIndex = '1';
-        resizer.style.backgroundColor = 'transparent';
-        
-        // Add hover effect
-        resizer.addEventListener('mouseover', () => {
-            resizer.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
-        });
-        
-        resizer.addEventListener('mouseout', () => {
-            if (!resizer.classList.contains('resizing')) {
-                resizer.style.backgroundColor = 'transparent';
-            }
-        });
-        
-        // Make sure header has position relative for proper positioning of resizer
-        header.style.position = 'relative';
-        header.appendChild(resizer);
-        
-        let startX, startWidth;
-        
-        function startResize(e) {
-            startX = e.pageX;
-            startWidth = header.offsetWidth;
-            
-            // Add visual indicator during resize
-            resizer.style.backgroundColor = 'rgba(0, 0, 0, 0.2)';
-            resizer.classList.add('resizing');
-            if (tableContainer) {
-                tableContainer.classList.add('resizing');
-                tableContainer.style.cursor = 'col-resize';
-                tableContainer.style.userSelect = 'none';
-            }
-            
-            // Add ghost indicator to show where column will resize to
-            const ghostIndicator = document.createElement('div');
-            ghostIndicator.id = 'ghost-resize-indicator';
-            ghostIndicator.style.position = 'absolute';
-            ghostIndicator.style.top = '0';
-            ghostIndicator.style.width = '1px';
-            ghostIndicator.style.height = table.offsetHeight + 'px';
-            ghostIndicator.style.backgroundColor = '#007bff';
-            ghostIndicator.style.zIndex = '100';
-            ghostIndicator.style.left = (header.getBoundingClientRect().right - tableContainer.getBoundingClientRect().left) + 'px';
-            tableContainer.appendChild(ghostIndicator);
-            
-            function resize(e) {
-                const width = startWidth + (e.pageX - startX);
-                if (width > 50) { // Minimum width constraint
-                    // Update ghost indicator position
-                    const indicator = document.getElementById('ghost-resize-indicator');
-                    if (indicator) {
-                        indicator.style.left = (header.getBoundingClientRect().left - tableContainer.getBoundingClientRect().left + width) + 'px';
-                    }
-                }
-            }
-            
-            function stopResize() {
-                // Apply the actual resize
-                const width = startWidth + (e.pageX - startX);
-                if (width > 50) {
-                    header.style.width = `${width}px`;
-                }
-                
-                // Remove ghost indicator
-                const indicator = document.getElementById('ghost-resize-indicator');
-                if (indicator) {
-                    indicator.remove();
-                }
-                
-                // Reset styles
-                resizer.classList.remove('resizing');
-                resizer.style.backgroundColor = 'transparent';
-                if (tableContainer) {
-                    tableContainer.classList.remove('resizing');
-                    tableContainer.style.cursor = '';
-                    tableContainer.style.userSelect = '';
-                }
-                
-                // Remove listeners
-                document.removeEventListener('mousemove', resize);
-                document.removeEventListener('mouseup', stopResize);
-                
-                // Save column widths
-                saveColumnWidths();
-            }
-            
-            document.addEventListener('mousemove', resize);
-            document.addEventListener('mouseup', stopResize);
-            e.preventDefault(); // Prevent text selection
-        }
-        
-        resizer.addEventListener('mousedown', startResize);
-    });
-}
 
-// Save column widths to localStorage
-function saveColumnWidths() {
-    const headers = document.querySelectorAll('#memberTable th');
-    const widths = Array.from(headers).map(header => header.style.width);
-    localStorage.setItem('columnWidths', JSON.stringify(widths));
-    
-    // Also save column names to handle table structure changes
-    const columnNames = Array.from(headers).map(header => header.dataset.column || header.textContent.trim());
-    localStorage.setItem('columnNames', JSON.stringify(columnNames));
-}
+
+
+
 
 // Load saved column widths with version checking
 function loadColumnWidths() {
@@ -315,7 +455,8 @@ function loadColumnWidths() {
     async function initialize() {
         try {
             setupEventListeners();
-            setupResizableColumns(); // Add this line
+            initializeResizableColumns(); 
+            initializeTableScrollControls();// Add this line
             loadColumnWidths();      // Add this line
             await fetchRecords('normal');
             setupSorting();
