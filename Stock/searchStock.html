@@ -51,12 +51,11 @@
                 <table id="stockTable" aria-label="Stock list">
                     <thead>
                         <tr>
-                            <th data-column="name">Stock Name <i class="fas fa-sort"></i></th>
-                            <th data-column="category">Category <i class="fas fa-sort"></i></th>
-                            <th data-column="quantity">Quantity <i class="fas fa-sort"></i></th>
-                            <th data-column="supplier">Supplier <i class="fas fa-sort"></i></th>
-                            <th data-column="status">Status <i class="fas fa-sort"></i></th>
-                            <th data-column="lastUpdated">Last Updated <i class="fas fa-sort"></i></th>
+                            <th data-column="id">ID <i class="fas fa-sort"></i></th>
+                            <th data-column="name">Name <i class="fas fa-sort"></i></th>
+                            <th data-column="stock">Stock <i class="fas fa-sort"></i></th>
+                            <th data-column="price">Price <i class="fas fa-sort"></i></th>
+                            <th data-column="remarks">Remarks <i class="fas fa-sort"></i></th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -67,7 +66,9 @@
             </div>
             
             <div class="pagination-container">
+                <button id="prevPage" class="btn btn-primary">←</button>
                 <div class="pagination"></div>
+                <button id="nextPage" class="btn btn-primary">→</button>
                 <div class="items-per-page">
                     <label for="itemsPerPage">Items per page:</label>
                     <select id="itemsPerPage">

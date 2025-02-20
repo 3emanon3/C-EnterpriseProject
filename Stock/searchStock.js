@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost/projects/Enterprise/C-EnterpriseProject/stockAPI.php';
+const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
 
 document.addEventListener("DOMContentLoaded", function () {
     const searchInput = document.getElementById("searchInput");
@@ -7,16 +7,28 @@ document.addEventListener("DOMContentLoaded", function () {
     const totalStocks = document.getElementById("totalStocks");
     const loader = document.querySelector(".loader");
     const itemsPerPageSelect = document.getElementById("itemsPerPage");
+    const prevPageButton = document.getElementById("prevPage");
+    const nextPageButton = document.getElementById("nextPage");
     let stockData = [];
     let itemsPerPage = parseInt(itemsPerPageSelect.value);
+    let currentPage = 1;
+    let debounceTimer;
 
     async function fetchStocks(query = "") {
         loader.style.display = "block";
         stockTableBody.innerHTML = "";
+        
+        let url = "";
+        if (query.trim() === "") {
+            url = `${API_BASE_URL}?table=stock&limit=10&page=1`;
+        } else {
+            url = `${API_BASE_URL}?table=stock&limit=10&page=1&search=${query}`;
+        }
+        
         try {
-            const response = await fetch(`${API_BASE_URL}?search=${encodeURIComponent(query)}`);
+            const response = await fetch(url);
             const data = await response.json();
-            stockData = data;
+            stockData = data.data;
             totalStocks.textContent = stockData.length;
             displayStocks(stockData);
         } catch (error) {
@@ -31,12 +43,11 @@ document.addEventListener("DOMContentLoaded", function () {
         stocks.slice(0, itemsPerPage).forEach(stock => {
             const row = document.createElement("tr");
             row.innerHTML = `
-                <td>${stock.name}</td>
-                <td>${stock.category}</td>
-                <td>${stock.quantity}</td>
-                <td>${stock.supplier}</td>
-                <td>${stock.status}</td>
-                <td>${stock.lastUpdated}</td>
+                <td>${stock.ID}</td>
+                <td>${stock.Name}</td>
+                <td>${stock.stock}</td>
+                <td>${stock.price}</td>
+                <td>${stock.Remarks}</td>
                 <td>
                     <button class="btn btn-edit" onclick="editStock(${stock.id})">Edit</button>
                     <button class="btn btn-delete" onclick="deleteStock(${stock.id})">Delete</button>

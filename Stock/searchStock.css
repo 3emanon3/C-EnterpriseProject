@@ -60,6 +60,7 @@ h1 {
 .btn-primary {
     background-color: var(--primary-color);
     color: white;
+
 }
 
 .btn-success {
@@ -110,8 +111,8 @@ h1 {
 }
 
 .search-stats {
-    font-size: 14px;
-    color: var(--primary-color);
+    font-size: 1rem;         
+    color: #ffffff;          
 }
 
 /* Table Styles */
@@ -181,15 +182,20 @@ tr:hover {
 /* Pagination Styles */
 .pagination-container {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     padding-top: 20px;
     border-top: 1px solid var(--border-color);
+    justify-content: flex-end;
 }
 
 .pagination {
     display: flex;
     gap: 5px;
+}
+
+.pagination-container .btn-primary {
+    padding: 5px 10px;
+    margin: 0 5px;
 }
 
 .pagination button {
