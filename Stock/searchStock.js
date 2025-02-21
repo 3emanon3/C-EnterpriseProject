@@ -11,6 +11,8 @@ document.addEventListener("DOMContentLoaded", function () {
     let stockData = [];
     let itemsPerPage = parseInt(itemsPerPageSelect.value);
     let currentPage = 1;
+    const table = document.getElementById('stockTable');
+    const headers = table.querySelectorAll('th');
 
     // Debounce function to limit API calls during rapid typing
     function debounce(func, wait) {
@@ -120,6 +122,31 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
     };
+
+    const tableHeaders = table.querySelectorAll('th');
+    tableHeaders.forEach(th => {
+        const resizer = th.querySelector('.resizer');
+        if (!resizer) return;
+        
+        let startX, startWidth;
+        
+        resizer.addEventListener('mousedown', function(e) {
+            startX = e.pageX;
+            startWidth = th.offsetWidth;
+            document.addEventListener('mousemove', resizeColumn);
+            document.addEventListener('mouseup', stopResize);
+        });
+        
+        function resizeColumn(e) {
+            const newWidth = startWidth + (e.pageX - startX);
+            th.style.width = newWidth + 'px';
+        }
+        
+        function stopResize() {
+            document.removeEventListener('mousemove', resizeColumn);
+            document.removeEventListener('mouseup', stopResize);
+        }
+    });
 
     // Initial fetch
     fetchStocks();

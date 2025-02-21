@@ -20,10 +20,11 @@ body {
     background-color: var(--background-color);
     color: var(--text-color);
     line-height: 1.6;
+    overflow-x: auto;
 }
 
 .container {
-    max-width: 1200px;
+    width: 3600px;
     margin: 0 auto;
     padding: 20px;
     min-height: 95vh;
@@ -145,6 +146,21 @@ th {
     color: var(--primary-color);
     font-weight: 600;
     cursor: pointer;
+    position: relative;
+}
+
+.resizer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 5px;
+    height: 100%;
+    cursor: col-resize;
+    user-select: none;
+}
+
+.resizer:hover {
+    background-color: rgba(0, 0, 0, 0.1);
 }
 
 th i {

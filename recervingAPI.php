@@ -37,9 +37,10 @@ class DatabaseAPI {
         'vdonation' => ['ID', 'Name/Company Name', 'donationTypes', 'Bank', 'membership', 'paymentDate', 'official receipt no', 'amount', 'Remarks'],
         'stock' => ['ID', 'Name', 'stock', 'Price', 'Remarks'],
         'soldrecord' => ['ID', 'Book', 'membership', 'Name/Company Name', 'quantity_in', 'quantity_out', 'InvoiceNo	Date', 'price', 'Remarks'],
-        'vsoldrecord' => ['ID', 'bookName', 'Name/Compony Name', 'Designation of Applicant', 'quantity_in', 'quantity_out', 'InvoiceNo', 'Date', 'price', 'Remarks']
-
-    ];
+        'vsoldrecord' => ['ID', 'bookName', 'Name/Compony Name', 'Designation of Applicant', 'quantity_in', 'quantity_out', 'InvoiceNo', 'Date', 'price', 'Remarks'],
+        'event' => ['ID', 'title', 'status', 'start_time', 'end_time', 'created_at', 'location', 'description', 'max_participant', 'registration_deadline', 'price', 'online_link'],
+        'participants' => ['ID', 'eventID', 'memberID', 'joined_at'],
+        'vparticipants' => ['ID', 'memberID', 'Name', 'CName', 'phone_number', 'email', 'IC', 'title', 'joined_at'],    ];
     private $specialConditions = [
         'members' => [
             'Birthday' =>[
@@ -177,26 +178,7 @@ class DatabaseAPI {
             $this->sendError($e->getMessage());
         }
     }
-
-
-    /**
-     * Get a single record by ID
-     */
-    private function getSingleRecord($table, $id) {
-        $stmt = $this->prepareAndExecute(
-            "SELECT * FROM `$table` WHERE ID = ?",
-            [$id],
-            'i'
-        );
-        
-        $data = $stmt->get_result()->fetch_assoc();
-        if ($data === null) {
-            $this->sendError("Record not found with ID $id", self::HTTP_NOT_FOUND);
-            return;
-        }
-        
-        $this->sendResponse($data);
-    }
+    
     /**
      * Search records with pagination and sorting
      */
@@ -204,7 +186,10 @@ class DatabaseAPI {
         $searchTerm = $params['search'] ?? '';
         $conditions = $this->buildSearchConditions($table, $searchTerm);
         
-        $table = $table === 'vmembers' ? 'members' : $table;
+        $table = $table === 'members' ? 'vmembers' : $table;
+        $table = $table === 'donation' ? 'vdonation' : $table;
+        $table = $table === 'soldrecord' ? 'vsoldrecord' : $table;
+        $table = $table === 'participants' ? 'vparticipants' : $table;
         $baseQuery = "SELECT * FROM `$table` WHERE " . $conditions['sql'];
         $countQuery = "SELECT COUNT(*) as total FROM `$table` WHERE " . $conditions['sql'];
         
@@ -232,7 +217,10 @@ class DatabaseAPI {
             $table1 = 'soldrecord';
             $table = 'vsoldrecord';
         }
-
+        if($table === 'vparticipants'){
+            $table1 = 'participants';
+            $table = 'vparticipants';
+        }
         $baseQuery = "SELECT * FROM `$table` WHERE 1";
         $countQuery = "SELECT COUNT(*) as total FROM `$table` WHERE 1";
 
@@ -401,20 +389,6 @@ class DatabaseAPI {
             throw new Exception('No valid fields provided');
         }
         return $filtered;
-    }
-
-    private function generateNewMemberId() {
-        $query = "SELECT `membersID` FROM `members` ORDER BY `ID` DESC LIMIT 1";
-        $result = $this->prepareAndExecute($query)->get_result();
-        
-        if ($result->num_rows > 0) {
-            $parts = explode('-', $result->fetch_assoc()['membersID']);
-            $newNumber = intval($parts[1]) + 1;
-        } else {
-            $newNumber = 1;
-        }
-        
-        return date('Y') . '-' . str_pad($newNumber, 6, '0', STR_PAD_LEFT);
     }
 
     private function buildSearchConditions($table, $searchTerm) {
