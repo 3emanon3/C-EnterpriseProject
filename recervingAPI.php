@@ -123,16 +123,16 @@ class DatabaseAPI {
      */
     private function handleGetRequest($table, $params) {
         if (isset($params['search'])) {
-            $knownParams - ['table', 'search', 'page', 'limit', 'sort', 'order'];
+            $knownParams = ['table', 'search', 'page', 'limit', 'sort', 'order'];
             $specificParams = array_diff_key($params, array_flip($knownParams));
             $allowedColumns = $this->allowedTables[$table];
             $searchColumns = array_intersect_key($specificParams, array_flip($allowedColumns));
 
             $conditionsData = $this->buildSpecificSearchConditions($table, $searchColumns);
-            if ($conditionData) {
+            if ($conditionsData) {
                 $queryTable = $this->getQueryTable($table);
-                $baseQuery = "SELECT * FROM `$queryTable` WHERE " . $conditionsData['sql'];
-                $countQuery = "SELECT COUNT(*) as total FROM `$queryTable` WHERE " . $conditionsData['sql'];
+                $baseQuery = "SELECT * FROM `$queryTable` WHERE ".$conditionsData['sql'];
+                $countQuery = "SELECT COUNT(*) as total FROM `$queryTable` WHERE ".$conditionsData['sql'];
                 $this->executeQuery($table, $baseQuery, $countQuery, $conditionsData['params'], $conditionsData['types']);
             } else {
                 $this->searchRecords($table, $params);
@@ -522,7 +522,7 @@ class DatabaseAPI {
         $params = [];
         $types = '';
         
-        foreach ($searchColumns as $column => value) {
+        foreach ($searchColumns as $column => $value) {
             if(!empty($value)) {
                 $conditions[] = "`$column` LIKE ?";
                 $params[] = "%$value%";
