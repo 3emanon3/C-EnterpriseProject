@@ -12,7 +12,10 @@ document.addEventListener("DOMContentLoaded", function () {
     let itemsPerPage = parseInt(itemsPerPageSelect.value);
     let currentPage = 1;
     const table = document.getElementById('stockTable');
-    const headers = table.querySelectorAll('th');
+    const tableHeaders = table.querySelectorAll('th');
+    let currentSortColumn = null;
+    let currentSortOrder = null;
+    
 
     // Debounce function to limit API calls during rapid typing
     function debounce(func, wait) {
@@ -31,18 +34,25 @@ document.addEventListener("DOMContentLoaded", function () {
         loader.style.display = "block";
         stockTableBody.innerHTML = "";
         
-        let url = "";
-        if (query.trim() === "") {
-            url = `${API_BASE_URL}?table=stock&limit=${itemsPerPage}&page=${currentPage}`;
-        } else {
-            url = `${API_BASE_URL}?table=stock&limit=${itemsPerPage}&page=${currentPage}&search=${query}`;
+        const params = new URLSearchParams();
+        params.append("table", "stock");
+        params.append("limit", itemsPerPage);
+        params.append("page", currentPage);
+        if (query.trim() !== "") {
+            params.append("search", query);
         }
+        if (currentSortColumn) {
+            params.append("sort", currentSortColumn);
+            params.append("order", currentSortOrder);
+        }
+        
+        const url = `${API_BASE_URL}?${params.toString()}`;
         
         try {
             const response = await fetch(url);
             const data = await response.json();
             stockData = data.data;
-            totalStocks.textContent = stockData.length;
+            totalStocks.textContent = data.total || stockData.length;
             displayStocks(stockData);
         } catch (error) {
             console.error("Error fetching stocks:", error);
@@ -71,6 +81,40 @@ document.addEventListener("DOMContentLoaded", function () {
             stockTableBody.appendChild(row);
         });
     }
+
+    function handleSortClick(colunmName) {
+        if(currentSortColumn === colunmName) {
+            currentSortOrder = currentSortOrder === 'ASC' ? 'DESC' : 'ASC';
+        } else {
+            currentSortColumn = colunmName;
+            currentSortOrder = 'ASC';
+        }
+        currentPage = 1;
+        updateSortIcons();
+        fetchStocks(searchInput.value);
+    }
+
+    function updateSortIcons() {
+        document.querySelectorAll('th[data-column]').forEach(th => {
+            const icon = th.querySelector('i');
+            icon.classList.remove('fa-sort', 'fa-sort-up', 'fa-sort-down');
+            if(th.dataset.column === currentSortColumn) {
+                if(currentSortOrder === 'ASC') {
+                    icon.classList.add('fa-sort-up');
+                } else {
+                    icon.classList.add('fa-sort-down');
+                }
+            } else {
+                icon.classList.add('fa-sort');
+            }
+        });
+    }
+
+    document.querySelectorAll('th[data-column]').forEach(th => {
+        th.addEventListener('click', function() {
+            handleSortClick(th.dataset.column);
+        });
+    });
 
     prevPageButton.addEventListener("click", function () {
         if (currentPage > 1) {
@@ -123,7 +167,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
-    const tableHeaders = table.querySelectorAll('th');
+    
     tableHeaders.forEach(th => {
         const resizer = th.querySelector('.resizer');
         if (!resizer) return;

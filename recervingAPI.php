@@ -40,7 +40,8 @@ class DatabaseAPI {
         'vsoldrecord' => ['ID', 'bookName', 'Name/Compony Name', 'Designation of Applicant', 'quantity_in', 'quantity_out', 'InvoiceNo', 'Date', 'price', 'Remarks'],
         'event' => ['ID', 'title', 'status', 'start_time', 'end_time', 'created_at', 'location', 'description', 'max_participant', 'registration_deadline', 'price', 'online_link'],
         'participants' => ['ID', 'eventID', 'memberID', 'joined_at'],
-        'vparticipants' => ['ID', 'memberID', 'Name', 'CName', 'phone_number', 'email', 'IC', 'title', 'joined_at'],    ];
+        'vparticipants' => ['ID', 'memberID', 'Name', 'CName', 'phone_number', 'email', 'IC', 'title', 'joined_at'],
+    ];
     private $specialConditions = [
         'members' => [
             'Birthday' =>[
