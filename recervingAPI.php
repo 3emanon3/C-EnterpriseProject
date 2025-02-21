@@ -122,13 +122,24 @@ class DatabaseAPI {
      * Handle different types of GET requests
      */
     private function handleGetRequest($table, $params) {
-        if(isset($params['ID'])) {
-            $this->getSingleRecord($table, $params['ID']);
-        } else if (isset($params['search'])) {
-            $this->searchRecords($table, $params);
-        } else {
+        if (isset($params['search'])) {
+            $knownParams - ['table', 'search', 'page', 'limit', 'sort', 'order'];
+            $specificParams = array_diff_key($params, array_flip($knownParams));
+            $allowedColumns = $this->allowedTables[$table];
+            $searchColumns = array_intersect_key($specificParams, array_flip($allowedColumns));
+
+            $conditionsData = $this->buildSpecificSearchConditions($table, $searchColumns);
+            if ($conditionData) {
+                $queryTable = $this->getQueryTable($table);
+                $baseQuery = "SELECT * FROM `$queryTable` WHERE " . $conditionsData['sql'];
+                $countQuery = "SELECT COUNT(*) as total FROM `$queryTable` WHERE " . $conditionsData['sql'];
+                $this->executeQuery($table, $baseQuery, $countQuery, $conditionsData['params'], $conditionsData['types']);
+            } else {
+                $this->searchRecords($table, $params);
+            }
+        } else{
             $this->getAllRecords($table, $params);
-        }
+        }  
     }
 
     /**
@@ -495,6 +506,39 @@ class DatabaseAPI {
             'received_params' => $_GET,
             'tables_available' => array_keys($this->allowedTables)
         ]);
+    }
+
+    private function getQueryTable($table) {
+        $tableToView = [
+            'members' => 'vmembers',
+            'donation' => 'vdonation',
+            'soldrecord' => 'vsoldrecord'
+        ];
+        return $tableToView[$table] ?? $table;
+    }
+
+    private function buildSpecificSearchConditions($table, $searchColumns) {
+        $conditions = [];
+        $params = [];
+        $types = '';
+        
+        foreach ($searchColumns as $column => value) {
+            if(!empty($value)) {
+                $conditions[] = "`$column` LIKE ?";
+                $params[] = "%$value%";
+                $types .= 's';
+            }
+        }
+
+        if (empty($conditions)) {
+            return null;
+        }
+        
+        return [
+            'sql' => implode(' OR ', $conditions),
+            'params' => $params,
+            'types' => $types
+        ];
     }
 }
 
