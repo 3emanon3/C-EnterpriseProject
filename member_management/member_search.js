@@ -779,7 +779,15 @@ const data = await response.json();
     }
 
     function formatDate(dateString) {
-        return dateString ? new Date(dateString).toISOString().split('T')[0] : '';
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return ''; // Return empty string for invalid dates
+        
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Add leading zero if needed
+        const day = String(date.getDate()).padStart(2, '0'); // Add leading zero if needed
+        
+        return `${year}-${month}-${day}`;
     }
 
     function escapeHtml(unsafe) {
@@ -816,8 +824,8 @@ const data = await response.json();
         }
     };
 
-    window.editMember = function(membersID) {
-        window.location.href = `edit_member.html?id=${membersID}`;
+    window.editMember = function(ID) {
+        window.location.href = `edit_member.html?id=${ID}`;
 
     };
     

@@ -65,10 +65,16 @@ document.addEventListener('DOMContentLoaded', function() {
         const birthdayField = document.getElementById('Birthday');
         const expiredDateField = document.getElementById('expired_date');
         
-        if (birthdayField.value && new Date(birthdayField.value) > new Date()) {
-            isValid = false;
-            errors.push('生日不能是将来的日期');
-            birthdayField.classList.add('error');
+        if (birthdayField.value) {
+            // Extract just the month from the date
+            const birthdayMonth = new Date(birthdayField.value).getMonth() + 1; // getMonth() returns 0-11
+            
+            // Validate if it's a valid month (1-12)
+            if (isNaN(birthdayMonth) || birthdayMonth < 1 || birthdayMonth > 12) {
+                isValid = false;
+                errors.push('请输入有效的生日月份');
+                birthdayField.classList.add('error');
+            }
         }
 
         if (expiredDateField.value && new Date(expiredDateField.value) < new Date()) {
@@ -105,7 +111,21 @@ document.addEventListener('DOMContentLoaded', function() {
         const data = {};
     
         formData.forEach((value, key) => {
-            data[key] = value;
+            if (key === 'Birthday' && value) {
+                // Convert the full date to just month (1-12)
+                const monthOnly = new Date(value).getMonth() + 1;
+                data[key] = monthOnly.toString(); // Convert to string for consistency
+            } else if   (key === 'expired_date' && value) {
+            // Convert expired_date to YYYY-MM-DD format
+         
+            const date = new Date(value);
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // Add leading zero if needed
+            const day = String(date.getDate()).padStart(2, '0'); // Add leading zero if needed
+            data[key] = `${year}-${month}-${day}`;
+        }  else {
+                data[key] = value;
+            }
         });
     
         data.action = 'add_member';
