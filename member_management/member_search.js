@@ -765,8 +765,67 @@ const data = await response.json();
             </button>
         `);
 
+        paginationHTML.push(`
+            <div class="pagination-info">
+                <span class="page-indicator">${currentPage}/${totalPages}</span>
+                <div class="page-jump">
+                    <input type="number" 
+                           id="pageInput" 
+                           min="1" 
+                           max="${totalPages}" 
+                           placeholder="页码"
+                           class="page-input">
+                    <button onclick="jumpToPage()" class="jump-btn">跳转</button>
+                </div>
+            </div>
+        `);
+
         elements.paginationContainer.innerHTML = paginationHTML.join('');
+
+        const pageInput = document.getElementById('pageInput');
+        if (pageInput) {
+            pageInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    jumpToPage();
+                }
+            });
+        }
     }
+    
+    // Add jump to page function
+    window.jumpToPage = function() {
+        const pageInput = document.getElementById('pageInput');
+        if (!pageInput) return;
+    
+        let targetPage = parseInt(pageInput.value);
+        
+        // Validate input
+        if (isNaN(targetPage)) {
+            alert('请输入有效的页码');
+            return;
+        }
+        if (targetPage < 1) {
+            targetPage = 1;
+        } else if (targetPage > totalPages) {
+            targetPage = totalPages;
+        }
+    
+        // Only change page if it's different from current page
+        if (targetPage !== currentPage) {
+            changePage(targetPage);
+        }
+    
+        // Clear input after jumping
+        pageInput.value = '';
+    };
+    
+    // Update the existing changePage function
+    window.changePage = function(page) {
+        if (page >= 1 && page <= totalPages && page !== currentPage) {
+            currentPage = page;
+            fetchRecords(currentSearchType);
+        }
+    };
 
     // Utility functions
     function formatPhone(phone) {

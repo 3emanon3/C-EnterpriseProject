@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Member</title>
+    <link rel="stylesheet" href="edit_member.css">
+</head>
+<body>
+    <div class="nav-buttons">
+        <button onclick="goBack()" class="nav-btn">← Back</button>
+    </div>
+    
+    <div class="container">
+        <h2>会员信息</h2>
+        <form id="editMemberForm" onsubmit="handleSubmit(event)">
+            <input type="hidden" id="memberId" name="membersID">
+            
+            <div class="form-group">
+                <label for="name">姓名（英文）：</label>
+                <input type="text" id="name" name="Name" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="cname">姓名（中文）：</label>
+                <input type="text" id="cname" name="CName" class="form-control">
+            </div>
+            
+            <div class="form-group">
+                <label for="designation_of_applicant">种类</label>
+                <select id="designation_of_applicant" name="Designation of Applicant" class="form-control" required>
+                    <option value="">请选择</option>
+                    <option value="1">会员</option>
+                    <option value="2">非会员</option>
+                    <option value="3">外国人</option>
+                    <option value="4">拒绝继续</option>
+                    <option value="5">自定义...</option>
+                </select>
+                <div id="customDesignationContainer" class="custom-designation" style="display: none;">
+                    <input type="text" id="customDesignationInput" placeholder="输入新的种类名称">
+                    <button type="button" onclick="applyCustomDesignation()">添加</button>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="address">地址:</label>
+                <textarea id="address" name="Address" class="form-control" rows="3"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="phone">电话号码：</label>
+                <input type="tel" id="phone" name="phone_number" class="form-control">
+            </div>
+            
+            <div class="form-group">
+                <label for="email">电子邮件：</label>
+                <input type="email" id="email" name="email" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="ic">IC :</label>
+                <input type="text" id="ic" name="IC" class="form-control">
+            </div>
+            
+            <div class="form-group">
+                <label for="oldic">旧 IC :</label>
+                <input type="text" id="oldic" name="oldIC" class="form-control">
+            </div>
+            
+            <div class="form-group">
+                <label for="gender">性别:</label>
+                <select id="gender" name="gender" class="form-control">
+                    <option value="">请选择</option>
+                    <option value="Male">男</option>
+                    <option value="Female">女</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="company">公司名称:</label>
+                <input type="text" id="company" name="componyName" class="form-control">
+            </div>
+            
+            <div class="form-group">
+                <label for="birthday">生日月份:</label>
+                <select id="birthday" name="Birthday" class="form-control">
+                    <option value="">Select Month</option>
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="expired">过期日期 (YYYY/MM/DD):</label>
+                <div class="expiration-options">
+                    <button type="button" onclick="setExpirationPeriod(1)">1年</button>
+                    <button type="button" onclick="setExpirationPeriod(3)">3年</button>
+                </div>
+                <div class="custom-years">
+                    <input type="number" id="customYears" min="1" max="20" placeholder="年数">
+                    <button type="button" onclick="setCustomExpirationPeriod()">应用自定义年数</button>
+                </div>
+                <input type="text" id="expired" name="expired date" class="form-control" placeholder="YYYY/MM/DD" readonly>
+            </div>
+            
+            <div class="form-group">
+                <label for="birthplace">出生地:</label>
+                <input type="text" id="birthplace" name="place of birth" class="form-control">
+            </div>
+            
+            <div class="form-group">
+                <label for="remarks">备注:</label>
+                <textarea id="remarks" name="remarks" class="form-control" rows="3"></textarea>
+            </div>
+            
+            <button type="submit" class="btn">更新会员</button>
+        </form>
+    </div>
+
+    <script src="edit_member.js"></script>
+</body>
+</html>
