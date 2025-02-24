@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Management System - Edit Stock</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="searchStock.css">
+    <link rel="stylesheet" href="editStock.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>库存管理系统 - 编辑产品</h1>
+            <nav class="system-nav">
+                <button class="btn btn-primary" onclick="printData()">
+                    <i class="fas fa-print"></i> 复印
+                </button>
+                <button class="btn btn-primary" onclick="confirmCancel()">
+                    <i class="fas fa-times"></i> 取消
+                </button>
+            </nav>
+        </header>
+
+        <section class="edit-container">
+            <div class="edit-form">
+                <div class="form-group">
+                    <label for="productId">产品ID:</label>
+                    <input type="text" id="productId" required>
+                </div>
+                <div class="form-group">
+                    <label for="name">产品名称:</label>
+                    <input type="text" id="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="stock">库存数量:</label>
+                    <input type="number" id="stock" required>
+                </div>
+                <div class="form-group">
+                    <label for="price">价格:</label>
+                    <input type="number" step="0.01" id="price" required>
+                </div>
+                <div class="form-group">
+                    <label for="publisher">出版社:</label>
+                    <input type="text" id="publisher" required>
+                </div>
+                <div class="form-group">
+                    <label for="remarks">备注:</label>
+                    <textarea id="remarks" rows="4"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-success" onclick="saveChanges()">
+                        <i class="fas fa-save"></i> 保存更改
+                    </button>
+                    <button class="btn btn-primary" onclick="location.href='searchStock.html'">
+                        <i class="fas fa-times"></i> 取消
+                    </button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="editStock.js"></script>
+</body>
+<div id="print-template" style="display: none;">
+    <html>
+        <head>
+            <title>Print Stock Details</title>
+            <style>
+                .top-info {
+                    position: relative;
+                    text-align: center;
+                    padding: 0 120px;
+                    
+                }
+                .logo-container {
+                    position: absolute;
+                    text-indent: -9999px;
+                    background: url('../assets/logo.png');
+                    background-repeat: no-repeat;
+                    background-position: center;
+                    width: 200px;
+                    height: 100px;
+                }
+                #print-content {
+                    font-family: Arial, sans-serif;
+                    padding: 20px;
+                }
+                #print-content h2 {
+                    text-align: center;
+                    margin-bottom: 20px;
+                }
+                #print-content p {
+                    margin: 10px 0;
+                }
+                #print-content button {
+                    display: block;
+                    margin: 20px auto;
+                }
+                @media print {
+                    #print-content {
+                        margin: 0;
+                        padding: 0;
+                    }
+                    #print-content h2 {
+                        text-align: left;
+                        font-size: 24px;
+                    }
+                    #print-content p {
+                        font-size: 16px;
+                    }
+                    #print-content button {
+                        display: none;
+                    }
+                }
+            </style>
+        </head>
+        <body>
+            <div id="print-content">
+                <sec class="top-info">
+                <div class="logo-container">The logo of seiwajyuku Malaysia</div>
+                <h2>Stock Details</h2>
+                <div class="dummy"></div>
+                </sec>
+                <sec>
+                <p>Product ID: {{productId}}</p>
+                <p>Name: {{name}}</p>
+                <p>Stock Quantity: {{stock}}</p>
+                <p>Price: {{price}}</p>
+                <p>Publisher: {{publisher}}</p>
+                <p>Remarks: {{remarks}}</p>
+                </sec>
+                <button class="btn btn-primary" onclick="window.print()">Print</button>
+            </div>
+        </body>
+    </html>
+</div>
+</html>

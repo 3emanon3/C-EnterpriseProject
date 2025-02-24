@@ -10,13 +10,13 @@
 <body>
     <div class="container">
         <header>
-            <h1>Stock Management System</h1>
+            <h1>库存管理系统</h1>
             <nav class="system-nav">
                 <button class="btn btn-primary" onclick="location.href='../project.html'">
-                    <i class="fas fa-home"></i> Back
+                    <i class="fas fa-home"></i> 返回
                 </button>
                 <button class="btn btn-success" onclick="location.href='stock.html'">
-                    <i class="fas fa-box"></i> Add New Stock
+                    <i class="fas fa-box"></i> 增加新产品
                 </button>
             </nav>
         </header>
@@ -28,15 +28,12 @@
                     <input 
                         type="text" 
                         id="searchInput" 
-                        placeholder="Search stocks by name, category, or status..." 
+                        placeholder="使用ID, 名称, 价格, 数量, 出版社搜索产品" 
                         aria-label="Search stocks">
-                    <button id="searchButton" class="btn btn-search">
-                        Search
-                    </button>
                 </div>
             </div>
             <div class="search-stats">
-                <span class="stats-label">Total Stock Items:</span>
+                <span class="stats-label">产品种类数量:</span>
                 <span id="totalStocks" class="stats-value">0</span>
             </div>
         </section>
@@ -51,14 +48,13 @@
                 <table id="stockTable" aria-label="Stock list">
                     <thead>
                         <tr>
-                            <th data-column="ID">ID <i class="fas fa-sort"></i><div class="resizer"></div></th>
-                            <th data-column="Product ID">ProductID <i class="fas fa-sort"></i><div class="resizer"></div></th>
-                            <th data-column="Name">Name <i class="fas fa-sort"></i><div class="resizer"></div></th>
-                            <th data-column="stock">Stock <i class="fas fa-sort"></i><div class="resizer"></div></th>
-                            <th data-column="Price">Price <i class="fas fa-sort"></i><div class="resizer"></div></th>
-                            <th data-column="Publisher">Publisher <i class="fas fa-sort"></i><div class="resizer"></div></th>
-                            <th data-column="Remarks">Remarks <i class="fas fa-sort"></i><div class="resizer"></div></th>
-                            <th>Actions</th>
+                            <th data-column="Product ID">产品ID <i class="fas fa-sort"></i><div class="resizer"></div></th>
+                            <th data-column="Name">产品<i class="fas fa-sort"></i><div class="resizer"></div></th>
+                            <th data-column="stock">数量<i class="fas fa-sort"></i><div class="resizer"></div></th>
+                            <th data-column="Price">价格 <i class="fas fa-sort"></i><div class="resizer"></div></th>
+                            <th data-column="Publisher">出版社<i class="fas fa-sort"></i><div class="resizer"></div></th>
+                            <th data-column="Remarks">备注<i class="fas fa-sort"></i><div class="resizer"></div></th>
+                            <th>操作</th>
                         </tr>
                     </thead>
                     <tbody>

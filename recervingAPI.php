@@ -35,7 +35,7 @@ class DatabaseAPI {
         'vmembers' => ['ID', 'membersID', 'Name', 'CName', 'designation of applicant', 'Address', 'phone_number', 'email', 'IC', 'oldIC', 'gender', 'componyName', 'Birthday', 'expired date', 'place of birth', 'remarks'],
         'donation' => ['ID', 'Name/Company Name', 'donationTypes', 'Bank', 'membership', 'paymentDate', 'official receipt no', 'amount', 'Remarks'],
         'vdonation' => ['ID', 'Name/Company Name', 'donationTypes', 'Bank', 'membership', 'paymentDate', 'official receipt no', 'amount', 'Remarks'],
-        'stock' => ['ID', 'Name', 'stock', 'Price', 'Remarks'],
+        'stock' => ['ID', 'Product ID', 'Name', 'stock', 'Price', 'Publisher', 'Remarks'],
         'soldrecord' => ['ID', 'Book', 'membership', 'Name/Company Name', 'quantity_in', 'quantity_out', 'InvoiceNo	Date', 'price', 'Remarks'],
         'vsoldrecord' => ['ID', 'bookName', 'Name/Compony Name', 'Designation of Applicant', 'quantity_in', 'quantity_out', 'InvoiceNo', 'Date', 'price', 'Remarks'],
         'event' => ['ID', 'title', 'status', 'start_time', 'end_time', 'created_at', 'location', 'description', 'max_participant', 'registration_deadline', 'price', 'online_link'],
@@ -128,20 +128,34 @@ class DatabaseAPI {
             $knownParams = ['table', 'search', 'page', 'limit', 'sort', 'order'];
             $specificParams = array_diff_key($params, array_flip($knownParams));
             $allowedColumns = $this->allowedTables[$table];
+            
+            // Check if there are any specific column searches
             $searchColumns = array_intersect_key($specificParams, array_flip($allowedColumns));
-
-            $conditionsData = $this->buildSpecificSearchConditions($table, $searchColumns);
-            if ($conditionsData) {
+            
+            if (!empty($searchColumns)) {
+                // Handle exact match search for specific columns
+                $conditionsData = $this->buildExactMatchConditions($table, $searchColumns);
+                if ($conditionsData) {
+                    $queryTable = $this->getQueryTable($table);
+                    $baseQuery = "SELECT * FROM `$queryTable` WHERE " . $conditionsData['sql'];
+                    $countQuery = "SELECT COUNT(*) as total FROM `$queryTable` WHERE " . $conditionsData['sql'];
+                    $this->executeQuery($table, $baseQuery, $countQuery, $conditionsData['params'], $conditionsData['types']);
+                    return;
+                }
+            } else if ($params['search'] === 'true' && isset($params['ID'])) {
+                // Handle exact match for ID
                 $queryTable = $this->getQueryTable($table);
-                $baseQuery = "SELECT * FROM `$queryTable` WHERE ".$conditionsData['sql'];
-                $countQuery = "SELECT COUNT(*) as total FROM `$queryTable` WHERE ".$conditionsData['sql'];
-                $this->executeQuery($table, $baseQuery, $countQuery, $conditionsData['params'], $conditionsData['types']);
-            } else {
-                $this->searchRecords($table, $params);
+                $baseQuery = "SELECT * FROM `$queryTable` WHERE ID = ?";
+                $countQuery = "SELECT COUNT(*) as total FROM `$queryTable` WHERE ID = ?";
+                $this->executeQuery($table, $baseQuery, $countQuery, [$params['ID']], 'i');
+                return;
             }
-        } else{
+            
+            // Default to LIKE search if no specific columns or exact matches
+            $this->searchRecords($table, $params);
+        } else {
             $this->getAllRecords($table, $params);
-        }  
+        }
     }
 
     /**
@@ -172,6 +186,7 @@ class DatabaseAPI {
 
             $this->sendResponse([
                 'data' => $data,
+                'total' => $totalRecords,
                 'pagination' => $this->getPaginationInfo($page, $limit, $totalRecords),
                 'sorting' => ['column' => $sortColumn, 'order' => $sortOrder]
             ]);
@@ -184,7 +199,7 @@ class DatabaseAPI {
      * Search records with pagination and sorting
      */
     private function searchRecords($table, $params) {
-        $searchTerm = $params['search'] ?? '';
+        $searchTerm = $params['search'] === 'true' ? '' : $params['search'];
         $conditions = $this->buildSearchConditions($table, $searchTerm);
         
         $table = $table === 'members' ? 'vmembers' : $table;
@@ -397,6 +412,14 @@ class DatabaseAPI {
         $params = [];
         $types = '';
         
+        if (empty($searchTerm)) {
+            return [
+                'sql' => '1=1',
+                'params' => [],
+                'types' => ''
+            ];
+        }
+
         foreach ($this->allowedTables[$table] as $column) {
             $conditions[] = "`$column` LIKE ?";
             $params[] = "%$searchTerm%";
@@ -409,6 +432,31 @@ class DatabaseAPI {
             'types' => $types
         ];
     }
+
+    private function buildExactMatchConditions($table, $searchColumns) {
+        $conditions = [];
+        $params = [];
+        $types = '';
+        
+        foreach ($searchColumns as $column => $value) {
+            if (!empty($value)) {
+                $conditions[] = "`$column` = ?";
+                $params[] = $value;
+                $types .= is_numeric($value) ? 'i' : 's';
+            }
+        }
+        
+        if (empty($conditions)) {
+            return null;
+        }
+        
+        return [
+            'sql' => implode(' AND ', $conditions), // Using AND for exact matches
+            'params' => $params,
+            'types' => $types
+        ];
+    }
+    
 
     private function recordExists($table, $id) {
         $stmt = $this->prepareAndExecute(

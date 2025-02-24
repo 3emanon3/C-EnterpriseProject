@@ -66,7 +66,6 @@ document.addEventListener("DOMContentLoaded", function () {
         stocks.forEach(stock => {
             const row = document.createElement("tr");
             row.innerHTML = `
-                <td>${stock.ID}</td>
                 <td>${stock["Product ID"]}</td>
                 <td>${stock.Name}</td>
                 <td>${stock.stock}</td>
@@ -74,8 +73,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 <td>${stock.Publisher}</td>
                 <td>${stock.Remarks}</td>
                 <td>
-                    <button class="btn btn-edit" onclick="editStock(${stock.id})">Edit</button>
-                    <button class="btn btn-delete" onclick="deleteStock(${stock.id})">Delete</button>
+                    <button class="btn btn-edit" onclick="editStock(${stock.ID})">更改</button>
+                    <button class="btn btn-delete" onclick="deleteStock(${stock.ID})">删除</button>
+                    <button class="btn btn-increase" onclick="increaseStock(${stock.ID})">增加</button>
+                    <button class="btn btn-decrease" onclick="decreaseStock(${stock.ID})">减少</button>    
                 </td>
             `;
             stockTableBody.appendChild(row);
@@ -148,8 +149,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     window.editStock = function (id) {
-        alert(`Edit stock item with ID: ${id}`);
-        // Implement edit functionality
+        window.location.href = `editStock.html?id=${id}`;
     };
 
     window.deleteStock = async function (id) {
