@@ -67,49 +67,42 @@
         <head>
             <title>Print Stock Details</title>
             <style>
-                .top-info {
-                    position: relative;
-                    text-align: center;
-                    padding: 0 120px;
-                    
-                }
-                .logo-container {
-                    position: absolute;
-                    text-indent: -9999px;
-                    background: url('../assets/logo.png');
-                    background-repeat: no-repeat;
-                    background-position: center;
-                    width: 200px;
-                    height: 100px;
-                }
                 #print-content {
                     font-family: Arial, sans-serif;
                     padding: 20px;
                 }
-                #print-content h2 {
+                .top-info {
+                    display: flex;
                     text-align: center;
                     margin-bottom: 20px;
                 }
-                #print-content p {
-                    margin: 10px 0;
-                }
-                #print-content button {
+                .logo {
+                    width: 200px;
+                    height: 100px;
                     display: block;
-                    margin: 20px auto;
+                    margin: 0 auto 10px auto;
+                }
+                h2 {
+                    margin: 0;
+                }
+                .stock-details p {
+                    margin: 10px 0;
                 }
                 @media print {
                     #print-content {
                         margin: 0;
                         padding: 0;
                     }
-                    #print-content h2 {
-                        text-align: left;
+                    .top-info {
+                        text-align: center;
+                    }
+                    h2 {
                         font-size: 24px;
                     }
-                    #print-content p {
+                    .stock-details p {
                         font-size: 16px;
                     }
-                    #print-content button {
+                    button {
                         display: none;
                     }
                 }
@@ -117,19 +110,19 @@
         </head>
         <body>
             <div id="print-content">
-                <sec class="top-info">
-                <div class="logo-container">The logo of seiwajyuku Malaysia</div>
+                <section class="top-info">
+                <img src="../assets/logo.png" alt="Seiwajyuku Malaysia Logo" class="logo">
                 <h2>Stock Details</h2>
                 <div class="dummy"></div>
-                </sec>
-                <sec>
+                </section>
+                <section>
                 <p>Product ID: {{productId}}</p>
                 <p>Name: {{name}}</p>
                 <p>Stock Quantity: {{stock}}</p>
                 <p>Price: {{price}}</p>
                 <p>Publisher: {{publisher}}</p>
                 <p>Remarks: {{remarks}}</p>
-                </sec>
+                </section>
                 <button class="btn btn-primary" onclick="window.print()">Print</button>
             </div>
         </body>
