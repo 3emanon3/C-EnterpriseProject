@@ -24173,3 +24173,2690 @@
     [METHOD] => GET
 )
 
+2025-02-26 03:29:56: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 03:29:59: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 03:30:44: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 03:36:25: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 04:22:33: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 04:44:31: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 04:44:45: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 04:44:56: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 04:44:57: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 04:44:58: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 04:46:59: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 04:47:06: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 04:47:50: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 04:47:52: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 04:49:10: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 04:49:18: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 04:49:20: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 04:49:22: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 04:49:23: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 04:49:23: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 04:49:23: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 04:49:24: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 04:49:24: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 04:49:24: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 04:49:24: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 04:49:25: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 04:49:25: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 04:49:25: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 04:49:26: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 04:49:34: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 04:58:32: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 04:58:39: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 04:58:42: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 04:58:51: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 04:59:21: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 04:59:32: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:05:56: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:05:57: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:05:58: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:05:58: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:05:58: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:05:59: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:05:59: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:05:59: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:05:59: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:05:59: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:05:59: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:05:59: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:06:00: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:06:00: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:06:00: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:06:03: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:06:12: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:06:42: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:06:49: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&ID=1
+    [METHOD] => PUT
+)
+
+2025-02-26 05:06:50: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:07:18: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:07:21: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:07:28: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:07:38: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&ID=1
+    [METHOD] => PUT
+)
+
+2025-02-26 05:07:39: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:07:42: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:07:53: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:08:48: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:08:48: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:08:48: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:08:49: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:08:49: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:08:49: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:08:49: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:08:50: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:08:50: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:08:52: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:08:57: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:09:22: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:18:16: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:18:17: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:18:18: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:18:18: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:18:54: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:18:55: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:18:56: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:18:57: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:38:30: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:38:31: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:38:39: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:38:48: Array
+(
+    [GET] => Array
+        (
+            [page] => 1
+            [limit] => 10
+            [table] => members
+            [sort] => ID
+            [order] => ASC
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?page=1&limit=10&table=members&sort=ID&order=ASC
+    [METHOD] => GET
+)
+
+2025-02-26 05:38:56: Array
+(
+    [GET] => Array
+        (
+            [page] => 1
+            [limit] => 10
+            [table] => members
+            [sort] => ID
+            [order] => ASC
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?page=1&limit=10&table=members&sort=ID&order=ASC
+    [METHOD] => GET
+)
+
+2025-02-26 05:39:07: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:39:10: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:42:16: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:42:17: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:42:18: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:42:53: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:46:49: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:46:50: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:53:05: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:53:08: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:53:42: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:54:32: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 05:54:42: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 06:00:47: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 06:00:51: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 07:27:32: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 07:27:34: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 07:27:35: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 07:31:00: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 07:31:02: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 08:11:22: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 08:11:32: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 08:17:05: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 08:17:16: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 08:19:01: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 08:44:55: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [search] => 1
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&search=1&ID=1
+    [METHOD] => GET
+)
+
+2025-02-26 10:03:58: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord
+    [METHOD] => GET
+)
+
+2025-02-26 10:35:50: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 10:35:50: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 10:35:50: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 10:35:51: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 10:35:51: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 10:35:51: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 10:35:51: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 10:35:51: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 10:35:53: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 10:35:54: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 10:35:55: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 10:35:55: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 10:36:07: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Wireless Ergonomic Mouse
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1&Book=Wireless+Ergonomic+Mouse
+    [METHOD] => GET
+)
+
+2025-02-26 10:36:09: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Laptop - High Performance
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1&Book=Laptop+-+High+Performance
+    [METHOD] => GET
+)
+
+2025-02-26 10:36:10: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Laptop - High Performance
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1&Book=Laptop+-+High+Performance
+    [METHOD] => GET
+)
+
+2025-02-26 10:36:10: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Laptop - High Performance
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1&Book=Laptop+-+High+Performance
+    [METHOD] => GET
+)
+
+2025-02-26 10:36:10: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Laptop - High Performance
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1&Book=Laptop+-+High+Performance
+    [METHOD] => GET
+)
+
+2025-02-26 10:36:13: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Database Management Textbook
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1&Book=Database+Management+Textbook
+    [METHOD] => GET
+)
+
+2025-02-26 10:36:13: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Database Management Textbook
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1&Book=Database+Management+Textbook
+    [METHOD] => GET
+)
+
+2025-02-26 10:36:13: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Database Management Textbook
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1&Book=Database+Management+Textbook
+    [METHOD] => GET
+)
+
+2025-02-26 10:36:22: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock
+    [METHOD] => GET
+)
+
+2025-02-26 10:36:22: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 10:36:34: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock
+    [METHOD] => GET
+)
+
+2025-02-26 10:36:34: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 10:36:38: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 10:36:45: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Laptop - High Performance
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1&Book=Laptop+-+High+Performance
+    [METHOD] => GET
+)
+
+2025-02-26 10:40:24: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Laptop - High Performance
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1&Book=Laptop+-+High+Performance
+    [METHOD] => GET
+)
+
+2025-02-26 10:40:42: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+            [Name] => Laptop - High Performance
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1&Name=Laptop+-+High+Performance
+    [METHOD] => GET
+)
+
+2025-02-26 10:41:06: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 10:41:09: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 10:41:23: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+            [Name] => Laptop
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1&Name=Laptop
+    [METHOD] => GET
+)
+
+2025-02-26 10:41:47: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1&Book=1
+    [METHOD] => GET
+)
+
+2025-02-26 10:42:22: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => 2
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1&Book=2
+    [METHOD] => GET
+)
+
+2025-02-26 10:42:25: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => 3
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1&Book=3
+    [METHOD] => GET
+)
+
+2025-02-26 10:42:31: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+            [applicant] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1&applicant=1
+    [METHOD] => GET
+)
+
+2025-02-26 10:42:39: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [applicant] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1&applicant=1
+    [METHOD] => GET
+)
+
+2025-02-26 10:42:44: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [applicant] => 2
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1&applicant=2
+    [METHOD] => GET
+)
+
+2025-02-26 10:42:52: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-26 10:43:07: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [applicant] => non-member
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1&applicant=non-member
+    [METHOD] => GET
+)
+
+2025-02-26 10:43:18: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [applicant] => non-member
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1&applicant=non-member
+    [METHOD] => GET
+)
+
+2025-02-26 10:43:25: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [applicant] => non-member
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1&applicant=non-member
+    [METHOD] => GET
+)
+
+2025-02-26 10:43:33: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [applicant] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1&applicant=1
+    [METHOD] => GET
+)
+

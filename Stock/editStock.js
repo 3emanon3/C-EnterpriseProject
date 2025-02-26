@@ -1,5 +1,10 @@
 const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
 let isLeaving = false;
+let currentBase64Image = ''; // Store the current image
+
+const imageDisplay = document.getElementById('imageDisplay');
+const fileInput = document.getElementById('fileInput');
+const imageContainer = document.getElementById('imageContainer');
 
 window.addEventListener('beforeunload', function (e) {
     if (!isLeaving) {
@@ -20,6 +25,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Fetch stock details
     fetchStockDetails(stockId);
+    
+    // Set up image container click event
+    const imageContainer = document.getElementById('imageContainer');
+    if (imageContainer) {
+        imageContainer.addEventListener('click', () => {
+            fileInput.click(); // Trigger the file input
+        });
+    }
 });
 
 async function fetchStockDetails(stockId) {
@@ -47,6 +60,12 @@ function populateForm(stock) {
     document.getElementById('price').value = stock.Price;
     document.getElementById('publisher').value = stock.Publisher;
     document.getElementById('remarks').value = stock.Remarks;
+    
+    // Store and display the image
+    if (stock.Picture) {
+        currentBase64Image = stock.Picture;
+        displayBase64Image(currentBase64Image);
+    }
 }
 
 async function saveChanges() {
@@ -54,11 +73,12 @@ async function saveChanges() {
     
     const updatedStock = {
         'Product ID': document.getElementById('productId').value,
-        Name: document.getElementById('name').value,
-        stock: document.getElementById('stock').value,
-        Price: document.getElementById('price').value,
-        Publisher: document.getElementById('publisher').value,
-        Remarks: document.getElementById('remarks').value
+        'Name': document.getElementById('name').value,
+        'stock': document.getElementById('stock').value,
+        'Price': document.getElementById('price').value,
+        'Publisher': document.getElementById('publisher').value,
+        'Remarks': document.getElementById('remarks').value,
+        'Picture': currentBase64Image // Include the image in the update
     };
 
     try {
@@ -91,6 +111,9 @@ function printData() {
     const price = parseFloat(document.getElementById('price').value).toFixed(2);
     const publisher = document.getElementById('publisher').value;
     const remarks = document.getElementById('remarks').value.replace(new RegExp('\n', 'g'), '<br>');
+    
+    // Get the current image
+    const imageSource = currentBase64Image || '../assets/placeholder.png';
 
     // Get the print template
     const template = document.getElementById('print-template').innerHTML;
@@ -102,17 +125,60 @@ function printData() {
         .replace('{{stock}}', stock)
         .replace('{{price}}', price)
         .replace('{{publisher}}', publisher)
-        .replace('{{remarks}}', remarks);
+        .replace('{{remarks}}', remarks)
+        .replace('{{productImage}}', imageSource); // Add the product image
 
     // Open a new window and write the print HTML
     const printWindow = window.open('', '_blank');
     printWindow.document.write(printHtml);
+    printWindow.document.close(); // Properly finish loading the document
     printWindow.focus();
 }
 
 function confirmCancel() {
     if (confirm('确定要取消吗，您所作的更改将不会保存。')) {
         isLeaving = true; // Set flag before redirecting
-        location.href = 'searchStock.html';
+        window.location.href = 'searchStock.html';
     }
 }
+
+function displayBase64Image(base64String) {
+    if (base64String) {
+        // Make sure image is visible
+        imageDisplay.style.display = 'block';
+        imageDisplay.src = base64String;
+    } else {
+        // Show placeholder or default image
+        imageDisplay.src = '../assets/placeholder.png'; // Replace with actual placeholder path
+    }
+}
+
+function encodeImageToBase64(file, callback) {
+    const reader = new FileReader();
+
+    reader.onload = function(event) {
+        callback(event.target.result);
+    };
+
+    reader.onerror = function(error) {
+        console.error("Error reading file:", error);
+        callback(null); // Indicate an error
+    };
+
+    reader.readAsDataURL(file);
+}
+
+// Event listener for when a file is selected
+fileInput.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+
+    if (file) {
+        encodeImageToBase64(file, (base64String) => {
+            if (base64String) {
+                // Store and display the new image
+                currentBase64Image = base64String;
+                displayBase64Image(base64String);
+            }
+        });
+    }
+});

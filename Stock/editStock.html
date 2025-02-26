@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <link rel="stylesheet" href="searchStock.css">
     <link rel="stylesheet" href="editStock.css">
 </head>
+
 <body>
     <div class="container">
         <header>
@@ -24,6 +26,10 @@
 
         <section class="edit-container">
             <div class="edit-form">
+                <div class="picture-container" id="imageContainer">
+                    <img id="imageDisplay" src="../assets/placeholder.png" alt="Click to upload or display image">
+                </div>
+                <input type="file" id="fileInput" accept="image/*">
                 <div class="form-group">
                     <label for="productId">产品ID:</label>
                     <input type="text" id="productId" required>
@@ -72,7 +78,6 @@
                     padding: 20px;
                 }
                 .top-info {
-                    display: flex;
                     text-align: center;
                     margin-bottom: 20px;
                 }
@@ -85,8 +90,28 @@
                 h2 {
                     margin: 0;
                 }
-                .stock-details p {
+                .product-info {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-start;
+                    margin-top: 20px;
+                }
+                .details {
+                    flex: 1;
+                    margin-right: 20px;
+                }
+                .details p {
                     margin: 10px 0;
+                }
+                .product-image-container {
+                    flex: 1;
+                    text-align: right;
+                }
+                .product-image {
+                    max-width: 150px;
+                    height: 150px;
+                    border: 1px solid #ccc;
+                    padding: 5px;
                 }
                 @media print {
                     #print-content {
@@ -99,8 +124,11 @@
                     h2 {
                         font-size: 24px;
                     }
-                    .stock-details p {
+                    .details p {
                         font-size: 16px;
+                    }
+                    .product-image {
+                        max-width: 50%;
                     }
                     button {
                         display: none;
@@ -111,21 +139,26 @@
         <body>
             <div id="print-content">
                 <section class="top-info">
-                <img src="../assets/logo.png" alt="Seiwajyuku Malaysia Logo" class="logo">
-                <h2>Stock Details</h2>
-                <div class="dummy"></div>
+                    <img src="../assets/logo.png" alt="Seiwajyuku Malaysia Logo" class="logo">
+                    <h2>Stock Details</h2>
                 </section>
-                <section>
-                <p>Product ID: {{productId}}</p>
-                <p>Name: {{name}}</p>
-                <p>Stock Quantity: {{stock}}</p>
-                <p>Price: {{price}}</p>
-                <p>Publisher: {{publisher}}</p>
-                <p>Remarks: {{remarks}}</p>
+                <section class="product-info">
+                    <div class="details">
+                        <p>Product ID: {{productId}}</p>
+                        <p>Name: {{name}}</p>
+                        <p>Stock Quantity: {{stock}}</p>
+                        <p>Price: {{price}}</p>
+                        <p>Publisher: {{publisher}}</p>
+                        <p>Remarks: {{remarks}}</p>
+                    </div>
+                    <section class="product-image-container">
+                        <img src="{{productImage}}" alt="Product Image" class="product-image">
+                    </section>
                 </section>
                 <button class="btn btn-primary" onclick="window.print()">Print</button>
             </div>
         </body>
     </html>
 </div>
+
 </html>

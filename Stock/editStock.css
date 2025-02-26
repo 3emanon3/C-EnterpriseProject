@@ -56,6 +56,50 @@
     margin-top: 20px;
 }
 
+.picture-container {
+    width: 200px;
+    height: 200px;
+    border: 2px dashed #ccc;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+}
+
+.picture-container:hover {
+    border-color: #888;
+}
+
+.picture-container::after {
+    content: "Click to upload image";
+    position: absolute;
+    bottom: 10px;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 3px;
+    font-size: 12px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.picture-container:hover::after {
+    opacity: 1;
+}
+
+#imageDisplay {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+#fileInput {
+    display: none; /* Hide the file input */
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .edit-container {
