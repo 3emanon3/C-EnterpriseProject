@@ -28,7 +28,7 @@
                     <input 
                         type="text" 
                         id="searchInput" 
-                        placeholder="Search events by name, venue, or status..." 
+                        placeholder="Search events by title, location, or status..." 
                         aria-label="Search events">
                     <button id="searchButton" class="btn btn-search">
                         Search
@@ -51,12 +51,18 @@
                 <table id="eventTable" aria-label="Event list">
                     <thead>
                         <tr>
-                            <th data-column="name">Event Name <i class="fas fa-sort"></i></th>
-                            <th data-column="date">Event Date <i class="fas fa-sort"></i></th>
-                            <th data-column="venue">Venue <i class="fas fa-sort"></i></th>
+                            <th data-column="id">ID <i class="fas fa-sort"></i></th>
+                            <th data-column="title">Title <i class="fas fa-sort"></i></th>
                             <th data-column="status">Status <i class="fas fa-sort"></i></th>
-                            <th data-column="capacity">Capacity <i class="fas fa-sort"></i></th>
-                            <th data-column="organizer">Organizer <i class="fas fa-sort"></i></th>
+                            <th data-column="start_time">Start Time <i class="fas fa-sort"></i></th>
+                            <th data-column="end_time">End Time <i class="fas fa-sort"></i></th>
+                            <th data-column="created_at">Created At <i class="fas fa-sort"></i></th>
+                            <th data-column="location">Location <i class="fas fa-sort"></i></th>
+                            <th data-column="description">Description <i class="fas fa-sort"></i></th>
+                            <th data-column="max_participant">Max Participants <i class="fas fa-sort"></i></th>
+                            <th data-column="registration_deadline">Registration Deadline <i class="fas fa-sort"></i></th>
+                            <th data-column="price">Price <i class="fas fa-sort"></i></th>
+                            <th data-column="online_link">Online Link <i class="fas fa-sort"></i></th>
                             <th>Actions</th>
                         </tr>
                     </thead>

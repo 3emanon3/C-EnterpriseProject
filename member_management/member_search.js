@@ -1,17 +1,17 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const API_BASE_URL = 'http://localhost/projects/Enterprise/C-EnterpriseProject/recervingAPI.php';
+    const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
     
     // State variables
-    let members = [];
-    let filteredMembers = [];
-    let currentPage = 1;
-    let currentTable = 'members';
-    let sortColumn = 'membersID';
-    let sortDirection = 'asc';
-    let itemsPerPage = 10;
-    let totalPages = 0;
-    let currentSearchType = 'normal';
-    let isResizing = false;
+    let members = [];//Stores all member records fetched from the API.
+    let filteredMembers = [];//Stores the filtered subset of members (used for display).
+    let currentPage = 1;//Tracks the current page for pagination (default: 1).
+    let currentTable = 'members';//Specifies the table being managed (default: 'members').
+    let sortColumn = 'membersID';//Tracks the column currently being sorted (default: 'membersID').
+    let sortDirection = 'asc';//Tracks the sort direction ('asc' or 'desc', default: 'asc').
+    let itemsPerPage = 10;//Number of items displayed per page (default: 10).
+    let totalPages = 0;//Total number of pages for pagination.
+    let currentSearchType = 'normal';//Tracks the type of search ('normal', 'search', 'Birthday', 'expired', or 'all').
+    let isResizing = false;//Boolean flag to track if a column is being resized.
 
     // DOM Elements
     const elements = {
@@ -458,7 +458,21 @@ function loadColumnWidths() {
             initializeResizableColumns(); 
             initializeTableScrollControls();// Add this line
             loadColumnWidths();      // Add this line
-            await fetchRecords('normal');
+            // Check if we're coming from a successful update
+        const urlParams = new URLSearchParams(window.location.search);
+        const updateStatus = urlParams.get('update');
+        
+        if (updateStatus === 'success') {
+            // Clear the URL parameter without refreshing the page
+            window.history.replaceState({}, '', 'member_search.html');
+        }
+        
+        // Ensure we're starting with a clean state
+        currentPage = 1;
+        currentSearchType = 'all';
+        elements.searchInput.value = '';
+        
+        await fetchRecords('all');
             setupSorting();
             updatePagination();
         } catch (error) {
@@ -581,7 +595,7 @@ const data = await response.json();
                 page: currentPage,
                 limit: itemsPerPage,
                 sort: sortColumn,
-                order: sortDirection
+                direction: sortDirection 
             });
             
             // Add specific parameters based on request type
@@ -602,7 +616,9 @@ const data = await response.json();
                         break;
             }
 
+            console.log('Fetching records with params:', params.toString());
             const response = await fetch(`${API_BASE_URL}?${params.toString()}`);
+            console.log('Response status:', response.status);
 
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
@@ -690,35 +706,56 @@ const data = await response.json();
     function updateTable() {
         if (!elements.tableBody) return;
         
+        console.log("Table updated with", filteredMembers.length, "records");
+        console.log("HTML generated:", elements.tableBody.innerHTML);
+
         sortRecords();
         
-        elements.tableBody.innerHTML = filteredMembers.length ? filteredMembers.map(member => `
-            <tr>
-                <td>${escapeHtml(member.membersID)}</td>
-                <td>${escapeHtml(member.Name)}</td>
-                <td>${escapeHtml(member.CName)}</td>
-                <td>${escapeHtml(member['designation of applicant'])}</td>
-                <td>${escapeHtml(member.Address)}</td>
-                <td>${formatPhone(member.phone_number)}</td>
-                <td>${escapeHtml(member.email)}</td>
-                <td>${formatIC(member.IC)}</td>
-                <td>${formatIC(member.oldIC)}</td>
-                <td>${escapeHtml(member.gender)}</td>
-                <td>${escapeHtml(member.componyName)}</td>
-                <td>${escapeHtml(member.Birthday)}</td>
-                <td>${formatDate(member['expired date'])}</td>
-                <td>${escapeHtml(member['place of birth'])}</td>
-                <td>${escapeHtml(member.remarks)}</td>
-                <td>
-                    <button class="btn btn-edit" onclick="editMember(${member.ID})">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="btn btn-delete" onclick="deleteMember(${member.ID})">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </td>
-            </tr>
-        `).join('') : '<tr><td colspan="16" class="no-results">暂无记录</td></tr>';
+        elements.tableBody.innerHTML = filteredMembers.length ? filteredMembers.map(member => {
+            // Properly handle empty or null values
+            const formatTableData = (value) => {
+                if (value === null || value === undefined || value === 'For...') {
+                    return '';
+                }
+                return escapeHtml(value);
+            };
+    
+            // Handle designation display
+            const designation = member['designation of applicant'] || member['Designation of Applicant'];
+            const designationDisplay = designation === '3' ? '外国人' :
+                                     designation === '2' ? '非会员' :
+                                     designation === '1' ? '会员' :
+                                     designation === '4' ? '拒绝继续' :
+                                     formatTableData(designation);
+    
+            return `
+                <tr>
+                    <td>${formatTableData(member.membersID)}</td>
+                    <td>${formatTableData(member.Name)}</td>
+                    <td>${formatTableData(member.CName)}</td>
+                    <td>${designationDisplay}</td>
+                    <td>${formatTableData(member.Address)}</td>
+                    <td>${formatPhone(member.phone_number)}</td>
+                    <td>${formatTableData(member.email)}</td>
+                    <td>${formatIC(member.IC)}</td>
+                    <td>${formatIC(member.oldIC)}</td>
+                    <td>${formatTableData(member.gender)}</td>
+                    <td>${formatTableData(member.componyName || member.companyName)}</td>
+                    <td>${formatTableData(member.Birthday)}</td>
+                    <td>${formatDate(member['expired date'])}</td>
+                    <td>${formatTableData(member['place of birth'])}</td>
+                    <td>${formatTableData(member.remarks)}</td>
+                    <td>
+                        <button class="btn btn-edit" onclick="editMember('${member.ID}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-delete" onclick="deleteMember('${member.ID}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }).join('') : '<tr><td colspan="16" class="no-results">暂无记录</td></tr>';
     }
 
     function sortRecords() {

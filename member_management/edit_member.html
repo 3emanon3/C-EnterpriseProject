@@ -3,128 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Member</title>
+    <title>Member Management System - Edit Member</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="member_search.css">
     <link rel="stylesheet" href="edit_member.css">
 </head>
 <body>
-    <div class="nav-buttons">
-        <button onclick="goBack()" class="nav-btn">← Back</button>
-    </div>
-    
     <div class="container">
-        <h2>会员信息</h2>
-        <form id="editMemberForm" onsubmit="handleSubmit(event)">
-            <input type="hidden" id="memberId" name="membersID">
-            
-            <div class="form-group">
-                <label for="name">姓名（英文）：</label>
-                <input type="text" id="name" name="Name" class="form-control" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="cname">姓名（中文）：</label>
-                <input type="text" id="cname" name="CName" class="form-control">
-            </div>
-            
-            <div class="form-group">
-                <label for="designation_of_applicant">种类</label>
-                <select id="designation_of_applicant" name="Designation of Applicant" class="form-control" required>
-                    <option value="">请选择</option>
-                    <option value="1">会员</option>
-                    <option value="2">非会员</option>
-                    <option value="3">外国人</option>
-                    <option value="4">拒绝继续</option>
-                    <option value="5">自定义...</option>
-                </select>
-                <div id="customDesignationContainer" class="custom-designation" style="display: none;">
-                    <input type="text" id="customDesignationInput" placeholder="输入新的种类名称">
-                    <button type="button" onclick="applyCustomDesignation()">添加</button>
+        <header>
+            <h1>会员管理系统 - 编辑会员</h1>
+            <nav class="system-nav">
+                <button class="btn btn-primary" onclick="printData()">
+                    <i class="fas fa-print"></i> 复印
+                </button>
+                <button class="btn btn-primary" onclick="goBack()">
+                    <i class="fas fa-times"></i> 取消
+                </button>
+            </nav>
+        </header>
+
+        <section class="edit-container">
+            <form class="edit-form" id="memberForm">
+                <div class="form-group">
+                    <label for="memberId">会员ID:</label>
+                    <input type="text" id="memberId" name="memberId" readonly>
                 </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="address">地址:</label>
-                <textarea id="address" name="Address" class="form-control" rows="3"></textarea>
-            </div>
-            
-            <div class="form-group">
-                <label for="phone">电话号码：</label>
-                <input type="tel" id="phone" name="phone_number" class="form-control">
-            </div>
-            
-            <div class="form-group">
-                <label for="email">电子邮件：</label>
-                <input type="email" id="email" name="email" class="form-control" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="ic">IC :</label>
-                <input type="text" id="ic" name="IC" class="form-control">
-            </div>
-            
-            <div class="form-group">
-                <label for="oldic">旧 IC :</label>
-                <input type="text" id="oldic" name="oldIC" class="form-control">
-            </div>
-            
-            <div class="form-group">
-                <label for="gender">性别:</label>
-                <select id="gender" name="gender" class="form-control">
-                    <option value="">请选择</option>
-                    <option value="Male">男</option>
-                    <option value="Female">女</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="company">公司名称:</label>
-                <input type="text" id="company" name="componyName" class="form-control">
-            </div>
-            
-            <div class="form-group">
-                <label for="birthday">生日月份:</label>
-                <select id="birthday" name="Birthday" class="form-control">
-                    <option value="">Select Month</option>
-                    <option value="1">January</option>
-                    <option value="2">February</option>
-                    <option value="3">March</option>
-                    <option value="4">April</option>
-                    <option value="5">May</option>
-                    <option value="6">June</option>
-                    <option value="7">July</option>
-                    <option value="8">August</option>
-                    <option value="9">September</option>
-                    <option value="10">October</option>
-                    <option value="11">November</option>
-                    <option value="12">December</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="expired">过期日期 (YYYY/MM/DD):</label>
-                <div class="expiration-options">
-                    <button type="button" onclick="setExpirationPeriod(1)">1年</button>
-                    <button type="button" onclick="setExpirationPeriod(3)">3年</button>
+                <div class="form-group">
+                    <label for="name">姓名（英）:</label>
+                    <input type="text" id="name" name="name" required>
                 </div>
-                <div class="custom-years">
-                    <input type="number" id="customYears" min="1" max="20" placeholder="年数">
-                    <button type="button" onclick="setCustomExpirationPeriod()">应用自定义年数</button>
+                <div class="form-group">
+                    <label for="cname">姓名（中）:</label>
+                    <input type="text" id="cname" name="cname">
                 </div>
-                <input type="text" id="expired" name="expired date" class="form-control" placeholder="YYYY/MM/DD" readonly>
-            </div>
-            
-            <div class="form-group">
-                <label for="birthplace">出生地:</label>
-                <input type="text" id="birthplace" name="place of birth" class="form-control">
-            </div>
-            
-            <div class="form-group">
-                <label for="remarks">备注:</label>
-                <textarea id="remarks" name="remarks" class="form-control" rows="3"></textarea>
-            </div>
-            
-            <button type="submit" class="btn">更新会员</button>
-        </form>
+                <div class="form-group">
+                    <label for="designation_of_applicant">种类:</label>
+                    <select id="designation_of_applicant" name="designation_of_applicant" required>
+                        <option value="">请选择</option>
+                        <option value="1">会员</option>
+                        <option value="2">非会员</option>
+                        <option value="3">外国人</option>
+                        <option value="4">拒绝继续</option>
+                        <option value="5">自定义...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="address">地址:</label>
+                    <textarea id="address" name="address" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="phone">手机号码:</label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">邮箱:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="ic">IC 号码:</label>
+                    <input type="text" id="ic" name="ic" required>
+                </div>
+                <div class="form-group">
+                    <label for="oldic">旧 IC 号码:</label>
+                    <input type="text" id="oldic" name="oldic">
+                </div>
+                <div class="form-group">
+                    <label for="gender">性别:</label>
+                    <select id="gender" name="gender" required>
+                        <option value="">请选择</option>
+                        <option value="male">男</option>
+                        <option value="female">女</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="company">公司名字:</label>
+                    <input type="text" id="company" name="company">
+                </div>
+                <div class="form-group">
+                    <label for="birthday">生日月份:</label>
+                    <select id="birthday" name="birthday" required>
+                        <option value="">请选择</option>
+                        <option value="1">一月</option>
+                        <option value="2">二月</option>
+                        <option value="3">三月</option>
+                        <option value="4">四月</option>
+                        <option value="5">五月</option>
+                        <option value="6">六月</option>
+                        <option value="7">七月</option>
+                        <option value="8">八月</option>
+                        <option value="9">九月</option>
+                        <option value="10">十月</option>
+                        <option value="11">十一月</option>
+                        <option value="12">十二月</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="expired">过期日期:</label>
+                    <input type="text" id="expired" name="expired" placeholder="YYYY/MM/DD" required>
+                </div>
+                <div class="form-group expiration-options">
+                    <button type="button" class="btn btn-small" data-expiration-years="1">1年</button>
+                    <button type="button" class="btn btn-small" data-expiration-years="2">2年</button>
+                    <button type="button" class="btn btn-small" data-expiration-years="3">3年</button>
+                    <div class="custom-years">
+                        <input type="number" id="customYears" min="1" max="20" placeholder="自定年数">
+                        <button type="button" id="setCustomYears" class="btn btn-small">设置</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="birthplace">出生地方:</label>
+                    <input type="text" id="birthplace" name="birthplace" required>
+                </div>
+                <div class="form-group">
+                    <label for="remarks">备注:</label>
+                    <textarea id="remarks" name="remarks" rows="4"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save"></i> 保存更改
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="goBack()">
+                        <i class="fas fa-times"></i> 取消
+                    </button>
+                </div>
+            </form>
+        </section>
+    </div>
+
+    <div id="print-template" style="display: none;">
+        <html>
+            <head>
+                <title>Print Member Details</title>
+                <style>
+                    .top-info {
+                        position: relative;
+                        text-align: center;
+                        padding: 0 120px;
+                    }
+                    .logo-container {
+                        position: absolute;
+                        text-indent: -9999px;
+                        background: url('../assets/logo.png');
+                        background-repeat: no-repeat;
+                        background-position: center;
+                        width: 200px;
+                        height: 100px;
+                    }
+                    #print-content {
+                        font-family: Arial, sans-serif;
+                        padding: 20px;
+                    }
+                    #print-content h2 {
+                        text-align: center;
+                        margin-bottom: 20px;
+                    }
+                    #print-content p {
+                        margin: 10px 0;
+                    }
+                    #print-content button {
+                        display: block;
+                        margin: 20px auto;
+                    }
+                    @media print {
+                        #print-content {
+                            margin: 0;
+                            padding: 0;
+                        }
+                        #print-content h2 {
+                            text-align: left;
+                            font-size: 24px;
+                        }
+                        #print-content p {
+                            font-size: 16px;
+                        }
+                        #print-content button {
+                            display: none;
+                        }
+                    }
+                </style>
+            </head>
+            <body>
+                <div id="print-content">
+                    <sec class="top-info">
+                        <div class="logo-container">The logo of seiwajyuku Malaysia</div>
+                        <h2>会员详情</h2>
+                        <div class="dummy"></div>
+                    </sec>
+                    <sec>
+                        <p>会员ID: {{memberId}}</p>
+                        <p>姓名（英）: {{name}}</p>
+                        <p>姓名（中）: {{cname}}</p>
+                        <p>种类: {{designation}}</p>
+                        <p>地址: {{address}}</p>
+                        <p>手机号码: {{phone}}</p>
+                        <p>邮箱: {{email}}</p>
+                        <p>IC 号码: {{ic}}</p>
+                        <p>旧 IC 号码: {{oldIc}}</p>
+                        <p>性别: {{gender}}</p>
+                        <p>公司名字: {{companyName}}</p>
+                        <p>生日月份: {{birthday}}</p>
+                        <p>过期日期: {{expiredDate}}</p>
+                        <p>出生地方: {{birthplace}}</p>
+                        <p>备注: {{remarks}}</p>
+                    </sec>
+                    <button class="btn btn-primary" onclick="window.print()">打印</button>
+                </div>
+            </body>
+        </html>
     </div>
 
     <script src="edit_member.js"></script>

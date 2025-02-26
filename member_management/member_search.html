@@ -3,73 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Member Management System - Search</title>
+    <title>Stock Management System - Search</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="member_search.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
     <div class="container">
-        <div class="table-wrapper"></div>
-        
-        <div class="table-container">
-        <table id="memberTable"  class="resizable-table">
         <header>
             <h1>会员管理系统</h1>
             <nav class="system-nav">
-                <button class="btn btn-primary" onclick="location.href='../project.html'" aria-label="Exit to Home">
-                    <i class="fas fa-home"></i> 退出
+                <button class="btn btn-primary" onclick="location.href='../project.html'">
+                    <i class="fas fa-home"></i> 返回
                 </button>
-                <button class="btn btn-success" onclick="location.href='member_management.html'" aria-label="Add New Member">
-                    <i class="fas fa-user-plus"></i> 添加新会员
+                <button class="btn btn-success" onclick="location.href='member_management.html'">
+                    <i class="fas fa-box"></i> 增加会员
                 </button>
-                <button id="searchBirthday" class="btn btn-search">
-                    <i class="fas fa-birthday-cake"></i> 本月生日会员
-                </button>
-                <button id="searchExpiry" class="btn btn-search">
-                    <i class="fas fa-clock"></i> 本月需续期会员
-                </button>
-                <button id="listAllMembers" class="btn btn-search">
-                    <i class="fas fa-list"></i> 显示所有会员
-                </button>
-              
             </nav>
         </header>
 
-       
-        
         <section class="search-container">
             <div class="search-wrapper">
                 <div class="search-input-group">
-                    <i class="fas fa-search search-icon" id="searchIcon" aria-hidden="true"></i>
+                    <i class="fas fa-search search-icon"></i>
                     <input 
                         type="text" 
                         id="searchInput" 
-                        placeholder="Search ..." 
-                        aria-label="Search members">
-                    <button id="searchButton" class="btn btn-search" aria-label="Search">
-                        搜索
-                    </button>
+                        placeholder="使用ID, 名称," 
+                        aria-label="Search stocks">
                 </div>
             </div>
-            
-            
-
             <div class="search-stats">
-                <span class="stats-label">会员总数:</span>
-                <span id="totalMembers" class="stats-value">0</span>
+                <span class="stats-label">会员数量:</span>
+                <span id="totalStocks" class="stats-value">0</span>
             </div>
         </section>
 
         <section class="table-container">
-            <table id="memberTable" class="resizable-table">
-            <div class="loader" role="status" aria-label="Loading members">
+            <div class="loader">
                 <div class="spinner"></div>
-                <span>正在加载会员...</span>
+                <span>Loading stocks...</span>
             </div>
             
             <div class="table-responsive">
-                <table id="memberTable" aria-label="Member list" class="resizable-table">
+                <table id="memberTable" aria-label="Member list">
                     <thead>
                         <tr>
                             <th data-column="membersID">会员ID<div class="resizer"></div></th>
@@ -88,6 +64,7 @@
                             <th data-column="place of birth">出生地方<div class="resizer"></div></th>
                             <th data-column="remarks">备注<div class="resizer"></div></th>
                             <th data-column="actions">操作<div class="resizer"></div></th>
+                           
                         </tr>
                     </thead>
                     <tbody>
@@ -97,10 +74,12 @@
             </div>
             
             <div class="pagination-container">
-                <div class="pagination" role="navigation" aria-label="Page navigation"></div>
+                <button id="prevPage" class="btn btn-primary">←</button>
+                <div class="pagination"></div>
+                <button id="nextPage" class="btn btn-primary">→</button>
                 <div class="items-per-page">
-                    <label for="itemsPerPage">每页项目数:</label>
-                    <select id="itemsPerPage" aria-label="Items per page">
+                    <label for="itemsPerPage">Items per page:</label>
+                    <select id="itemsPerPage">
                         <option value="10">10</option>
                         <option value="25">25</option>
                         <option value="50">50</option>
@@ -108,8 +87,6 @@
                 </div>
             </div>
         </section>
-
-        <div id="toastContainer" aria-live="polite" class="toast-container"></div>
     </div>
 
     <script src="member_search.js"></script>

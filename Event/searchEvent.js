@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost/projects/Enterprise/C-EnterpriseProject/recervingAPI.php';
+const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
 
 document.addEventListener("DOMContentLoaded", function () {
     const searchInput = document.getElementById("searchInput");

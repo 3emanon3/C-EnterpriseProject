@@ -1,18 +1,38 @@
-// Constants
-const API_BASE_URL = 'http://localhost/projects/Enterprise/C-EnterpriseProject/recervingAPI.php';
+const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
 const CUSTOM_DESIGNATION_VALUE = '5';
+
+// Static designation mappings
+const STATIC_DESIGNATIONS = [
+    { id: '1', name: '会员', englishName: 'Member' },
+    { id: '2', name: '非会员', englishName: 'Non-Member' },
+    { id: '3', name: '外国人', englishName: 'Foreigner' },
+    { id: '4', name: '拒绝继续', englishName: 'Reject' }
+];
+
+// Month names mapping
+const MONTH_NAMES = [
+    '一月', '二月', '三月', '四月', '五月', '六月', 
+    '七月', '八月', '九月', '十月', '十一月', '十二月'
+];
 
 // Utility Functions
 const makeApiUrl = (table) => `${API_BASE_URL}?table=${encodeURIComponent(table)}`;
 
 const handleApiResponse = async (response) => {
+    const responseText = await response.text();
+    console.log('API Response Status:', response.status);
+    console.log('API Response Headers:', Object.fromEntries(response.headers.entries()));
+    console.log('API Response Body:', responseText);
+
     if (!response.ok) {
-        const errorText = await response.text();
-        console.error('API Error Response:', errorText);
-        throw new Error(`HTTP error! status: ${response.status}`);
+        console.error('API Error Response:', {
+            status: response.status,
+            statusText: response.statusText,
+            body: responseText
+        });
+        throw new Error(`HTTP error! status: ${response.status}\nResponse: ${responseText}`);
     }
     
-    const responseText = await response.text();
     try {
         return JSON.parse(responseText);
     } catch (error) {
@@ -33,13 +53,37 @@ function isValidDateFormat(dateString) {
     return /^\d{4}\/\d{2}\/\d{2}$/.test(dateString);
 }
 
-// Designation Handler Class
+// Enhanced DesignationHandler Class
 class DesignationHandler {
     constructor() {
         this.selectElement = document.getElementById('designation_of_applicant');
-        this.customContainer = document.getElementById('customDesignationContainer');
         this.types = new Map();
+        this.createCustomDesignationUI();
         this.setupEventListeners();
+    }
+
+    createCustomDesignationUI() {
+        if (!document.getElementById('customDesignationContainer')) {
+            const container = document.createElement('div');
+            container.id = 'customDesignationContainer';
+            container.className = 'custom-designation';
+            container.style.display = 'none';
+
+            const input = document.createElement('input');
+            input.id = 'customDesignationInput';
+            input.type = 'text';
+            input.placeholder = '输入新的种类名称';
+
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.textContent = '添加';
+            button.onclick = () => this.applyCustomDesignation();
+
+            container.appendChild(input);
+            container.appendChild(button);
+            this.selectElement.parentNode.appendChild(container);
+            this.customContainer = container;
+        }
     }
 
     setupEventListeners() {
@@ -60,6 +104,7 @@ class DesignationHandler {
 
     async loadDesignations() {
         try {
+            console.log('Fetching designations...');
             const response = await fetch(makeApiUrl('applicants types'));
             const data = await handleApiResponse(response);
 
@@ -70,22 +115,35 @@ class DesignationHandler {
             this.clearDesignationOptions();
             this.addDesignationOption('请选择', '');
 
+            // Add static designations first
+            STATIC_DESIGNATIONS.forEach(designation => {
+                this.addDesignationOption(designation.name, designation.id);
+                this.types.set(designation.id, designation.name);
+            });
+
+            // Add dynamic designations from API
             data.data.forEach(designation => {
-                this.addDesignationOption(designation.designation_name, designation.id);
-                this.types.set(designation.id.toString(), designation.designation_name);
+                const id = designation?.id?.toString() || '';
+                const name = designation?.designation_name || '';
+                
+                if (id && name && !this.types.has(id)) {
+                    this.addDesignationOption(name, id);
+                    this.types.set(id, name);
+                }
             });
 
             this.addDesignationOption('自定义...', CUSTOM_DESIGNATION_VALUE);
+            console.log('Designations loaded successfully:', this.types);
 
         } catch (error) {
             console.error('Error loading designations:', error);
-            throw error;
+            // Don't throw - allow initialization to continue with static designations
         }
     }
 
     clearDesignationOptions() {
         while (this.selectElement.firstChild) {
-            this.selectElement.removeChild(this.selectElement.firstChild);
+            this.selectElement.firstChild.remove();
         }
     }
 
@@ -112,10 +170,12 @@ class DesignationHandler {
             }
 
             const newId = await this.saveNewDesignation(customValue);
-            this.addDesignationOption(customValue, newId);
-            this.types.set(newId.toString(), customValue);
-            this.selectElement.value = newId;
-            this.customContainer.style.display = 'none';
+            if (newId) {
+                this.addDesignationOption(customValue, newId);
+                this.types.set(newId.toString(), customValue);
+                this.selectElement.value = newId;
+                this.customContainer.style.display = 'none';
+            }
 
         } catch (error) {
             console.error('Error applying custom designation:', error);
@@ -124,9 +184,10 @@ class DesignationHandler {
     }
 
     findExistingDesignation(value) {
+        if (!value) return null;
         const lowercaseValue = value.toLowerCase();
         for (const [id, name] of this.types) {
-            if (name.toLowerCase() === lowercaseValue) {
+            if (name && name.toLowerCase() === lowercaseValue) {
                 return id;
             }
         }
@@ -149,12 +210,12 @@ class DesignationHandler {
         if (!value || value === CUSTOM_DESIGNATION_VALUE) return null;
         return {
             id: value,
-            name: this.selectElement.options[this.selectElement.selectedIndex].text
+            name: this.types.get(value) || this.selectElement.options[this.selectElement.selectedIndex]?.text || ''
         };
     }
 }
 
-// Form Functions
+// Form Management Functions
 function setExpirationPeriod(years) {
     const currentDate = new Date();
     const expirationDate = new Date(currentDate);
@@ -174,58 +235,107 @@ function setCustomExpirationPeriod() {
     setExpirationPeriod(years);
 }
 
+// Helper function to get month from birthday data
+function getMonthFromBirthday(birthdayData) {
+    if (!birthdayData) return '';
+    
+    // Handle timestamp from API
+    if (typeof birthdayData === 'number') {
+        const date = new Date(birthdayData);
+        if (!isNaN(date.getTime())) {
+            return (date.getMonth() + 1).toString();
+        }
+    }
+    
+    // Handle string with possible month number (from API)
+    if (typeof birthdayData === 'string') {
+        // Try to extract month from date string like "YYYY-MM-DD" or "YYYY/MM/DD"
+        const dateMatch = birthdayData.match(/\d{4}[-\/](\d{2})[-\/]\d{2}/);
+        if (dateMatch && dateMatch[1]) {
+            // Return month number without leading zero
+            return parseInt(dateMatch[1], 10).toString();
+        }
+        
+        // If it's already just a month number
+        if (/^([1-9]|1[0-2])$/.test(birthdayData)) {
+            return birthdayData;
+        }
+    }
+    
+    return '';
+}
+
 function populateForm(memberData) {
     console.log('Populating form with data:', memberData);
     
     const setFormValue = (elementId, value) => {
         const element = document.getElementById(elementId);
-        if (element) {
-            if (element.tagName === 'SELECT') {
-                if (elementId === 'designation_of_applicant' && value) {
-                    let designationId = !isNaN(value) ? value.toString() : window.designationHandler.findExistingDesignation(value);
-                    if (designationId) {
-                        element.value = designationId;
-                    } else {
-                        element.value = '';
-                    }
+        if (!element) {
+            console.warn(`Element with id '${elementId}' not found`);
+            return;
+        }
+
+        if (value === 'For...' || value === null || value === undefined) {
+            value = '';
+        }
+
+        if (element.tagName === 'SELECT') {
+            if (elementId === 'designation_of_applicant') {
+                let designationValue = value?.toString() || '';
+                
+                // Try to find matching designation from static list first
+                const staticDesignation = STATIC_DESIGNATIONS.find(d => 
+                    d.name === designationValue || d.englishName === designationValue || d.id === designationValue
+                );
+                
+                if (staticDesignation) {
+                    element.value = staticDesignation.id;
                 } else {
-                    element.value = value || '';
+                    element.value = designationValue;
                 }
+            } else if (elementId === 'gender') {
+                const genderValue = value?.toString().toLowerCase() || '';
+                element.value = genderValue;
+            } else if (elementId === 'birthday') {
+                // Handle birthday as month only
+                const monthValue = getMonthFromBirthday(value);
+                element.value = monthValue;
             } else {
                 element.value = value || '';
             }
+        } else {
+            element.value = value || '';
         }
     };
 
     const fieldMappings = {
-        'memberId': 'ID',
-        'name': 'Name',
-        'cname': 'CName',
-        'designation_of_applicant': 'Designation of Applicant',
-        'address': 'Address',
-        'phone': 'phone_number',
-        'email': 'email',
-        'ic': 'IC',
-        'oldic': 'oldIC',
-        'gender': 'gender',
-        'company': 'componyName',
-        'birthday': 'Birthday',
-        'expired': 'expired date',
-        'birthplace': 'place of birth',
-        'remarks': 'remarks'
+        'memberId': ['ID', 'membersID'],
+        'name': ['Name'],
+        'cname': ['CName'],
+        'designation_of_applicant': ['Designation of Applicant', 'designation of applicant', 'designation_of_applicant'],
+        'address': ['Address'],
+        'phone': ['phone_number'],
+        'email': ['email'],
+        'ic': ['IC'],
+        'oldic': ['oldIC'],
+        'gender': ['gender'],
+        'company': ['companyName', 'componyName'],
+        'birthday': ['Birthday'],
+        'expired': ['expired date'],
+        'birthplace': ['place of birth'],
+        'remarks': ['remarks']
     };
 
-    Object.entries(fieldMappings).forEach(([elementId, dataKey]) => {
-        let value = memberData[dataKey];
+    Object.entries(fieldMappings).forEach(([elementId, possibleKeys]) => {
+        let value = null;
         
-        if (elementId === 'birthday' && value) {
-            value = parseInt(value);
+        for (const key of possibleKeys) {
+            if (memberData[key] !== undefined) {
+                value = memberData[key];
+                break;
+            }
         }
         
-        if (elementId === 'expired' && value) {
-            value = formatDate(value);
-        }
-
         setFormValue(elementId, value);
     });
 }
@@ -247,30 +357,52 @@ async function handleSubmit(event) {
     }
 
     const formData = new FormData(event.target);
-    const memberData = Object.fromEntries(formData.entries());
-
     const designation = window.designationHandler.getCurrentDesignation();
-    if (designation) {
-        memberData['Designation of Applicant'] = designation.name;
+    const birthdayMonth = formData.get('birthday');
+
+    // Store just the month value for birthday
+    // We'll use a consistent format in the database (timestamp of first day of month)
+    let birthdayValue = null;
+    if (birthdayMonth) {
+        // Create a date object for the first day of the selected month in the current year
+        const currentYear = new Date().getFullYear();
+        const birthdayDate = new Date(currentYear, parseInt(birthdayMonth) - 1, 1);
+        birthdayValue = birthdayDate.getTime();
     }
 
-    // Format data
-    if (memberData.Birthday) {
-        memberData.Birthday = parseInt(memberData.Birthday);
-    }
-
-    // Clean empty values
-    Object.keys(memberData).forEach(key => {
-        if (memberData[key] === '') {
-            memberData[key] = null;
-        }
-    });
-
-    memberData.membersID = memberId;
+    const memberData = {
+        ID: memberId,
+        Name: formData.get('name') || null,
+        CName: formData.get('cname') || null,
+        'Designation of Applicant': designation?.id || null,
+        'designation of applicant': designation?.id || null,
+        Address: formData.get('address') || null,
+        phone_number: formData.get('phone') || null,
+        email: formData.get('email') || null,
+        IC: formData.get('ic') || null,
+        oldIC: formData.get('oldic') || null,
+        gender: formData.get('gender') || null,
+        companyName: formData.get('company') || null,
+        componyName: formData.get('company') || null,
+        Birthday: birthdayValue,
+        'expired date': formData.get('expired') || null,
+        'place of birth': formData.get('birthplace') || null,
+        remarks: formData.get('remarks') || null
+    };
 
     try {
-        const url = `${API_BASE_URL}?table=members&search=true&ID=${memberData.membersID}`;
-        const response = await fetch(url, {
+        // First check if the member exists
+        const checkUrl = `${API_BASE_URL}?table=members&search=true&ID=${memberId}`;
+        const checkResponse = await fetch(checkUrl);
+        const checkData = await handleApiResponse(checkResponse);
+
+        if (!checkData.data || !checkData.data.length) {
+            throw new Error('Member not found');
+        }
+
+        // Proceed with update
+        const updateUrl = `${API_BASE_URL}?table=members&ID=${memberId}`;
+        const response = await fetch(updateUrl, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -278,16 +410,75 @@ async function handleSubmit(event) {
             body: JSON.stringify(memberData)
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        const responseData = await handleApiResponse(response);
+        
+        if (responseData.status === 'success' || response.ok) {
+            // Verify the update was successful
+            const verifyResponse = await fetch(checkUrl);
+            const verifyData = await handleApiResponse(verifyResponse);
+            
+            if (verifyData.data && verifyData.data.length > 0) {
+                console.log('Updated member data:', verifyData.data[0]);
+                alert('Member information updated successfully!');
+                window.location.href = 'member_search.html?update=success';
+            } else {
+                throw new Error('Update verification failed');
+            }
+        } else {
+            throw new Error(responseData.message || 'Update failed');
         }
-
-        alert('Member information updated successfully!');
-        window.location.href = 'member_search.html';
     } catch (error) {
         console.error('Error during submission:', error);
-        alert(`An error occurred while updating member information: ${error.message}`);
+        alert(`更新会员信息时出错: ${error.message}`);
     }
+}
+
+function printData() {
+    const memberId = document.getElementById('memberId').value;
+    const name = document.getElementById('name').value;
+    const cname = document.getElementById('cname').value;
+    const designation = document.getElementById('designation_of_applicant').options[document.getElementById('designation_of_applicant').selectedIndex].text;
+    const address = document.getElementById('address').value;
+    const phone = document.getElementById('phone').value;
+    const email = document.getElementById('email').value;
+    const ic = document.getElementById('ic').value;
+    const oldic = document.getElementById('oldic').value;
+    const gender = document.getElementById('gender').options[document.getElementById('gender').selectedIndex].text;
+    const company = document.getElementById('company').value;
+    
+    // Get the month name instead of number for display
+    const birthdaySelect = document.getElementById('birthday');
+    const birthdayMonth = birthdaySelect.value ? 
+        birthdaySelect.options[birthdaySelect.selectedIndex].text : '';
+    
+    const expired = document.getElementById('expired').value;
+    const birthplace = document.getElementById('birthplace').value;
+    const remarks = document.getElementById('remarks').value;
+
+    // Get the print template
+    let printTemplate = document.getElementById('print-template').innerHTML;
+    
+    // Replace placeholders with actual data
+    printTemplate = printTemplate.replace('{{memberId}}', memberId)
+        .replace('{{name}}', name)
+        .replace('{{cname}}', cname)
+        .replace('{{designation}}', designation)
+        .replace('{{address}}', address)
+        .replace('{{phone}}', phone)
+        .replace('{{email}}', email)
+        .replace('{{ic}}', ic)
+        .replace('{{oldIc}}', oldic)
+        .replace('{{gender}}', gender)
+        .replace('{{companyName}}', company)
+        .replace('{{birthday}}', birthdayMonth)
+        .replace('{{expiredDate}}', expired)
+        .replace('{{birthplace}}', birthplace)
+        .replace('{{remarks}}', remarks);
+
+    // Open a new window for printing
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(printTemplate);
+    printWindow.document.close();
 }
 
 async function loadMemberData() {
@@ -309,7 +500,7 @@ async function loadMemberData() {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const responseData = await response.json();
+        const responseData = await handleApiResponse(response);
         
         if (!responseData.data || !Array.isArray(responseData.data) || responseData.data.length === 0) {
             throw new Error("No member data found");
@@ -327,13 +518,73 @@ function goBack() {
     window.history.back();
 }
 
-// Initialize the application
+function confirmCancel() {
+    if (confirm('确定要取消编辑吗？未保存的更改将丢失。')) {
+        goBack();
+    }
+}
+
+// Initialization
 document.addEventListener('DOMContentLoaded', async () => {
+    console.log('Page loaded, initializing...');
+    
     try {
+        // Initialize DesignationHandler as a global instance
         window.designationHandler = new DesignationHandler();
         await window.designationHandler.loadDesignations();
+        console.log('Designations loaded successfully');
+
+        // Load member data
         await loadMemberData();
+        console.log('Member data loaded and form populated');
+
+        // Set up form submission handler
+        const form = document.getElementById('memberForm');
+        if (form) {
+            form.addEventListener('submit', handleSubmit);
+        } else {
+            console.error('Form element not found');
+        }
+
+        // Set up expiration period buttons if they exist
+        const expirationButtons = document.querySelectorAll('[data-expiration-years]');
+        expirationButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const years = parseInt(button.dataset.expirationYears);
+                if (!isNaN(years)) {
+                    setExpirationPeriod(years);
+                }
+            });
+        });
+
+        // Set up custom expiration input handler
+        const customYearsButton = document.getElementById('setCustomYears');
+        if (customYearsButton) {
+            customYearsButton.addEventListener('click', setCustomExpirationPeriod);
+        }
+
+        console.log('All event handlers initialized');
+
     } catch (error) {
         console.error('Initialization error:', error);
+        alert('系统初始化时出错，请刷新页面重试。');
     }
 });
+
+// Error handling for uncaught promises
+window.addEventListener('unhandledrejection', event => {
+    console.error('Unhandled promise rejection:', event.reason);
+    alert('操作过程中出现错误，请重试。如果问题持续存在，请刷新页面。');
+});
+
+// Global error handler
+window.onerror = function(message, source, lineno, colno, error) {
+    console.error('Global error:', {
+        message,
+        source,
+        lineno,
+        colno,
+        error
+    });
+    return false;
+};

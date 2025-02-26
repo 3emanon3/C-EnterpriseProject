@@ -123,6 +123,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const month = String(date.getMonth() + 1).padStart(2, '0'); // Add leading zero if needed
             const day = String(date.getDate()).padStart(2, '0'); // Add leading zero if needed
             data[key] = `${year}-${month}-${day}`;
+        } else if (key === 'designation_of_applicant') {
+            // Ensure designation is sent as a number
+            data[key] = parseInt(value, 10);
         }  else {
                 data[key] = value;
             }
