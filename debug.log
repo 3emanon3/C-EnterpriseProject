@@ -26860,3 +26860,2018 @@
     [METHOD] => GET
 )
 
+2025-02-27 04:06:26: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [search] => 1
+            [applicant] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1&search=1&applicant=1
+    [METHOD] => GET
+)
+
+2025-02-27 04:06:44: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [search] => 1
+            [applicanttype] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1&search=1&applicanttype=1
+    [METHOD] => GET
+)
+
+2025-02-27 04:07:03: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [search] => 1
+            ['Designation_of_Applicant'] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1&search=1&%27Designation%20of%20Applicant%27=1
+    [METHOD] => GET
+)
+
+2025-02-27 04:07:26: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [search] => true
+            ['Designation_of_Applicant'] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1&search=true&%27Designation%20of%20Applicant%27=1
+    [METHOD] => GET
+)
+
+2025-02-27 04:07:32: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-02-27 04:07:37: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [search] => 1
+            ['Designation_of_Applicant'] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1&search=1&%27Designation%20of%20Applicant%27=1
+    [METHOD] => GET
+)
+
+2025-02-27 04:07:50: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [search] => 2
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1&search=2
+    [METHOD] => GET
+)
+
+2025-02-27 04:08:15: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [search] => Avenue
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1&search=Avenue
+    [METHOD] => GET
+)
+
+2025-02-27 04:08:36: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [search] => true
+            [ID] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1&search=true&ID=1
+    [METHOD] => GET
+)
+
+2025-02-27 04:08:41: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [search] => true
+            [ID] => 81
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1&search=true&ID=81
+    [METHOD] => GET
+)
+
+2025-02-27 08:50:13: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [search] => 1
+            ['Designation_of_Applicant'] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [search] => 1
+            ['Designation_of_Applicant'] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1&search=1&%27Designation%20of%20Applicant%27=1
+    [METHOD] => GET
+)
+
+2025-02-27 08:50:24: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [search] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [search] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1&search=1
+    [METHOD] => GET
+)
+
+2025-02-27 08:50:29: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-02-27 08:50:44: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [search] => 81
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [search] => 81
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&search=81
+    [METHOD] => GET
+)
+
+2025-02-27 08:50:53: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [search] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [search] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&search=1
+    [METHOD] => GET
+)
+
+2025-02-27 08:51:08: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [search] => 4
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [search] => 4
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&search=4
+    [METHOD] => GET
+)
+
+2025-02-27 08:51:18: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [search] => John
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [search] => John
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&search=John
+    [METHOD] => GET
+)
+
+2025-02-27 08:51:32: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Laptop - High Performance
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Laptop - High Performance
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1&Book=Laptop+-+High+Performance
+    [METHOD] => GET
+)
+
+2025-02-27 08:51:34: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Laptop - High Performance
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Laptop - High Performance
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1&Book=Laptop+-+High+Performance
+    [METHOD] => GET
+)
+
+2025-02-27 08:51:34: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Laptop - High Performance
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Laptop - High Performance
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1&Book=Laptop+-+High+Performance
+    [METHOD] => GET
+)
+
+2025-02-27 08:51:35: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Laptop - High Performance
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Laptop - High Performance
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1&Book=Laptop+-+High+Performance
+    [METHOD] => GET
+)
+
+2025-02-27 08:51:37: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Wireless Ergonomic Mouse
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Wireless Ergonomic Mouse
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1&Book=Wireless+Ergonomic+Mouse
+    [METHOD] => GET
+)
+
+2025-02-27 08:51:37: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Wireless Ergonomic Mouse
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Wireless Ergonomic Mouse
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1&Book=Wireless+Ergonomic+Mouse
+    [METHOD] => GET
+)
+
+2025-02-27 08:51:37: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Wireless Ergonomic Mouse
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Wireless Ergonomic Mouse
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1&Book=Wireless+Ergonomic+Mouse
+    [METHOD] => GET
+)
+
+2025-02-27 08:51:37: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Wireless Ergonomic Mouse
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Wireless Ergonomic Mouse
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1&Book=Wireless+Ergonomic+Mouse
+    [METHOD] => GET
+)
+
+2025-02-27 08:51:39: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => stock
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock
+    [METHOD] => GET
+)
+
+> 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-27 08:51:41: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => stock
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock
+    [METHOD] => GET
+)
+
+2025-02-27 08:51:41: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-27 08:51:45: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Mystery Novel - The Silent Creek
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Mystery Novel - The Silent Creek
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1&Book=Mystery+Novel+-+The+Silent+Creek
+    [METHOD] => GET
+)
+
+2025-02-27 08:51:47: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Laptop - High Performance
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Laptop - High Performance
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1&Book=Laptop+-+High+Performance
+    [METHOD] => GET
+)
+
+2025-02-27 08:51:48: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Laptop - High Performance
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Laptop - High Performance
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1&Book=Laptop+-+High+Performance
+    [METHOD] => GET
+)
+
+2025-02-27 08:51:48: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Laptop - High Performance
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Laptop - High Performance
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1&Book=Laptop+-+High+Performance
+    [METHOD] => GET
+)
+
+2025-02-27 08:51:50: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-27 08:51:50: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => stock
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock
+    [METHOD] => GET
+)
+
+2025-02-27 08:51:50: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-27 08:51:51: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-27 08:51:51: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => stock
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock
+    [METHOD] => GET
+)
+
+2025-02-27 08:51:51: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => soldrecord
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-27 08:51:51: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => stock
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock
+    [METHOD] => GET
+)
+
+> 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-02-27 08:52:48: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [search] => John%Birthday=true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [search] => John%Birthday=true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&search=John%Birthday=true
+    [METHOD] => GET
+)
+
+2025-02-27 08:53:02: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [birthday] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [birthday] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&birthday=true
+    [METHOD] => GET
+)
+
+2025-02-27 08:53:13: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [birthday] => true
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [birthday] => true
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&birthday=true&search=true
+    [METHOD] => GET
+)
+
+2025-02-27 08:53:19: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [birthday] => true
+            [search] => Alice
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [birthday] => true
+            [search] => Alice
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&birthday=true&search=Alice
+    [METHOD] => GET
+)
+
+2025-02-27 08:53:31: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [birthday] => true
+            [search] => John
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [birthday] => true
+            [search] => John
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&birthday=true&search=John
+    [METHOD] => GET
+)
+
+2025-02-27 08:53:33: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [birthday] => true
+            [search] => John
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [birthday] => true
+            [search] => John
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&birthday=true&search=John
+    [METHOD] => GET
+)
+
+2025-02-27 08:53:40: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [birthday] => true
+            [search] => John
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [birthday] => true
+            [search] => John
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&birthday=true&search=John
+    [METHOD] => GET
+)
+
+2025-02-27 08:53:44: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [search] => John
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [search] => John
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&search=John
+    [METHOD] => GET
+)
+
+2025-02-27 08:54:00: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [search] => John
+            [Birthday] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [search] => John
+            [Birthday] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&search=John&Birthday=true
+    [METHOD] => GET
+)
+
+2025-02-27 08:54:08: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [birthday] => true
+            [search] => John
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [birthday] => true
+            [search] => John
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&birthday=true&search=John
+    [METHOD] => GET
+)
+
+2025-02-27 08:56:11: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [search] => John
+            [Birthday] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [search] => John
+            [Birthday] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&search=John&Birthday=true
+    [METHOD] => GET
+)
+
+2025-02-27 08:56:13: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [search] => John
+            [Birthday] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [search] => John
+            [Birthday] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&search=John&Birthday=true
+    [METHOD] => GET
+)
+
+2025-02-27 08:57:23: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [Birthday] => true
+            [search] => John
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [Birthday] => true
+            [search] => John
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&Birthday=true&search=John&
+    [METHOD] => GET
+)
+
+2025-02-27 08:57:26: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [birthday] => true
+            [search] => John
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [birthday] => true
+            [search] => John
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&birthday=true&search=John
+    [METHOD] => GET
+)
+
+2025-02-27 08:57:33: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [birthday] => true
+            [search] => John
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [birthday] => true
+            [search] => John
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&birthday=true&search=John
+    [METHOD] => GET
+)
+
+2025-02-27 08:57:46: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [birthday] => true
+            [search] => John
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [birthday] => true
+            [search] => John
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&birthday=true&search=John
+    [METHOD] => GET
+)
+
+2025-02-27 08:57:59: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [birthday] => true
+            [search] => John
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [birthday] => true
+            [search] => John
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&birthday=true&search=John
+    [METHOD] => GET
+)
+
+2025-02-27 09:00:20: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [search] => John
+            [Birthday] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [search] => John
+            [Birthday] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&search=John&Birthday=true
+    [METHOD] => GET
+)
+
+2025-02-27 09:01:03: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [Birthday] => true
+            [search] => John
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [Birthday] => true
+            [search] => John
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&Birthday=true&search=John
+    [METHOD] => GET
+)
+
+2025-02-27 09:01:20: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [Birthday] => true
+            [applicant] => 2
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [Birthday] => true
+            [applicant] => 2
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&Birthday=true&applicant=2
+    [METHOD] => GET
+)
+
+2025-02-27 09:01:27: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [applicant] => 2
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [applicant] => 2
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&applicant=2
+    [METHOD] => GET
+)
+
+2025-02-27 09:01:30: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [applicant] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [applicant] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&applicant=1
+    [METHOD] => GET
+)
+
+2025-02-27 09:01:34: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [applicant] => 3
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [applicant] => 3
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&applicant=3
+    [METHOD] => GET
+)
+
+2025-02-27 09:01:53: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [applicant] => 3
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [applicant] => 3
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&applicant=3
+    [METHOD] => GET
+)
+
+2025-02-27 09:02:00: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [applicant] => 3
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [applicant] => 3
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&applicant=3
+    [METHOD] => GET
+)
+
+2025-02-27 09:02:38: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [applicant] => 3
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [applicant] => 3
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&applicant=3&search=true
+    [METHOD] => GET
+)
+
+2025-02-27 09:03:07: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [birthday] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [birthday] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&birthday=true
+    [METHOD] => GET
+)
+
+2025-02-27 09:03:31: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [birthday] => true
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [birthday] => true
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&birthday=true&search=true
+    [METHOD] => GET
+)
+
+2025-02-27 09:03:42: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [Birthday] => true
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [Birthday] => true
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&Birthday=true&search=true
+    [METHOD] => GET
+)
+
+2025-02-27 09:03:46: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [birthday] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [birthday] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&birthday=true
+    [METHOD] => GET
+)
+
+2025-02-27 09:03:58: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [birthday] => true
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [birthday] => true
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&birthday=true&search=true
+    [METHOD] => GET
+)
+
+2025-02-27 09:04:12: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [Birthday] => true
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [Birthday] => true
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&Birthday=true&search=true
+    [METHOD] => GET
+)
+
+2025-02-27 09:04:16: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [birthday] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [birthday] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&birthday=true
+    [METHOD] => GET
+)
+
+2025-02-27 09:04:21: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [birthday] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [birthday] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&birthday=true
+    [METHOD] => GET
+)
+
+2025-02-27 09:04:42: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [Birthday] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [Birthday] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&Birthday=true
+    [METHOD] => GET
+)
+
+2025-02-27 09:05:02: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [applicant] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [applicant] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&applicant=1
+    [METHOD] => GET
+)
+
+2025-02-27 09:05:12: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [applicant] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [applicant] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&applicant=1&search=true
+    [METHOD] => GET
+)
+
+2025-02-27 09:10:41: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [applicant] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [applicant] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&applicant=1
+    [METHOD] => GET
+)
+
+2025-02-27 09:10:45: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [applicant] => 2
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [applicant] => 2
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&applicant=2
+    [METHOD] => GET
+)
+
+2025-02-27 09:10:54: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [applicant] => 2
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [applicant] => 2
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&applicant=2&search=true
+    [METHOD] => GET
+)
+
+2025-02-27 09:12:38: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [applicant] => Member
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [applicant] => Member
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&applicant=Member
+    [METHOD] => GET
+)
+
+2025-02-27 09:13:16: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [applicant] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [applicant] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&applicant=1&search=true
+    [METHOD] => GET
+)
+
+2025-02-27 09:13:38: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [applicant] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [applicant] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&applicant=1
+    [METHOD] => GET
+)
+
+2025-02-27 09:14:37: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [birthday] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [birthday] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&birthday=true
+    [METHOD] => GET
+)
+
+2025-02-27 09:15:03: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [Birthday] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [Birthday] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&Birthday=true
+    [METHOD] => GET
+)
+
