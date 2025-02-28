@@ -28875,3 +28875,28 @@
     [METHOD] => GET
 )
 
+2025-02-27 10:01:32: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [applicant] => 2
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [applicant] => 2
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&applicant=2&search=true
+    [METHOD] => GET
+)
+
