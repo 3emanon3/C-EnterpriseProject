@@ -33,11 +33,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
                 
                 // Add unique book names to the filter dropdown
-                const uniqueBooks = [...new Set(data.data.map(item => item.Name))];
-                uniqueBooks.forEach(book => {
+                const uniqueBooks = data.data;
+                uniqueBooks.forEach(item => {
                     const option = document.createElement("option");
-                    option.value = book;
-                    option.textContent = book;
+                    option.value = item.ID;
+                    option.textContent = `${item.Name} (${item.Price})`;
                     bookFilter.appendChild(option);
                 });
             }
@@ -103,8 +103,8 @@ document.addEventListener("DOMContentLoaded", function () {
             const row = document.createElement("tr");
             
             row.innerHTML = `
-                <td>${record.Book || '-'}</td>
-                <td>${record.membership || '-'}</td>
+                <td>${record.Name || '-'}</td>
+                <td>${record.CName || '-'}</td>
                 <td>${record.Name || '-'}</td>
                 <td>${record.quantity_in || '0'}</td>
                 <td>${record.quantity_out || '0'}</td>
@@ -163,11 +163,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Event listeners for filter buttons
     applyFilterButton.addEventListener("click", function() {
-        const selectedBook = bookFilter.value;
-        activeFilter = selectedBook;
+        const selectedID = bookFilter.value;
+        activeFilter = selectedID;
         currentPage = 1;
         
-        const filterParams = selectedBook ? { Book: selectedBook } : {};
+        const filterParams = selectedID ? { Book: selectedID } : {};
         fetchRecords(filterParams);
     });
 
