@@ -395,26 +395,46 @@ class DatabaseAPI {
     /**
      * Create a new record
      */
-    private function handlePostRequest($table) {
-        try {
-            $data = json_decode(file_get_contents('php://input'), true);
-            if ($data === null) {
-                $this->sendError('Invalid JSON data', self::HTTP_BAD_REQUEST);
-                return;
-            }
+    /**
+ * Create new record(s) - supports both single and multiple records
+ */
+private function handlePostRequest($table) {
+    try {
+        $rawData = json_decode(file_get_contents('php://input'), true);
+        if ($rawData === null) {
+            $this->sendError('Invalid JSON data', self::HTTP_BAD_REQUEST);
+            return;
+        }
 
-            $filteredData = $this->filterAllowedFields($table, $data);
-            $insertId = $this->insertRecord($table, $filteredData);
+        // Check if data is an array of records (multiple records) or a single record
+        $isBatchInsert = isset($rawData[0]) && is_array($rawData[0]);
+        $recordsToInsert = $isBatchInsert ? $rawData : [$rawData];
+        
+        $insertedIds = [];
+        $this->dsn->begin_transaction();
+        
+        try {
+            foreach ($recordsToInsert as $data) {
+                $filteredData = $this->filterAllowedFields($table, $data);
+                $insertId = $this->insertRecord($table, $filteredData);
+                $insertedIds[] = $insertId;
+            }
+            
+            $this->dsn->commit();
             
             $this->sendResponse([
                 'status' => 'success',
-                'message' => 'Record created successfully',
-                'id' => $insertId,
+                'message' => count($insertedIds) . ' record(s) created successfully',
+                'ids' => $insertedIds,
             ], self::HTTP_CREATED);
         } catch (Exception $e) {
-            $this->sendError($e->getMessage());
+            $this->dsn->rollback();
+            throw $e;
         }
+    } catch (Exception $e) {
+        $this->sendError($e->getMessage());
     }
+}
 
     /**
      * Update an existing record
