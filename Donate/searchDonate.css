@@ -72,6 +72,20 @@ h1 {
     color: white;
 }
 
+.btn-edit {
+    background-color: var(--secondary-color);
+    color: white;
+    padding: 5px 10px;
+    font-size: 12px;
+}
+
+.btn-delete {
+    background-color: #e74c3c;
+    color: white;
+    padding: 5px 10px;
+    font-size: 12px;
+}
+
 .btn:hover {
     opacity: 0.9;
     transform: translateY(-1px);
@@ -111,7 +125,16 @@ h1 {
 
 .search-stats {
     font-size: 14px;
-    color: var(--primary-color);
+    color: #f8f9fa;
+    background: rgba(0,0,0,0.2);
+    padding: 8px 15px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.stats-value {
+    font-weight: bold;
+    margin-left: 5px;
 }
 
 /* Table Styles */
@@ -137,6 +160,7 @@ th, td {
     padding: 12px;
     text-align: left;
     border-bottom: 1px solid var(--border-color);
+    position: relative;
 }
 
 th {
@@ -153,6 +177,31 @@ th i {
 
 tr:hover {
     background-color: #f8f9fa;
+}
+
+.no-data, .error-message {
+    text-align: center;
+    padding: 20px;
+    color: var(--text-color);
+}
+
+.error-message {
+    color: #e74c3c;
+}
+
+/* Resizer Style */
+.resizer {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 5px;
+    background: rgba(0, 0, 0, 0.05);
+    cursor: col-resize;
+}
+
+.resizer:hover {
+    background: rgba(0, 0, 0, 0.1);
 }
 
 /* Loader Styles */
@@ -190,9 +239,10 @@ tr:hover {
 .pagination {
     display: flex;
     gap: 5px;
+    flex-wrap: wrap;
 }
 
-.pagination button {
+.pagination-btn {
     padding: 5px 10px;
     border: 1px solid var(--border-color);
     background: white;
@@ -200,10 +250,49 @@ tr:hover {
     border-radius: 4px;
 }
 
-.pagination button.active {
+.pagination-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pagination-btn.active {
     background-color: var(--secondary-color);
     color: white;
     border-color: var(--secondary-color);
+}
+
+.pagination-ellipsis {
+    padding: 5px;
+    display: flex;
+    align-items: center;
+}
+
+.pagination-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: 10px;
+}
+
+.page-jump {
+    display: flex;
+    gap: 5px;
+}
+
+.page-input {
+    width: 50px;
+    padding: 3px 5px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+
+.jump-btn {
+    padding: 3px 8px;
+    background: var(--secondary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
 }
 
 .items-per-page {
@@ -238,5 +327,10 @@ tr:hover {
     .pagination-container {
         flex-direction: column;
         gap: 15px;
+        align-items: flex-start;
+    }
+    
+    .pagination-info, .items-per-page {
+        margin-top: 10px;
     }
 }

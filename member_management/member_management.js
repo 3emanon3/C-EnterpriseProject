@@ -90,9 +90,9 @@ document.addEventListener('DOMContentLoaded', function() {
         return false;
     }
        const designationValue = designationField.value;
-        if (designationValue < 1 || designationValue > 4) {
+        if (designationValue < 1 || designationValue > 5) {
         isValid = false;
-       errors.push('Designation must be between 1 and 4');
+       errors.push('Designation must be between 1 and 5');
        designationField.classList.add('error');
         }
         
@@ -110,7 +110,22 @@ document.addEventListener('DOMContentLoaded', function() {
         const formData = new FormData(addMemberForm);
         const data = {};
     
+
+        console.log('Raw place_of_birth:', formData.get('place_of_birth'));
+    console.log('Raw expired_date:', formData.get('expired_date'));
+    
+
         formData.forEach((value, key) => {
+                // Make sure ALL fields are included in the data object
+        data[key] = value;
+        let standardizedKey = key;
+    
+        // Example of standardizing field names
+        if (key === 'place_of_birth') standardizedKey = 'placeOfBirth';
+        if (key === 'expired_date') standardizedKey = 'expiredDate';
+        if (key === 'designation_of_applicant') standardizedKey = 'designationOfApplicant';
+        
+        data[standardizedKey] = value;
             if (key === 'Birthday' && value) {
                 // Convert the full date to just month (1-12)
                 const monthOnly = new Date(value).getMonth() + 1;
@@ -118,11 +133,29 @@ document.addEventListener('DOMContentLoaded', function() {
             } else if   (key === 'expired_date' && value) {
             // Convert expired_date to YYYY-MM-DD format
          
-            const date = new Date(value);
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0'); // Add leading zero if needed
-            const day = String(date.getDate()).padStart(2, '0'); // Add leading zero if needed
-            data[key] = `${year}-${month}-${day}`;
+             try {
+                const dateValue = value.trim();
+                // Check if the date is in YYYY-MM-DD format
+                if (/^\d{4}-\d{2}-\d{2}$/.test(dateValue)) {
+                    data[key] = dateValue; // Already in correct format
+                } else {
+                    // Try to parse and convert
+                    const date = new Date(dateValue);
+                    if (!isNaN(date.getTime())) { // Valid date
+                        const year = date.getFullYear();
+                        const month = String(date.getMonth() + 1).padStart(2, '0');
+                        const day = String(date.getDate()).padStart(2, '0');
+                        data[key] = `${year}-${month}-${day}`;
+                    } else {
+                        // Invalid date, use original to avoid losing data
+                        console.error('Invalid date format for expired_date:', dateValue);
+                        data[key] = dateValue;
+                    }
+                }
+            } catch (e) {
+                console.error('Error processing expired_date:', e);
+                data[key] = value; // Keep original value on error
+            }
         } else if (key === 'designation_of_applicant') {
             // Ensure designation is sent as a number
             data[key] = parseInt(value, 10);
@@ -161,7 +194,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
             if (parsedData.status === 'success') {
                 alert('会员添加成功！');
-                window.location.href = 'member_search.html';
+                window.location.href = 'member_search.html?add=success&id=' + parsedData.memberId;
             } else {
                 showError('添加会员失败: ' + (parsedData.message || '未知错误'));
                 // Debug: Log error details if available

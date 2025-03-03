@@ -18,17 +18,18 @@
                 <button class="btn btn-success" onclick="location.href='donate.html'">
                     <i class="fas fa-hand-holding-heart"></i> Add New Donation
                 </button>
+                
             </nav>
         </header>
-
+        
         <section class="search-container">
             <div class="search-wrapper">
                 <div class="search-input-group">
                     <i class="fas fa-search search-icon"></i>
-                    <input 
-                        type="text" 
-                        id="searchInput" 
-                        placeholder="Search donations by donor, amount, or status..." 
+                    <input
+                        type="text"
+                        id="searchInput"
+                        placeholder="Search donations ..."
                         aria-label="Search donations">
                     <button id="searchButton" class="btn btn-search">
                         Search
@@ -40,7 +41,7 @@
                 <span id="totalDonations" class="stats-value">0</span>
             </div>
         </section>
-
+        
         <section class="table-container">
             <div class="loader">
                 <div class="spinner"></div>
@@ -51,12 +52,15 @@
                 <table id="donationTable" aria-label="Donation list">
                     <thead>
                         <tr>
-                            <th data-column="donor">Donor Name <i class="fas fa-sort"></i></th>
-                            <th data-column="date">Donation Date <i class="fas fa-sort"></i></th>
-                            <th data-column="amount">Amount <i class="fas fa-sort"></i></th>
-                            <th data-column="method">Payment Method <i class="fas fa-sort"></i></th>
-                            <th data-column="status">Status <i class="fas fa-sort"></i></th>
-                            <th data-column="receiver">Receiver <i class="fas fa-sort"></i></th>
+                            <th data-column="id">ID <i class="fas fa-sort"></i><div class="resizer"></div></th>
+                            <th data-column="donor_name">Name/Company Name <i class="fas fa-sort"></i><div class="resizer"></div></th>
+                            <th data-column="donationTypes">Donation Type <i class="fas fa-sort"></i><div class="resizer"></div></th>
+                            <th data-column="Bank">Bank <i class="fas fa-sort"></i><div class="resizer"></div></th>
+                            <th data-column="membership">Membership <i class="fas fa-sort"></i><div class="resizer"></div></th>
+                            <th data-column="payment_date">Payment Date <i class="fas fa-sort"></i><div class="resizer"></div></th>
+                            <th data-column="receipt_no">Receipt No <i class="fas fa-sort"></i><div class="resizer"></div></th>
+                            <th data-column="amount">Amount <i class="fas fa-sort"></i><div class="resizer"></div></th>
+                            <th data-column="remarks">Remarks <i class="fas fa-sort"></i><div class="resizer"></div></th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -67,6 +71,7 @@
             </div>
             
             <div class="pagination-container">
+                <!-- Pagination will be added here -->
                 <div class="pagination"></div>
                 <div class="items-per-page">
                     <label for="itemsPerPage">Items per page:</label>

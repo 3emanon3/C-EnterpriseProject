@@ -18,6 +18,16 @@
                 <button class="btn btn-success" onclick="location.href='member_management.html'">
                     <i class="fas fa-box"></i> 增加会员
                 </button>
+              
+                <button id="searchBirthday" class="btn btn-info">
+                    <i class="fas fa-birthday-cake"></i> 本月生日
+                </button>
+                <button id="searchExpiry" class="btn btn-warning">
+                    <i class="fas fa-calendar-times"></i> 会员到期
+                </button>
+                <button id="listAllMembers" class="btn btn-secondary">
+                    <i class="fas fa-list"></i> 所有会员
+                </button>
             </nav>
         </header>
 
@@ -30,11 +40,15 @@
                         id="searchInput" 
                         placeholder="使用ID, 名称," 
                         aria-label="Search stocks">
+                        <button id="searchButton" class="btn btn-primary">
+                            <i class="fas fa-search"></i> 搜索
+                        </button>
                 </div>
+                
             </div>
             <div class="search-stats">
                 <span class="stats-label">会员数量:</span>
-                <span id="totalStocks" class="stats-value">0</span>
+                <span id="totalMembers" class="stats-value">0</span>
             </div>
         </section>
 
@@ -63,7 +77,7 @@
                             <th data-column="expired date">过期日期<div class="resizer"></div></th>
                             <th data-column="place of birth">出生地方<div class="resizer"></div></th>
                             <th data-column="remarks">备注<div class="resizer"></div></th>
-                            <th data-column="actions">操作<div class="resizer"></div></th>
+                            <th>操作</th>
                            
                         </tr>
                     </thead>
