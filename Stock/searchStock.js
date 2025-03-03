@@ -30,6 +30,16 @@ document.addEventListener("DOMContentLoaded", function () {
         };
     }
 
+    // Update search input to use debounced real-time search
+    const debouncedSearch = debounce((searchText) => {
+        currentPage = 1; // Reset to first page when searching
+        fetchStocks(searchText);
+    }, 300); // 300ms delay
+
+    searchInput.addEventListener("input", function() {
+        debouncedSearch(this.value);
+    });
+
     async function fetchStocks(query = "") {
         loader.style.display = "block";
         stockTableBody.innerHTML = "";
@@ -39,7 +49,8 @@ document.addEventListener("DOMContentLoaded", function () {
         params.append("limit", itemsPerPage);
         params.append("page", currentPage);
         if (query.trim() !== "") {
-            params.append("search", query);
+           params.append("search", query);
+        
         }
         if (currentSortColumn) {
             params.append("sort", currentSortColumn);
@@ -47,6 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         
         const url = `${API_BASE_URL}?${params.toString()}`;
+        console.log("API URL:", url);
         
         try {
             const response = await fetch(url);
@@ -60,6 +72,7 @@ document.addEventListener("DOMContentLoaded", function () {
             loader.style.display = "none";
         }
     }
+
 
     function displayStocks(stocks) {
         stockTableBody.innerHTML = "";
@@ -131,15 +144,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Remove searchButton event listener since we'll use real-time search
     
-    // Update search input to use debounced real-time search
-    const debouncedSearch = debounce((searchText) => {
-        currentPage = 1; // Reset to first page when searching
-        fetchStocks(searchText);
-    }, 300); // 300ms delay
-
-    searchInput.addEventListener("input", function() {
-        debouncedSearch(this.value);
-    });
+    
 
     // Update itemsPerPage handler to refresh data immediately
     itemsPerPageSelect.addEventListener("change", function () {

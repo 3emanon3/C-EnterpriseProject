@@ -33,7 +33,7 @@ body {
 /* Header Styles */
 header {
     display: flex;
-    justify-content: space-between;
+    justify-content:  flex-start;
     align-items: center;
     margin-bottom: 30px;
     padding-bottom: 20px;
@@ -169,7 +169,7 @@ th i {
 }
 
 tr:hover {
-    background-color: #f8f9fa;
+    background-color: #dadada;
 }
 
 /* Loader Styles */
@@ -264,7 +264,27 @@ tr:hover {
 
     /* Add to your CSS */
 #memberTable tbody tr:hover {
-    background-color: rgba(0, 123, 255, 0.1);
+    background-color: rgba(0, 0, 0, 0.1);
     transition: background-color 0.2s ease;
   }
+
+  /* Add a solid horizontal line to separate rows */
+#memberTable tbody tr {
+    border-bottom: 3px solid rgb(255, 0, 0); /* Change color and thickness as needed */
+}
+
+#memberTable tbody tr:last-child {
+    border-bottom: 2px solid #d80000; /* Remove border for the last row to keep it clean */
+}
+
+#memberTable th {
+    border-right: 2px solid var(--border-color);
+    position: relative;
+}
+
+#memberTable th:last-child {
+    border-right: none;
+}
+
+
 }

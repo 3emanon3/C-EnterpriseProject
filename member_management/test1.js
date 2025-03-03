@@ -18,12 +18,11 @@ document.addEventListener("DOMContentLoaded", function () {
     
     // State variables
     let currentPage = 1;
-    let itemsPerPage = parseInt(itemsPerPageSelect?.value || 10);
-    let sortColumn = '';
-    let sortDirection = '';
+    let itemsPerPage = parseInt(itemsPerPageSelect.value);
+    let sortColumn = 'membersID';
+    let sortDirection = 'ASC';
     let totalPages = 0;
     let currentSearchType = 'all';
-    let membersData = [];
     
     // Debounce function to limit API calls during rapid typing
     function debounce(func, wait) {
@@ -38,19 +37,6 @@ document.addEventListener("DOMContentLoaded", function () {
         };
     }
     
-
-        // Debounced search
-        const debouncedSearch = debounce((searchText) => {
-            console.log("Searching for:", searchText); 
-            currentPage = 1; // Reset to first page when searching
-           
-            fetchMembers(searchText);
-        }, 300); // 300ms delay
-        
-        searchInput?.addEventListener("input", function() {
-            debouncedSearch(this.value);
-        });
-
     // Fetch members data from API
     async function fetchMembers(query = "") {
         loader.style.display = "block";
@@ -62,79 +48,38 @@ document.addEventListener("DOMContentLoaded", function () {
         params.append("page", currentPage);
         
         // Add different parameters based on search type
-        if (query.trim() !== "") {
+        if ( query.trim() !== "") {
             params.append("search", query);
-            //params.append("search_fields", "membersID,Name,CName,Address,phone_number,email,IC,oldIC,gender,companyName,Birthday,remarks");
-            currentSearchType = 'search';
-        } else if (currentSearchType === 'Birthday') {
-            params.append("birthday", "true");
-        } else if (currentSearchType === 'expired') {
-            params.append("expired", "true");
-        } else {
-            currentSearchType = 'all';
+           // params.append("searchFields", "membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks");
         }
 
-
-        
         // Add sorting parameters
         if (sortColumn) {
-            // Fix any column name mismatches between frontend and database
-            let dbSortColumn = sortColumn;
-            if (sortColumn === 'componyName') {
-                dbSortColumn = 'componyName'; // Fixing a possible typo in column name
-            } else if (sortColumn === 'expired date' || sortColumn === 'expiredDate') {
-                dbSortColumn = 'expired date'; // Use the actual database column name
-            } else if (sortColumn === 'place of birth' || sortColumn === 'placeOfBirth') {
-                dbSortColumn = 'place of birth'; // Use the actual database column name
-            }
-            
-            params.append("sort", dbSortColumn);
+            params.append("sort", sortColumn);
             params.append("order", sortDirection);
         }
         
         const url = `${API_BASE_URL}?${params.toString()}`;
-        console.log("API URL:", url);
-
+        
         try {
             const response = await fetch(url);
             
-            if (!response.ok) {
-                const errorText = await response.text();
-                console.error(`Server error response: ${errorText}`);
-                throw new Error(`Server returned ${response.status}: ${response.statusText}`);
-            }
-            
             const data = await response.json();
             
-            // Check if data and data.data exist before assigning
-            if (data && typeof data === 'object') {
-                membersData = Array.isArray(data.data) ? data.data : [];
-                
-                // Update total count and pages
-                const total = data.pagination?.total_records || membersData.length;
-                totalMembers.textContent = total;
-                totalPages = Math.ceil(total / itemsPerPage) || 1; // Ensure at least 1 page
-            } else {
-                // Handle unexpected data format
-                membersData = [];
-                totalMembers.textContent = 0;
-                totalPages = 1;
-                console.error("Unexpected API response format:", data);
-            }
+            const members = data.data || [];
             
-            displayMembers(membersData);
-            updatePagination();
-            updateSortIcons();
+            // Update total count and pages
+            const total = data.pagination?.total_records || members.length;
+            totalMembers.textContent = total;
+            totalPages = Math.ceil(total / itemsPerPage);
+            
+            displayMembers(members);
+           updatePagination();
+          // updateSortIcons();
             
         } catch (error) {
             console.error("Error fetching members:", error);
             memberTableBody.innerHTML = `<tr><td colspan="16" class="no-results">加载失败: ${error.message}</td></tr>`;
-            
-            // Reset data on error
-            membersData = [];
-            totalMembers.textContent = 0;
-            totalPages = 1;
-            updatePagination();
         } finally {
             loader.style.display = "none";
         }
@@ -143,12 +88,6 @@ document.addEventListener("DOMContentLoaded", function () {
     // Display members in the table
     function displayMembers(members) {
         memberTableBody.innerHTML = "";
-        
-        // Ensure members is an array
-        if (!Array.isArray(members)) {
-            console.error("Expected members to be an array, got:", members);
-            members = [];
-        }
         
         if (members.length === 0) {
             let message = '暂无记录';
@@ -161,12 +100,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         
         members.forEach(member => {
-            // Ensure member is an object
-            if (!member || typeof member !== 'object') {
-                console.error("Invalid member data:", member);
-                return;
-            }
-            
             // Helper function to format data
             const formatData = (value) => {
                 if (value === null || value === undefined || value === 'For...') {
@@ -241,17 +174,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 <td>${formatData(member.Birthday)}</td>
                 <td>${formatDate(expiredDate)}</td>
                 <td>${formatData(placeOfBirth)}</td>
-                <td>${formatData(member.other)}</td>
                 <td>${formatData(member.remarks)}</td>
                 <td>
-                    <button class="btn btn-edit" onclick="editMember('${member.ID || member.id || ''}')">
+                    <button class="btn btn-edit" onclick="editMember('${member.ID}')">
                         <i class="fas fa-edit"></i>
                     </button>
-                    <button class="btn btn-delete" onclick="deleteMember('${member.ID || member.id || ''}')">
+                    <button class="btn btn-delete" onclick="deleteMember('${member.ID}')">
                         <i class="fas fa-trash"></i>
-                    </button>
-                       <button class="btn btn-check" onclick="checkMember('${member.ID || member.id || ''}')">
-                        <i class="fas fa-check"></i>
                     </button>
                 </td>
             `;
@@ -273,6 +202,22 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     
     // Update sort icons in table headers
+    function updateSortIcons() {
+        document.querySelectorAll('th[data-column]').forEach(th => {
+            const icon = th.querySelector('i');
+            icon.classList.remove('fa-sort', 'fa-sort-up', 'fa-sort-down');
+            if(th.dataset.column === currentSortColumn) {
+                if(currentSortOrder === 'ASC') {
+                    icon.classList.add('fa-sort-up');
+                } else {
+                    icon.classList.add('fa-sort-down');
+                }
+            } else {
+                icon.classList.add('fa-sort');
+            }
+        });
+    }
+    
     function updateSortIcons() {
         document.querySelectorAll('th[data-column]').forEach(th => {
             const icon = th.querySelector('i') || document.createElement('i');
@@ -299,7 +244,13 @@ document.addEventListener("DOMContentLoaded", function () {
         
         const paginationHTML = [];
         
-       
+        // Previous button
+       /* paginationHTML.push(`
+            <button id="prevPage" class="pagination-btn ${currentPage === 1 ? 'disabled' : ''}" 
+                ${currentPage === 1 ? 'disabled' : ''}>
+                上一页
+            </button>
+        `);*/
         
         // Page numbers
         for (let i = 1; i <= totalPages; i++) {
@@ -315,7 +266,13 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
         
-       
+        // Next button
+        /*paginationHTML.push(`
+            <button id="nextPage" class="pagination-btn ${currentPage === totalPages ? 'disabled' : ''}" 
+                ${currentPage === totalPages ? 'disabled' : ''}>
+                下一页
+            </button>
+        `);*/
         
         // Page jump
         paginationHTML.push(`
@@ -462,11 +419,9 @@ document.addEventListener("DOMContentLoaded", function () {
     
     // Add event listeners
     tableHeaders.forEach(th => {
-        if (th.dataset.column) {
-            th.addEventListener('click', function() {
-                handleSortClick(th.dataset.column);
-            });
-        }
+        th.addEventListener('click', function() {
+            handleSortClick(th.dataset.column);
+        });
     });
     
     prevPageButton?.addEventListener("click", function () {
@@ -483,7 +438,16 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
     
-
+    // Debounced search
+    const debouncedSearch = debounce((searchText) => {
+        currentPage = 1; // Reset to first page when searching
+        currentSearchType = searchText.trim() ? 'search' : 'all';
+        fetchMembers(searchText);
+    }, 300); // 300ms delay
+    
+    searchInput?.addEventListener("input", function() {
+        debouncedSearch(this.value);
+    });
     
     
     
@@ -502,7 +466,7 @@ document.addEventListener("DOMContentLoaded", function () {
     listAllMembersButton?.addEventListener("click", function() {
         currentPage = 1;
         currentSearchType = 'all';
-        if (searchInput) searchInput.value = '';
+        searchInput.value = '';
         fetchMembers();
     });
     
@@ -510,64 +474,37 @@ document.addEventListener("DOMContentLoaded", function () {
     itemsPerPageSelect?.addEventListener("change", function () {
         itemsPerPage = parseInt(this.value);
         currentPage = 1; // Reset to first page when changing items per page
-        fetchMembers(searchInput?.value || '');
+        fetchMembers(searchInput.value);
     });
     
     // Global functions
     window.editMember = function(id) {
-        if (!id) {
-            console.error("Cannot edit member: No ID provided");
-            alert("无法编辑：会员ID未提供");
-            return;
-        }
         window.location.href = `edit_member.html?id=${id}`;
     };
     
     window.deleteMember = async function(id) {
-        if (!id) {
-            console.error("Cannot delete member: No ID provided");
-            alert("无法删除：会员ID未提供");
-            return;
-        }
-        
         if (confirm("确定要删除这个会员吗？")) {
             try {
                 const response = await fetch(`${API_BASE_URL}?table=members&ID=${id}`, { method: "DELETE" });
-                
-                if (!response.ok) {
-                    throw new Error(`Server returned ${response.status}: ${response.statusText}`);
-                }
-                
                 const data = await response.json();
                 
                 if (data.status === 'success') {
                     alert('删除成功！');
-                    fetchMembers(searchInput?.value || '');
+                    fetchMembers(searchInput.value);
                 } else {
                     alert(data.message || "删除失败");
                 }
             } catch (error) {
                 console.error("Error deleting member:", error);
-                alert(`删除时发生错误: ${error.message}`);
+                alert("删除时发生错误");
             }
         }
     };
-
-    window.checkMember = async function (id) {
-        if (!id) {
-            console.error("Cannot edit member: No ID provided");
-            alert("无法查看：会员ID未提供");
-            return;
-        }
-        window.location.href = `check_details.html?id=${id}`;
-    };
-     
-
-
+    
     window.changePage = function(page) {
         if (page >= 1 && page <= totalPages && page !== currentPage) {
             currentPage = page;
-            fetchMembers(searchInput?.value || '');
+            fetchMembers(searchInput.value);
         }
     };
     
