@@ -106,8 +106,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 <td>${record.Name || '-'}</td>
                 <td>${record.CName || '-'}</td>
                 <td>${record.Name || '-'}</td>
-                <td>${record.quantity_in || '0'}</td>
-                <td>${record.quantity_out || '0'}</td>
+                <td>${record.quantity_in || '-'}</td>
+                <td>${record.quantity_out || '-'}</td>
                 <td>${record.InvoiceNo || '-'}</td>
                 <td>${record.Date || '-'}</td>
                 <td>${record.price || '-'}</td>
@@ -167,7 +167,7 @@ document.addEventListener("DOMContentLoaded", function () {
         activeFilter = selectedID;
         currentPage = 1;
         
-        const filterParams = selectedID ? { Book: selectedID } : {};
+        const filterParams = selectedID ? { Book: selectedID, search: true } : {};
         fetchRecords(filterParams);
     });
 
@@ -228,13 +228,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Global record editing and deleting functions
     window.editRecord = function(id) {
-        window.location.href = `editRecord.html?id=${id}`;
+        window.location.href = `editRecord.html?ID=${id}`;
     };
 
     window.deleteRecord = async function(id) {
         if (confirm("确定要删除这条记录吗？")) {
             try {
-                const response = await fetch(`${API_BASE_URL}?table=soldrecord&id=${id}`, { 
+                const response = await fetch(`${API_BASE_URL}?table=soldrecord&ID=${id}`, { 
                     method: "DELETE" 
                 });
                 

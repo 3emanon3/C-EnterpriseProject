@@ -392,11 +392,8 @@ class DatabaseAPI {
         }
     }
 
-    /**
-     * Create a new record
-     */
-    /**
- * Create new record(s) - supports both single and multiple records
+/**
+ * Create new record(s) - supports both single and multiple records with image compression for 'stock' table
  */
 private function handlePostRequest($table) {
     try {
@@ -406,7 +403,7 @@ private function handlePostRequest($table) {
             return;
         }
 
-        // Check if data is an array of records (multiple records) or a single record
+        // Check if data is an array of records (batch) or a single record
         $isBatchInsert = isset($rawData[0]) && is_array($rawData[0]);
         $recordsToInsert = $isBatchInsert ? $rawData : [$rawData];
         
@@ -414,11 +411,15 @@ private function handlePostRequest($table) {
         $this->dsn->begin_transaction();
         
         try {
-            foreach ($recordsToInsert as $data) {
+            foreach ($recordsToInsert as &$data) { // Use reference to modify original data
+                if ($table === 'stock' && isset($data['Picture'])) {
+                    $data['Picture'] = $this->compressImage($data['Picture'], 640);
+                }
                 $filteredData = $this->filterAllowedFields($table, $data);
                 $insertId = $this->insertRecord($table, $filteredData);
                 $insertedIds[] = $insertId;
             }
+            unset($data); // Clean up reference
             
             $this->dsn->commit();
             
@@ -435,27 +436,31 @@ private function handlePostRequest($table) {
         $this->sendError($e->getMessage());
     }
 }
-
-    /**
-     * Update an existing record
+        
+        /**
+     * Update an existing record with image compression for 'stock' table
      */
     private function handlePutRequest($table) {
         try {
             $id = $_GET["ID"] ?? null;
-            if ($id === null){
+            if ($id === null) {
                 $this->sendError('Missing ID parameter', self::HTTP_BAD_REQUEST);
                 return;
             }
 
-            if(!$this->recordExists($table, $id)) {
+            if (!$this->recordExists($table, $id)) {
                 $this->sendError("Record not found with ID $id", self::HTTP_NOT_FOUND);
                 return;
             }
 
             $data = json_decode(file_get_contents('php://input'), true);
-            if($data === null) {
+            if ($data === null) {
                 $this->sendError('Invalid JSON data', self::HTTP_BAD_REQUEST);
                 return;
+            }
+
+            if ($table === 'stock' && isset($data['Picture'])) {
+                $data['Picture'] = $this->compressImage($data['Picture'], 640);
             }
 
             $filteredData = $this->filterAllowedFields($table, $data);
@@ -669,6 +674,55 @@ private function handlePostRequest($table) {
 
     private function getViewTable($table) {
         return $this->tableToView[$table] ?? $table;
+    }
+
+    /**
+ * Compress a base64-encoded image to ensure its size is below the specified limit (in KB)
+ * @param string $base64Image The base64-encoded image string
+ * @param int $maxSizeKB Maximum size in KB (default 640KB)
+ * @return string Compressed base64-encoded image
+ * @throws Exception If compression fails or image data is invalid
+ */
+    private function compressImage($base64Image, $maxSizeKB = 640) {
+        try {
+            // Decode base64 to binary
+            $imageData = base64_decode($base64Image);
+            if ($imageData === false) {
+                throw new Exception('Invalid base64 data');
+            }
+
+            // Create image resource from binary data
+            $source = imagecreatefromstring($imageData);
+            if ($source === false) {
+                throw new Exception('Invalid image data');
+            }
+
+            // Compress to JPEG format
+            $quality = 90; // Start with high quality
+            do {
+                ob_start();
+                imagejpeg($source, null, $quality);
+                $compressedData = ob_get_clean();
+                $size = strlen($compressedData);
+                if ($size > $maxSizeKB * 1024 && $quality > 10) {
+                    $quality -= 10; // Reduce quality incrementally
+                } else {
+                    break;
+                }
+            } while (true);
+
+            imagedestroy($source);
+
+            // Verify size requirement is met
+            if ($size > $maxSizeKB * 1024) {
+                throw new Exception("Unable to compress image below {$maxSizeKB}KB");
+            }
+
+            // Return as base64 string
+            return base64_encode($compressedData);
+        } catch (Exception $e) {
+            throw new Exception('Image compression failed: ' . $e->getMessage());
+        }
     }
 }
 

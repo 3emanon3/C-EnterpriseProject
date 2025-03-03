@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Management System - new Stock</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="searchStock.css">
+    <link rel="stylesheet" href="newStock.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>库存管理系统 - 新增产品</h1>
+            <nav class="system-nav">
+                <button class="btn btn-primary" onclick="confirmCancel()">
+                    <i class="fas fa-times"></i> 取消
+                </button>
+            </nav>
+        </header>
+
+        <section class="adding-container">
+            <div class="adding-form">
+                <div class="picture-container" id="imageContainer">
+                    <img id="imageDisplay" src="../assets/placeholder.png" alt="Click to upload or display image">
+                </div>
+                <input type="file" id="fileInput" accept="image/*">
+                <div class="form-group">
+                    <label for="productId">产品ID:</label>
+                    <input type="text" id="productId" required>
+                </div>
+                <div class="form-group">
+                    <label for="name">产品名称:</label>
+                    <input type="text" id="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="stock">库存数量:</label>
+                    <input type="number" id="stock" required>
+                </div>
+                <div class="form-group">
+                    <label for="price">价格:</label>
+                    <input type="number" step="0.01" id="price" required>
+                </div>
+                <div class="form-group">
+                    <label for="publisher">出版社:</label>
+                    <input type="text" id="publisher" required>
+                </div>
+                <div class="form-group">
+                    <label for="remarks">备注:</label>
+                    <textarea id="remarks" rows="4"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-success" onclick="saveNewData()">
+                        <i class="fas fa-save"></i> 新增产品
+                    </button>
+                    <button class="btn btn-primary" onclick="location.href='searchStock.html'">
+                        <i class="fas fa-times"></i> 取消
+                    </button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="newStock.js"></script>
+</body>
+</html>
