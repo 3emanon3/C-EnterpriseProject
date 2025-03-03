@@ -1,12 +1,13 @@
 const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
-const CUSTOM_DESIGNATION_VALUE = '5';
+const CUSTOM_DESIGNATION_VALUE = '6';  // Changed from '5' to '6' since 5 is now used for "逾期"
 
-// Static designation mappings
+// Static designation mappings - updated to include "逾期" (Overdue)
 const STATIC_DESIGNATIONS = [
     { id: '1', name: '会员', englishName: 'Member' },
     { id: '2', name: '非会员', englishName: 'Non-Member' },
     { id: '3', name: '外国人', englishName: 'Foreigner' },
-    { id: '4', name: '拒绝继续', englishName: 'Reject' }
+    { id: '4', name: '拒绝继续', englishName: 'Reject' },
+    { id: '5', name: '逾期', englishName: 'Overdue' }
 ];
 
 // Month names mapping
@@ -44,13 +45,13 @@ const handleApiResponse = async (response) => {
 function formatDate(dateString) {
     if (!dateString) return '';
     const date = new Date(dateString);
-    return date.getFullYear() + '/' + 
-           String(date.getMonth() + 1).padStart(2, '0') + '/' + 
+    return date.getFullYear() + '-' + 
+           String(date.getMonth() + 1).padStart(2, '0') + '-' + 
            String(date.getDate()).padStart(2, '0');
 }
 
 function isValidDateFormat(dateString) {
-    return /^\d{4}\/\d{2}\/\d{2}$/.test(dateString);
+    return /^\d{4}-\d{2}-\d{2}$/.test(dateString);
 }
 
 // Enhanced DesignationHandler Class
@@ -295,7 +296,11 @@ function populateForm(memberData) {
                 }
             } else if (elementId === 'gender') {
                 const genderValue = value?.toString().toLowerCase() || '';
-                element.value = genderValue;
+                if (genderValue === 'male' || genderValue === 'female') {
+                    element.value = genderValue; // This should work if the <select> has the correct options
+                } else {
+                    console.warn(`Unexpected gender value: ${genderValue}`);
+                }
             } else if (elementId === 'birthday') {
                 // Handle birthday as month only
                 const monthValue = getMonthFromBirthday(value);
@@ -321,8 +326,8 @@ function populateForm(memberData) {
         'gender': ['gender'],
         'company': ['companyName', 'componyName'],
         'birthday': ['Birthday'],
-        'expired': ['expired date'],
-        'birthplace': ['place of birth'],
+        'expired': ['expired date', 'expired_date'],
+        'birthplace': ['place of birth' ,'place_of_birth'],
         'remarks': ['remarks']
     };
 
@@ -338,6 +343,13 @@ function populateForm(memberData) {
         
         setFormValue(elementId, value);
     });
+    console.log('Populated expired date:', document.getElementById('expired').value);
+    console.log('Populated birthplace:', document.getElementById('birthplace').value);
+}
+
+function isNewMember() {
+    const memberId = document.getElementById('memberId').value;
+    return !memberId || memberId.startsWith('NEW');
 }
 
 async function handleSubmit(event) {
@@ -352,7 +364,7 @@ async function handleSubmit(event) {
 
     const expiredDateField = document.getElementById('expired');
     if (expiredDateField.value && !isValidDateFormat(expiredDateField.value)) {
-        alert('过期日期格式必须为 YYYY/MM/DD');
+        alert('过期日期格式必须为 YYYY-MM-DD');
         return;
     }
 
@@ -385,25 +397,46 @@ async function handleSubmit(event) {
         companyName: formData.get('company') || null,
         componyName: formData.get('company') || null,
         Birthday: birthdayValue,
+        'expired_date': formData.get('expired') || null,
         'expired date': formData.get('expired') || null,
+        'place_of_birth': formData.get('birthplace') || null,
         'place of birth': formData.get('birthplace') || null,
-        remarks: formData.get('remarks') || null
+        remarks: formData.get('remarks') || null,
+        action: 'add_member'
     };
 
-    try {
-        // First check if the member exists
-        const checkUrl = `${API_BASE_URL}?table=members&search=true&ID=${memberId}`;
-        const checkResponse = await fetch(checkUrl);
-        const checkData = await handleApiResponse(checkResponse);
+    console.log('Submitting member data:', memberData);
 
-        if (!checkData.data || !checkData.data.length) {
-            throw new Error('Member not found');
+    try {
+        let url = '';
+        let method = '';
+        
+        // Check if this is a new member or update based on ID
+        if (memberId.startsWith('NEW')) {
+            // Create new member
+            url = `${API_BASE_URL}?table=members`;
+            method = 'POST';
+        } else {
+            // Update existing member - first check if exists
+            const checkUrl = `${API_BASE_URL}?table=members&search=true&ID=${memberId}`;
+            const checkResponse = await fetch(checkUrl);
+            const checkData = await handleApiResponse(checkResponse);
+
+            if (checkData.data && checkData.data.length > 0) {
+                // Update existing member
+                url = `${API_BASE_URL}?table=members&ID=${memberId}`;
+                method = 'PUT';
+            } else {
+                // Create new member if ID doesn't exist
+                url = `${API_BASE_URL}?table=members`;
+                method = 'POST';
+            }
         }
 
-        // Proceed with update
-        const updateUrl = `${API_BASE_URL}?table=members&ID=${memberId}`;
-        const response = await fetch(updateUrl, {
-            method: 'PUT',
+        // Make the API request
+        console.log(`Making ${method} request to ${url}`);
+        const response = await fetch(url, {
+            method: method,
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -411,23 +444,15 @@ async function handleSubmit(event) {
         });
 
         const responseData = await handleApiResponse(response);
+        console.log('API response:', responseData);
         
         if (responseData.status === 'success' || response.ok) {
-            // Verify the update was successful
-            const verifyResponse = await fetch(checkUrl);
-            const verifyData = await handleApiResponse(verifyResponse);
-            
-            if (verifyData.data && verifyData.data.length > 0) {
-                console.log('Updated member data:', verifyData.data[0]);
-                alert('Member information updated successfully!');
-                window.location.href = 'member_search.html?update=success';
-            } else {
-                throw new Error('Update verification failed');
-            }
+            alert('Member information saved successfully!');
+            window.location.href = 'member_search.html?update=success';
         } else {
-            throw new Error(responseData.message || 'Update failed');
+            throw new Error(responseData.message || 'Operation failed');
         }
-    } catch (error) {
+    }  catch (error) {
         console.error('Error during submission:', error);
         alert(`更新会员信息时出错: ${error.message}`);
     }
@@ -484,6 +509,18 @@ function printData() {
 async function loadMemberData() {
     const urlParams = new URLSearchParams(window.location.search);
     const memberId = urlParams.get('id');
+    const isNew = urlParams.get('new') === 'true';
+
+    if (isNew) {
+        // Set up form for new member
+        document.getElementById('memberId').value = 'NEW-' + Date.now();
+        document.title = '添加新会员';
+        const headerElement = document.querySelector('h1, h2, .header');
+        if (headerElement) {
+            headerElement.textContent = '添加新会员';
+        }
+        return;
+    }
 
     if (!memberId || memberId === 'null' || memberId.trim() === '') {
         console.error("Error: No valid member ID in URL");

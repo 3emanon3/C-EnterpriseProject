@@ -1,6 +1,42 @@
+
+
 document.addEventListener("DOMContentLoaded", function () {
     const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
     
+    window.changePage = function(page) {
+        if (page >= 1 && page <= totalPages && page !== currentPage) {
+            currentPage = page;
+            fetchRecords(currentSearchType);
+        }
+    };
+    
+    window.editMember = function(ID) {
+        window.location.href = `edit_member.html?id=${ID}`;
+    
+    };
+    
+    
+    window.deleteMember = function(ID) {
+        if (confirm('确定要删除这个会员吗？')) {
+            fetch(`${API_BASE_URL}?table=members&ID=${ID}`, { 
+                method: 'DELETE' 
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.status === 'success') {
+                    alert('删除成功！');
+                    fetchRecords();
+                } else {
+                    showError(result.message || '删除失败');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showError('删除时发生错误');
+            });
+        }
+    };
+
     // State variables
     let members = [];//Stores all member records fetched from the API.
     let filteredMembers = [];//Stores the filtered subset of members (used for display).
@@ -405,21 +441,19 @@ function initializeTableScrollControls() {
 
     function handleSearch() {
         const searchTerm = elements.searchInput?.value.trim() || '';
+        currentPage = 1;
+
         if (!searchTerm) {
-            currentPage = 1;
+          
             currentSearchType = 'all';
             fetchRecords('all');
             return;
         }
 
-        currentPage = 1; // Reset to page 1 when a new search is performed
+       
         currentSearchType = 'search';
-        fetchRecords(currentSearchType);
+        fetchRecords('search');
     }
-
-
-
-
 
 
 // Load saved column widths with version checking
@@ -454,50 +488,180 @@ function loadColumnWidths() {
     // Initialize the application
     async function initialize() {
         try {
-            setupEventListeners();
-            initializeResizableColumns(); 
-            initializeTableScrollControls();// Add this line
-            loadColumnWidths();      // Add this line
-            // Check if we're coming from a successful update
-        const urlParams = new URLSearchParams(window.location.search);
+          setupEventListeners();
+          initializeResizableColumns();
+          initializeTableScrollControls();
+          loadColumnWidths();
+          
+          // Process URL parameters
+          const urlParams = new URLSearchParams(window.location.search);
+          processUrlParameters(urlParams);
+          
+          // Start with clean state
+          resetState();
+          
+          // Fetch initial data
+          await fetchRecords(currentSearchType);
+          
+          // Post-fetch processing
+          processPostFetch();
+          
+          console.log('Application initialized successfully');
+        } catch (error) {
+          console.error('Initialization error:', error);
+          showError('Failed to initialize the application');
+        }
+      }
+      
+      // Helper functions for better organization
+      function processUrlParameters(urlParams) {
         const updateStatus = urlParams.get('update');
+        const addStatus = urlParams.get('add');
+        const newMemberId = urlParams.get('id');
         
         if (updateStatus === 'success') {
-            // Clear the URL parameter without refreshing the page
-            window.history.replaceState({}, '', 'member_search.html');
+          window.history.replaceState({}, '', 'member_search.html');
+          showToast('会员信息已更新', 'success');
         }
         
-        // Ensure we're starting with a clean state
+        if (addStatus === 'success') {
+          showToast('新会员添加成功', 'success');
+          if (newMemberId) {
+            window.newlyAddedMemberId = newMemberId;
+          }
+        }
+      }
+      
+      function resetState() {
         currentPage = 1;
+        if (elements.searchInput) elements.searchInput.value = '';
         currentSearchType = 'all';
-        elements.searchInput.value = '';
+      }
+      
+      function processPostFetch() {
+        setupSorting();
+        updatePagination();
         
-        await fetchRecords('all');
-            setupSorting();
-            updatePagination();
-        } catch (error) {
-            console.error('Initialization error:', error);
-            showError('Failed to initialize the application');
+        if (window.newlyAddedMemberId) {
+          highlightNewMember(window.newlyAddedMemberId);
+          delete window.newlyAddedMemberId;
         }
+      }
+
+// Add debounce functionality to prevent excessive API calls
+function debounce(func, wait) {
+    let timeout;
+    return function(...args) {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+  }
+  
+  // Apply debounce to search input
+  elements.searchInput?.addEventListener('keyup', debounce((e) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    } else if (elements.searchInput.value.trim() === '') {
+      currentPage = 1;
+      currentSearchType = 'all';
+      fetchRecords('all');
     }
+  }, 300));
 
-
+    function highlightNewMember(memberId) {
+        const rows = document.querySelectorAll('#memberTable tbody tr');
+        rows.forEach(row => {
+            const idCell = row.cells[0]; // Assuming ID is in the first column
+            if (idCell && idCell.textContent === memberId) {
+                row.classList.add('highlight-new');
+                // Scroll to the row
+                row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                // Remove highlight after a few seconds
+                setTimeout(() => {
+                    row.classList.remove('highlight-new');
+                }, 5000);
+            }
+        });
+    }
     
-    // Event Listeners Setup
-    function setupEventListeners() {
-        // Search input events
-        elements.searchInput?.addEventListener('keyup', (e) => {
+
+    function setupSearchEventListeners() {
+
+        // Search input events with debounce
+        elements.searchInput?.addEventListener('keyup', debounce((e) => {
+            const searchTerm = elements.searchInput.value.trim().toLowerCase();
+            
+            // Filter the existing members array
+            if (searchTerm) {
+              filterMembersLocally(searchTerm);
+            } else {
+              // If search is empty, restore all members
+              filteredMembers = [...members];
+              updateTable();
+              updatePagination();
+            }
+            
+            // Only fetch from server on Enter key
             if (e.key === 'Enter') {
                 handleSearch();
             } else if (elements.searchInput.value.trim() === '') {
-                // When search is cleared, list all members
+                // If search is cleared, reset to showing all
+                currentPage = 1;
+                currentSearchType = 'all';
+                fetchRecords('all');
+            }
+        }, 300));
+    
+        // Search button click
+        elements.searchButton?.addEventListener("click", handleSearch);
+    
+        // Clear search button (if you want to add one)
+        document.getElementById('clearSearch')?.addEventListener('click', () => {
+            if (elements.searchInput) {
+                elements.searchInput.value = '';
                 currentPage = 1;
                 currentSearchType = 'all';
                 fetchRecords('all');
             }
         });
+        elements.searchIcon?.addEventListener('click', handleSearch);
+    }
 
-        elements.searchButton?.addEventListener("click", handleSearch);
+    function filterMembersLocally(searchTerm) {
+        searchTerm = searchTerm.toLowerCase();
+        
+        filteredMembers = members.filter(member => {
+          // Check name fields (prioritize these for your search)
+          const nameMatch = 
+            (member.Name && member.Name.toLowerCase().includes(searchTerm)) || 
+            (member.CName && member.CName.toLowerCase().includes(searchTerm));
+          
+          // If you want to search in other fields as well
+          const otherFieldsMatch = 
+            (member.membersID && member.membersID.toString().includes(searchTerm)) ||
+            (member.phone_number && member.phone_number.toString().includes(searchTerm)) ||
+            (member.email && member.email.toLowerCase().includes(searchTerm)) ||
+            (member.componyName && member.componyName.toLowerCase().includes(searchTerm)) ||
+            (member.companyName && member.companyName.toLowerCase().includes(searchTerm));
+          
+          return nameMatch || otherFieldsMatch;
+        });
+        
+        totalPages = Math.ceil(filteredMembers.length / itemsPerPage);
+        currentPage = 1; // Reset to first page when filtering
+        
+        updateTable();
+        updatePagination();
+        
+        if (elements.totalMembersSpan) {
+          elements.totalMembersSpan.textContent = filteredMembers.length;
+        }
+      }
+
+    // Event Listeners Setup
+    function setupEventListeners() {
+        setupSearchEventListeners();
+       
 
     elements.birthdayButton?.addEventListener('click', () => {
         handleDateSearch('Birthday');
@@ -515,13 +679,13 @@ function loadColumnWidths() {
             fetchRecords();
         });
 
-        // Date search events
-        elements.searchBirthday?.addEventListener('click', () => {
-            handleDateSearch('Birthday');
+ 
+        document.getElementById('prevPage')?.addEventListener('click', () => {
+            if (currentPage > 1) changePage(currentPage - 1);
         });
-
-        elements.searchExpiry?.addEventListener('click', () => {
-            handleDateSearch('expired date');
+        
+        document.getElementById('nextPage')?.addEventListener('click', () => {
+            if (currentPage < totalPages) changePage(currentPage + 1);
         });
 
         setupAdditionalEventListeners();
@@ -585,9 +749,32 @@ const data = await response.json();
         }
     }
     
+    const apiCache = {
+        data: {},
+        set(key, data, ttl = 60000) { // 1 minute TTL by default
+          this.data[key] = {
+            timestamp: Date.now(),
+            ttl,
+            value: data
+          };
+        },
+        get(key) {
+          const item = this.data[key];
+          if (!item) return null;
+          
+          if (Date.now() - item.timestamp > item.ttl) {
+            delete this.data[key];
+            return null;
+          }
+          
+          return item.value;
+        }
+      };
+
     // Modified fetchRecords function to include date parameters
     async function fetchRecords(type ='normal') {
         showLoader();
+        
         try {
             const searchTerm = elements.searchInput?.value.trim() || '';
             const params = new URLSearchParams({
@@ -601,20 +788,28 @@ const data = await response.json();
             // Add specific parameters based on request type
             switch(type) {
                 case 'search':
-                    params.append('search', elements.searchInput?.value.trim() || '');
+                    if (searchTerm) {
+                        params.append('search', searchTerm);
+                        // Make sure all relevant fields are included for search
+                        params.append('searchFields','membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks');
+                        params.append('search_all', 'true'); // N
+                    }
                     break;
-                    case 'Birthday':
-                        const currentMonth = new Date().getMonth() + 1; // Get current month (1-12)
-                        params.append('Birthday', currentMonth);
+
+                case 'Birthday':   
+                    params.append('Birthday', new Date().getMonth() + 1);
                         break;
                     
                 case 'expired':
                     params.append('expired', 'true');
                     break;
-                    case 'all':
+
+                 case 'all':
                         params.append('listAll', 'true');
                         break;
             }
+
+           
 
             console.log('Fetching records with params:', params.toString());
             const response = await fetch(`${API_BASE_URL}?${params.toString()}`);
@@ -629,31 +824,17 @@ const data = await response.json();
                 throw new Error("Received non-JSON response");
             }
             
-            const data = await response.json(); // ✅ Now it's safe to parse JSON
+            const data = await response.json();
+           
+            handleApiData(data);
             
-            if (data.error) throw new Error(data.error);
-    
-            members = data.data || [];
-            console.log(members);
-            filteredMembers = [...members];
-            totalPages = Math.ceil((data.pagination?.total_records || members.length) / itemsPerPage);
-            
-            if (elements.totalMembersSpan) {
-                elements.totalMembersSpan.textContent = data.pagination?.total_records || members.length;
-            }
-    
-            updateTable();
-            updatePagination();
-            updateSortIndicators();
-            
-
              // Show appropriate message based on request type
              if (members.length === 0) {
                 let message = '暂无记录';
+                if (type === 'search') message = '没有找到匹配的记录';
                 if (type === 'Birthday') message = '本月没有会员生日';
                 if (type === 'expired') message = '本月没有会员需要续期';
                 elements.tableBody.innerHTML = "<tr><td colspan='16' class='no-results'>" + message + "</td></tr>";
-
             }
 
         } catch (error) {
@@ -664,15 +845,33 @@ const data = await response.json();
         }
     }
 
+    function handleApiData(data) {
+        if (data.error) throw new Error(data.error);
+        
+        members = data.data || [];
+        filteredMembers = [...members];
+       
+        totalPages = Math.ceil((data.pagination?.total_records || members.length) / itemsPerPage);
+        
+        if (elements.totalMembersSpan) {
+          elements.totalMembersSpan.textContent = data.pagination?.total_records || members.length;
+        }
+        
+        updateTable();
+        updatePagination();
+        updateSortIndicators();
+      }
     // Handle sort column click
     function handleSort(column) {
-        if (sortColumn === column) {
+        // Normalize column name to handle case inconsistency
+        const normalizedColumn = column.toLowerCase();
+        if (sortColumn.toLowerCase() === normalizedColumn) {
             sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
         } else {
             sortColumn = column;
             sortDirection = 'asc';
         }
-        fetchRecords();
+        fetchRecords(currentSearchType);
     }
 
     // Setup sorting functionality
@@ -707,7 +906,17 @@ const data = await response.json();
         if (!elements.tableBody) return;
         
         console.log("Table updated with", filteredMembers.length, "records");
-        console.log("HTML generated:", elements.tableBody.innerHTML);
+        if (filteredMembers.length > 0) {
+            
+            console.log("Sample record structure:", filteredMembers[0]);
+
+            console.log("Full member data:", JSON.stringify(filteredMembers[0], null, 2));
+            console.log("Gender value:", filteredMembers[0]['gender'], 
+                                        filteredMembers[0]['Gender'], 
+                                        filteredMembers[0]['sex'], 
+                                        filteredMembers[0]['Sex']);
+        }
+      
 
         sortRecords();
         
@@ -721,13 +930,31 @@ const data = await response.json();
             };
     
             // Handle designation display
-            const designation = member['designation of applicant'] || member['Designation of Applicant'];
+          
+            const designation = member['designation of applicant'] ||
+                                member['Designation of Applicant']||
+                                member['designation_of_applicant'];;
             const designationDisplay = designation === '3' ? '外国人' :
                                      designation === '2' ? '非会员' :
                                      designation === '1' ? '会员' :
                                      designation === '4' ? '拒绝继续' :
                                      formatTableData(designation);
     
+            const expiredDate = member['expired date'] || 
+                                member['expired_date'] || 
+                                member['expiredDate'] || 
+                                member['expireddate'];
+                                     
+           const placeOfBirth = member['place of birth'] || 
+                                member['place_of_birth'] || 
+                                member['placeOfBirth'] || 
+                                member['placeofbirth'];
+
+            const gender = member['gender'] ||
+               member['Gender'] ||
+               member['sex'] ||
+               member['Sex'];
+
             return `
                 <tr>
                     <td>${formatTableData(member.membersID)}</td>
@@ -739,11 +966,11 @@ const data = await response.json();
                     <td>${formatTableData(member.email)}</td>
                     <td>${formatIC(member.IC)}</td>
                     <td>${formatIC(member.oldIC)}</td>
-                    <td>${formatTableData(member.gender)}</td>
+                    <td>${formatTableData(gender)}</td>
                     <td>${formatTableData(member.componyName || member.companyName)}</td>
                     <td>${formatTableData(member.Birthday)}</td>
-                    <td>${formatDate(member['expired date'])}</td>
-                    <td>${formatTableData(member['place of birth'])}</td>
+                    <td>${formatDate(expiredDate)}</td>
+                    <td>${formatTableData(placeOfBirth)}</td>
                     <td>${formatTableData(member.remarks)}</td>
                     <td>
                         <button class="btn btn-edit" onclick="editMember('${member.ID}')">
@@ -773,13 +1000,7 @@ const data = await response.json();
 
         const paginationHTML = [];
         
-        paginationHTML.push(`
-            <button class="pagination-btn" 
-                    ${currentPage === 1 ? 'disabled' : ''} 
-                    onclick="changePage(${currentPage - 1})">
-                上一页
-            </button>
-        `);
+     
 
         for (let i = 1; i <= totalPages; i++) {
             if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
@@ -794,13 +1015,7 @@ const data = await response.json();
             }
         }
 
-        paginationHTML.push(`
-            <button class="pagination-btn" 
-                    ${currentPage === totalPages ? 'disabled' : ''} 
-                    onclick="changePage(${currentPage + 1})">
-                下一页
-            </button>
-        `);
+        
 
         paginationHTML.push(`
             <div class="pagination-info">
@@ -856,13 +1071,7 @@ const data = await response.json();
         pageInput.value = '';
     };
     
-    // Update the existing changePage function
-    window.changePage = function(page) {
-        if (page >= 1 && page <= totalPages && page !== currentPage) {
-            currentPage = page;
-            fetchRecords(currentSearchType);
-        }
-    };
+   
 
     // Utility functions
     function formatPhone(phone) {
@@ -920,32 +1129,7 @@ const data = await response.json();
         }
     };
 
-    window.editMember = function(ID) {
-        window.location.href = `edit_member.html?id=${ID}`;
-
-    };
     
-
-    window.deleteMember = function(ID) {
-        if (confirm('确定要删除这个会员吗？')) {
-            fetch(`${API_BASE_URL}?table=members&ID=${ID}`, { 
-                method: 'DELETE' 
-            })
-            .then(response => response.json())
-            .then(result => {
-                if (result.status === 'success') {
-                    alert('删除成功！');
-                    fetchRecords();
-                } else {
-                    showError(result.message || '删除失败');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showError('删除时发生错误');
-            });
-        }
-    };
 
     // Start the application
     initialize();

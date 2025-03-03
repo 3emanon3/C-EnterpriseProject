@@ -28900,3 +28900,4570 @@
     [METHOD] => GET
 )
 
+2025-03-02 07:47:32: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 08:25:18: Array
+(
+    [GET] => Array
+        (
+            [table] => donation
+            [includeInactive] => true
+            [includeDeleted] => true
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation
+            [includeInactive] => true
+            [includeDeleted] => true
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation&includeInactive=true&includeDeleted=true&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-03-02 08:25:22: Array
+(
+    [GET] => Array
+        (
+            [table] => applicants types
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => applicants types
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=applicants%20types
+    [METHOD] => GET
+)
+
+2025-03-02 08:25:22: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [search] => true
+            [ID] => 81
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [search] => true
+            [ID] => 81
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&search=true&ID=81
+    [METHOD] => GET
+)
+
+2025-03-02 08:26:07: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [search] => true
+            [ID] => 81
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [search] => true
+            [ID] => 81
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&search=true&ID=81
+    [METHOD] => GET
+)
+
+2025-03-02 08:26:07: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [ID] => 81
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => Array
+        (
+            [ID] => 81
+            [Name] => Alice Smith
+            [CName] => 艾丽丝·史密斯
+            [Designation of Applicant] => 1
+            [designation of applicant] => 1
+            [Address] => 123 Main Street, Anytown
+            [phone_number] => 123-456-7890
+            [email] => alice.smith@email.com
+            [IC] => IC-1234567
+            [oldIC] => oldIC-7654321
+            [gender] => male
+            [companyName] => Tech Corp
+            [componyName] => Tech Corp
+            [Birthday] => 1735660800000
+            [expired_date] => 2025-12-31
+            [expired date] => 2025-12-31
+            [place_of_birth] => New York
+            [place of birth] => New York
+            [remarks] => Good
+            [action] => add_member
+        )
+
+    [DELETE] => Array
+        (
+            [table] => members
+            [ID] => 81
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&ID=81
+    [METHOD] => PUT
+)
+
+2025-03-02 08:26:08: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 08:26:12: Array
+(
+    [GET] => Array
+        (
+            [table] => applicants types
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => applicants types
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=applicants%20types
+    [METHOD] => GET
+)
+
+2025-03-02 08:26:12: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [search] => true
+            [ID] => 81
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [search] => true
+            [ID] => 81
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&search=true&ID=81
+    [METHOD] => GET
+)
+
+2025-03-02 08:26:19: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [search] => true
+            [ID] => 81
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [search] => true
+            [ID] => 81
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&search=true&ID=81
+    [METHOD] => GET
+)
+
+2025-03-02 08:26:19: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [ID] => 81
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => Array
+        (
+            [ID] => 81
+            [Name] => Alice Smith
+            [CName] => 艾丽丝·史密斯
+            [Designation of Applicant] => 1
+            [designation of applicant] => 1
+            [Address] => 123 Main Street, Anytown
+            [phone_number] => 123-456-7890
+            [email] => alice.smith@email.com
+            [IC] => IC-1234567
+            [oldIC] => oldIC-7654321
+            [gender] => male
+            [companyName] => Tech Corp
+            [componyName] => Tech Corp
+            [Birthday] => 1735660800000
+            [expired_date] => 2025-12-31
+            [expired date] => 2025-12-31
+            [place_of_birth] => New York
+            [place of birth] => New York
+            [remarks] => Good
+            [action] => add_member
+        )
+
+    [DELETE] => Array
+        (
+            [table] => members
+            [ID] => 81
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&ID=81
+    [METHOD] => PUT
+)
+
+2025-03-02 08:26:21: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 08:27:09: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => Array
+        (
+            [Name] => 11
+            [CName] => 11
+            [Designation of Applicant] => 1
+            [Address] => 11
+            [phone_number] => 01231232132323
+            [email] => sre@gmail.com
+            [IC] => 354576898957
+            [oldIC] => 11
+            [gender] => male
+            [componyName] => 11
+            [Birthday] => 10
+            [expired_date] => 2212-12-12
+            [expiredDate] => 2212-12-12
+            [place_of_birth] => 12
+            [placeOfBirth] => 12
+            [remarks] => 
+            [action] => add_member
+        )
+
+    [DELETE] => Array
+        (
+            [table] => members
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members
+    [METHOD] => POST
+)
+
+2025-03-02 08:27:11: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 08:27:25: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 08:28:03: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 08:28:33: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 08:28:38: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 08:28:49: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 08:28:53: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 08:28:56: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 08:29:18: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 08:29:34: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 08:30:24: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 08:30:27: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 188
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 188
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=188&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 08:30:41: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 08:30:52: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 08:31:01: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 08:31:03: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 188
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 188
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=188&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 08:31:08: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 08:31:18: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 08:31:28: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 09:51:44: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 09:51:45: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 09:51:53: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 09:51:53: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 09:51:59: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => 1111111
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => 1111111
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=1111111&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 09:52:00: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => 1111111
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => 1111111
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=1111111&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 09:52:02: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => 1111111
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => 1111111
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=1111111&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 09:57:47: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 09:57:49: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => 1
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => 1
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=1&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 09:57:49: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => 1
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => 1
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=1&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 09:57:50: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => 11
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => 11
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=11&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 09:57:50: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => 11
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => 11
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=11&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 09:57:51: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => 11
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => 11
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=11&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 09:57:51: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => 11
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => 11
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=11&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 09:57:53: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => 11
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => 11
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=11&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 09:57:53: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => 11
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => 11
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=11&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 09:58:08: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 09:58:09: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 09:58:11: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 09:58:24: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => ad
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => ad
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=ad&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 09:58:24: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => ad
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => ad
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=ad&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 09:58:25: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => ad
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => ad
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=ad&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 09:58:25: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => ad
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => ad
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=ad&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 10:27:37: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 10:27:40: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => a
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => a
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=a&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 10:27:41: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => as
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => as
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=as&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 10:27:42: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => asdf
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => asdf
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=asdf&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 10:27:43: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => asdfg
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => asdfg
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=asdfg&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 10:27:44: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => asdfgge
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => asdfgge
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=asdfgge&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 10:27:45: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => asdfggeed
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => asdfggeed
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=asdfggeed&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 10:27:52: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 10:27:56: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => were
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => were
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=were&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 10:28:02: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => were
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => were
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=were&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 10:28:05: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => were
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => were
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=were&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 13:37:16: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 13:37:32: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => ad
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => ad
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=ad&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 13:39:02: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 13:39:07: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => t
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => t
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=t&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 13:39:08: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 13:39:22: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 13:59:19: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 13:59:24: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sa
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sa
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=sa&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 13:59:24: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sa
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sa
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=sa&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 13:59:28: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sa
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sa
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=sa&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 13:59:34: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 13:59:34: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 13:59:36: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => oii\
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => oii\
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=oii%5C&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 13:59:36: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => oii\
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => oii\
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=oii%5C&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 13:59:38: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 13:59:38: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 13:59:41: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => nj
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => nj
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=nj&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 13:59:41: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => nj
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => nj
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=nj&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 13:59:41: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => nj
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => nj
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=nj&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 13:59:41: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => nj
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => nj
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=nj&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 13:59:42: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => nj
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => nj
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=nj&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 13:59:42: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => nj
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => nj
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=nj&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 13:59:43: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => nj
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => nj
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=nj&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 13:59:43: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => nj
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => nj
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=nj&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:02:27: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:02:39: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=sea&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:02:40: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=sea&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:02:41: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=sea&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:02:41: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=sea&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:02:41: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=sea&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:02:42: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=sea&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:02:42: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=sea&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:02:46: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=sea&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:02:46: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=sea&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:02:47: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=sea&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:02:47: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=sea&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:02:48: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=sea&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:02:48: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=sea&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:02:48: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=sea&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:02:49: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=sea&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:02:49: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=sea&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:02:49: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=sea&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:02:49: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=sea&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:02:49: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=sea&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:02:50: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=sea&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:02:50: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=sea&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:02:50: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=sea&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:02:50: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=sea&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:02:51: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=sea&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:02:51: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sea
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=sea&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:03:22: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sead
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sead
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=sead&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:03:23: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sead
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [search] => sead
+            [searchFields] => membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks
+            [searchAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&search=sead&searchFields=membersID%2CName%2CCName%2CAddress%2Cphone_number%2Cemail%2Cgender%2CIC%2ColdIC%2CcomponyName%2CcompanyName%2Cremarks&searchAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:04:52: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:05:00: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:05:06: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:33:55: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:33:56: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:34:03: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:34:03: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:34:20: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:34:20: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:34:24: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:34:24: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:36:48: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:36:48: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:48:39: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:48:44: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:48:44: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:48:48: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:48:48: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:48:51: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 3
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 3
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=3&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:49:02: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+
+2025-03-02 14:49:02: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [page] => 1
+            [limit] => 10
+            [sort] => membersID
+            [direction] => asc
+            [listAll] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&page=1&limit=10&sort=membersID&direction=asc&listAll=true
+    [METHOD] => GET
+)
+

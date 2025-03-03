@@ -24,7 +24,7 @@ body {
 }
 
 .container {
-    width: 3600px;
+    width: 2100px;
     margin: 0 auto;
     padding: 20px;
     min-height: 95vh;
@@ -261,4 +261,10 @@ tr:hover {
         flex-direction: column;
         gap: 15px;
     }
+
+    /* Add to your CSS */
+#memberTable tbody tr:hover {
+    background-color: rgba(0, 123, 255, 0.1);
+    transition: background-color 0.2s ease;
+  }
 }

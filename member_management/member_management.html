@@ -36,18 +36,20 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="Designation of Applicant">种类</label>
+                        <label for="designation_of_applicant">种类</label>
                         <select id="designation_of_applicant" name="Designation of Applicant" class="form-control" required>
+                            <option value="" disabled selected>请选择</option>
                             <option value="1">会员</option>
                             <option value="2">非会员</option>
                             <option value="3">外国人</option>
                             <option value="4">拒绝继续</option>
+                            <option value="5">逾期</option>
                         </select> 
                     </div>
 
                     <div class="form-group">
                         <label for="Address">地址</label>
-                        <input type="text" id="Address" name="Address" autocomplete="text" class="form-control" required>
+                        <input type="text" id="Address" name="Address" autocomplete="text" class="form-control" >
                     </div>
 
                     <div class="form-group">
@@ -73,9 +75,9 @@
                     <div class="form-group">
                         <label for="gender">性别</label>
                         <select id="gender" name="gender" class="form-control" required>
-                            <option value="">请选择</option>
-                            <option value="男">男</option>
-                            <option value="女">女</option>
+                            <option value=""disabled selected>请选择</option>
+                            <option value="male">男</option>
+                            <option value="female">女</option>
                         </select>
                     </div>
 
@@ -88,7 +90,7 @@
                         <label for="Birthday">生日</label>
                         
                         <select id="Birthday" name="Birthday" class="form-control">
-                            <option value="">请选择月份</option>
+                            <option value=""disabled selected>请选择月份</option>
                             <option value="1">1月</option>
                             <option value="2">2月</option>
                             <option value="3">3月</option>
@@ -105,13 +107,13 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="expired_date">过期日期 (YYYY/MM/DD)</label>
-                        <input type="text" id="expired_date" name="expired_date" autocomplete="date" class="form-control" required placeholder="YYYY/MM/DD">
+                        <label for="expired_date">过期日期 (YYYY-MM-DD)</label>
+                        <input type="date" id="expired_date" name="expired_date" autocomplete="date" class="form-control" required placeholder="YYYY-MM-DD">
                     </div>
 
                     <div class="form-group">
                         <label for="place_of_birth">出生地方</label>
-                        <input type="text" id="place_of_birth" name="place_of_birth" autocomplete="text" class="form-control" required>
+                        <input type="text" id="place_of_birth" name="place_of_birth" autocomplete="text" class="form-control" >
                     </div>
 
                     <div class="form-group">

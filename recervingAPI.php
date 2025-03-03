@@ -654,4 +654,4 @@ class DatabaseAPI {
 
 // Create API instance and handle request
 $api = new DatabaseAPI($dsn);
-$api->handleRequest();
+$api->handleRequest(); 
