@@ -158,16 +158,21 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     window.deleteStock = async function (id) {
-        if (confirm("Are you sure you want to delete this stock item?")) {
+        if (confirm("确定要删除这条记录吗？")) {
             try {
-                const response = await fetch(`${API_BASE_URL}?id=${id}`, { method: "DELETE" });
+                const response = await fetch(`${API_BASE_URL}?table=stock&ID=${id}`, { 
+                    method: "DELETE" 
+                });
+                
                 if (response.ok) {
-                    fetchStocks(searchInput.value);
+                    const filterParams = activeFilter ? { Book: activeFilter } : {};
+                    fetchRecords(filterParams);
                 } else {
-                    alert("Failed to delete stock item.");
+                    alert("删除记录失败。");
                 }
             } catch (error) {
-                console.error("Error deleting stock:", error);
+                console.error("Error deleting record:", error);
+                alert("删除操作发生错误。");
             }
         }
     };

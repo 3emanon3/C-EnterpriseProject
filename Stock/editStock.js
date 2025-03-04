@@ -173,6 +173,14 @@ fileInput.addEventListener('change', (event) => {
     const file = event.target.files[0];
 
     if (file) {
+        // Check if the file size exceeds 1MB (1,048,576 bytes)
+        if (file.size > 1048576) {
+            alert('The image size exceeds 1MB. Please choose a smaller image.');
+            fileInput.value = ''; // Clear the file input
+            return; // Stop further execution
+        }
+
+        // If size is acceptable, proceed with encoding
         encodeImageToBase64(file, (base64String) => {
             if (base64String) {
                 // Store and display the new image
