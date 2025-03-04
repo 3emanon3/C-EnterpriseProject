@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const nextPageButton = document.getElementById("nextPage");
     const table = document.getElementById('recordsTable');
     const tableHeaders = table.querySelectorAll('th');
+    const searchInput = document.getElementById("searchInput");
     
     let recordsData = [];
     let itemsPerPage = parseInt(itemsPerPageSelect.value);
@@ -19,6 +20,8 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentSortColumn = null;
     let currentSortOrder = null;
     let activeFilter = null;
+    let searchTerm = "";
+    let searchTimeout = null;
 
     // Fetch book options for filter
     async function fetchBookOptions() {
@@ -60,6 +63,11 @@ document.addEventListener("DOMContentLoaded", function () {
             if (value) {
                 params.append(key, value);
             }
+        }
+        
+        // Add search parameter if exists
+        if (searchTerm) {
+            params.append("search", searchTerm);
         }
         
         // Add sorting parameters
@@ -122,6 +130,23 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    // Handle search input
+    function handleSearch() {
+        // Clear any existing timeout
+        if (searchTimeout) {
+            clearTimeout(searchTimeout);
+        }
+        
+        // Set a small timeout to prevent making requests for every keystroke
+        searchTimeout = setTimeout(() => {
+            searchTerm = searchInput.value.trim();
+            currentPage = 1;
+            
+            const filterParams = activeFilter ? { Book: activeFilter } : {};
+            fetchRecords(filterParams);
+        }, 300); // 300ms delay
+    }
+
     function handleSortClick(columnName) {
         if(currentSortColumn === columnName) {
             currentSortOrder = currentSortOrder === 'ASC' ? 'DESC' : 'ASC';
@@ -154,6 +179,9 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    // Event listener for search input
+    searchInput.addEventListener("input", handleSearch);
+
     // Event listeners for sorting
     document.querySelectorAll('th[data-column]').forEach(th => {
         th.addEventListener('click', function() {
@@ -167,7 +195,7 @@ document.addEventListener("DOMContentLoaded", function () {
         activeFilter = selectedID;
         currentPage = 1;
         
-        const filterParams = selectedID ? { Book: selectedID, search: true } : {};
+        const filterParams = selectedID ? { Book: selectedID } : {};
         fetchRecords(filterParams);
     });
 
@@ -175,6 +203,8 @@ document.addEventListener("DOMContentLoaded", function () {
         bookFilter.value = "";
         activeFilter = null;
         currentPage = 1;
+        searchInput.value = "";
+        searchTerm = "";
         fetchRecords();
     });
 

@@ -572,11 +572,34 @@ private function handlePostRequest($table) {
                 'types' => ''
             ];
         }
-
+    
+        // Get the actual table we're querying (the view)
+        $queryTable = $this->getViewTable($table);
+        
+        // Get the column information for the actual table/view we're querying
+        $columnsQuery = "SHOW COLUMNS FROM `$queryTable`";
+        $columnsResult = $this->dsn->query($columnsQuery);
+        $viewColumns = [];
+        
+        while ($column = $columnsResult->fetch_assoc()) {
+            $viewColumns[] = $column['Field'];
+        }
+        
+        // Only include columns that exist in the view
         foreach ($this->allowedTables[$table] as $column) {
-            $conditions[] = "`$column` LIKE ?";
-            $params[] = "%$searchTerm%";
-            $types .= 's';
+            if (in_array($column, $viewColumns)) {
+                $conditions[] = "`$column` LIKE ?";
+                $params[] = "%$searchTerm%";
+                $types .= 's';
+            }
+        }
+        
+        if (empty($conditions)) {
+            return [
+                'sql' => '1=1',
+                'params' => [],
+                'types' => ''
+            ];
         }
         
         return [

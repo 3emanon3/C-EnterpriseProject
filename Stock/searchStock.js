@@ -160,7 +160,7 @@ document.addEventListener("DOMContentLoaded", function () {
     window.deleteStock = async function (id) {
         if (confirm("确定要删除这条记录吗？")) {
             try {
-                const response = await fetch(`${API_BASE_URL}?table=stock&ID=${id}`, { 
+                const response = await fetch(`${API_BASE_URL}?table=s&ID=${id}`, { 
                     method: "DELETE" 
                 });
                 
