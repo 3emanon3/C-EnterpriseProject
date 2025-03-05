@@ -45,10 +45,10 @@ class DatabaseAPI {
         'vdonation' => ['ID', 'Name/Company Name', 'donationTypes', 'Bank', 'membership', 'paymentDate', 'official receipt no', 'amount', 'Remarks'],
         'stock' => ['ID', 'Product ID', 'Name', 'stock', 'Price', 'Publisher', 'Remarks', 'Picture'],
         'soldrecord' => ['ID', 'Book', 'membership', 'Name/Company Name', 'quantity_in', 'quantity_out', 'InvoiceNo', 'Date', 'price', 'Remarks'],
-        'vsoldrecord' => ['ID', 'Name', 'CName', 'Name/Company Name', 'quantity_in', 'quantity_out', 'InvoiceNo', 'Date', 'price', 'Remarks'],
+        'vsoldrecord' => ['ID', 'Book', 'membership', 'Name/Company Name', 'quantity_in', 'quantity_out', 'InvoiceNo', 'Date', 'price', 'Remarks'],
         'event' => ['ID', 'title', 'status', 'start_time', 'end_time', 'created_at', 'location', 'description', 'max_participant', 'registration_deadline', 'price', 'online_link'],
         'participants' => ['ID', 'eventID', 'memberID', 'joined_at'],
-        'vparticipants' => ['ID', 'memberID', 'Name', 'CName', 'phone_number', 'email', 'IC', 'title', 'joined_at'],
+        'vparticipants' => ['ID', 'memberID', 'Name', 'CName', 'phone_number', 'email', 'IC', 'eventID', 'joined_at'],
         'blacklist' => ['ID', 'membersID', 'Name', 'CName', 'designation of applicant', 'Address', 'phone_number', 'email', 'IC', 'oldIC', 'gender', 'componyName', 'Birthday', 'expired date', 'place of birth', 'others','remarks'],
     ];
     
@@ -154,8 +154,10 @@ class DatabaseAPI {
      */
     private function handleGetRequest($table, $params) {
         if (isset($params['search'])) {
+            //will go search if got search, else get everything
             $this->handleSearchRequest($table, $params);
         } else {
+            //will ge
             $this->getAllRecords($table, $params);
         }
     }
@@ -164,24 +166,34 @@ class DatabaseAPI {
      * Handle search requests with special conditions and normal filters
      */
     private function handleSearchRequest($table, $params) {
+        //if search = true, then became null which is '', else search the word inside the params search
         $searchTerm = $params['search'] === 'true' ? '' : $params['search'];
         
         // Simple ID search
+        //if contain ID, then search for the ID
         if ($params['search'] === 'true' && isset($params['ID'])) {
+            //find the view table
             $queryTable = $this->getViewTable($table);
+            //Select from table where ID = ?
             $baseQuery = "SELECT * FROM `$queryTable` WHERE ID = ?";
+            //find the count
             $countQuery = "SELECT COUNT(*) as total FROM `$queryTable` WHERE ID = ?";
+            //execute the query
             $this->executeQuery($table, $baseQuery, $countQuery, [$params['ID']], 'i');
+            //return the rest code will not be executed
             return;
         }
         
         // Extract search parameters
         $knownParams = ['table', 'search', 'page', 'limit', 'sort', 'order'];
+        //find is there any other params that is not in the knownParams
         $specificParams = array_diff_key($params, array_flip($knownParams));
         
         if (!empty($specificParams)) {
+            //if got specific params, then go to handleParameterizedSearch
             $this->handleParameterizedSearch($table, $specificParams);
         } else if (!empty($searchTerm)) {
+            //if not, then go to handleGeneralSearch
             $this->handleGeneralSearch($table, $searchTerm);
         } else {
             $this->getAllRecords($table, $params);
@@ -195,6 +207,8 @@ class DatabaseAPI {
         $allowedColumns = $this->allowedTables[$table];
         
         // Separate special and normal parameters
+        //specialParams is the special conditions
+        //normalParams is other specific params that is not inside the special paramas
         $specialParams = array_intersect_key($specificParams, $this->specialConditions[$table] ?? []);
         $normalParams = array_diff_key($specificParams, $specialParams);
         
@@ -245,7 +259,7 @@ class DatabaseAPI {
      */
     private function handleGeneralSearch($table, $searchTerm) {
         $queryTable = $this->getViewTable($table);
-        $conditions = $this->buildSearchConditions($table, $searchTerm);
+        $conditions = $this->buildSearchConditions($queryTable, $searchTerm);
         
         $baseQuery = "SELECT * FROM `$queryTable` WHERE " . $conditions['sql'];
         $countQuery = "SELECT COUNT(*) as total FROM `$queryTable` WHERE " . $conditions['sql'];

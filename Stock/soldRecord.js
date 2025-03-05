@@ -111,9 +111,9 @@ document.addEventListener("DOMContentLoaded", function () {
             const row = document.createElement("tr");
             
             row.innerHTML = `
-                <td>${record.Name || '-'}</td>
-                <td>${record.CName || '-'}</td>
-                <td>${record.Name || '-'}</td>
+                <td>${record.Book || '-'}</td>
+                <td>${record.membership || '-'}</td>
+                <td>${record["Name/Company Name"] || '-'}</td>
                 <td>${record.quantity_in || '-'}</td>
                 <td>${record.quantity_out || '-'}</td>
                 <td>${record.InvoiceNo || '-'}</td>
@@ -195,7 +195,7 @@ document.addEventListener("DOMContentLoaded", function () {
         activeFilter = selectedID;
         currentPage = 1;
         
-        const filterParams = selectedID ? { Book: selectedID } : {};
+        const filterParams = selectedID ? { Book: selectedID, search: "true" } : {};
         fetchRecords(filterParams);
     });
 
