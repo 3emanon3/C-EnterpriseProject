@@ -177,6 +177,13 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
+    window.increaseStock = function (id) {
+        window.location.href = `increaseStock.html?id=${id}`;
+    };
+
+    window.decreaseStock = function (id) {
+        window.location.href = `decreaseStock.html?id=${id}`;
+    };
     
     tableHeaders.forEach(th => {
         const resizer = th.querySelector('.resizer');

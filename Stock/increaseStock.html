@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Management System - Increase Stock</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="searchStock.css">
+    <link rel="stylesheet" href="increaseStock.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>库存管理系统 - 增加产品</h1>
+            <nav class="system-nav">
+                <button class="btn btn-primary" onclick="confirmCancel()">
+                    <i class="fas fa-times"></i> 取消
+                </button>
+            </nav>
+        </header>
+
+        <section class="increase-container">
+            <div class="increase-form">
+                <h3>新记录</h3>
+                <div class="form-group">
+                    <label for="name">产品名称:</label>
+                    <input type="text" id="name">
+                </div>
+                <div class="form-group">
+                    <label for="membership">出售至</label>
+                    <select id="membership" onchange="updateMemberSection()">
+                        <option value="1">新人</option>
+                        <option value="2">旧人</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="Name/Company Name">公司名字:</label>
+                    <input type="text" id="Name/Company Name">
+                </div>
+                <div class="form-group">
+                    <label for="quantity_in">增加数量:</label>
+                    <div class="quantity-input-group">
+                        <button class="quantity-btn" data-change="-10">-10</button>
+                        <button class="quantity-btn" data-change="-1">-1</button>
+                        <input type="number" id="quantity_in" value="0" min="0">
+                        <button class="quantity-btn" data-change="1">+1</button>
+                        <button class="quantity-btn" data-change="10">+10</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="InvoiceNo">账单序号:</label>
+                    <input type="text" id="InvoiceNo">
+                </div>
+                <div class="form-group">
+                    <label for="Date">日期:</label>
+                    <input type="date" id="Date">
+                </div>
+                <div class="form-group">
+                    <label for="price">价格:</label>
+                    <input type="number" step="0.01" id="price">
+                </div>
+                <div class="form-group">
+                    <label for="remarks">备注:</label>
+                    <textarea id="remarks" rows="4"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-success" onclick="saveChanges()">
+                        <i class="fas fa-save"></i> 保存更改
+                    </button>
+                    <button class="btn btn-primary" onclick=confirmCancel()>
+                        <i class="fas fa-times"></i> 取消
+                    </button>
+                </div>
+            </div>
+            <div class="membersearch">
+                <div class="new-member-section"> 
+                    <h3>新会员信息</h3>
+                    <div class="form-group">
+                        <label for="newMemberName">会员姓名:</label>
+                        <input type="text" id="newMemberName">
+                    </div>
+                    <div class="form-group">
+                        <label for="newMemberContact">会员联系方式:</label>
+                        <input type="text" id="newMemberContact">
+                    </div>
+                    
+                </div>
+                <div class="search-member-section"> 
+                    <h3>搜索会员</h3>
+                    <div class="form-group">
+                        <label for="searchMember">搜索会员姓名/ID:</label>
+                        <input type="text" id="searchMember" oninput="searchMembers()"> 
+                    </div>
+                    <div class="search-results" id="searchResults">
+                        
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="increaseStock.js"></script>
+</body>
+
+</html>

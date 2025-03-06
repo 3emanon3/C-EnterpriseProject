@@ -1,0 +1,147 @@
+/* Edit Form Styles */
+.container {
+    max-width: 100%;
+}
+
+.increase-container {
+    display: flex;
+    background: white;
+    border-radius: 8px;
+    box-shadow: var(--shadow);  /* Assuming you have --shadow defined */
+    padding: 30px;
+    margin: 20px 0;
+    max-width: 800px;
+    margin: 0 auto;
+    flex-direction: row;
+}
+
+.increase-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: var(--primary-color); /* Assuming you have --primary-color defined */
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select /* Added select styling */
+{
+    padding: 10px;
+    border: 1px solid var(--border-color); /* Assuming you have --border-color defined */
+    border-radius: 4px;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+.form-group input:read-only {
+    background-color: #f8f9fa;
+    cursor: not-allowed;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+/* Quantity Input Group Styles */
+.quantity-input-group {
+    display: flex;
+    align-items: center;  /* Vertically center the buttons and input */
+    width: 100%;
+
+}
+
+.quantity-input-group input {
+    flex: 1; /* Allow input to take remaining space */
+    text-align: center;
+    margin: 0 5px; /* Add some spacing between buttons and input */
+}
+.quantity-input-group input[type=number]::-webkit-inner-spin-button, 
+.quantity-input-group input[type=number]::-webkit-outer-spin-button {  
+    opacity: 0;
+
+}
+
+.quantity-btn {
+    padding: 5px 10px; /* Adjust padding as needed */
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: white;
+    cursor: pointer;
+    font-size: 14px;
+    width: 50px;
+}
+
+.quantity-btn:hover {
+    background-color: #f0f0f0;
+}
+
+.new-member-section, .search-member-section {
+    display: none;
+    margin-left: 80px;
+}
+
+.search-results {
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.search-results ul {
+    list-style: none;
+    padding: 0;
+}
+
+.search-results li {
+    padding: 5px 0;
+    cursor: pointer;
+}
+
+.search-results li:hover {
+    background-color: #f0f0f0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .edit-container {  /* Corrected the class name here */
+        padding: 20px;
+        margin: 10px;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .form-actions button {
+        width: 100%;
+    }
+    .quantity-input-group {
+        flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    }
+    .quantity-input-group input{
+        width: 50%;
+        flex: initial;
+    }
+     .quantity-input-group button{
+        width: 25%;
+    }
+}

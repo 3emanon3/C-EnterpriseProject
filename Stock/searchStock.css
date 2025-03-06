@@ -74,6 +74,26 @@ h1 {
     color: white;
 }
 
+.btn-edit {
+    background-color: #f39c12;
+    color: white;
+}
+
+.btn-delete {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.btn-increase {
+    background-color: #27ae60;
+    color: white;
+}
+
+.btn-decrease {
+    background-color: #c0392b;
+    color: white;
+}
+
 .btn:hover {
     opacity: 0.9;
     transform: translateY(-1px);
@@ -138,7 +158,22 @@ table {
 th, td {
     padding: 12px;
     text-align: left;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: none;
+    border-right: 5px solid rgba(220, 220, 220, 0.922);
+}
+
+tbody tr:nth-child(odd) {
+    background-color: white;
+}
+
+/* Style for even rows */
+tbody tr:nth-child(even) {
+    background-color: #f2f2f2; /* Light grey */
+}
+
+/* Keep the hover effect, but adjust it if needed */
+tr:hover {
+    background-color: #f8f9fa; /* This might need slight adjustment */
 }
 
 th {
@@ -160,7 +195,7 @@ th {
 }
 
 .resizer:hover {
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: rgba(19, 17, 17, 0.1);
 }
 
 th i {
