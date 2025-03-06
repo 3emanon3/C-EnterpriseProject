@@ -1,307 +1,274 @@
+const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
+
 document.addEventListener("DOMContentLoaded", function () {
-    const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
-    
-    // DOM Elements
+    // Element references
     const searchInput = document.getElementById("searchInput");
-    const memberTableBody = document.querySelector("#memberTable tbody");
-    const totalMembers = document.getElementById("totalMembers");
+    const searchButton = document.getElementById("searchButton");
+    const totalDonations = document.getElementById("totalDonations");
     const loader = document.querySelector(".loader");
     const itemsPerPageSelect = document.getElementById("itemsPerPage");
-    const prevPageButton = document.getElementById("prevPage");
-    const nextPageButton = document.getElementById("nextPage");
-    const birthdayButton = document.getElementById("searchBirthday");
-    const expiredButton = document.getElementById("searchExpiry");
-    const listAllMembersButton = document.getElementById("listAllMembers");
-    const table = document.getElementById('memberTable');
+    const table = document.getElementById('donationTable');
     const tableHeaders = table.querySelectorAll('th');
-    const paginationContainer = document.querySelector('.pagination');
+    const donationTableBody = table.querySelector('tbody');
     
-    // State variables
-    let currentPage = 1;
-    let itemsPerPage = parseInt(itemsPerPageSelect.value);
-    let sortColumn = 'membersID';
-    let sortDirection = 'ASC';
-    let totalPages = 0;
-    let currentSearchType = 'all';
-    
-    // Debounce function to limit API calls during rapid typing
-    function debounce(func, wait) {
-        let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
+    // Only create pagination container if it doesn't exist
+    const paginationContainer = document.querySelector(".pagination");
+    if (!paginationContainer) {
+        console.warn("Pagination container not found, creating one");
+        const paginationDiv = document.createElement("div");
+        paginationDiv.className = "pagination";
+        document.querySelector(".pagination-container").prepend(paginationDiv);
     }
-    
-    // Fetch members data from API
-    async function fetchMembers(query = "") {
-        loader.style.display = "block";
-        memberTableBody.innerHTML = "";
-        
-        const params = new URLSearchParams();
-        params.append("table", "members");
-        params.append("limit", itemsPerPage);
-        params.append("page", currentPage);
-        
-        // Add different parameters based on search type
-        if ( query.trim() !== "") {
-            params.append("search", query);
-           // params.append("searchFields", "membersID,Name,CName,Address,phone_number,email,gender,IC,oldIC,componyName,companyName,remarks");
-        }
 
-        // Add sorting parameters
-        if (sortColumn) {
-            params.append("sort", sortColumn);
-            params.append("order", sortDirection);
+    // State variables
+    let currentSortColumn = null;
+    let currentSortOrder = null;
+    let donationData = []; 
+    let itemsPerPage = parseInt(itemsPerPageSelect.value);
+    let currentPage = 1;
+    let totalPages = 0;
+    
+    let isListingAll = true; // Flag to indicate listing all data
+
+    async function fetchDonations(query = "") {
+        loader.style.display = "flex";
+      
+        // Create params object instead of using append
+        const params = new URLSearchParams({
+            table: "donation",
+            page: currentPage,
+            limit: itemsPerPage,
+        });
+        
+        if (query && query.trim()) {
+            params.append("search", query.trim());
+            isListingAll = false; // Indicate not listing all when search query is present  // UPGRADE: Set isListingAll to false when search query is present
+        } else {
+            isListingAll = true; // Back to listing all if query is empty // UPGRADE: Set isListingAll back to true when query is empty
         }
-        
+    
+        if (currentSortColumn) {
+            // Ensure the column names match what the API expects
+            const apiColumnName = mapColumnNameToApi(currentSortColumn);
+            params.append("sort", apiColumnName);
+            params.append("order", currentSortOrder || 'ASC');
+        }
+    
         const url = `${API_BASE_URL}?${params.toString()}`;
-        
+        console.log("Fetching from URL:", url); // Debug log
+    
         try {
             const response = await fetch(url);
+            console.log("Raw response status:", response.status);
+            
+
+            if (!response.ok) {
+                throw new Error(`Server responded with status: ${response.status}`);
+            }
             
             const data = await response.json();
+            console.log("API Response :", data); // Log the entire response
             
-            const members = data.data || [];
+            // More detailed safety checks
+            if (!data|| typeof data !== 'object') {
+                throw new Error("Empty response received");
+            }
             
-            // Update total count and pages
-            const total = data.pagination?.total_records || members.length;
-            totalMembers.textContent = total;
-            totalPages = Math.ceil(total / itemsPerPage);
+           
             
-            displayMembers(members);
-           updatePagination();
-          // updateSortIcons();
+            // Check for data array, handle both formats that API might return
+            let processedData = Array.isArray(data) ? data : data.data || [];
+            let totalCount = data.total || processedData.length;
             
+            
+            donationData = processedData;
+            totalDonations.textContent = totalCount;
+            totalPages = Math.ceil(totalCount / itemsPerPage); // Always calculate pages
+         
+            displayDonations(donationData);
+            updatePagination();
+           
         } catch (error) {
-            console.error("Error fetching members:", error);
-            memberTableBody.innerHTML = `<tr><td colspan="16" class="no-results">加载失败: ${error.message}</td></tr>`;
+            console.error("Error fetching donations:", error);
+            donationTableBody.innerHTML = `<tr><td colspan="10" class="error-message">Failed to load donations. Please try again later. Error: ${error.message}</td></tr>`;
+           
         } finally {
             loader.style.display = "none";
         }
     }
-    
-    // Display members in the table
-    function displayMembers(members) {
-        memberTableBody.innerHTML = "";
+
+    function mapColumnNameToApi(columnName) {
+        // Updated mapping to match HTML data-column attributes
+        const mapping = {
+            'id': 'ID',
+            'donor_name': 'Name/Company Name',
+            'donationTypes': 'donationTypes',
+            'Bank': 'Bank',
+            'membership': 'membership',
+            'payment_date': 'payment_date',
+            'receipt_no': 'receipt_no',
+            'amount': 'amount',
+            'remarks': 'remarks'
+        };
         
-        if (members.length === 0) {
-            let message = '暂无记录';
-            if (currentSearchType === 'search') message = '没有找到匹配的记录';
-            if (currentSearchType === 'Birthday') message = '本月没有会员生日';
-            if (currentSearchType === 'expired') message = '本月没有会员需要续期';
-            
-            memberTableBody.innerHTML = `<tr><td colspan="16" class="no-results">${message}</td></tr>`;
+        return mapping[columnName] || columnName;
+    }
+
+    function displayDonations(donations) {
+        console.log("Displaying donations:", donations);
+        donationTableBody.innerHTML = "";//It starts by resetting the table body to ensure no old data remains.
+        
+        if (!Array.isArray(donations) || donations.length === 0) {
+            console.log("No donations to display");
+            donationTableBody.innerHTML = `<tr><td colspan="10" class="no-data">No donations found</td></tr>`;
             return;
         }
+    
+        console.log(`Processing ${donations.length} donations for display`);
         
-        members.forEach(member => {
-            // Helper function to format data
-            const formatData = (value) => {
-                if (value === null || value === undefined || value === 'For...') {
-                    return '';
-                }
-                return String(value || '').replace(/[&<>"']/g, (m) => ({
-                    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
-                }[m]));
-            };
+        donations.forEach(donation => {
             
-            // Get proper field values with fallbacks
-            const designation = member['designation of applicant'] || 
-                               member['Designation of Applicant'] || 
-                               member['designation_of_applicant'];
-                               
-            const designationDisplay = designation === '3' ? '外国人' :
-                                     designation === '2' ? '非会员' :
-                                     designation === '1' ? '会员' :
-                                     designation === '4' ? '拒绝继续' :
-                                     formatData(designation);
             
-            const expiredDate = member['expired date'] || 
-                               member['expired_date'] || 
-                               member['expiredDate'] || 
-                               member['expireddate'];
-                                   
-            const placeOfBirth = member['place of birth'] || 
-                               member['place_of_birth'] || 
-                               member['placeOfBirth'] || 
-                               member['placeofbirth'];
+            // Log the donation object to see its structure
+            console.log("Processing donation:", donation);
+            
 
-            const gender = member['gender'] ||
-                         member['Gender'] ||
-                         member['sex'] ||
-                         member['Sex'];
-            
-            // Format functions
-            const formatPhone = (phone) => {
-                return phone ? String(phone).replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3") : '';
-            };
-            
-            const formatIC = (ic) => {
-                if (!ic) return '';
-                return String(ic).replace(/(\d{6})(\d{2})(\d{4})/, "$1-$2-$3");
-            };
-            
-            const formatDate = (dateString) => {
-                if (!dateString) return '';
-                const date = new Date(dateString);
-                if (isNaN(date.getTime())) return '';
-                
-                const year = date.getFullYear();
-                const month = String(date.getMonth() + 1).padStart(2, '0');
-                const day = String(date.getDate()).padStart(2, '0');
-                
-                return `${year}-${month}-${day}`;
-            };
             
             const row = document.createElement("tr");
+            row.setAttribute('id', `donation-row-${donation.ID || 'unknown'}`);
+            
+            // Handle potential property name variations
+            const id = donation.ID || donation.id || '';
+            const donorName = donation['Name/Company Name'] || donation.donor_name || '';
+            const donationType = donation.donationTypes || donation.donation_type || '';
+            const bank = donation.Bank || donation.bank || '';
+            const membership = donation.membership || '';
+            const paymentDate = formatDateTime(donation.paymentDate || donation.payment_date || '');
+            const receiptNo = donation['official receipt no'] || donation.receipt_no || '';
+            const amount = formatPrice(donation.amount || 0);
+            const remarks = truncateText(donation.Remarks || donation.remarks || '', 50);
+            
             row.innerHTML = `
-                <td>${formatData(member.membersID)}</td>
-                <td>${formatData(member.Name)}</td>
-                <td>${formatData(member.CName)}</td>
-                <td>${designationDisplay}</td>
-                <td>${formatData(member.Address)}</td>
-                <td>${formatPhone(member.phone_number)}</td>
-                <td>${formatData(member.email)}</td>
-                <td>${formatIC(member.IC)}</td>
-                <td>${formatIC(member.oldIC)}</td>
-                <td>${formatData(gender)}</td>
-                <td>${formatData(member.componyName || member.companyName)}</td>
-                <td>${formatData(member.Birthday)}</td>
-                <td>${formatDate(expiredDate)}</td>
-                <td>${formatData(placeOfBirth)}</td>
-                <td>${formatData(member.remarks)}</td>
-                <td>
-                    <button class="btn btn-edit" onclick="editMember('${member.ID}')">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="btn btn-delete" onclick="deleteMember('${member.ID}')">
-                        <i class="fas fa-trash"></i>
-                    </button>
+            <td>${id}</td>
+            <td>${donorName}</td>
+            <td>${donationType}</td>
+            <td>${bank}</td>
+            <td>${membership}</td>
+            <td>${paymentDate}</td>
+            <td>${receiptNo}</td>
+            <td>${amount}</td>
+            <td>${remarks}</td>
+            <td>
+                    <button class="btn btn-edit" data-id="${id}" aria-label="Edit donation ${id}">编辑</button>
+                    <button class="btn btn-delete" data-id="${id}" aria-label="Delete donation ${id}">删除</button>
                 </td>
             `;
-            memberTableBody.appendChild(row);
+            donationTableBody.appendChild(row);
         });
     }
-    
-    // Handle sort column click
-    function handleSortClick(columnName) {
-        if (sortColumn === columnName) {
-            sortDirection = sortDirection === 'ASC' ? 'DESC' : 'ASC';
-        } else {
-            sortColumn = columnName;
-            sortDirection = 'ASC';
+
+    function truncateText(text, maxLength) {
+        if (!text) return '';
+        if (text.length > maxLength) {
+            // Add a title attribute for the full text when truncated
+            return `<span title="${escapeHTML(text)}">${escapeHTML(text.substring(0, maxLength))}...</span>`;
         }
-        currentPage = 1;
-        updateSortIcons();
-        fetchMembers(searchInput.value);
+        return escapeHTML(text);
     }
     
-    // Update sort icons in table headers
-    function updateSortIcons() {
-        document.querySelectorAll('th[data-column]').forEach(th => {
-            const icon = th.querySelector('i');
-            icon.classList.remove('fa-sort', 'fa-sort-up', 'fa-sort-down');
-            if(th.dataset.column === currentSortColumn) {
-                if(currentSortOrder === 'ASC') {
-                    icon.classList.add('fa-sort-up');
-                } else {
-                    icon.classList.add('fa-sort-down');
-                }
-            } else {
-                icon.classList.add('fa-sort');
-            }
+    // Helper function to escape HTML
+    function escapeHTML(str) {
+        if (!str) return '';
+        return str
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    function formatDateTime(dateTimeStr) {
+        if (!dateTimeStr) return '';
+        const date = new Date(dateTimeStr);
+        if (isNaN(date.getTime())) return dateTimeStr;
+
+        return date.toLocaleString('zh-CN', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
         });
     }
-    
-    function updateSortIcons() {
-        document.querySelectorAll('th[data-column]').forEach(th => {
-            const icon = th.querySelector('i') || document.createElement('i');
-            icon.className = 'sort-arrow fas';
-            
-            if (th.dataset.column === sortColumn) {
-                icon.classList.remove('fa-sort');
-                icon.classList.add(sortDirection === 'ASC' ? 'fa-sort-up' : 'fa-sort-down');
-            } else {
-                icon.classList.remove('fa-sort-up', 'fa-sort-down');
-                icon.classList.add('fa-sort');
-            }
-            
-            // Add icon if it doesn't exist
-            if (!th.querySelector('i')) {
-                th.appendChild(icon);
-            }
-        });
+
+    function formatPrice(price) {
+        if (price === null || price === undefined) return '';
+        return `RM${parseFloat(price).toFixed(2)}`;
     }
-    
-    // Update pagination controls
+
     function updatePagination() {
+        const paginationContainer = document.querySelector(".pagination");
         if (!paginationContainer) return;
+
         
+       
         const paginationHTML = [];
         
-        // Previous button
-       /* paginationHTML.push(`
-            <button id="prevPage" class="pagination-btn ${currentPage === 1 ? 'disabled' : ''}" 
-                ${currentPage === 1 ? 'disabled' : ''}>
-                上一页
-            </button>
-        `);*/
-        
+        // Previous page button
+       
+
         // Page numbers
         for (let i = 1; i <= totalPages; i++) {
             if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
                 paginationHTML.push(`
                     <button class="pagination-btn ${i === currentPage ? 'active' : ''}" 
-                            onclick="changePage(${i})">
+                            data-page="${i}"
+                            aria-label="Page ${i}"
+                            ${i === currentPage ? 'aria-current="page"' : ''}>
                         ${i}
                     </button>
                 `);
             } else if (i === currentPage - 3 || i === currentPage + 3) {
-                paginationHTML.push('<span class="pagination-ellipsis">...</span>');
+                paginationHTML.push('<span class="pagination-ellipsis" aria-hidden="true">...</span>');
             }
         }
-        
-        // Next button
-        /*paginationHTML.push(`
-            <button id="nextPage" class="pagination-btn ${currentPage === totalPages ? 'disabled' : ''}" 
-                ${currentPage === totalPages ? 'disabled' : ''}>
-                下一页
-            </button>
-        `);*/
-        
+
         // Page jump
         paginationHTML.push(`
-            <div class="pagination-info">
-                <span class="page-indicator">${currentPage}/${totalPages}</span>
+            <div class="pagination-info" aria-live="polite">
+                <span class="page-indicator">Page ${currentPage} of ${totalPages}</span>
                 <div class="page-jump">
                     <input type="number" 
                            id="pageInput" 
                            min="1" 
                            max="${totalPages}" 
                            placeholder="页码"
+                           aria-label="Jump to page"
                            class="page-input">
-                    <button onclick="jumpToPage()" class="jump-btn">跳转</button>
+                    <button id="jumpBtn" class="jump-btn" aria-label="Jump to the specified page">跳转</button>
                 </div>
             </div>
         `);
-        
+
         paginationContainer.innerHTML = paginationHTML.join('');
         
-        // Re-attach event listeners for prev/next buttons
-        document.getElementById('prevPage')?.addEventListener('click', () => {
-            if (currentPage > 1) changePage(currentPage - 1);
+        // Add event listeners to pagination buttons
+        paginationContainer.querySelectorAll('.pagination-btn[data-page]').forEach(button => {
+            button.addEventListener('click', function() {
+                const page = parseInt(this.dataset.page);
+                if (!isNaN(page) && page >= 1 && page <= totalPages) {
+                    changePage(page);
+                }
+            });
         });
-        
-        document.getElementById('nextPage')?.addEventListener('click', () => {
-            if (currentPage < totalPages) changePage(currentPage + 1);
-        });
-        
-        // Add event listener for page input
+
+        // Add event listener to jump button
+        const jumpBtn = document.getElementById('jumpBtn');
+        if (jumpBtn) {
+            jumpBtn.addEventListener('click', jumpToPage);
+        }
+
+        // Add event listener to page input for Enter key
         const pageInput = document.getElementById('pageInput');
         if (pageInput) {
             pageInput.addEventListener('keypress', (e) => {
@@ -310,234 +277,232 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             });
         }
+    
+}
+
+    function changePage(page) {
+        if (page < 1 || page > totalPages) return;
+        currentPage = page;
+        fetchDonations(searchInput.value);
     }
-    
-    // Set up column resizing
-    function initializeResizableColumns() {
-        tableHeaders.forEach(th => {
-            // Create resizer element if it doesn't exist
-            let resizer = th.querySelector('.resizer');
-            if (!resizer) {
-                resizer = document.createElement('div');
-                resizer.className = 'resizer';
-                th.appendChild(resizer);
-            }
-            
-            let startX, startWidth;
-            
-            resizer.addEventListener('mousedown', function(e) {
-                startX = e.pageX;
-                startWidth = th.offsetWidth;
-                
-                const tableContainer = table.closest('.table-container');
-                if (tableContainer) {
-                    tableContainer.classList.add('resizing');
-                }
-                
-                document.addEventListener('mousemove', resizeColumn);
-                document.addEventListener('mouseup', stopResize);
-                e.preventDefault();
-            });
-            
-            function resizeColumn(e) {
-                const width = startWidth + (e.pageX - startX);
-                if (width >= 50) { // Minimum width
-                    th.style.width = `${width}px`;
-                }
-            }
-            
-            function stopResize() {
-                const tableContainer = table.closest('.table-container');
-                if (tableContainer) {
-                    tableContainer.classList.remove('resizing');
-                }
-                
-                document.removeEventListener('mousemove', resizeColumn);
-                document.removeEventListener('mouseup', stopResize);
-                
-                // Save column widths
-                saveColumnWidths();
-            }
-        });
-        
-        // Load saved column widths
-        loadColumnWidths();
-    }
-    
-    // Save column widths to localStorage
-    function saveColumnWidths() {
-        try {
-            const widths = {};
-            tableHeaders.forEach(header => {
-                widths[header.dataset.column] = header.style.width;
-            });
-            localStorage.setItem('columnWidths', JSON.stringify(widths));
-        } catch (error) {
-            console.error('Error saving column widths:', error);
-        }
-    }
-    
-    // Load column widths from localStorage
-    function loadColumnWidths() {
-        try {
-            const savedWidths = JSON.parse(localStorage.getItem('columnWidths') || '{}');
-            
-            tableHeaders.forEach(header => {
-                const column = header.dataset.column;
-                if (savedWidths[column]) {
-                    header.style.width = savedWidths[column];
-                } else {
-                    // Set default widths based on column type
-                    switch (column) {
-                        case 'membersID':
-                        case 'gender':
-                            header.style.width = '80px';
-                            break;
-                        case 'Name':
-                        case 'CName':
-                        case 'email':
-                            header.style.width = '150px';
-                            break;
-                        case 'Address':
-                        case 'remarks':
-                            header.style.width = '200px';
-                            break;
-                        case 'phone_number':
-                        case 'IC':
-                        case 'oldIC':
-                            header.style.width = '120px';
-                            break;
-                        default:
-                            header.style.width = '100px';
-                    }
-                }
-            });
-        } catch (error) {
-            console.error('Error loading column widths:', error);
-        }
-    }
-    
-    // Add event listeners
-    tableHeaders.forEach(th => {
-        th.addEventListener('click', function() {
-            handleSortClick(th.dataset.column);
-        });
-    });
-    
-    prevPageButton?.addEventListener("click", function () {
-        if (currentPage > 1) {
-            currentPage -= 1;
-            fetchMembers(searchInput.value);
-        }
-    });
-    
-    nextPageButton?.addEventListener("click", function () {
-        if (currentPage < totalPages) {
-            currentPage += 1;
-            fetchMembers(searchInput.value);
-        }
-    });
-    
-    // Debounced search
-    const debouncedSearch = debounce((searchText) => {
-        currentPage = 1; // Reset to first page when searching
-        currentSearchType = searchText.trim() ? 'search' : 'all';
-        fetchMembers(searchText);
-    }, 300); // 300ms delay
-    
-    searchInput?.addEventListener("input", function() {
-        debouncedSearch(this.value);
-    });
-    
-    
-    
-    birthdayButton?.addEventListener("click", function() {
-        currentPage = 1;
-        currentSearchType = 'Birthday';
-        fetchMembers();
-    });
-    
-    expiredButton?.addEventListener("click", function() {
-        currentPage = 1;
-        currentSearchType = 'expired';
-        fetchMembers();
-    });
-    
-    listAllMembersButton?.addEventListener("click", function() {
-        currentPage = 1;
-        currentSearchType = 'all';
-        searchInput.value = '';
-        fetchMembers();
-    });
-    
-    // Items per page change
-    itemsPerPageSelect?.addEventListener("change", function () {
-        itemsPerPage = parseInt(this.value);
-        currentPage = 1; // Reset to first page when changing items per page
-        fetchMembers(searchInput.value);
-    });
-    
-    // Global functions
-    window.editMember = function(id) {
-        window.location.href = `edit_member.html?id=${id}`;
-    };
-    
-    window.deleteMember = async function(id) {
-        if (confirm("确定要删除这个会员吗？")) {
-            try {
-                const response = await fetch(`${API_BASE_URL}?table=members&ID=${id}`, { method: "DELETE" });
-                const data = await response.json();
-                
-                if (data.status === 'success') {
-                    alert('删除成功！');
-                    fetchMembers(searchInput.value);
-                } else {
-                    alert(data.message || "删除失败");
-                }
-            } catch (error) {
-                console.error("Error deleting member:", error);
-                alert("删除时发生错误");
-            }
-        }
-    };
-    
-    window.changePage = function(page) {
-        if (page >= 1 && page <= totalPages && page !== currentPage) {
-            currentPage = page;
-            fetchMembers(searchInput.value);
-        }
-    };
-    
-    window.jumpToPage = function() {
+
+    function jumpToPage() {
         const pageInput = document.getElementById('pageInput');
         if (!pageInput) return;
         
         let targetPage = parseInt(pageInput.value);
+        if (isNaN(targetPage)) return;
         
-        // Validate input
-        if (isNaN(targetPage)) {
-            alert('请输入有效的页码');
-            return;
-        }
-        
-        if (targetPage < 1) {
-            targetPage = 1;
-        } else if (targetPage > totalPages) {
-            targetPage = totalPages;
-        }
-        
-        // Only change page if it's different from current page
+        targetPage = Math.max(1, Math.min(targetPage, totalPages));
         if (targetPage !== currentPage) {
-            changePage(targetPage);
+            currentPage = targetPage;
+            fetchDonations(searchInput.value);
         }
+    }
+
+    function handleSortClick(columnName) {
+        if (currentSortColumn === columnName) {
+            currentSortOrder = currentSortOrder === 'ASC' ? 'DESC' : 'ASC';
+        } else {
+            currentSortColumn = columnName;
+            currentSortOrder = 'ASC';
+        }
+        currentPage = 1;
+        updateSortIcons();
+        fetchDonations(searchInput.value);
+    }
+
+    function updateSortIcons() {
+        document.querySelectorAll('th[data-column]').forEach(th => {
+            const icon = th.querySelector('i');
+            if (!icon) return;
+            
+            icon.classList.remove('fa-sort', 'fa-sort-up', 'fa-sort-down');
+            
+            if (th.dataset.column === currentSortColumn) {
+                const newClass = currentSortOrder === 'ASC' ? 'fa-sort-up' : 'fa-sort-down';
+                icon.classList.add(newClass);
+                
+                // Update aria-sort attribute for accessibility
+                th.setAttribute('aria-sort', currentSortOrder === 'ASC' ? 'ascending' : 'descending');
+            } else {
+                icon.classList.add('fa-sort');
+                th.removeAttribute('aria-sort');
+            }
+        });
+    }
+
+    // Event handlers
+    function handleSearch() {
+        currentPage = 1;
+        isListingAll = true; // Explicitly reset
+        fetchDonations("");
+    }
+
+    function handleEmptySearch() {
+        if (!searchInput.value.trim()) {
+            currentPage = 1;
+            fetchDonations();
+        }
+    }
+
+    // Event listeners
+    tableHeaders.forEach(th => {
+        if (th.dataset.column) {
+            th.addEventListener('click', function() {
+                handleSortClick(this.dataset.column);
+            });
+            
+            // Make sortable headers more accessible
+            th.setAttribute('role', 'button');
+            th.setAttribute('tabindex', '0');
+            th.setAttribute('aria-label', `Sort by ${th.textContent.trim()}`);
+            
+            // Allow keyboard sorting
+            th.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleSortClick(this.dataset.column);
+                }
+            });
+        }
+    });
+
+    searchButton.addEventListener("click", handleSearch);
+
+    searchInput.addEventListener("keypress", function(e) {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            handleSearch();
+        }
+    });
+
+    searchInput.addEventListener("input", handleEmptySearch);
+
+    donationTableBody.addEventListener('click', function(e) {
+        const target = e.target;
+        const id = target.dataset.id;
         
-        // Clear input after jumping
-        pageInput.value = '';
+        if (!id) return;
+        
+        if (target.classList.contains('btn-edit')) {
+            editDonation(id);
+        } else if (target.classList.contains('btn-delete')) {
+            deleteDonation(id);
+        }
+    });
+    
+    itemsPerPageSelect.addEventListener("change", function() {
+        itemsPerPage = parseInt(this.value);
+        currentPage = 1;
+        fetchDonations(searchInput.value);
+    });
+
+    // Save column widths to localStorage
+    function saveColumnWidths() {
+        const columnWidths = {};
+        
+        tableHeaders.forEach(th => {
+            if (th.dataset.column && th.style.width) {
+                columnWidths[th.dataset.column] = th.style.width;
+            }
+        });
+        
+        localStorage.setItem('donationTableColumnWidths', JSON.stringify(columnWidths));
+    }
+    
+    // Load column widths from localStorage
+    function loadColumnWidths() {
+        const savedWidths = localStorage.getItem('donationTableColumnWidths');
+        if (savedWidths) {
+            try {
+                const columnWidths = JSON.parse(savedWidths);
+                
+                tableHeaders.forEach(th => {
+                    if (th.dataset.column && columnWidths[th.dataset.column]) {
+                        th.style.width = columnWidths[th.dataset.column];
+                    }
+                });
+            } catch (e) {
+                console.error('Failed to load saved column widths:', e);
+            }
+        }
+    }
+
+    // Global functions
+    window.editDonation = function(id) {
+        window.location.href = `edit_donation.html?id=${id}`;
     };
-    
-    // Initialize resizable columns
-    initializeResizableColumns();
-    
+
+    window.deleteDonation = async function(id) {
+        if (confirm("确定要删除这个捐赠记录吗？")) {
+            try {
+                const response = await fetch(`${API_BASE_URL}`, {
+                    method: "DELETE",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ table: "donation", id: id }),
+                });
+
+                // Handle different HTTP status codes
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        throw new Error("The donation record could not be found.");
+                    } else if (response.status === 403) {
+                        throw new Error("You don't have permission to delete this record.");
+                    } else {
+                        throw new Error(`Server responded with status: ${response.status}`);
+                    }
+                }
+
+                const data = await response.json();
+                if (data.success) {
+                    alert("捐赠记录已成功删除！");
+                    fetchDonations(searchInput.value);
+                } else {
+                    alert("删除捐赠记录失败: " + (data.message || "未知错误"));
+                }
+            } catch (error) {
+                console.error("Error deleting donation:", error);
+                alert("删除捐赠记录时发生错误，请稍后再试。" + error.message);
+            }
+        }
+    };
+
+    // Table column resizing
+    tableHeaders.forEach(th => {
+        const resizer = th.querySelector('.resizer');
+        if (!resizer) return;
+
+        let startX, startWidth;
+
+        resizer.addEventListener('mousedown', function(e) {
+            startX = e.pageX;
+            startWidth = th.offsetWidth;
+            
+            function resizeColumn(e) {
+                const newWidth = startWidth + (e.pageX - startX);
+                if (newWidth > 50) {
+                    th.style.width = newWidth + 'px';
+                }
+            }
+
+            function stopResize() {
+                document.removeEventListener('mousemove', resizeColumn);
+                document.removeEventListener('mouseup', stopResize);
+                
+                // Save column widths when resizing is done
+                saveColumnWidths();
+            }
+            
+            document.addEventListener('mousemove', resizeColumn);
+            document.addEventListener('mouseup', stopResize);
+            e.preventDefault();
+        });
+    });
+
+    // Load saved column widths
+    loadColumnWidths();
+
     // Initial fetch
-    fetchMembers();
+    fetchDonations();
 });
