@@ -59,8 +59,8 @@
                             <th data-column="membership">Membership <i class="fas fa-sort"></i><div class="resizer"></div></th>
                             <th data-column="payment_date">Payment Date <i class="fas fa-sort"></i><div class="resizer"></div></th>
                             <th data-column="receipt_no">Receipt No <i class="fas fa-sort"></i><div class="resizer"></div></th>
-                            <th data-column="amount">Amount <i class="fas fa-sort"></i><div class="resizer"></div></th>
-                            <th data-column="remarks">Remarks <i class="fas fa-sort"></i><div class="resizer"></div></th>
+                            <th data-column="amount">amount <i class="fas fa-sort"></i><div class="resizer"></div></th>
+                            <th data-column="Remarks">Remarks <i class="fas fa-sort"></i><div class="resizer"></div></th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -72,7 +72,9 @@
             
             <div class="pagination-container">
                 <!-- Pagination will be added here -->
+                <button id="prevPage" class="btn btn-primary">←</button>
                 <div class="pagination"></div>
+                <button id="nextPage" class="btn btn-primary">→</button>
                 <div class="items-per-page">
                     <label for="itemsPerPage">Items per page:</label>
                     <select id="itemsPerPage">

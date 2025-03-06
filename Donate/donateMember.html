@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>添加新会员</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="member_management.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header-actions">
+            <button class="btn btn-primary" onclick="location.href='member_search.html'">
+                <i class="fas fa-home"></i> 返回搜索
+            </button>
+        </div>
+
+        <h1>添加新会员</h1>
+        
+        <div id="errorMessages" class="alert alert-danger" style="display: none;"></div>
+
+        <form id="addMemberForm">
+            <fieldset>
+                <legend>会员信息</legend>
+                <div class="form-container">
+                    
+
+                    <div class="form-group">
+                        <label for="Name">姓名（英）</label>
+                        <input type="text" id="Name" name="Name" autocomplete="text" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="CName">姓名（中）</label>
+                        <input type="text" id="CName" name="CName" autocomplete="text" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="designation_of_applicant">种类</label>
+                        <select id="designation_of_applicant" name="Designation of Applicant" class="form-control" required>
+                            <option value="" disabled selected>请选择</option>
+                            <option value="1">会员</option>
+                            <option value="2">非会员</option>
+                            <option value="3">外国人</option>
+                            <option value="4">拒绝继续</option>
+                            <option value="5">逾期</option>
+                            <option value="6">黑名单</option>
+                            
+                        </select> 
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Address">地址</label>
+                        <input type="text" id="Address" name="Address" autocomplete="text" class="form-control" >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone_number">手机号码</label>
+                        <input type="tel" id="phone_number" name="phone_number" autocomplete="tel"  class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">邮箱</label>
+                        <input type="email" id="email" name="email" autocomplete="email" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="IC">IC 号码</label>
+                        <input type="text" id="IC" name="IC" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="oldIC">旧 IC 号码</label>
+                        <input type="text" id="oldIC" name="oldIC" autocomplete="text" class="form-control" >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gender">性别</label>
+                        <select id="gender" name="gender" class="form-control" required>
+                            <option value=""disabled selected>请选择</option>
+                            <option value="male">男</option>
+                            <option value="female">女</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="componyName">公司名字</label>
+                        <input type="text" id="componyName" name="componyName" class="form-control" autocomplete="text">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Birthday">生日</label>
+                        
+                        <select id="Birthday" name="Birthday" class="form-control">
+                            <option value=""disabled selected>请选择月份</option>
+                            <option value="1">1月</option>
+                            <option value="2">2月</option>
+                            <option value="3">3月</option>
+                            <option value="4">4月</option>
+                            <option value="5">5月</option>
+                            <option value="6">6月</option>
+                            <option value="7">7月</option>
+                            <option value="8">8月</option>
+                            <option value="9">9月</option>
+                            <option value="10">10月</option>
+                            <option value="11">11月</option>
+                            <option value="12">12月</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="expired date">到期日期 (YYYY-MM-DD)</label>
+                        <input type="date" id="expired date" name="expired date" autocomplete="date" class="form-control" required placeholder="YYYY-MM-DD">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="place of birth">出生地点</label>
+                        <input type="text" id="place of birth" name="place of birth" autocomplete="text" class="form-control" >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="other">其他</label>
+                        <input type="text" id="other" name="other" autocomplete="text" class="form-control" >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="remarks">备注</label>
+                        <input type="text" id="remarks" name="remarks" autocomplete="text" class="form-control">
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> 添加会员
+                    </button>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+
+    <div id="loadingIndicator" class="loading-spinner" style="display: none;">
+        加载中...
+    </div>
+
+    <script src="member_management.js"></script>
+</body>
+</html>

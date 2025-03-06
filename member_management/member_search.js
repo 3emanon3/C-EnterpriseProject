@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
     const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
-    
+
+   
     // DOM Elements
     const searchInput = document.getElementById("searchInput");
     const memberTableBody = document.querySelector("#memberTable tbody");
@@ -12,6 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const birthdayButton = document.getElementById("searchBirthday");
     const expiredButton = document.getElementById("searchExpiry");
     const listAllMembersButton = document.getElementById("listAllMembers");
+    const memberFilterSelect = document.getElementById("memberFilter"); // Add reference to the new filter
     const table = document.getElementById('memberTable');
     const tableHeaders = table.querySelectorAll('th');
     const paginationContainer = document.querySelector('.pagination');
@@ -23,6 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let sortDirection = '';
     let totalPages = 0;
     let currentSearchType = 'all';
+    let currentFilterValue = ''; // New variable to track current filter
     let membersData = [];
     
     // Debounce function to limit API calls during rapid typing
@@ -38,18 +41,16 @@ document.addEventListener("DOMContentLoaded", function () {
         };
     }
     
-
-        // Debounced search
-        const debouncedSearch = debounce((searchText) => {
-            console.log("Searching for:", searchText); 
-            currentPage = 1; // Reset to first page when searching
-           
-            fetchMembers(searchText);
-        }, 300); // 300ms delay
-        
-        searchInput?.addEventListener("input", function() {
-            debouncedSearch(this.value);
-        });
+    // Debounced search
+    const debouncedSearch = debounce((searchText) => {
+        console.log("Searching for:", searchText); 
+        currentPage = 1; // Reset to first page when searching
+        fetchMembers(searchText);
+    }, 300); // 300ms delay
+    
+    searchInput?.addEventListener("input", function() {
+        debouncedSearch(this.value);
+    });
 
     // Fetch members data from API
     async function fetchMembers(query = "") {
@@ -62,19 +63,42 @@ document.addEventListener("DOMContentLoaded", function () {
         params.append("page", currentPage);
         
         // Add different parameters based on search type
-        if (query.trim() !== "") {
+        if (currentSearchType === 'Birthday') {
+            const currentMonth = new Date().getMonth() + 1; // JavaScript 月份从 0 开始，+1 后为 1-12
+            params.append("Birthday", "true");
+            params.append("month", currentMonth.toString());
+            console.log(`Searching for birthdays in month ${currentMonth}`);
+        } else if (currentSearchType === 'expired') {
+            params.append("expired", "true");
+        } else if (query.trim() !== "") {
             params.append("search", query);
             //params.append("search_fields", "membersID,Name,CName,Address,phone_number,email,IC,oldIC,gender,companyName,Birthday,remarks");
             currentSearchType = 'search';
-        } else if (currentSearchType === 'Birthday') {
-            params.append("birthday", "true");
-        } else if (currentSearchType === 'expired') {
-            params.append("expired", "true");
         } else {
             currentSearchType = 'all';
         }
+        
+        // Add filter parameter if a filter is selected
+        if (currentFilterValue) {
+            let dbFilterValue = (() => {
+                switch(currentFilterValue) {
+                    case '会员': return '1';
+                    case '非会员': return '2';
+                    case '外国人': return '3';
+                    case '拒绝续费': return '4';
+                    case '逾期': return '5';
+                    case '黑名单': return '6';
+                    default: return currentFilterValue;
+                }
+            })();
+    
+            console.log("Sending filter to API:", { 
+                column: 'designation of applicant', 
+                value: dbFilterValue 
+            });
 
-
+            params.append('designation of applicant', dbFilterValue);
+        }
         
         // Add sorting parameters
         if (sortColumn) {
@@ -105,7 +129,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
             
             const data = await response.json();
-            
+            console.log("API Response:", data);
             // Check if data and data.data exist before assigning
             if (data && typeof data === 'object') {
                 membersData = Array.isArray(data.data) ? data.data : [];
@@ -155,6 +179,8 @@ document.addEventListener("DOMContentLoaded", function () {
             if (currentSearchType === 'search') message = '没有找到匹配的记录';
             if (currentSearchType === 'Birthday') message = '本月没有会员生日';
             if (currentSearchType === 'expired') message = '本月没有会员需要续期';
+            if (currentSearchType === 'blacklist') message = '没有黑名单会员';
+            if (currentFilterValue) message = `没有符合"${currentFilterValue}"条件的会员`;
             
             memberTableBody.innerHTML = `<tr><td colspan="16" class="no-results">${message}</td></tr>`;
             return;
@@ -179,13 +205,16 @@ document.addEventListener("DOMContentLoaded", function () {
             
             // Get proper field values with fallbacks
             const designation = member['designation of applicant'] || 
-                               member['Designation of Applicant'] || 
                                member['designation_of_applicant'];
+
+                               
                                
             const designationDisplay = designation === '3' ? '外国人' :
                                      designation === '2' ? '非会员' :
                                      designation === '1' ? '会员' :
-                                     designation === '4' ? '拒绝继续' :
+                                     designation === '4' ? '拒绝续费' :
+                                     designation === '5' ? '逾期' :
+                                     designation === '6' ? '黑名单' :
                                      formatData(designation);
             
             const expiredDate = member['expired date'] || 
@@ -250,7 +279,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     <button class="btn btn-delete" onclick="deleteMember('${member.ID || member.id || ''}')">
                         <i class="fas fa-trash"></i>
                     </button>
-                       <button class="btn btn-check" onclick="checkMember('${member.ID || member.id || ''}')">
+                    <button class="btn btn-check" onclick="checkMember('${member.ID || member.id || ''}')">
                         <i class="fas fa-check"></i>
                     </button>
                 </td>
@@ -299,8 +328,6 @@ document.addEventListener("DOMContentLoaded", function () {
         
         const paginationHTML = [];
         
-       
-        
         // Page numbers
         for (let i = 1; i <= totalPages; i++) {
             if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
@@ -314,8 +341,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 paginationHTML.push('<span class="pagination-ellipsis">...</span>');
             }
         }
-        
-       
         
         // Page jump
         paginationHTML.push(`
@@ -483,27 +508,61 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
     
-
-    
-    
-    
     birthdayButton?.addEventListener("click", function() {
+        console.log("Birthday button clicked"); // Debugging
         currentPage = 1;
         currentSearchType = 'Birthday';
+        currentFilterValue = ''; // Reset filter when changing search type
+        if (memberFilterSelect) memberFilterSelect.selectedIndex = 0; // Reset filter dropdown
+        if (searchInput) searchInput.value = '';
         fetchMembers();
     });
     
     expiredButton?.addEventListener("click", function() {
         currentPage = 1;
         currentSearchType = 'expired';
+        currentFilterValue = ''; // Reset filter when changing search type
+        if (memberFilterSelect) memberFilterSelect.selectedIndex = 0; // Reset filter dropdown
+        if (searchInput) searchInput.value = '';
         fetchMembers();
     });
     
     listAllMembersButton?.addEventListener("click", function() {
         currentPage = 1;
         currentSearchType = 'all';
+        currentFilterValue = ''; // Reset filter when changing search type
+        if (memberFilterSelect) memberFilterSelect.selectedIndex = 0; // Reset filter dropdown
         if (searchInput) searchInput.value = '';
         fetchMembers();
+    });
+    
+    
+    // Add event listener for member filter dropdown
+    memberFilterSelect?.addEventListener("change", function() {
+       
+       
+        currentPage = 1;
+        currentFilterValue = this.value;
+
+        console.log("Raw Selected Filter Value:", currentFilterValue);
+
+    // Explicit mapping with error handling
+    const filterValue = (() => {
+        switch(currentFilterValue) {
+            case '会员': return '1';
+            case '非会员': return '2';
+            case '外国人': return '3';
+            case '拒绝续费': return '4';
+            case '逾期': return '5';
+            case '黑名单': return '6';
+            default: return currentFilterValue;
+        }
+    })();
+    console.log("Translated Filter Value:", filterValue);
+
+        if (searchInput) searchInput.value = '';
+        fetchMembers();
+       
     });
     
     // Items per page change
@@ -530,11 +589,46 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
         
-        if (confirm("确定要删除这个会员吗？")) {
+        if (confirm("确定要删除这个会员吗？所有相关记录也将被删除。")) {
             try {
-                const response = await fetch(`${API_BASE_URL}?table=members&ID=${id}`, { method: "DELETE" });
+                // First, check if the member has any related records
+                const checkResponse = await fetch(`${API_BASE_URL}?table=members&action=checkRelations&ID=${id}`, {
+                    method: 'GET'
+                });
+                
+                if (!checkResponse.ok) {
+                    const errorText = await checkResponse.text();
+                    console.error(`Server error response: ${errorText}`);
+                    throw new Error(`Server returned ${checkResponse.status}: ${checkResponse.statusText}`);
+                }
+                
+                const checkData = await checkResponse.json();
+                
+                if (checkData.hasRelations) {
+                    // If member has relations, offer options to the user
+                    if (confirm("此会员有关联的参与记录。您想先删除这些关联记录吗？")) {
+                        // Delete relations first
+                        const deleteRelationsResponse = await fetch(`${API_BASE_URL}?table=participants&action=deleteByMember&memberID=${id}`, {
+                            method: 'DELETE'
+                        });
+                        
+                        if (!deleteRelationsResponse.ok) {
+                            throw new Error("删除关联记录失败");
+                        }
+                    } else {
+                        alert("操作已取消");
+                        return;
+                    }
+                }
+                
+                // Now proceed with member deletion
+                const response = await fetch(`${API_BASE_URL}?table=members&ID=${id}`, {
+                    method: 'DELETE'
+                });
                 
                 if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error(`Server error response: ${errorText}`);
                     throw new Error(`Server returned ${response.status}: ${response.statusText}`);
                 }
                 
@@ -562,12 +656,11 @@ document.addEventListener("DOMContentLoaded", function () {
         window.location.href = `check_details.html?id=${id}`;
     };
      
-
-
     window.changePage = function(page) {
         if (page >= 1 && page <= totalPages && page !== currentPage) {
             currentPage = page;
             fetchMembers(searchInput?.value || '');
+            
         }
     };
     

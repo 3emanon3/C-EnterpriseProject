@@ -3,8 +3,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const errorMessages = document.getElementById('errorMessages');
     const loadingIndicator = document.getElementById('loadingIndicator');
 
-
-
     // Form submission handler
     addMemberForm.addEventListener('submit', function(e) {
         e.preventDefault();
@@ -13,9 +11,6 @@ document.addEventListener('DOMContentLoaded', function() {
             submitForm();
         }
     });
-
-
-   
 
     // Form validation
     function validateForm() {
@@ -32,44 +27,49 @@ document.addEventListener('DOMContentLoaded', function() {
         requiredFields.forEach(field => {
             if (!field.value.trim()) {
                 isValid = false;
-                errors.push(`${field.previousElementSibling.textContent} 是必填项`);
+                errors.push(`${field.previousElementSibling ? field.previousElementSibling.textContent : field.name} 是必填项`);
                 field.classList.add('error');
             }
         });
 
-        // Validate email format
-        const emailField = document.getElementById('email');
-        if (emailField.value && !isValidEmail(emailField.value)) {
+        // Safe element retrieval with fallback
+        function safeGetElement(id) {
+            const element = document.getElementById(id);
+            if (!element) {
+                console.warn(`Element with id '${id}' not found`);
+            }
+            return element;
+        }
+
+        // Validate email
+        const emailField = safeGetElement('email');
+        if (emailField && emailField.value && !isValidEmail(emailField.value)) {
             isValid = false;
             errors.push('邮箱格式不正确');
             emailField.classList.add('error');
         }
 
         // Validate phone number
-        const phoneField = document.getElementById('phone_number');
-        if (phoneField.value && !isValidPhone(phoneField.value)) {
+        const phoneField = safeGetElement('phone_number');
+        if (phoneField && phoneField.value && !isValidPhone(phoneField.value)) {
             isValid = false;
             errors.push('手机号码格式不正确');
             phoneField.classList.add('error');
         }
 
         // Validate IC number
-        const icField = document.getElementById('IC');
-        if (icField.value && !isValidIC(icField.value)) {
+        const icField = safeGetElement('IC');
+        if (icField && icField.value && !isValidIC(icField.value)) {
             isValid = false;
             errors.push('IC号码格式不正确');
             icField.classList.add('error');
         }
 
-        // Validate dates
-        const birthdayField = document.getElementById('Birthday');
-        const expiredDateField = document.getElementById('expired_date');
-        
-        if (birthdayField.value) {
-            // Extract just the month from the date
-            const birthdayMonth = new Date(birthdayField.value).getMonth() + 1; // getMonth() returns 0-11
+        // Validate Birthday
+        const birthdayField = safeGetElement('Birthday');
+        if (birthdayField && birthdayField.value) {
+            const birthdayMonth = new Date(birthdayField.value).getMonth() + 1;
             
-            // Validate if it's a valid month (1-12)
             if (isNaN(birthdayMonth) || birthdayMonth < 1 || birthdayMonth > 12) {
                 isValid = false;
                 errors.push('请输入有效的生日月份');
@@ -77,23 +77,36 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
-        if (expiredDateField.value && new Date(expiredDateField.value) < new Date()) {
-            isValid = false;
-            errors.push('过期日期不能是过去的日期');
-            expiredDateField.classList.add('error');
+        // Validate Expired Date
+        const expiredDateField = safeGetElement('expired date');
+        if (expiredDateField && expiredDateField.value) {
+            const expiredDate = new Date(expiredDateField.value);
+            const today = new Date();
+            
+            if (expiredDate < today) {
+                isValid = false;
+                errors.push('过期日期不能是过去的日期');
+                expiredDateField.classList.add('error');
+            }
         }
 
-     // Validate Designation
-       const designationField = document.getElementById('designation_of_applicant');
-       if (!designationField) {
-        console.error("Element 'designation_of_applicant' not found.");
-        return false;
-    }
-       const designationValue = designationField.value;
-        if (designationValue < 1 || designationValue > 5) {
-        isValid = false;
-       errors.push('Designation must be between 1 and 5');
-       designationField.classList.add('error');
+        // Validate Designation
+        const designationField = safeGetElement('designation_of_applicant');
+        if (designationField) {
+            const designationValue = parseInt(designationField.value, 10);
+            if (isNaN(designationValue) || designationValue < 1 || designationValue > 6) {
+                isValid = false;
+                errors.push('Designation must be between 1 and 6');
+                designationField.classList.add('error');
+            }
+        }
+
+        // Validate Place of Birth (added)
+        const placeOfBirthField = safeGetElement('place of birth');
+        if (placeOfBirthField && !placeOfBirthField.value.trim()) {
+            isValid = false;
+            errors.push('出生地不能为空');
+            placeOfBirthField.classList.add('error');
         }
         
         if (!isValid) {
@@ -109,81 +122,44 @@ document.addEventListener('DOMContentLoaded', function() {
     async function submitForm() {
         const formData = new FormData(addMemberForm);
         const data = {};
-    
 
-        console.log('Raw place_of_birth:', formData.get('place_of_birth'));
-    console.log('Raw expired_date:', formData.get('expired_date'));
-    
-
-        formData.forEach((value, key) => {
-                // Make sure ALL fields are included in the data object
-        data[key] = value;
-        let standardizedKey = key;
-    
-        // Example of standardizing field names
-        if (key === 'place_of_birth') standardizedKey = 'placeOfBirth';
-        if (key === 'expired_date') standardizedKey = 'expiredDate';
-        if (key === 'designation_of_applicant') standardizedKey = 'designationOfApplicant';
+        console.log('Final processed data:', JSON.stringify(data, null, 2));
         
-        data[standardizedKey] = value;
-            if (key === 'Birthday' && value) {
-                // Convert the full date to just month (1-12)
-                const monthOnly = new Date(value).getMonth() + 1;
-                data[key] = monthOnly.toString(); // Convert to string for consistency
-            } else if   (key === 'expired_date' && value) {
-            // Convert expired_date to YYYY-MM-DD format
-         
-             try {
-                const dateValue = value.trim();
-                // Check if the date is in YYYY-MM-DD format
-                if (/^\d{4}-\d{2}-\d{2}$/.test(dateValue)) {
-                    data[key] = dateValue; // Already in correct format
-                } else {
-                    // Try to parse and convert
-                    const date = new Date(dateValue);
-                    if (!isNaN(date.getTime())) { // Valid date
-                        const year = date.getFullYear();
-                        const month = String(date.getMonth() + 1).padStart(2, '0');
-                        const day = String(date.getDate()).padStart(2, '0');
-                        data[key] = `${year}-${month}-${day}`;
-                    } else {
-                        // Invalid date, use original to avoid losing data
-                        console.error('Invalid date format for expired_date:', dateValue);
-                        data[key] = dateValue;
-                    }
-                }
-            } catch (e) {
-                console.error('Error processing expired_date:', e);
-                data[key] = value; // Keep original value on error
-            }
-        } else if (key === 'designation_of_applicant') {
-            // Ensure designation is sent as a number
-            data[key] = parseInt(value, 10);
-        }  else {
-                data[key] = value;
-            }
-        });
-    
+        console.log('Raw Form Data:');
+        for (let [key, value] of formData.entries()) {
+            console.log(`${key}: ${value}`);
+        }
+
+        // Modify the existing form data processing section
+    formData.forEach((value, key) => {
+   
+    let processedValue = value.trim(); // Trim whitespace
+
+
+    // Ensure the field is not empty before adding to data
+    if (processedValue !== '') {
+        data[key] = processedValue;
+    }
+});
+
         data.action = 'add_member';
-    
-        // Debug: Log the JSON data to be sent
+
+        // Debug logging
         console.log('Submitting JSON data:', JSON.stringify(data, null, 2));
-    
+
         try {
             showLoading();
             const response = await fetch('../recervingAPI.php?table=members', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'  // Ensure the Content-Type is application/json
+                    'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(data)  // Send data as JSON
+                body: JSON.stringify(data)
             });
-    
-            // Debug: Log raw response
+
             const rawResponse = await response.text();
             console.log('Raw API Response:', rawResponse);
-    
-            // Try to parse as JSON
+
             let parsedData;
             try {
                 parsedData = JSON.parse(rawResponse);
@@ -191,13 +167,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 showError('API返回格式错误: ' + rawResponse);
                 return;
             }
-    
+
             if (parsedData.status === 'success') {
                 alert('会员添加成功！');
                 window.location.href = 'member_search.html?add=success&id=' + parsedData.memberId;
             } else {
                 showError('添加会员失败: ' + (parsedData.message || '未知错误'));
-                // Debug: Log error details if available
                 if (parsedData.error_details) {
                     console.error('Error details:', parsedData.error_details);
                 }
@@ -213,7 +188,6 @@ document.addEventListener('DOMContentLoaded', function() {
             hideLoading();
         }
     }
-    
 
     // Helper functions
     function isValidEmail(email) {
@@ -225,7 +199,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function isValidIC(ic) {
-        // Adjust this regex based on your IC number format requirements
         return /^[\d-]{6,}$/.test(ic);
     }
 

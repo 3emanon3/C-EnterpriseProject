@@ -317,17 +317,17 @@ function populateForm(memberData) {
         'memberId': ['ID', 'membersID'],
         'name': ['Name'],
         'cname': ['CName'],
-        'designation_of_applicant': ['Designation of Applicant', 'designation of applicant', 'designation_of_applicant'],
+        'designation_of_applicant': ['Designation of Applicant'],
         'address': ['Address'],
         'phone': ['phone_number'],
         'email': ['email'],
         'ic': ['IC'],
         'oldic': ['oldIC'],
         'gender': ['gender'],
-        'company': ['companyName', 'componyName'],
+        'company': [ 'componyName'],
         'birthday': ['Birthday'],
-        'expired': ['expired date', 'expired_date'],
-        'birthplace': ['place of birth' ,'place_of_birth'],
+        'expired': ['expired date',],
+        'birthplace': ['place of birth'],
         'remarks': ['remarks']
     };
 
@@ -387,7 +387,6 @@ async function handleSubmit(event) {
         Name: formData.get('name') || null,
         CName: formData.get('cname') || null,
         'Designation of Applicant': designation?.id || null,
-        'designation of applicant': designation?.id || null,
         Address: formData.get('address') || null,
         phone_number: formData.get('phone') || null,
         email: formData.get('email') || null,
@@ -397,10 +396,9 @@ async function handleSubmit(event) {
         companyName: formData.get('company') || null,
         componyName: formData.get('company') || null,
         Birthday: birthdayValue,
-        'expired_date': formData.get('expired') || null,
         'expired date': formData.get('expired') || null,
-        'place_of_birth': formData.get('birthplace') || null,
         'place of birth': formData.get('birthplace') || null,
+        other: formData.get('other') || null,
         remarks: formData.get('remarks') || null,
         action: 'add_member'
     };
@@ -498,6 +496,7 @@ function printData() {
         .replace('{{birthday}}', birthdayMonth)
         .replace('{{expiredDate}}', expired)
         .replace('{{birthplace}}', birthplace)
+        .replace('{{other}}', other)
         .replace('{{remarks}}', remarks);
 
     // Open a new window for printing

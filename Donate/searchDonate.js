@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const tableHeaders = table.querySelectorAll('th');
     const donationTableBody = table.querySelector('tbody');
     
+    /*
     // Only create pagination container if it doesn't exist
     const paginationContainer = document.querySelector(".pagination");
     if (!paginationContainer) {
@@ -18,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const paginationDiv = document.createElement("div");
         paginationDiv.className = "pagination";
         document.querySelector(".pagination-container").prepend(paginationDiv);
-    }
+    }*/
 
     // State variables
     let currentSortColumn = null;
@@ -27,25 +28,25 @@ document.addEventListener("DOMContentLoaded", function () {
     let itemsPerPage = parseInt(itemsPerPageSelect.value);
     let currentPage = 1;
     let totalPages = 0;
-    let isListingAll = true; // Flag to indicate listing all data
+    
+    let currentSearchType = 'all'; // Flag to indicate listing all data
 
     async function fetchDonations(query = "") {
-        loader.style.display = "flex";
+        loader.style.display = "block";
+        donationTableBody.innerHTML = "";
       
         // Create params object instead of using append
         const params = new URLSearchParams({
             table: "donation",
-            includeInactive: true,  // Add this if needed
-            includeDeleted: true ,   // Add this if needed
             page: currentPage,
-    limit: itemsPerPage,
+            limit: itemsPerPage,
         });
         
-        if (query && query.trim()) {
+        if (query && query.trim()!=="") {
             params.append("search", query.trim());
-            isListingAll = false; // Indicate not listing all when search query is present  // UPGRADE: Set isListingAll to false when search query is present
+            currentSearchType =  'search'; // Indicate not listing all when search query is present  // UPGRADE: Set isListingAll to false when search query is present
         } else {
-            isListingAll = true; // Back to listing all if query is empty // UPGRADE: Set isListingAll back to true when query is empty
+            currentSearchType =  'all'; // Back to listing all if query is empty // UPGRADE: Set isListingAll back to true when query is empty
         }
     
         if (currentSortColumn) {
@@ -56,7 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     
         const url = `${API_BASE_URL}?${params.toString()}`;
-        console.log("Fetching from URL:", url); // Debug log
+        console.log("API URL:", url);
     
         try {
             const response = await fetch(url);
@@ -85,20 +86,21 @@ document.addEventListener("DOMContentLoaded", function () {
             donationData = processedData;
             totalDonations.textContent = totalCount;
             totalPages = Math.ceil(totalCount / itemsPerPage); // Always calculate pages
+         
             displayDonations(donationData);
             updatePagination();
            
         } catch (error) {
             console.error("Error fetching donations:", error);
             donationTableBody.innerHTML = `<tr><td colspan="10" class="error-message">Failed to load donations. Please try again later. Error: ${error.message}</td></tr>`;
-            totalDonations.textContent = "0";
-            totalPages = 0;
-            updatePagination();
+           
         } finally {
             loader.style.display = "none";
         }
     }
 
+
+    
     function mapColumnNameToApi(columnName) {
         // Updated mapping to match HTML data-column attributes
         const mapping = {
@@ -107,10 +109,10 @@ document.addEventListener("DOMContentLoaded", function () {
             'donationTypes': 'donationTypes',
             'Bank': 'Bank',
             'membership': 'membership',
-            'payment_date': 'paymentDate',
-            'receipt_no': 'official receipt no',
+            'payment_date': 'payment_date',
+            'receipt_no': 'receipt_no',
             'amount': 'amount',
-            'remarks': 'Remarks'
+            'remarks': 'remarks'
         };
         
         return mapping[columnName] || columnName;
@@ -118,7 +120,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function displayDonations(donations) {
         console.log("Displaying donations:", donations);
-        donationTableBody.innerHTML = "";
+        donationTableBody.innerHTML = "";//It starts by resetting the table body to ensure no old data remains.
         
         if (!Array.isArray(donations) || donations.length === 0) {
             console.log("No donations to display");
@@ -129,10 +131,7 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log(`Processing ${donations.length} donations for display`);
         
         donations.forEach(donation => {
-            if (!donation || typeof donation !== 'object') {
-                console.warn("Invalid donation object:", donation);
-                return;
-            }
+            
             
             // Log the donation object to see its structure
             console.log("Processing donation:", donation);
@@ -148,22 +147,22 @@ document.addEventListener("DOMContentLoaded", function () {
             const donationType = donation.donationTypes || donation.donation_type || '';
             const bank = donation.Bank || donation.bank || '';
             const membership = donation.membership || '';
-            const paymentDate = donation.paymentDate || donation.payment_date || '';
+            const paymentDate = formatDateTime(donation.paymentDate || donation.payment_date || '');
             const receiptNo = donation['official receipt no'] || donation.receipt_no || '';
-            const amount = donation.amount || 0;
-            const remarks = donation.Remarks || donation.remarks || '';
+            const amount = formatPrice(donation.amount || 0);
+            const remarks = truncateText(donation.Remarks || donation.remarks || '', 50);
             
             row.innerHTML = `
-                <td>${id}</td>
-                <td>${donorName}</td>
-                <td>${donationType}</td>
-                <td>${bank}</td>
-                <td>${membership}</td>
-                <td>${formatDateTime(paymentDate) || ''}</td>
-                <td>${receiptNo}</td>
-                <td>${amount ? formatPrice(amount) : ''}</td>
-                <td>${truncateText(remarks, 50) || ''}</td>
-                <td>
+            <td>${id}</td>
+            <td>${donorName}</td>
+            <td>${donationType}</td>
+            <td>${bank}</td>
+            <td>${membership}</td>
+            <td>${paymentDate}</td>
+            <td>${receiptNo}</td>
+            <td>${amount}</td>
+            <td>${remarks}</td>
+            <td>
                     <button class="btn btn-edit" data-id="${id}" aria-label="Edit donation ${id}">编辑</button>
                     <button class="btn btn-delete" data-id="${id}" aria-label="Delete donation ${id}">删除</button>
                 </td>
@@ -208,7 +207,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function formatPrice(price) {
         if (price === null || price === undefined) return '';
-        return `¥${parseFloat(price).toFixed(2)}`;
+        return `RM${parseFloat(price).toFixed(2)}`;
     }
 
     function updatePagination() {
@@ -220,14 +219,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const paginationHTML = [];
         
         // Previous page button
-        paginationHTML.push(`
-            <button class="pagination-btn" 
-                    ${currentPage === 1 ? 'disabled' : ''} 
-                    data-page="${currentPage - 1}"
-                    aria-label="Previous page">
-                上一页
-            </button>
-        `);
+       
 
         // Page numbers
         for (let i = 1; i <= totalPages; i++) {
@@ -244,16 +236,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 paginationHTML.push('<span class="pagination-ellipsis" aria-hidden="true">...</span>');
             }
         }
-
-        // Next page button
-        paginationHTML.push(`
-            <button class="pagination-btn" 
-                    ${currentPage === totalPages ? 'disabled' : ''} 
-                    data-page="${currentPage + 1}"
-                    aria-label="Next page">
-                下一页
-            </button>
-        `);
 
         // Page jump
         paginationHTML.push(`
