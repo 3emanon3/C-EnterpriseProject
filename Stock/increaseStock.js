@@ -16,6 +16,14 @@ function confirmCancel() {
 }
 
 async function saveChanges() {
+    
+    if(selectedMemberId != null) {
+        const newMember = {
+
+        }
+
+    }
+    
     const newSoldRecord = [
     ]
 
@@ -114,6 +122,7 @@ function selectMember(memberId, memberName) {
 document.addEventListener('DOMContentLoaded', function() {
     const quantityInput = document.getElementById('quantity_in');
     const quantityButtons = document.querySelectorAll('.quantity-btn');
+    const applicantType = document.getElementById("applicantTypeFilter");
 
     quantityButtons.forEach(button => {
         button.addEventListener('click', function() {
@@ -128,5 +137,32 @@ document.addEventListener('DOMContentLoaded', function() {
         this.value = this.value.replace(/[^0-9]/g, '');
     });
 
+    async function fetchApplicantType(){
+        try {
+            const response = await fetch(`${API_BASE_URL}?table=applicants%20types&limit=100`);
+            const data = await response.json();
+            
+            if (data && data.data) {
+                // Clear existing options except the first one
+                while (applicantType.options.length > 1) {
+                    applicantType.remove(1);
+                }
+                
+                // Add unique applicant types to the  dropdown
+                const uniqueApplicant = data.data;
+                uniqueApplicant.forEach(item => {
+                    const option = document.createElement("option");
+                    option.value = item.ID;
+                    option.textContent = `${item["designation of applicant"]}`;
+                    applicantType.appendChild(option);
+                });
+            }
+
+    }catch(error){
+        console.error("Error fetching applicant type options:", error);
+    }
+    }
+
+    fetchApplicantType()
     updateMemberSection(); // Call this initially to set the initial state based on default selection (新人)
 });
