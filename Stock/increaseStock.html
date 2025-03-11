@@ -25,11 +25,7 @@
             <div class="increase-form">
                 <h3>新记录</h3>
                 <div class="form-group">
-                    <label for="name">产品名称:</label>
-                    <input type="text" id="name">
-                </div>
-                <div class="form-group">
-                    <label for="membership">出售至</label>
+                    <label for="membership">从</label>
                     <select id="membership" onchange="updateMemberSection()">
                         <option value="1">新人</option>
                         <option value="2">旧人</option>
@@ -92,14 +88,75 @@
                             <!-- Options will be populated dynamically -->
                         </select>
                     </div>
-                    <div class="">
-
+                    <div class="form-group">
+                        <label for="Address">地址</label>
+                        <textarea id="Address" rows="4"></textarea>
                     </div>
                     <div class="form-group">
-                        <label for="newMemberContact">会员联系方式:</label>
-                        <input type="text" id="newMemberContact">
+                        <label for="Contact">手机号码:</label>
+                        <input type="text" id="Contact">
                     </div>
-                    
+                    <div class="form-group">
+                        <label for="Email">电子邮箱:</label>
+                        <input type="text" id="Email">
+                    </div>
+                    <div class="form-group">
+                        <label for="IC">IC:</label>
+                        <input type="text" id="IC">
+                    </div>
+                    <div class="form-group">
+                        <label for="oldIC">旧IC:</label>
+                        <input type="text" id="oldIC">
+                    </div>
+                    <div class="form-group">
+                            <label for="gender">性别:</label>
+                            <select id="gender">
+                                <option value="Male">男</option>
+                                <option value="Female">女</option>
+                            </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="componyName">公司名字:</label>
+                        <input type="text" id="componyName">
+                    </div>
+                    <div class="form-group">
+                        <label for="MonthofBirth">出生月期:</label>
+                        <input type="number" id="MonthofBirth">
+                    </div>
+                    <div class="form-group">
+                        <label for="expirationType">会员期限:</label>
+                        <select id="expirationType" onchange="updateExpirationFields()">
+                            <option value="1year">1年</option>
+                            <option value="3year">3年</option>
+                            <option value="custom">自定义</option>
+                        </select>
+                    </div>
+                    <div id="customExpirationFields" style="display: none;">
+                        <div class="form-group">
+                            <label for="expirationYear">到期年份:</label>
+                            <input type="number" id="expirationYear">
+                        </div>
+                        <div class="form-group">
+                            <label for="expirationMonth">到期月份:</label>
+                            <input type="number" id="expirationMonth" min="1" max="12">
+                        </div>
+                        <div class="form-group">
+                            <label for="expirationDay">到期日期:</label>
+                            <input type="number" id="expirationDay" min="1" max="31">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="placeOfBirth">出生地方</label>
+                        <input type="text" id="placeOfBirth">
+                    </div>
+                    <div class="form-group">
+                        <label for="others">其他:</label>
+                        <input type="text" id="others">
+                    </div>
+                    <div class="form-group">
+                        <label for="remarks">备注:</label>
+                        <textarea id="remarks" rows="4"></textarea>
+                    </div>
                 </div>
                 <div class="search-member-section"> 
                     <h3>搜索会员</h3>

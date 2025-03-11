@@ -73,65 +73,268 @@
         <head>
             <title>Print Stock Details</title>
             <style>
+                /* Scoped print template styles - only apply within the print window */
                 #print-content {
-                    font-family: Arial, sans-serif;
-                    padding: 20px;
+                    margin: 0;
+                    padding: 0;
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    color: #333;
+                    line-height: 1.6;
+                    background-color: #fff;
                 }
+                
+                #print-content {
+                    max-width: 1000px;
+                    margin: 0 auto;
+                    padding: 30px;
+                    box-shadow: 0 0 20px rgba(0,0,0,0.05);
+                }
+                
+                /* Header section */
                 .top-info {
                     text-align: center;
-                    margin-bottom: 20px;
+                    margin-bottom: 30px;
+                    padding-bottom: 20px;
+                    border-bottom: 2px solid #800000;
+                    position: relative;
                 }
+                
                 .logo {
-                    width: 200px;
-                    height: 100px;
+                    width: 180px;
+                    height: auto;
                     display: block;
-                    margin: 0 auto 10px auto;
+                    margin: 0 auto 15px auto;
                 }
+                
                 h2 {
                     margin: 0;
+                    color: #2c3e50;
+                    font-size: 28px;
+                    font-weight: 600;
+                    letter-spacing: 0.5px;
                 }
+                
+                h3 {
+                    margin: 25px 0 15px 0;
+                    color: #2c3e50;
+                    font-size: 20px;
+                    font-weight: 500;
+                    border-bottom: 2px solid #800000;
+                    padding-bottom: 8px;
+                    position: relative;
+                }
+                
+                h3:after {
+                    content: '';
+                    position: absolute;
+                    bottom: -2px;
+                    left: 0;
+                    width: 60px;
+                    height: 2px;
+                    background-color: #a52a2a;
+                }
+                
+                /* Product information section */
                 .product-info {
                     display: flex;
                     justify-content: space-between;
                     align-items: flex-start;
-                    margin-top: 20px;
+                    margin-top: 25px;
+                    border: 1px solid #e0e0e0;
+                    padding: 25px;
+                    border-radius: 8px;
+                    background-color: #f9f9f9;
+                    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
                 }
+                
                 .details {
-                    flex: 1;
-                    margin-right: 20px;
+                    flex: 2;
+                    margin-right: 30px;
                 }
+                
                 .details p {
-                    margin: 10px 0;
+                    margin: 12px 0;
+                    line-height: 1.7;
+                    font-size: 15px;
                 }
+                
+                .details strong {
+                    color: #800000;
+                    font-weight: 600;
+                    display: inline-block;
+                    width: 120px;
+                }
+                
                 .product-image-container {
                     flex: 1;
-                    text-align: right;
+                    text-align: center;
                 }
+                
                 .product-image {
-                    max-width: 150px;
-                    height: 150px;
-                    border: 1px solid #ccc;
-                    padding: 5px;
+                    max-width: 180px;
+                    max-height: 180px;
+                    border: 1px solid #ddd;
+                    padding: 8px;
+                    background-color: white;
+                    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                    border-radius: 4px;
+                    transition: transform 0.3s ease;
                 }
+                
+                /* Transaction records section */
+                .sold-records {
+                    margin-top: 40px;
+                    background-color: #fff;
+                    padding: 5px 0;
+                    border-radius: 8px;
+                }
+                
+                .records-table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-top: 15px;
+                    font-size: 14px;
+                    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+                    border-radius: 8px;
+                    overflow: hidden;
+                }
+                
+                .records-table th, .records-table td {
+                    border: 1px solid #e0e0e0;
+                    padding: 10px 12px;
+                    text-align: left;
+                }
+                
+                .records-table th {
+                    background: linear-gradient(135deg, #800000, #a52a2a);
+                    color: white;
+                    font-weight: 500;
+                    text-transform: uppercase;
+                    font-size: 13px;
+                    letter-spacing: 0.5px;
+                }
+                
+                .records-table tr:nth-child(even) {
+                    background-color: #fff5f5;
+                }
+                
+                .records-table tr:hover {
+                    background-color: #ffe6e6;
+                }
+                /* Additional styling elements */
+                .report-date {
+                    font-size: 14px;
+                    color: #666;
+                    margin-top: 5px;
+                }
+                
+                .print-controls {
+                    margin-top: 30px;
+                    text-align: center;
+                }
+                
+                .print-button {
+                    background: linear-gradient(135deg, #800000, #a52a2a);
+                    color: white;
+                    border: none;
+                    padding: 10px 20px;
+                    font-size: 16px;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                }
+                
+                .print-button:hover {
+                    background: linear-gradient(135deg, #600000, #8b0000);
+                    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+                }
+                
+                .footer {
+                    margin-top: 40px;
+                    text-align: center;
+                    color: #777;
+                    border-top: 1px solid #eee;
+                    padding-top: 15px;
+                    font-size: 13px;
+                }
+                
+                /* Print-specific styles */
                 @media print {
+                    body {
+                        background-color: white;
+                        -webkit-print-color-adjust: exact !important;
+                        print-color-adjust: exact !important;
+                    }
+                    
                     #print-content {
                         margin: 0;
-                        padding: 0;
+                        padding: 15px;
+                        max-width: 100%;
+                        box-shadow: none;
                     }
+                    
                     .top-info {
-                        text-align: center;
+                        margin-bottom: 20px;
+                        padding-bottom: 15px;
                     }
+                    
                     h2 {
                         font-size: 24px;
                     }
+                    
+                    h3 {
+                        font-size: 18px;
+                        margin: 20px 0 10px 0;
+                    }
+                    
+                    .product-info {
+                        padding: 15px;
+                        page-break-inside: avoid;
+                    }
+                    
                     .details p {
-                        font-size: 16px;
+                        font-size: 13px;
+                        margin: 8px 0;
                     }
+                    
                     .product-image {
-                        max-width: 50%;
+                        max-width: 150px;
+                        max-height: 150px;
                     }
-                    button {
+                    
+                    .sold-records {
+                        page-break-before: auto;
+                    }
+                    
+                    .records-table {
+                        font-size: 11px;
+                        page-break-inside: auto;
+                    }
+                    
+                    .records-table th {
+                        background: #800000 !important;
+                    }
+                    
+                    .records-table th, .records-table td {
+                        padding: 6px;
+                    }
+                    
+                    .records-table tr {
+                        page-break-inside: avoid;
+                    }
+                    
+                    .print-controls {
                         display: none;
+                    }
+                    
+                    .footer {
+                        margin-top: 30px;
+                        font-size: 11px;
+                        text-align: center;
+                        color: #777;
+                        border-top: 1px solid #eee;
+                        padding-top: 10px;
                     }
                 }
             </style>
@@ -140,23 +343,46 @@
             <div id="print-content">
                 <section class="top-info">
                     <img src="../assets/logo.png" alt="Seiwajyuku Malaysia Logo" class="logo">
-                    <h2>Stock Details</h2>
+                    <h2>Stock Details Report</h2>
+                    <p class="report-date">Report generated: <span id="currentDate"></span></p>
                 </section>
+                
                 <section class="product-info">
                     <div class="details">
-                        <p>Product ID: {{productId}}</p>
-                        <p>Name: {{name}}</p>
-                        <p>Stock Quantity: {{stock}}</p>
-                        <p>Price: {{price}}</p>
-                        <p>Publisher: {{publisher}}</p>
-                        <p>Remarks: {{remarks}}</p>
+                        <p><strong>Product ID:</strong> {{productId}}</p>
+                        <p><strong>Name:</strong> {{name}}</p>
+                        <p><strong>Stock Quantity:</strong> {{stock}}</p>
+                        <p><strong>Price:</strong> RM {{price}}</p>
+                        <p><strong>Publisher:</strong> {{publisher}}</p>
+                        <p><strong>Remarks:</strong> {{remarks}}</p>
                     </div>
                     <section class="product-image-container">
                         <img src="{{productImage}}" alt="Product Image" class="product-image">
                     </section>
                 </section>
-                <button class="btn btn-primary" onclick="window.print()">Print</button>
+                
+                {{soldRecordsTable}}
+                
+                <div class="footer">
+                    <p>© Seiwajyuku Malaysia - Inventory Management System</p>
+                    <p>This is a computer-generated document. No signature is required.</p>
+                </div>
+                
+                <div class="print-controls">
+                    <button class="print-button" onclick="window.print()"><i class="fas fa-print"></i> Print Report</button>
+                </div>
             </div>
+            
+            <script>
+                // Set current date in the report
+                document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-MY', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            </script>
         </body>
     </html>
 </div>

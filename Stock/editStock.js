@@ -103,8 +103,20 @@ async function saveChanges() {
     }
 }
 
-function printData() {
+async function fetchSoldRecords(stockId, limit = 10) {
+    try {
+        const response = await fetch(`${API_BASE_URL}?table=soldrecord&search=true&Book=${stockId}&limit=${limit}`);
+        const data = await response.json();
+        return data.data || [];
+    } catch (error) {
+        console.error('Error fetching sold records:', error);
+        return [];
+    }
+}
+
+async function printData() {
     // Get form values
+    const stockId = new URLSearchParams(window.location.search).get('id');
     const productId = document.getElementById('productId').value;
     const name = document.getElementById('name').value;
     const stock = document.getElementById('stock').value;
@@ -114,6 +126,53 @@ function printData() {
     
     // Get the current image
     const imageSource = currentBase64Image || '../assets/placeholder.png';
+
+    // Fetch sold records for this product
+    const soldRecords = await fetchSoldRecords(stockId, 20);
+    
+    // Generate sold records table HTML
+    let soldRecordsHtml = '';
+    if (soldRecords.length > 0) {
+        soldRecordsHtml = `
+            <section class="sold-records">
+                <h3>Recent Transaction Records</h3>
+                <table class="records-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Customer/Company</th>
+                            <th>Name</th>
+                            <th>In</th>
+                            <th>Out</th>
+                            <th>Invoice No</th>
+                            <th>Price</th>
+                            <th>Remarks</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+        
+        soldRecords.forEach(record => {
+            soldRecordsHtml += `
+                <tr>
+                    <td>${record.Date || '-'}</td>
+                    <td>${record["Name/Company Name"] || '-'}</td>
+                    <td>${record.membership || '-'}</td>
+                    <td>${record.quantity_in || '-'}</td>
+                    <td>${record.quantity_out || '-'}</td>
+                    <td>${record.InvoiceNo || '-'}</td>
+                    <td>${record.price || '-'}</td>
+                    <td>${record.Remarks || '-'}</td>
+                </tr>
+            `;
+        });
+        
+        soldRecordsHtml += `
+                    </tbody>
+                </table>
+            </section>
+        `;
+    }
 
     // Get the print template
     const template = document.getElementById('print-template').innerHTML;
@@ -126,7 +185,8 @@ function printData() {
         .replace('{{price}}', price)
         .replace('{{publisher}}', publisher)
         .replace('{{remarks}}', remarks)
-        .replace('{{productImage}}', imageSource); // Add the product image
+        .replace('{{productImage}}', imageSource)
+        .replace('{{soldRecordsTable}}', soldRecordsHtml); // Add the sold records table
 
     // Open a new window and write the print HTML
     const printWindow = window.open('', '_blank');

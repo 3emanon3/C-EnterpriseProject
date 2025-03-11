@@ -18,15 +18,15 @@ function confirmCancel() {
 async function saveChanges() {
     // Get common stock record fields
     const companyName = document.getElementById('Name/Company Name').value;
-    const quantityIn = parseInt(document.getElementById('quantity_in').value) || 0;
+    const quantityOut = parseInt(document.getElementById('quantity_out').value) || 0;
     const invoiceNo = document.getElementById('InvoiceNo').value;
     const date = document.getElementById('Date').value;
     const price = parseFloat(document.getElementById('price').value) || 0;
     const remarks = document.getElementById('remarks').value;
     
     // Validate required fields
-    if (quantityIn <= 0 || !date) {
-        alert('请填写必要的字段：公司名字、增加数量和日期');
+    if (quantityOut <= 0 || !date) {
+        alert('请填写必要的字段：公司名字、减少数量和日期');
         return;
     }
     
@@ -159,24 +159,35 @@ async function saveChanges() {
                 'remarks': memberRemarks
             };
             
-            // Send request to create new member
-            const memberResponse = await fetch(`${API_BASE_URL}?table=members`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(newMember)
-            });
-            
-            if (!memberResponse.ok) {
-                throw new Error('Failed to create new member');
+            try {
+                // Send request to create new member
+                const memberResponse = await fetch(`${API_BASE_URL}?table=members`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(newMember)
+                });
+                
+                if (!memberResponse.ok) {
+                    throw new Error('Failed to create new member');
+                }
+                
+                const memberData = await memberResponse.json();
+                if (!memberData.ids || memberData.ids.length === 0) {
+                    throw new Error('Failed to get ID of new member');
+                }
+                
+                // Use the new member ID
+                memberId = memberData.ids[0];
+            } catch (error) {
+                console.error('Error creating new member:', error);
+                alert(`创建新会员失败: ${error.message}`);
+                return;
             }
-            
-            const memberData = await memberResponse.json();
-            memberId = memberData.ids[0]; // Get the ID of the newly created member
         } else {
-            alert('请选择会员或创建新会员');
-            return;
+            // If no member is selected or created, use null
+            memberId = null;
         }
         
         // Create sold record object
@@ -184,8 +195,8 @@ async function saveChanges() {
             'Book': bookId,
             'membership': memberId,
             'Name/Company Name': companyName,
-            'quantity_in': quantityIn,
-            'quantity_out': null, // This is an increase record, so quantity_out is 0
+            'quantity_in': null, // This is a decrease record, so quantity_in is null
+            'quantity_out': quantityOut,
             'InvoiceNo': invoiceNo,
             'Date': date,
             'price': price,
@@ -208,25 +219,37 @@ async function saveChanges() {
         } else {
             throw new Error('Failed to update stock');
         }
+        
     } catch (error) {
-        console.error('Error:', error);
-        alert(`操作失败: ${error.message}`);
+        console.error('Error saving changes:', error);
+        alert(`保存更改失败: ${error.message}`);
     }
 }
-
 
 function updateMemberSection() {
     const membershipType = document.getElementById('membership').value;
     const newMemberSection = document.querySelector('.new-member-section');
     const searchMemberSection = document.querySelector('.search-member-section');
+    
+    if (membershipType === '1') {
+        // New member
+        newMemberSection.style.display = 'block';
+        searchMemberSection.style.display = 'none';
+    } else {
+        // Existing member
+        newMemberSection.style.display = 'none';
+        searchMemberSection.style.display = 'block';
+    }
+}
 
-    if (membershipType === '1') { // 新人 - New member
-        newMemberSection.style.display = 'block'; // Show new member section
-        searchMemberSection.style.display = 'none'; // Hide search member section
-        selectedMemberId = null; // Reset selected member ID when switching to new member
-    } else if (membershipType === '2') { // 旧人 - Existing member
-        newMemberSection.style.display = 'none'; // Hide new member section
-        searchMemberSection.style.display = 'block'; // Show search member section
+function updateExpirationFields() {
+    const expirationType = document.getElementById('expirationType').value;
+    const customFields = document.getElementById('customExpirationFields');
+    
+    if (expirationType === 'custom') {
+        customFields.style.display = 'block';
+    } else {
+        customFields.style.display = 'none';
     }
 }
 
@@ -309,23 +332,21 @@ function clearSelectedMember() {
     document.getElementById('searchMember').focus();
 }
 
-
-function updateExpirationFields() {
-    const expirationType = document.getElementById('expirationType').value;
-    const customFields = document.getElementById('customExpirationFields');
-    
-    if (expirationType === 'custom') {
-        customFields.style.display = 'block';
-    } else {
-        customFields.style.display = 'none';
-    }
-}
-
-// Quantity Input Logic (Crucial part) - No changes here
+// Initialize the page
 document.addEventListener('DOMContentLoaded', function() {
-    const quantityInput = document.getElementById('quantity_in');
+    const quantityInput = document.getElementById('quantity_out');
     const quantityButtons = document.querySelectorAll('.quantity-btn');
     const applicantType = document.getElementById("applicantTypeFilter");
+
+    // Set default date to today
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('Date').value = today;
+    
+    // Initialize member section display
+    updateMemberSection();
+    
+    // Initialize expiration fields display
+    updateExpirationFields();
 
     quantityButtons.forEach(button => {
         button.addEventListener('click', function() {
@@ -442,6 +463,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    fetchApplicantType()
+    fetchApplicantType();
     updateMemberSection(); // Call this initially to set the initial state based on default selection (新人)
 });
