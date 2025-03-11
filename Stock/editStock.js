@@ -135,18 +135,18 @@ async function printData() {
     if (soldRecords.length > 0) {
         soldRecordsHtml = `
             <section class="sold-records">
-                <h3>Recent Transaction Records</h3>
+                <h3>近期交易记录</h3>
                 <table class="records-table">
                     <thead>
                         <tr>
-                            <th>Date</th>
-                            <th>Customer/Company</th>
-                            <th>Name</th>
-                            <th>In</th>
-                            <th>Out</th>
-                            <th>Invoice No</th>
-                            <th>Price</th>
-                            <th>Remarks</th>
+                            <th>日期</th>
+                            <th>客户/公司</th>
+                            <th>名称</th>
+                            <th>入库</th>
+                            <th>出库</th>
+                            <th>发票号</th>
+                            <th>价格</th>
+                            <th>备注</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -250,3 +250,11 @@ fileInput.addEventListener('change', (event) => {
         });
     }
 });
+                // Set current date in the report
+                document.getElementById('currentDate').textContent = new Date().toLocaleDateString('zh-CN', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });

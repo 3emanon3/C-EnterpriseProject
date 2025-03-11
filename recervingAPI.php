@@ -50,6 +50,7 @@ class DatabaseAPI {
         'participants' => ['ID', 'eventID', 'memberID', 'joined_at'],
         'vparticipants' => ['ID', 'memberID', 'Name', 'CName', 'phone_number', 'email', 'IC', 'eventID', 'joined_at'],
         'blacklist' => ['ID', 'membersID', 'Name', 'CName', 'designation of applicant', 'Address', 'phone_number', 'email', 'IC', 'oldIC', 'gender', 'componyName', 'Birthday', 'expired date', 'place of birth', 'others','remarks'],
+        
     ];
     
     // Table mappings
