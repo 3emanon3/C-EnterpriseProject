@@ -35,11 +35,57 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
-    padding-bottom: 20px;
+    padding: 20px;
     border-bottom: 2px solid var(--border-color);
+    position: fixed;
+    z-index: 100;
+    background-color: var(--background-color);
+    height: 80px;
+    left: 0;
+    right: 0;
+    top: 0;
 }
 
+.container {
+    padding-top: 140px;
+}
+
+.search-container {
+    margin-top: 20px;
+    margin-bottom: 30px;
+    position: relative;
+    z-index: 99;
+}
+
+.system-nav {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 101;
+}
+
+.system-nav .btn {
+    background-color: rgba(255, 255, 255, 0.9);
+    color: var(--primary-color);
+    padding: 10px 20px;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.system-nav .btn:hover {
+    background-color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* Add scroll behavior for header */
+.header-hidden {
+    transform: translateY(-100%);
+}
 h1 {
     color: #f8f9fa;
     font-size: 2rem;
