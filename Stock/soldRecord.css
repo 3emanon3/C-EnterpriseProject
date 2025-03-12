@@ -78,15 +78,8 @@ h1 {
     transform: translateY(-1px);
 }
 
-.btn-edit, .btn-delete {
-    padding: 4px 8px;
-    border-radius: 3px;
-    margin-right: 5px;
-    font-size: 12px;
-}
-
 .btn-edit {
-    background-color: var(--secondary-color);
+    background-color: #f39c12;
     color: white;
 }
 
