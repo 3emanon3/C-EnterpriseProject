@@ -1,7 +1,42 @@
 document.addEventListener('DOMContentLoaded', function() {
+    const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
+
     const addMemberForm = document.getElementById('addMemberForm');
     const errorMessages = document.getElementById('errorMessages');
     const loadingIndicator = document.getElementById('loadingIndicator');
+    const designation_of_applicant=document.getElementById('designation_of_applicant');
+    
+    // 获取URL参数中的returnUrl
+    const urlParams = new URLSearchParams(window.location.search);
+    const returnUrl = urlParams.get('returnUrl');
+  
+    fetchApplicantType();
+
+
+    async function fetchApplicantType() {
+        try {
+            const response = await fetch(`${API_BASE_URL}?table=applicants%20types&limit=100`);
+            const data = await response.json();
+            
+            if (data && data.data) {
+                // Clear existing options except the first one
+                while (designation_of_applicant.options.length > 1) {
+                    designation_of_applicant.remove(1);
+                }
+                
+                // Add unique applicant types to the dropdown
+                const uniqueApplicant = data.data;
+                uniqueApplicant.forEach(item => {
+                    const option = document.createElement("option");
+                    option.value = item.ID;
+                    option.textContent = `${item["designation of applicant"]}`;
+                    designation_of_applicant.appendChild(option);
+                });
+            }
+        } catch(error) {
+            console.error("Error fetching applicant type options:", error);
+        }
+    }
 
     // Form submission handler
     addMemberForm.addEventListener('submit', function(e) {
@@ -120,32 +155,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Submit form data
     async function submitForm() {
+        
         const formData = new FormData(addMemberForm);
         const data = {};
 
-        console.log('Final processed data:', JSON.stringify(data, null, 2));
         
-        console.log('Raw Form Data:');
-        for (let [key, value] of formData.entries()) {
+        formData.forEach((value, key) => {
             console.log(`${key}: ${value}`);
-        }
-
-        // Modify the existing form data processing section
-    formData.forEach((value, key) => {
-   
-    let processedValue = value.trim(); // Trim whitespace
-
-
-    // Ensure the field is not empty before adding to data
-    if (processedValue !== '') {
-        data[key] = processedValue;
-    }
-});
+            if (value.trim() !== '') {
+                data[key] = value.trim();
+            }
+        });
 
         data.action = 'add_member';
 
         // Debug logging
-        console.log('Submitting JSON data:', JSON.stringify(data, null, 2));
+        console.log ('Submitting JSON data:', JSON.stringify(data, null, 2));
+
+     
 
         try {
             showLoading();
@@ -160,6 +187,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const rawResponse = await response.text();
             console.log('Raw API Response:', rawResponse);
 
+
             let parsedData;
             try {
                 parsedData = JSON.parse(rawResponse);
@@ -170,7 +198,28 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (parsedData.status === 'success') {
                 alert('会员添加成功！');
-                window.location.href = 'member_search.html?add=success&id=' + parsedData.memberId;
+                
+                // 获取会员类型
+                const designationType = parseInt(data['Designation of Applicant'], 10);
+                
+                // 如果有returnUrl参数，则跳转回原页面并根据会员类型决定是否带上新会员ID
+                if (returnUrl) {
+                    // 构建URL
+                    const redirectUrl = new URL(returnUrl);
+                    
+                    // 如果会员类型是Member(1)或Foreigner(3)，则返回memberId
+                    if (designationType === 1 || designationType === 3) {
+                        redirectUrl.searchParams.set('memberId', parsedData.memberId);
+                    } else {
+                        // 其他类型返回null
+                        redirectUrl.searchParams.set('memberId', 'null');
+                    }
+                    
+                    window.location.href = redirectUrl.toString();
+                } else {
+                    // 默认跳转到会员搜索页面
+                    window.location.href = 'member_search.html?add=success&id=' + parsedData.memberId;
+                }
             } else {
                 showError('添加会员失败: ' + (parsedData.message || '未知错误'));
                 if (parsedData.error_details) {
@@ -215,4 +264,6 @@ document.addEventListener('DOMContentLoaded', function() {
     function hideLoading() {
         loadingIndicator.style.display = 'none';
     }
+
+    
 });

@@ -13,12 +13,10 @@
             <a href="searchEvent.html" class="btn btn-secondary" aria-label="Back to Search">
                 <i class="fas fa-arrow-left"></i> Back to Search
             </a>
-            <button id="printButton" class="btn btn-primary" aria-label="Print Details">
-                <i class="fas fa-print"></i> Print Details
-            </button>
+            
         </div>
 
-        <div id="printArea">
+        <div id="contentArea">
             <h1>Event Details</h1>
             
             <div id="errorMessages" class="alert alert-danger" style="display: none;"></div>
@@ -30,41 +28,67 @@
                 <fieldset>
                     <legend>Event Information</legend>
                     <div class="form-container">
-                       
-                    </div class="form-group">
-                        <label for="title">Event Title</label>
-                        <input type="text" id="title" name="title" class="form-control" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="status">Event Status</label>
-
-                    <input type="radio" id="status" name="status" class="form-control" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="eventTime">Event Time</label>
-                        <input type="time" id="eventTime" name="eventTime" class="form-control" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="eventLocation">Event Location</label>
-                        <input type="text" id="eventLocation" name="eventLocation" class="form-control" required>
-
-                    </div>
-
-                    <div class="form-group">
-                        <label for="eventDescription">Event Description</label>
-                        <textarea id="eventDescription" name="eventDescription" class="form-control" required></textarea>
+                        <div class="form-group">
+                            <label for="eventTitle">Event Title</label>
+                            <input type="text" id="eventTitle" name="title" required>
+                        </div>
 
                         <div class="form-group">
-                            <label for="eventImage">Event Image</label>
-                            <input type="file" id="eventImage" name="eventImage" class="form-control-file" accept="image/*">
-    
+                            <label for="eventStatus">Status</label>
+                            <select id="eventStatus" name="status" required>
+                                <option value="not_started">Not Started</option>
+                                <option value="started">Started</option>
+                                <option value="cancelled">Cancelled</option>
+                                <option value="ended">Ended</option>
+                            </select>
+                        </div>
 
-                
+                        <div class="form-group">
+                            <label for="eventStartTime">Start Time</label>
+                            <input type="datetime-local" id="eventStartTime" name="start_time" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="eventEndTime">End Time</label>
+                            <input type="datetime-local" id="eventEndTime" name="end_time" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="eventLocation">Location</label>
+                            <input type="text" id="eventLocation" name="location" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="eventDescription">Description</label>
+                            <textarea id="eventDescription" name="description" rows="4"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="eventMaxParticipant">Maximum Participants</label>
+                            <input type="number" id="eventMaxParticipant" name="max_participant" min="1" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="eventRegistrationDeadline">Registration Deadline</label>
+                            <input type="datetime-local" id="eventRegistrationDeadline" name="registration_deadline" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="eventPrice">Price</label>
+                            <input type="number" id="eventPrice" name="price" step="0.01" min="0" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="eventOnlineLink">Online Link (if applicable)</label>
+                            <input type="text" id="eventOnlineLink" name="online_link">
+                        </div>
                     </div>
                 </fieldset>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="window.location.href='searchEvent.html'">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Event</button>
+                </div>
             </form>
         </div>
     </div>

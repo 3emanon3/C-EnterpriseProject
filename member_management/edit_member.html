@@ -13,9 +13,7 @@
         <header>
             <h1>会员管理系统 - 编辑会员</h1>
             <nav class="system-nav">
-                <button class="btn btn-primary" onclick="printData()">
-                    <i class="fas fa-print"></i> 复印
-                </button>
+                
                 <button class="btn btn-primary" onclick="goBack()">
                     <i class="fas fa-times"></i> 取消
                 </button>
@@ -39,13 +37,8 @@
                 <div class="form-group">
                     <label for="designation_of_applicant">种类:</label>
                     <select id="designation_of_applicant" name="designation_of_applicant" required>
-                        <option value=""disabled selected>请选择</option>
-                        <option value="1">会员</option>
-                        <option value="2">非会员</option>
-                        <option value="3">外国人</option>
-                        <option value="4">拒绝续费</option>
-                        <option value="5">逾期</option>
-                        <option value="6">自定义...</option>
+                       
+                        <!-- Options will be populated by JavaScript -->
                     </select>
                 </div>
                 <div class="form-group">
@@ -117,8 +110,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="other">其他</label>
-                    <input type="text" id="other" name="other" autocomplete="text" class="form-control" >
+                    <label for="others">其他</label>
+                    <input type="text" id="others" name="others" autocomplete="text" class="form-control" >
                 </div>
 
                 <div class="form-group">
@@ -137,83 +130,8 @@
         </section>
     </div>
 
-    <div id="print-template" style="display: none;">
-        <html>
-            <head>
-                <title>Print Member Details</title>
-                <style>
-                    .top-info {
-                        position: relative;
-                        text-align: center;
-                        padding: 0 120px;
-                    }
-                    .logo-container {
-                        position: absolute;
-                        text-indent: -9999px;
-                        background: url('../assets/logo.png');
-                        background-repeat: no-repeat;
-                        background-position: center;
-                        width: 200px;
-                        height: 100px;
-                    }
-                    #print-content {
-                        font-family: Arial, sans-serif;
-                        padding: 20px;
-                    }
-                    #print-content h2 {
-                        text-align: center;
-                        margin-bottom: 20px;
-                    }
-                    #print-content p {
-                        margin: 10px 0;
-                    }
-                    #print-content button {
-                        display: block;
-                        margin: 20px auto;
-                    }
-                    @media print {
-                        #print-content {
-                            margin: 0;
-                            padding: 0;
-                        }
-                        #print-content h2 {
-                            text-align: left;
-                            font-size: 24px;
-                        }
-                        #print-content p {
-                            font-size: 16px;
-                        }
-                        #print-content button {
-                            display: none;
-                        }
-                    }
-                </style>
-            </head>
-            <body>
-                <div id="print-content">
-                    <sec class="top-info">
-                        <div class="logo-container">The logo of seiwajyuku Malaysia</div>
-                        <h2>会员详情</h2>
-                        <div class="dummy"></div>
-                    </sec>
-                    <sec>
-                        <p>会员ID: {{memberId}}</p>
-                        <p>姓名（英）: {{name}}</p>
-                        <p>姓名（中）: {{cname}}</p>
-                        <p>种类: {{designation}}</p>
-                        <p>地址: {{address}}</p>
-                        <p>手机号码: {{phone}}</p>
-                        <p>邮箱: {{email}}</p>
-                        <p>IC 号码: {{ic}}</p>
-                        <p>旧 IC 号码: {{oldIc}}</p>
-                        <p>性别: {{gender}}</p>
-                        <p>公司名字: {{companyName}}</p>
-                        <p>生日月份: {{birthday}}</p>
-                        <p>过期日期: {{expiredDate}}</p>
-                        <p>出生地方: {{birthplace}}</p>
-                        <p>备注: {{remarks}}</p>
-                    </sec>
-                    <button class="btn btn-primary" onclick="window.print()">打印</button>
+
+     
                 </div>
             </body>
         </html>

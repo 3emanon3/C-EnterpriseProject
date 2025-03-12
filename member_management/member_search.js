@@ -17,7 +17,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const table = document.getElementById('memberTable');
     const tableHeaders = table.querySelectorAll('th');
     const paginationContainer = document.querySelector('.pagination');
-    
+    const memberFilter=document.getElementById('memberFilter')
+
     // State variables
     let currentPage = 1;
     let itemsPerPage = parseInt(itemsPerPageSelect?.value || 10);
@@ -27,6 +28,74 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentSearchType = 'all';
     let currentFilterValue = ''; // New variable to track current filter
     let membersData = [];
+    
+    fetchApplicantType();
+
+
+    async function fetchApplicantType() {
+        if (!memberFilter) {
+            console.log("memberFilter element not found in the DOM");
+            return;
+        }
+        
+        // Clear existing options except the first one
+        while (memberFilter.options.length > 1) {
+            memberFilter.remove(1);
+        }
+        
+        // Add default option
+        const defaultOption = document.createElement("option");
+        defaultOption.value = "";
+        defaultOption.textContent = "选择会员种类";
+        memberFilter.appendChild(defaultOption);
+        
+        // Directly add the applicant types without fetching from API
+        const applicantTypes = [
+            { ID: "1", designation: "Member" },
+            { ID: "2", designation: "Non-Member" },
+            { ID: "3", designation: "Foreigner" },
+            { ID: "4", designation: "Refuse continue" },
+            { ID: "5", designation: "逾期" },
+            { ID: "6", designation: "BlackList" }
+        ];
+        
+        applicantTypes.forEach(item => {
+            const option = document.createElement("option");
+            option.value = item.ID;
+            
+            // Map numerical values to user-friendly text (in Chinese if needed)
+            let displayText;
+            switch(item.ID) {
+                case "1":
+                    displayText = "会员";
+                    break;
+                case "2":
+                    displayText = "非会员";
+                    break;
+                case "3":
+                    displayText = "外国人";
+                    break;
+                case "4":
+                    displayText = "拒绝续费";
+                    break;
+                case "5":
+                    displayText = "逾期";
+                    break;
+                case "6":
+                    displayText = "黑名单";
+                    break;
+                default:
+                    displayText = item.designation;
+            }
+            
+            option.textContent = displayText;
+            memberFilter.appendChild(option);
+        });
+    }
+
+    
+
+
     
     // Debounce function to limit API calls during rapid typing
     function debounce(func, wait) {
@@ -78,28 +147,12 @@ document.addEventListener("DOMContentLoaded", function () {
             currentSearchType = 'all';
         }
         
-        // Add filter parameter if a filter is selected
-        if (currentFilterValue) {
-            let dbFilterValue = (() => {
-                switch(currentFilterValue) {
-                    case '会员': return '1';
-                    case '非会员': return '2';
-                    case '外国人': return '3';
-                    case '拒绝续费': return '4';
-                    case '逾期': return '5';
-                    case '黑名单': return '6';
-                    default: return currentFilterValue;
-                }
-            })();
-    
-            console.log("Sending filter to API:", { 
-                column: 'designation of applicant', 
-                value: dbFilterValue 
-            });
+       // Add the filter for designation of applicant if selected
+    if (currentFilterValue && currentFilterValue !== "") {
+        params.append("designation_of_applicant",  parseInt(currentFilterValue, 10));
+        console.log("Filtering by applicant type:",  parseInt(currentFilterValue, 10));
+    }
 
-            params.append('designation of applicant', dbFilterValue);
-        }
-        
         // Add sorting parameters
         if (sortColumn) {
             // Fix any column name mismatches between frontend and database
@@ -118,6 +171,7 @@ document.addEventListener("DOMContentLoaded", function () {
         
         const url = `${API_BASE_URL}?${params.toString()}`;
         console.log("API URL:", url);
+        console.log("All params:", Object.fromEntries(params.entries()));
 
         try {
             const response = await fetch(url);
@@ -209,12 +263,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
                                
                                
-            const designationDisplay = designation === '3' ? '外国人' :
-                                     designation === '2' ? '非会员' :
-                                     designation === '1' ? '会员' :
-                                     designation === '4' ? '拒绝续费' :
-                                     designation === '5' ? '逾期' :
-                                     designation === '6' ? '黑名单' :
+            const designationDisplay = designation === 3 ? '外国人' :
+                                     designation === 2 ? '非会员' :
+                                     designation === 1 ? '会员' :
+                                     designation === 4 ? '拒绝续费' :
+                                     designation === 5 ? '逾期' :
+                                     designation === 6 ? '黑名单' :
                                      formatData(designation);
             
             const expiredDate = member['expired date'] || 
@@ -537,32 +591,11 @@ document.addEventListener("DOMContentLoaded", function () {
     });
     
     
-    // Add event listener for member filter dropdown
-    memberFilterSelect?.addEventListener("change", function() {
-       
-       
-        currentPage = 1;
+    // Add event listener for member filter
+    memberFilter?.addEventListener('change', function() {
         currentFilterValue = this.value;
-
-        console.log("Raw Selected Filter Value:", currentFilterValue);
-
-    // Explicit mapping with error handling
-    const filterValue = (() => {
-        switch(currentFilterValue) {
-            case '会员': return '1';
-            case '非会员': return '2';
-            case '外国人': return '3';
-            case '拒绝续费': return '4';
-            case '逾期': return '5';
-            case '黑名单': return '6';
-            default: return currentFilterValue;
-        }
-    })();
-    console.log("Translated Filter Value:", filterValue);
-
-        if (searchInput) searchInput.value = '';
+        currentPage = 1; // Reset to first page when filtering
         fetchMembers();
-       
     });
     
     // Items per page change

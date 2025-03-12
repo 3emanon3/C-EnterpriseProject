@@ -1,3 +1,5 @@
+const API_BASE_URL = '../recervingAPI.php';
+
 document.addEventListener('DOMContentLoaded', function() {
     const donationForm = document.getElementById('donationForm');
     const errorMessages = document.getElementById('errorMessages');
@@ -8,6 +10,22 @@ document.addEventListener('DOMContentLoaded', function() {
     const membershipSelect = document.getElementById('membership');
     const newMemberId = new URLSearchParams(window.location.search).get('memberId');
 
+    // 模态框元素
+    const memberSearchModal = document.getElementById('memberSearchModal');
+    const modalClose = document.querySelector('.close');
+    const modalSearchInput = document.getElementById('modalSearchInput');
+    const modalSearchButton = document.getElementById('modalSearchButton');
+    const modalResultsBody = document.getElementById('modalResultsBody');
+    const modalLoadingIndicator = document.getElementById('modalLoadingIndicator');
+    const modalNoResults = document.getElementById('modalNoResults');
+    const modalPagination = document.getElementById('modalPagination');
+
+    // 模态框变量
+    let currentPage = 1;
+    const itemsPerPage = 10;
+    let totalItems = 0;
+    let currentSearchTerm = '';
+
     // Initialize
     if (donationId) {
         document.getElementById('donationId').value = donationId;
@@ -16,6 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Handle redirected from member page with new member ID
     if (newMemberId) {
+        console.log('Detected new member ID in URL:', newMemberId);
         handleReturnedNewMember(newMemberId);
     }
 
@@ -32,39 +51,253 @@ document.addEventListener('DOMContentLoaded', function() {
         window.print();
     });
 
-    // Add event listener for membership select to handle new/old member selection
-    membershipSelect.addEventListener('change', async function() {
-        if (this.value === '1') {
-            const donorName = document.getElementById('nameCompany').value;
-            if (!donorName) {
-                showError('请先填写姓名/公司名称，再选择新会员');
-                this.value = ''; // Reset the selection
-                return;
-            }
-            
-            try {
-                showLoading();
-                // Save current form data to session storage before redirecting
-                saveFormDataToSession();
-                
-                // Instead of adding member directly, redirect to member management page
-                const tempMemberId = await addNewMemberAndGetID(donorName);
-                if (tempMemberId) {
-                    // Redirect to member management page with the new ID
-                    window.location.href = `donateMember.html?id=${tempMemberId}&returnToForm=true`;
-                } else {
-                    this.value = ''; // Reset if there was an error
-                }
-            } catch (error) {
-                showError('添加新会员时出错: ' + error.message);
-                this.value = ''; // Reset the selection
-            } finally {
-                hideLoading();
-            }
-        } else if (this.value === '2') {
-            openMemberSearchDialog();
+    // 模态框事件监听器
+    modalClose.addEventListener('click', function() {
+        memberSearchModal.style.display = 'none';
+    });
+
+    window.addEventListener('click', function(event) {
+        if (event.target === memberSearchModal) {
+            memberSearchModal.style.display = 'none';
         }
     });
+
+    modalSearchButton.addEventListener('click', function() {
+        performModalSearch();
+    });
+
+    modalSearchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            performModalSearch();
+        }
+    });
+    
+    // 添加实时搜索功能 - 在输入时自动搜索
+    modalSearchInput.addEventListener('input', function() {
+        // 使用延迟执行，避免每次按键都触发搜索
+        clearTimeout(this.searchTimeout);
+        this.searchTimeout = setTimeout(() => {
+            performModalSearch();
+        }, 300); // 300毫秒延迟
+    });
+
+    // Add event listener for membership select to handle new/old/non member selection
+    membershipSelect.addEventListener('change', async function() {
+        if (this.value === '1') { // New Member
+            // Save current form data to session storage before navigating away
+            saveFormDataToSession();
+            // Redirect to member management page to add a new member
+            window.location.href = '../member_management/member_management.html?returnUrl=' + encodeURIComponent(window.location.href);
+        } else if (this.value === '2') { // Old Member
+            // 直接使用模态框搜索，不再提供独立页面选项
+            memberSearchModal.style.display = 'block';
+            modalSearchInput.focus();
+            modalSearchInput.value = '';
+            modalResultsBody.innerHTML = '';
+            modalNoResults.style.display = 'none';
+            modalPagination.innerHTML = '';
+        } else if (this.value === '3') { // Non Member
+            // Clear any previously selected member ID
+            if (document.getElementById('selectedMemberId')) {
+                document.getElementById('selectedMemberId').value = '';
+            }
+            // Continue with donation form without member association
+        }
+    });
+
+    // 模态框搜索功能 - 增强版，支持实时搜索
+    function performModalSearch(page = 1) {
+        const searchTerm = modalSearchInput.value.trim();
+        if (!searchTerm) {
+            // 清空结果但不显示警告
+            modalResultsBody.innerHTML = '';
+            modalNoResults.style.display = 'none';
+            modalPagination.innerHTML = '';
+            return;
+        }
+        
+        currentSearchTerm = searchTerm;
+        currentPage = page;
+        
+        // 显示加载指示器
+        modalLoadingIndicator.style.display = 'block';
+        modalNoResults.style.display = 'none';
+        modalResultsBody.innerHTML = '';
+        
+        // 从API获取数据 - 修改为与increaseStock.js相同的API调用方式
+        fetch(`${API_BASE_URL}?table=members&search=${encodeURIComponent(searchTerm)}&page=${page}&limit=${itemsPerPage}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`搜索失败: ${response.status} - ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                modalLoadingIndicator.style.display = 'none';
+                
+                const members = data.data; // API返回的数据结构是data.data
+                
+                if (members && data.total > 0) {
+                    displayModalResults(members);
+                    totalItems = data.total || members.length;
+                    updateModalPagination();
+                } else {
+                    modalNoResults.style.display = 'block';
+                }
+            })
+            .catch(error => {
+                modalLoadingIndicator.style.display = 'none';
+                console.error('会员搜索错误:', error);
+                alert('搜索会员时出错: ' + error.message);
+            });
+    }
+    
+    // 显示模态框搜索结果
+    function displayModalResults(members) {
+        modalResultsBody.innerHTML = '';
+        
+        members.forEach(member => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${member.membersID || ''}</td>
+                <td>${member.Name || member.CName || '未知'}</td>
+                <td>${member.componyName || member.companyName || '未提供'}</td>
+                <td>${member.phone_number || '未提供'}</td>
+            `;
+            
+            // 添加点击事件来选择此会员
+            row.addEventListener('click', function() {
+                selectModalMember(member);
+            });
+            
+            // 添加悬停效果
+            row.classList.add('member-row');
+            
+            modalResultsBody.appendChild(row);
+        });
+    }
+    
+    // 选择模态框中的会员
+    function selectModalMember(member) {
+        const companyName = member.componyName || member.companyName;
+        const memberName = member.Name || member.CName;
+        const memberId = member.membersID;
+        
+        console.log('选择会员:', member);
+        console.log('会员ID:', memberId);
+        
+        // 如果会员同时拥有姓名和公司名称，弹出选择框
+        if (companyName && companyName.trim() !== '' && memberName && memberName.trim() !== '') {
+            const useCompanyName = confirm('检测到该会员同时拥有姓名和公司名称：\n\n姓名：' + memberName + '\n公司名称：' + companyName + '\n\n点击"确定"使用公司名称，点击"取消"使用姓名');
+            document.getElementById('nameCompany').value = useCompanyName ? companyName : memberName;
+        } else if (companyName && companyName.trim() !== '') {
+            document.getElementById('nameCompany').value = companyName;
+        } else {
+            document.getElementById('nameCompany').value = memberName || `会员 ID: ${memberId}`;
+        }
+        
+        // 确保selectedMemberId字段存在
+        let selectedMemberIdField = document.getElementById('selectedMemberId');
+        if (!selectedMemberIdField) {
+            selectedMemberIdField = document.createElement('input');
+            selectedMemberIdField.type = 'hidden';
+            selectedMemberIdField.id = 'selectedMemberId';
+            selectedMemberIdField.name = 'memberId';
+            donationForm.appendChild(selectedMemberIdField);
+        }
+        
+        // 存储会员ID到隐藏字段 - 确保是数字类型
+        const memberIdNum = parseInt(memberId, 10);
+        if (!isNaN(memberIdNum) && memberIdNum > 0) {
+            selectedMemberIdField.value = memberIdNum;
+            console.log('设置会员ID为:', memberIdNum);
+        } else {
+            console.error('无效的会员ID:', memberId);
+            alert('选择的会员ID无效，请重新选择');
+            return;
+        }
+        
+        // 将此会员添加为下拉列表中的选项（如果尚不存在）
+        let memberExists = false;
+        for (let i = 0; i < membershipSelect.options.length; i++) {
+            if (membershipSelect.options[i].value === memberIdNum.toString()) {
+                memberExists = true;
+                break;
+            }
+        }
+        
+        if (!memberExists) {
+            // 为此会员创建新选项
+            const newOption = document.createElement('option');
+            newOption.value = memberIdNum; // 使用membersID
+            newOption.textContent = `${memberName || '未知'} (ID: ${memberIdNum})`;
+            
+            // 在任何分隔符或特殊选项之前添加选项
+            const specialIndex = Array.from(membershipSelect.options).findIndex(opt => 
+                opt.value === '1' || opt.value === '2' || opt.value === '3' || opt.disabled);
+            
+            if (specialIndex !== -1) {
+                membershipSelect.insertBefore(newOption, membershipSelect.options[specialIndex]);
+            } else {
+                membershipSelect.appendChild(newOption);
+            }
+        }
+        
+        // 在下拉列表中选择该会员
+        membershipSelect.value = memberIdNum;
+        
+        // 关闭模态框
+        memberSearchModal.style.display = 'none';
+    }
+    
+    // 更新模态框分页
+    function updateModalPagination() {
+        modalPagination.innerHTML = '';
+        
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        
+        // 上一页按钮
+        if (totalPages > 1) {
+            const prevButton = document.createElement('button');
+            prevButton.innerHTML = '&laquo; 上一页';
+            prevButton.disabled = currentPage === 1;
+            prevButton.addEventListener('click', function() {
+                if (currentPage > 1) {
+                    performModalSearch(currentPage - 1);
+                }
+            });
+            modalPagination.appendChild(prevButton);
+            
+            // 页码按钮
+            let startPage = Math.max(1, currentPage - 2);
+            let endPage = Math.min(totalPages, startPage + 4);
+            
+            if (endPage - startPage < 4) {
+                startPage = Math.max(1, endPage - 4);
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                const pageButton = document.createElement('button');
+                pageButton.textContent = i;
+                pageButton.classList.toggle('active', i === currentPage);
+                pageButton.addEventListener('click', function() {
+                    performModalSearch(i);
+                });
+                modalPagination.appendChild(pageButton);
+            }
+            
+            // 下一页按钮
+            const nextButton = document.createElement('button');
+            nextButton.innerHTML = '下一页 &raquo;';
+            nextButton.disabled = currentPage === totalPages;
+            nextButton.addEventListener('click', function() {
+                if (currentPage < totalPages) {
+                    performModalSearch(currentPage + 1);
+                }
+            });
+            modalPagination.appendChild(nextButton);
+        }
+    }
 
     // Form validation
     function validateForm() {
@@ -150,29 +383,97 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Handle returned from member page with new member ID
     function handleReturnedNewMember(memberId) {
-        // Restore the previously saved form data
+        console.log('处理返回的会员ID:', memberId);
+        
+        // 检查memberId是否为undefined或'null'字符串
+        if (memberId === undefined || memberId === 'null' || memberId === null) {
+            console.log('会员ID为null或undefined，设置为非会员');
+            // 只恢复表单数据，不设置会员
+            restoreFormDataFromSession();
+            // 选择'Non Member'选项
+            membershipSelect.value = '3';
+            return;
+        }
+        
+        // 确保memberId是数字类型
+        const memberIdNum = parseInt(memberId, 10);
+        if (isNaN(memberIdNum) || memberIdNum <= 0) {
+            console.log('无效的会员ID，设置为非会员');
+            restoreFormDataFromSession();
+            membershipSelect.value = '3';
+            return;
+        }
+        
+        // 恢复之前保存的表单数据
         restoreFormDataFromSession();
         
-        // Fetch member details to get name
-        fetch(`../recervingAPI.php?table=members&action=get_member&id=${memberId}`)
-            .then(response => response.json())
+        // 确保selectedMemberId字段存在
+        let selectedMemberIdField = document.getElementById('selectedMemberId');
+        if (!selectedMemberIdField) {
+            console.log('创建selectedMemberId隐藏字段');
+            selectedMemberIdField = document.createElement('input');
+            selectedMemberIdField.type = 'hidden';
+            selectedMemberIdField.id = 'selectedMemberId';
+            selectedMemberIdField.name = 'memberId';
+            donationForm.appendChild(selectedMemberIdField);
+        }
+        
+        // 设置selectedMemberId字段的值
+        selectedMemberIdField.value = memberIdNum;
+        console.log('设置selectedMemberId字段值为:', memberIdNum);
+        
+        // 获取会员详情以获取名称
+        fetch(`${API_BASE_URL}?table=members&action=get_member&id=${memberIdNum}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`API请求失败: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
+                console.log('获取到会员详情:', data);
                 if (data.status === 'success' && data.member) {
-                    const memberName = data.member.Name || data.member.CName || `会员 ID: ${memberId}`;
+                    const memberName = data.member.Name || data.member.CName || `会员 ID: ${memberIdNum}`;
+                    console.log('会员名称:', memberName);
                     
-                    // Create and add a new option
-                    const newOption = document.createElement('option');
-                    newOption.value = memberId;
-                    newOption.textContent = `${memberName} (ID: ${memberId})`;
-                    membershipSelect.appendChild(newOption);
+                    // 检查是否已存在此会员的选项
+                    let existingOption = null;
+                    for (let i = 0; i < membershipSelect.options.length; i++) {
+                        if (membershipSelect.options[i].value === memberIdNum.toString()) {
+                            existingOption = membershipSelect.options[i];
+                            break;
+                        }
+                    }
                     
-                    // Select the new option
-                    membershipSelect.value = memberId;
+                    if (existingOption) {
+                        console.log('更新现有选项');
+                        existingOption.textContent = `${memberName} (ID: ${memberIdNum})`;
+                    } else {
+                        console.log('创建新选项');
+                        // 创建并添加新选项
+                        const newOption = document.createElement('option');
+                        newOption.value = memberIdNum;
+                        newOption.textContent = `${memberName} (ID: ${memberIdNum})`;
+                        membershipSelect.appendChild(newOption);
+                    }
+                    
+                    // 选择新选项
+                    membershipSelect.value = memberIdNum;
+                    console.log('设置下拉框选中值为:', memberIdNum);
+                    
+                    // 更新表单中的姓名字段
+                    const nameCompanyField = document.getElementById('nameCompany');
+                    if (nameCompanyField) {
+                        nameCompanyField.value = memberName;
+                        console.log('更新姓名字段为:', memberName);
+                    }
                 } else {
+                    console.error('API返回错误或无会员数据:', data);
                     showError('无法获取新会员详情');
                 }
             })
             .catch(error => {
+                console.error('获取会员详情失败:', error);
                 showError('获取会员详情出错: ' + error.message);
             });
     }
@@ -181,49 +482,112 @@ document.addEventListener('DOMContentLoaded', function() {
     async function submitForm() {
         const formData = new FormData(donationForm);
         const data = {};
+       
+        console.log('Raw form data:');
+        for (let pair of formData.entries()) {
+            console.log(pair[0] + ': ' + pair[1]);
+        }
+
+        const fieldMap = {
+            'Name/Company Name': 'Name/Company Name',
+            'donationTypes': 'membership',
+            'Remarks': 'Remarks',
+            'receipt_no': 'official receipt no',
+            'bank': 'Bank',
+            'amount': 'amount',
+            'paymentDate': 'paymentDate',
+            'id': 'ID',
+            'membership': 'membership'
+        };
 
         formData.forEach((value, key) => {
-            // Format payment date if needed
-            if (key === 'paymentDate' && value) {
-                const date = new Date(value);
-                const year = date.getFullYear();
-                const month = String(date.getMonth() + 1).padStart(2, '0');
-                const day = String(date.getDate()).padStart(2, '0');
-                data[key] = `${year}-${month}-${day}`;
-            }
-            // Convert amount to number
-            else if (key === 'amount') {
-                data[key] = parseFloat(value);
-            }
-            else {
+            if (fieldMap[key]) {
+                // Use the mapped field name
+                const mappedKey = fieldMap[key];
+                
+                // Handle special conversions
+                if (mappedKey === 'amount' && value) {
+                    data[mappedKey] = parseFloat(parseFloat(value).toFixed(2));
+                } else if (mappedKey === 'payment_date' && value) {
+                    const date = new Date(value);
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    data[mappedKey] = `${year}-${month}-${day}`;
+                } else {
+                    data[mappedKey] = value;
+                }
+            } else if (key !== 'membership' && key !== 'csrf_token' && key !== 'memberId') {
+                // For unmapped fields (except special handling ones)
                 data[key] = value;
             }
         });
 
-        // Handle membership value from select - FIXED to preserve hyphenated IDs
+        // Handle membership value from select
         const membershipValue = membershipSelect.value;
-        if (membershipValue && membershipValue !== 'new' && membershipValue !== 'old') {
-            // Use the membership value directly without parsing as integer
-            data.membership = membershipValue;
-        } else {
-            data.membership = null; // No membership selected or invalid option selected
-        }
-
-        // Make membership null if it's empty to avoid foreign key errors
-        if (data.membership === null || data.membership === undefined || data.membership === '') {
-            // If form requires membership, show an error
-            // Uncomment this if membership is required
-            /*
-            if (document.getElementById('membership').hasAttribute('required')) {
-                showError('请选择有效的会员');
-                return;
-            }
-            */
-            
-            // Otherwise, ensure it's explicitly null for the API
+        console.log('提交表单时的会员选择值:', membershipValue);
+        
+        const selectedMemberId = document.getElementById('selectedMemberId')?.value;
+        console.log('提交表单时的selectedMemberId值:', selectedMemberId);
+        
+        // 处理会员身份 - 修复外键约束问题
+        if (membershipValue === '3') {
+            // 非会员情况下，设置membership为null
             data.membership = null;
+            console.log('Non-member selected, setting membership to null');
+        } else if (membershipValue === '1' || membershipValue === '2') {
+            // 新会员或老会员选项，但没有具体会员ID
+            // 检查是否有selectedMemberId
+            if (selectedMemberId && selectedMemberId.trim() !== '') {
+                const memberId = parseInt(selectedMemberId, 10);
+                if (!isNaN(memberId) && memberId > 0) {
+                    data.membership = memberId;
+                    console.log('Using selected member ID for new/old member:', data.membership);
+                } else {
+                    data.membership = null;
+                    console.log('Invalid selected member ID for new/old member, setting to null');
+                }
+            } else {
+                data.membership = null;
+                console.log('Member type selected but no specific member, setting to null');
+            }
+        } else if (selectedMemberId && selectedMemberId.trim() !== '') {
+            // 如果有选择具体会员，使用selectedMemberId
+            const memberId = parseInt(selectedMemberId, 10);
+            if (!isNaN(memberId) && memberId > 0) {
+                data.membership = memberId;
+                console.log('Using selected member ID:', data.membership);
+            } else {
+                data.membership = null;
+                console.log('Invalid selected member ID, setting to null');
+            }
+        } else if (membershipValue && membershipValue !== 'null' && membershipValue !== 'custom') {
+            // 尝试直接使用membershipValue作为会员ID
+            const memberId = parseInt(membershipValue, 10);
+            if (!isNaN(memberId) && memberId > 0) {
+                data.membership = memberId;
+                console.log('Using membership value as ID:', data.membership);
+            } else {
+                data.membership = null;
+                console.log('Invalid membership value, setting to null');
+            }
+        } else {
+            // 其他情况下，设置为null
+            data.membership = null;
+            console.log('No valid membership ID found, setting to null');
         }
-
+        
+        // 最后检查一次membership值，确保它是有效的整数或null
+        if (data.membership !== null) {
+            const memberId = parseInt(data.membership, 10);
+            if (isNaN(memberId) || memberId <= 0) {
+                data.membership = null;
+                console.log('Final check: Invalid membership ID, setting to null');
+            }
+        }
+        
+        console.log('Final data being sent:', JSON.stringify(data));
+    
         // Add action type
         data.action = donationId ? 'update_donation' : 'add_donation';
 
@@ -312,21 +676,66 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Handle membership field with proper display
         if (donation.membership) {
-            // Check if we already have this member ID as an option
-            let memberOption = Array.from(membershipSelect.options).find(opt => opt.value == donation.membership);
+            // 确保membership是数字
+            const membershipId = parseInt(donation.membership, 10);
             
-            if (!memberOption) {
-                // If not, create a new option for this member ID
-                memberOption = document.createElement('option');
-                memberOption.value = donation.membership;
-                memberOption.textContent = `会员 ID: ${donation.membership}`;
-                membershipSelect.appendChild(memberOption);
+            if (!isNaN(membershipId) && membershipId > 0) {
+                // 确保selectedMemberId字段存在并设置值
+                let selectedMemberIdField = document.getElementById('selectedMemberId');
+                if (!selectedMemberIdField) {
+                    selectedMemberIdField = document.createElement('input');
+                    selectedMemberIdField.type = 'hidden';
+                    selectedMemberIdField.id = 'selectedMemberId';
+                    selectedMemberIdField.name = 'memberId';
+                    donationForm.appendChild(selectedMemberIdField);
+                }
+                selectedMemberIdField.value = membershipId;
+                
+                // 检查是否已有此会员ID作为选项
+                let memberOption = Array.from(membershipSelect.options).find(opt => opt.value == membershipId);
+                
+                if (!memberOption) {
+                    // 如果没有，创建一个新选项
+                    memberOption = document.createElement('option');
+                    memberOption.value = membershipId;
+                    memberOption.textContent = `会员 ID: ${membershipId}`;
+                    
+                    // 在预设选项之前添加
+                    const specialIndex = Array.from(membershipSelect.options).findIndex(opt => 
+                        opt.value === '1' || opt.value === '2' || opt.value === '3' || opt.disabled);
+                    
+                    if (specialIndex !== -1) {
+                        membershipSelect.insertBefore(memberOption, membershipSelect.options[specialIndex]);
+                    } else {
+                        membershipSelect.appendChild(memberOption);
+                    }
+                }
+                
+                // 选择会员选项
+                membershipSelect.value = membershipId;
+                
+                // 获取会员详情以显示正确的名称
+                fetch(`${API_BASE_URL}?table=members&action=get_member&id=${membershipId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success' && data.member) {
+                            const memberName = data.member.Name || data.member.CName || `会员 ID: ${membershipId}`;
+                            document.getElementById('nameCompany').value = memberName;
+                        }
+                    })
+                    .catch(error => console.error('获取会员详情失败:', error));
+            } else {
+                // 如果不是有效的数字ID，设为非会员
+                membershipSelect.value = '3'; // 非会员
+                if (document.getElementById('selectedMemberId')) {
+                    document.getElementById('selectedMemberId').value = '';
+                }
             }
-            
-            // Select the member option
-            membershipSelect.value = donation.membership;
         } else {
-            membershipSelect.value = '';
+            membershipSelect.value = '3'; // 设为非会员
+            if (document.getElementById('selectedMemberId')) {
+                document.getElementById('selectedMemberId').value = '';
+            }
         }
 
         // Format payment date if needed
@@ -336,7 +745,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         document.getElementById('receiptNo').value = donation.receipt_no || '';
-        document.getElementById('amount').value = donation.amount || '';
+        document.getElementById('amount').value = donation.amount ? parseFloat(donation.amount).toFixed(2) : '';
         document.getElementById('remarks').value = donation.remarks || '';
     }
 
@@ -391,335 +800,111 @@ document.addEventListener('DOMContentLoaded', function() {
         selectElement.appendChild(customOption);
     }
 
+
+    function resetSelectToDefault(selectElement) {
+        // Reset to first non-disabled option
+        for (let i = 0; i < selectElement.options.length; i++) {
+            if (!selectElement.options[i].disabled && selectElement.options[i].value !== 'custom') {
+                selectElement.selectedIndex = i;
+                break;
+            }
+        }
+    }
+
     /**
      * Handles the selection of the custom option
      * @param {HTMLSelectElement} selectElement - The select dropdown
      * @param {string} itemType - The type of item being added (for display)
      */
-    function handleCustomOptionSelection(selectElement, itemType) {
+    async function handleCustomOptionSelection(selectElement, itemType, tableType) {
         if (selectElement.value === 'custom') {
             const newOption = prompt(`请输入新的${itemType}:`);
-            if (newOption) {
-                // Here you would typically make an API call to add to database
-                // For now, let's just add it to the dropdown
-                const optionElement = document.createElement('option');
-                optionElement.value = newOption;
-                optionElement.textContent = newOption;
-                
-                // Insert before the separator
-                const separatorIndex = Array.from(selectElement.options).findIndex(opt => opt.disabled);
-                if (separatorIndex !== -1) {
-                    selectElement.insertBefore(optionElement, selectElement.options[separatorIndex]);
-                } else {
-                    selectElement.insertBefore(optionElement, selectElement.options[selectElement.options.length - 2]);
-                }
-                
-                selectElement.value = newOption;
-            } else {
-                // If user cancels the prompt, reset the dropdown to empty
-                selectElement.value = '';
-            }
-        }
-    }
-
-    /**
-     * Adds a new member and returns the ID
-     * @param {string} memberName - The name of the new member
-     * @returns {Promise<number|null>} - The new member ID or null if failed
-     */
-    async function addNewMemberAndGetID(memberName) {
-        const data = {
-            action: 'add_member',
-            Name: memberName,
-            CName: memberName,
-        };
-    
-        try {
-            const response = await fetch('../recervingAPI.php?table=members', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            });
-    
-            const rawResponse = await response.text();
-            console.log('Raw API Response (add_member):', rawResponse);
-    
-            let parsedData;
-            try {
-                parsedData = JSON.parse(rawResponse);
-            } catch (e) {
-                showError('API返回格式错误: ' + rawResponse);
-                return null;
-            }
-    
-            if (parsedData.status === 'success' || parsedData.success === true) {
-                const newMemberId = parsedData.membersID || parsedData.member_id || parsedData.id;
-                
-                if (newMemberId) {
-                    // Store the ID in localStorage or sessionStorage
-                    sessionStorage.setItem('pendingMemberId', newMemberId);
-                    
-                    // Redirect to member.html with the ID
-                    window.location.href = `donateMember.html?id=${newMemberId}&returnUrl=${encodeURIComponent(window.location.href)}`;
-                    
-                    // This code won't execute immediately due to the redirect
-                    return newMemberId;
-                } else {
-                    showError('添加成功但未返回会员ID。');
-                    return null;
-                }
-            } else {
-                showError(`添加新会员失败: ${parsedData.message || parsedData.error || '未知错误'}`);
-                return null;
-            }
-        } catch (error) {
-            showError('添加新会员时网络错误: ' + error.message);
-            return null;
-        }
-    }
-
-    /**
-     * Opens a modal dialog for member search
-     */
-    function openMemberSearchDialog() {
-        // Create a modal dialog for member search
-        const dialog = document.createElement('div');
-        dialog.className = 'member-search-dialog';
-        
-        // Create dialog content
-        dialog.innerHTML = `
-            <div class="dialog-content">
-                <h2>搜索会员</h2>
-                <div class="search-container">
-                    <input type="text" id="memberSearchInput" placeholder="输入会员姓名或ID搜索...">
-                    <button id="searchMemberBtn">搜索</button>
-                </div>
-                <div id="memberSearchResults" class="search-results"></div>
-                <div id="memberSearchPagination" class="pagination"></div>
-                <div class="dialog-buttons">
-                    <button id="cancelMemberSearch">取消</button>
-                </div>
-            </div>
-        `;
-        
-        // Apply CSS for the dialog
-        const style = document.createElement('style');
-        style.textContent = `
-            .member-search-dialog {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: rgba(0, 0, 0, 0.5);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                z-index: 1000;
-            }
-            .dialog-content {
-                background-color: white;
-                padding: 20px;
-                border-radius: 5px;
-                width: 80%;
-                max-width: 600px;
-                max-height: 80vh;
-                overflow-y: auto;
-            }
-            .search-container {
-                display: flex;
-                margin-bottom: 15px;
-            }
-            #memberSearchInput {
-                flex: 1;
-                padding: 8px;
-                margin-right: 10px;
-            }
-            .search-results {
-                margin: 15px 0;
-                max-height: 50vh;
-                overflow-y: auto;
-            }
-            .member-item {
-                padding: 10px;
-                border: 1px solid #ddd;
-                margin-bottom: 5px;
-                cursor: pointer;
-            }
-            .member-item:hover {
-                background-color: #f0f0f0;
-            }
-            .pagination {
-                display: flex;
-                justify-content: center;
-                margin: 15px 0;
-            }
-            .pagination button {
-                margin: 0 5px;
-                padding: 5px 10px;
-            }
-            .dialog-buttons {
-                display: flex;
-                justify-content: flex-end;
-                margin-top: 15px;
-            }
-            #searchMemberBtn {
-                padding: 8px 15px;
-            }
-            #cancelMemberSearch {
-                padding: 8px 15px;
-                background-color: #f0f0f0;
-            }
-        `;
-        
-        document.head.appendChild(style);
-        document.body.appendChild(dialog);
-        
-        // Get DOM elements
-        const searchInput = document.getElementById('memberSearchInput');
-        const searchButton = document.getElementById('searchMemberBtn');
-        const cancelButton = document.getElementById('cancelMemberSearch');
-        const resultsContainer = document.getElementById('memberSearchResults');
-        const paginationContainer = document.getElementById('memberSearchPagination');
-        
-        // Focus the search input
-        searchInput.focus();
-        
-        // Initialize page variables
-        let currentPage = 1;
-        let totalPages = 1;
-        
-        // Search function
-        async function searchMembers(page = 1, query = '') {
-            resultsContainer.innerHTML = '<p>正在搜索...</p>';
             
-            try {
-                let searchUrl = `../recervingAPI.php?table=members&action=search_member&page=${page}`;
-                
-                if (query.trim()) {
-                    searchUrl += `&name=${encodeURIComponent(query.trim())}`;
-                }
-                
-                const response = await fetch(searchUrl);
-                const data = await response.json();
-                
-                if (data.status === 'success') {
-                    // Update pagination info
-                    currentPage = data.current_page || 1;
-                    totalPages = data.total_pages || 1;
+            if (newOption && newOption.trim() !== '') {
+                try {
+                    // Show loading indicator
+                    showLoading();
                     
-                    // Display results
-                    if (data.members && data.members.length > 0) {
-                        resultsContainer.innerHTML = '';
+                    // Make an API call to add the new option to the database
+                    const response = await fetch(`${API_BASE_URL}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            table: tableType,
+                            action: 'add_new_option',
+                            name: newOption
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.status === 'success' && data.id) {
+                        // Create new option with the returned ID
+                        const optionElement = document.createElement('option');
+                        optionElement.value = data.id;  // Use the ID from the database
+                        optionElement.textContent = newOption;
                         
-                        data.members.forEach(member => {
-                            const memberItem = document.createElement('div');
-                            memberItem.className = 'member-item';
-                            memberItem.innerHTML = `
-                                <strong>ID: ${member.membersID || member.id}</strong><br>
-                                姓名: ${member.Name || member.CName || '无名称'}<br>
-                                联系方式: ${member.ContactNo || member.contact || '无'}
-                            `;
-                            
-                            // Add click handler to select this member
-                            memberItem.addEventListener('click', () => {
-                                selectMember(member);
-                            });
-                            
-                            resultsContainer.appendChild(memberItem);
-                        });
+                        // Insert before the separator
+                        const separatorIndex = Array.from(selectElement.options).findIndex(opt => opt.disabled);
+                        if (separatorIndex !== -1) {
+                            selectElement.insertBefore(optionElement, selectElement.options[separatorIndex]);
+                            selectElement.value = data.id;
+                        } else {
+                            selectElement.insertBefore(optionElement, selectElement.options[0]);
+                            selectElement.value = data.id;
+                        }
+                        
+                        alert(`新的${itemType}已添加成功！`);
                     } else {
-                        resultsContainer.innerHTML = '<p>没有找到会员</p>';
+                        alert(`添加${itemType}失败: ${data.message || '未知错误'}`);
+                        resetSelectToDefault(selectElement);
                     }
-                    
-                    // Update pagination buttons
-                    updatePagination();
-                } else {
-                    resultsContainer.innerHTML = `<p>搜索失败: ${data.message || '未知错误'}</p>`;
+                } catch (error) {
+                    alert(`添加${itemType}时出错: ${error.message}`);
+                    resetSelectToDefault(selectElement);
+                } finally {
+                    hideLoading();
                 }
-            } catch (error) {
-                resultsContainer.innerHTML = `<p>搜索出错: ${error.message}</p>`;
+            } else {
+                resetSelectToDefault(selectElement);
             }
         }
-        
-        // Update pagination buttons
-        function updatePagination() {
-            paginationContainer.innerHTML = '';
-            
-            if (totalPages <= 1) return;
-            
-            // Previous button
-            if (currentPage > 1) {
-                const prevBtn = document.createElement('button');
-                prevBtn.textContent = '上一页';
-                prevBtn.addEventListener('click', () => {
-                    searchMembers(currentPage - 1, searchInput.value);
-                });
-                paginationContainer.appendChild(prevBtn);
+    }
+
+    // Delete donation functionality
+    if (deleteButton) {
+        deleteButton.addEventListener('click', async function() {
+            if (!donationId) {
+                alert('无法删除未保存的捐赠记录');
+                return;
             }
-            
-            // Page info
-            const pageInfo = document.createElement('span');
-            pageInfo.textContent = `${currentPage} / ${totalPages}`;
-            pageInfo.style.margin = '0 10px';
-            paginationContainer.appendChild(pageInfo);
-            
-            // Next button
-            if (currentPage < totalPages) {
-                const nextBtn = document.createElement('button');
-                nextBtn.textContent = '下一页';
-                nextBtn.addEventListener('click', () => {
-                    searchMembers(currentPage + 1, searchInput.value);
-                });
-                paginationContainer.appendChild(nextBtn);
-            }
-        }
-        
-        // Select a member and close the dialog
-        function selectMember(member) {
-            const memberId = member.membersID || member.id;
-            const memberName = member.Name || member.CName || `会员 ID: ${memberId}`;
-            
-            // Check if this member is already in the dropdown
-            let memberOption = Array.from(membershipSelect.options).find(opt => opt.value == memberId);
-            
-            if (!memberOption) {
-                // Add this member to the dropdown
-                memberOption = document.createElement('option');
-                memberOption.value = memberId;
-                memberOption.textContent = `${memberName} (ID: ${memberId})`;
-                membershipSelect.appendChild(memberOption);
-            }
-            
-            // Select this member in the dropdown
-            membershipSelect.value = memberId;
-            
-            // Close the dialog
-            closeDialog();
-        }
-        
-        // Close the dialog
-        function closeDialog() {
-            document.body.removeChild(dialog);
-        }
-        
-        // Event listeners
-        searchButton.addEventListener('click', () => {
-            searchMembers(1, searchInput.value);
-        });
-        
-        // Search when pressing Enter in the search box
-        searchInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                searchMembers(1, searchInput.value);
+
+            if (confirm('确定要删除此捐赠记录吗？此操作不可撤销。')) {
+                try {
+                    showLoading();
+                    const response = await fetch(`../recervingAPI.php?table=donation&action=delete_donation&id=${donationId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    const data = await response.json();
+
+                    if (data.status === 'success') {
+                        alert('捐赠记录已成功删除');
+                        window.location.href = 'searchDonate.html';
+                    } else {
+                        showError('删除捐赠记录失败: ' + (data.message || '未知错误'));
+                    }
+                } catch (error) {
+                    showError('删除捐赠记录时出错: ' + error.message);
+                } finally {
+                    hideLoading();
+                }
             }
         });
-        
-        cancelButton.addEventListener('click', closeDialog);
-        
-        // Initial search (empty query to show all members first page)
-        searchMembers(1, '');
     }
 });

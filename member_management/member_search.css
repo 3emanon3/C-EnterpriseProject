@@ -61,7 +61,7 @@ h1 {
 .btn-primary {
     background-color: var(--primary-color);
     color: white;
-    margin: 20px;
+
 
 }
 
@@ -202,7 +202,7 @@ tr:hover {
     align-items: center;
     padding-top: 20px;
     border-top: 1px solid var(--border-color);
-    justify-content: flex-end;
+    justify-content:  flex-start;
 }
 
 .pagination {

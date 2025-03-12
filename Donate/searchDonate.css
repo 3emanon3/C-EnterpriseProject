@@ -32,12 +32,14 @@ body {
 /* Header Styles */
 header {
     display: flex;
-    justify-content: space-between;
+    justify-content:  flex-start;
     align-items: center;
     margin-bottom: 30px;
     padding-bottom: 20px;
     border-bottom: 2px solid var(--border-color);
 }
+
+
 
 h1 {
     color: #f8f9fa;

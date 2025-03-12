@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>会员详细信息</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="check_details1.css">
+    <link rel="stylesheet" href="check_details2.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+           
+            <h1><i class="fas fa-user-check"></i> 会员详细信息</h1>
+            <div class="actions">
+                <button id="backButton" class="btn"><i class="fas fa-arrow-left"></i> 返回列表</button>
+            </div>
+        </header>
+
+        <div class="loader"></div>
+        
+        <div id="memberDetails" class="details-container">
+            <div class="detail-section">
+                <h2>基本信息</h2>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <label>会员ID:</label>
+                        <span id="membersID">加载中...</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>英文名:</label>
+                        <span id="Name">加载中...</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>中文名:</label>
+                        <span id="CName">加载中...</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>会员类型:</label>
+                        <span id="designation">加载中...</span>
+                    </div>
+                    <div class="detail-item full-width">
+                        <label>地址:</label>
+                        <span id="Address">加载中...</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <h2>联系方式</h2>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <label>电话:</label>
+                        <span id="phone_number">加载中...</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>邮箱:</label>
+                        <span id="email">加载中...</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <h2>个人资料</h2>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <label>身份证号:</label>
+                        <span id="IC">加载中...</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>旧身份证号:</label>
+                        <span id="oldIC">加载中...</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>性别:</label>
+                        <span id="gender">加载中...</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>出生地:</label>
+                        <span id="placeOfBirth">加载中...</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>生日:</label>
+                        <span id="Birthday">加载中...</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>公司名称:</label>
+                        <span id="companyName">加载中...</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <h2>会员状态</h2>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <label>到期日期:</label>
+                        <span id="expiredDate">加载中...</span>
+                    </div>
+                    <div class="detail-item full-width">
+                        <label>备注:</label>
+                        <span id="remarks">加载中...</span>
+                    </div>
+                    <div class="detail-item full-width">
+                        <label>其他信息:</label>
+                        <span id="other">加载中...</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-section" id="participationHistory">
+                <h2>参与历史</h2>
+                <div class="table-container">
+                    <table id="participationTable">
+                        <thead>
+                            <tr>
+                                <th>活动ID</th>
+                                <th>活动名称</th>
+                                <th>日期</th>
+                                <th>参与状态</th>
+                                <th>备注</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="5" class="loading-message">加载中...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="detail-section" id="donationHistory">
+                <h2>捐款历史</h2>
+                <div class="table-container">
+                    <table id="donationTable">
+                        <thead>
+                            <tr>
+                                <th>捐款ID</th>
+                                <th>捐款日期</th>
+                                <th>金额</th>
+                                <th>捐款类型</th>
+                                <th>备注</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="5" class="loading-message">加载中...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="check_details.js"></script>
+</body>
+</html>

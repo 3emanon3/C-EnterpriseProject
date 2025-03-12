@@ -2,7 +2,7 @@
 $host = 'localhost';
 $db   = 'entreprise_test';
 $user = 'root';
-$pass = '0000';
+$pass = '';
 $charset = 'utf8mb4';
 
 // Create connection

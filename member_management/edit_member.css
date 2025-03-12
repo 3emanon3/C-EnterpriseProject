@@ -56,6 +56,10 @@
     margin-top: 20px;
 }
 
+.btn-primary {
+    margin: 10px;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .edit-container {

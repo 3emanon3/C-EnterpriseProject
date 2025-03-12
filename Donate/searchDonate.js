@@ -1,7 +1,6 @@
-const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
-
 document.addEventListener("DOMContentLoaded", function () {
     // Element references
+    const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
     const searchInput = document.getElementById("searchInput");
     const searchButton = document.getElementById("searchButton");
     const totalDonations = document.getElementById("totalDonations");
@@ -10,17 +9,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const table = document.getElementById('donationTable');
     const tableHeaders = table.querySelectorAll('th');
     const donationTableBody = table.querySelector('tbody');
-    
-    /*
-    // Only create pagination container if it doesn't exist
     const paginationContainer = document.querySelector(".pagination");
-    if (!paginationContainer) {
-        console.warn("Pagination container not found, creating one");
-        const paginationDiv = document.createElement("div");
-        paginationDiv.className = "pagination";
-        document.querySelector(".pagination-container").prepend(paginationDiv);
-    }*/
-
+    const prevPageButton = document.getElementById("prevPage");
+    const nextPageButton = document.getElementById("nextPage");
+    
     // State variables
     let currentSortColumn = null;
     let currentSortOrder = null;
@@ -28,8 +20,31 @@ document.addEventListener("DOMContentLoaded", function () {
     let itemsPerPage = parseInt(itemsPerPageSelect.value);
     let currentPage = 1;
     let totalPages = 0;
-    
     let currentSearchType = 'all'; // Flag to indicate listing all data
+
+    // Debounce function to limit API calls during rapid typing
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+    
+    // Debounced search
+    const debouncedSearch = debounce((searchText) => {
+        console.log("Searching for:", searchText); 
+        currentPage = 1; // Reset to first page when searching
+        fetchDonations(searchText);
+    }, 300); // 300ms delay
+    
+    searchInput.addEventListener("input", function() {
+        debouncedSearch(this.value);
+    });
 
     async function fetchDonations(query = "") {
         loader.style.display = "block";
@@ -42,11 +57,11 @@ document.addEventListener("DOMContentLoaded", function () {
             limit: itemsPerPage,
         });
         
-        if (query && query.trim()!=="") {
+        if (query && query.trim() !== "") {
             params.append("search", query.trim());
-            currentSearchType =  'search'; // Indicate not listing all when search query is present  // UPGRADE: Set isListingAll to false when search query is present
+            currentSearchType = 'search'; // Indicate not listing all when search query is present
         } else {
-            currentSearchType =  'all'; // Back to listing all if query is empty // UPGRADE: Set isListingAll back to true when query is empty
+            currentSearchType = 'all'; // Back to listing all if query is empty
         }
     
         if (currentSortColumn) {
@@ -63,56 +78,56 @@ document.addEventListener("DOMContentLoaded", function () {
             const response = await fetch(url);
             console.log("Raw response status:", response.status);
             
-
             if (!response.ok) {
+                const errorText = await response.text();
+                console.error(`Server error response: ${errorText}`);
                 throw new Error(`Server responded with status: ${response.status}`);
             }
             
             const data = await response.json();
-            console.log("API Response :", data); // Log the entire response
+            console.log("API Response:", data); // Log the entire response
             
-            // More detailed safety checks
-            if (!data|| typeof data !== 'object') {
-                throw new Error("Empty response received");
+            // Check for different response formats
+            if (Array.isArray(data)) {
+                donationData = data;
+                totalDonations.textContent = data.length;
+            } else if (data && typeof data === 'object') {
+                donationData = Array.isArray(data.data) ? data.data : [];
+                totalDonations.textContent = data.total || data.pagination?.total_records || donationData.length;
+            } else {
+                throw new Error("Invalid data format received");
             }
-            
-           
-            
-            // Check for data array, handle both formats that API might return
-            let processedData = Array.isArray(data) ? data : data.data || [];
-            let totalCount = data.total || processedData.length;
-            
-            
-            donationData = processedData;
-            totalDonations.textContent = totalCount;
-            totalPages = Math.ceil(totalCount / itemsPerPage); // Always calculate pages
-         
+    
+            totalPages = Math.ceil(parseInt(totalDonations.textContent) / itemsPerPage);
             displayDonations(donationData);
             updatePagination();
-           
+            updateSortIcons();
         } catch (error) {
             console.error("Error fetching donations:", error);
-            donationTableBody.innerHTML = `<tr><td colspan="10" class="error-message">Failed to load donations. Please try again later. Error: ${error.message}</td></tr>`;
-           
+            donationTableBody.innerHTML = `<tr><td colspan="10" class="error-message">Failed to load donations. Error: ${error.message}</td></tr>`;
+            
+            // Reset data on error
+            donationData = [];
+            totalDonations.textContent = 0;
+            totalPages = 1;
+            updatePagination();
         } finally {
             loader.style.display = "none";
         }
     }
 
-
-    
     function mapColumnNameToApi(columnName) {
         // Updated mapping to match HTML data-column attributes
         const mapping = {
             'id': 'ID',
             'donor_name': 'Name/Company Name',
-            'donationTypes': 'donationTypes',
+            'donationTypes': 'vdonation',
             'Bank': 'Bank',
             'membership': 'membership',
             'payment_date': 'payment_date',
             'receipt_no': 'receipt_no',
             'amount': 'amount',
-            'remarks': 'remarks'
+            'Remarks': 'Remarks'
         };
         
         return mapping[columnName] || columnName;
@@ -120,23 +135,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function displayDonations(donations) {
         console.log("Displaying donations:", donations);
-        donationTableBody.innerHTML = "";//It starts by resetting the table body to ensure no old data remains.
+        donationTableBody.innerHTML = ""; // Reset the table body
         
         if (!Array.isArray(donations) || donations.length === 0) {
-            console.log("No donations to display");
-            donationTableBody.innerHTML = `<tr><td colspan="10" class="no-data">No donations found</td></tr>`;
+            let message = '暂无记录';
+            if (currentSearchType === 'search') message = '没有找到匹配的记录';
+            
+            donationTableBody.innerHTML = `<tr><td colspan="10" class="no-data">${message}</td></tr>`;
             return;
         }
     
         console.log(`Processing ${donations.length} donations for display`);
         
         donations.forEach(donation => {
-            
-            
             // Log the donation object to see its structure
             console.log("Processing donation:", donation);
-            
-
             
             const row = document.createElement("tr");
             row.setAttribute('id', `donation-row-${donation.ID || 'unknown'}`);
@@ -153,19 +166,19 @@ document.addEventListener("DOMContentLoaded", function () {
             const remarks = truncateText(donation.Remarks || donation.remarks || '', 50);
             
             row.innerHTML = `
-            <td>${id}</td>
-            <td>${donorName}</td>
-            <td>${donationType}</td>
-            <td>${bank}</td>
-            <td>${membership}</td>
+            <td>${escapeHTML(id)}</td>
+            <td>${escapeHTML(donorName)}</td>
+            <td>${escapeHTML(donationType)}</td>
+            <td>${escapeHTML(bank)}</td>
+            <td>${escapeHTML(membership)}</td>
             <td>${paymentDate}</td>
-            <td>${receiptNo}</td>
+            <td>${escapeHTML(receiptNo)}</td>
             <td>${amount}</td>
             <td>${remarks}</td>
             <td>
-                    <button class="btn btn-edit" data-id="${id}" aria-label="Edit donation ${id}">编辑</button>
-                    <button class="btn btn-delete" data-id="${id}" aria-label="Delete donation ${id}">删除</button>
-                </td>
+                <button class="btn btn-edit" data-id="${id}" aria-label="Edit donation ${id}">编辑</button>
+                <button class="btn btn-delete" data-id="${id}" aria-label="Delete donation ${id}">删除</button>
+            </td>
             `;
             donationTableBody.appendChild(row);
         });
@@ -183,7 +196,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Helper function to escape HTML
     function escapeHTML(str) {
         if (!str) return '';
-        return str
+        return String(str)
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;')
@@ -211,23 +224,17 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function updatePagination() {
-        const paginationContainer = document.querySelector(".pagination");
         if (!paginationContainer) return;
-
         
-       
         const paginationHTML = [];
         
-        // Previous page button
-       
-
         // Page numbers
         for (let i = 1; i <= totalPages; i++) {
             if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
                 paginationHTML.push(`
                     <button class="pagination-btn ${i === currentPage ? 'active' : ''}" 
                             data-page="${i}"
-                            aria-label="Page ${i}"
+                            aria-label="第${i}页"
                             ${i === currentPage ? 'aria-current="page"' : ''}>
                         ${i}
                     </button>
@@ -240,16 +247,16 @@ document.addEventListener("DOMContentLoaded", function () {
         // Page jump
         paginationHTML.push(`
             <div class="pagination-info" aria-live="polite">
-                <span class="page-indicator">Page ${currentPage} of ${totalPages}</span>
+                <span class="page-indicator">${currentPage}/${totalPages}</span>
                 <div class="page-jump">
                     <input type="number" 
                            id="pageInput" 
                            min="1" 
                            max="${totalPages}" 
                            placeholder="页码"
-                           aria-label="Jump to page"
+                           aria-label="跳转到页码"
                            class="page-input">
-                    <button id="jumpBtn" class="jump-btn" aria-label="Jump to the specified page">跳转</button>
+                    <button onclick="jumpToPage()" class="jump-btn">跳转</button>
                 </div>
             </div>
         `);
@@ -266,12 +273,6 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         });
 
-        // Add event listener to jump button
-        const jumpBtn = document.getElementById('jumpBtn');
-        if (jumpBtn) {
-            jumpBtn.addEventListener('click', jumpToPage);
-        }
-
         // Add event listener to page input for Enter key
         const pageInput = document.getElementById('pageInput');
         if (pageInput) {
@@ -281,13 +282,26 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             });
         }
-    
-}
+        
+        // Re-attach event listeners for prev/next buttons
+        if (prevPageButton) {
+            prevPageButton.addEventListener('click', () => {
+                if (currentPage > 1) changePage(currentPage - 1);
+            });
+        }
+        
+        if (nextPageButton) {
+            nextPageButton.addEventListener('click', () => {
+                if (currentPage < totalPages) changePage(currentPage + 1);
+            });
+        }
+    }
 
     function changePage(page) {
-        if (page < 1 || page > totalPages) return;
-        currentPage = page;
-        fetchDonations(searchInput.value);
+        if (page >= 1 && page <= totalPages && page !== currentPage) {
+            currentPage = page;
+            fetchDonations(searchInput.value);
+        }
     }
 
     function jumpToPage() {
@@ -295,13 +309,26 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!pageInput) return;
         
         let targetPage = parseInt(pageInput.value);
-        if (isNaN(targetPage)) return;
         
-        targetPage = Math.max(1, Math.min(targetPage, totalPages));
-        if (targetPage !== currentPage) {
-            currentPage = targetPage;
-            fetchDonations(searchInput.value);
+        // Validate input
+        if (isNaN(targetPage)) {
+            alert('请输入有效的页码');
+            return;
         }
+        
+        if (targetPage < 1) {
+            targetPage = 1;
+        } else if (targetPage > totalPages) {
+            targetPage = totalPages;
+        }
+        
+        // Only change page if it's different from current page
+        if (targetPage !== currentPage) {
+            changePage(targetPage);
+        }
+        
+        // Clear input after jumping
+        pageInput.value = '';
     }
 
     function handleSortClick(columnName) {
@@ -318,20 +345,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function updateSortIcons() {
         document.querySelectorAll('th[data-column]').forEach(th => {
-            const icon = th.querySelector('i');
-            if (!icon) return;
-            
-            icon.classList.remove('fa-sort', 'fa-sort-up', 'fa-sort-down');
+            const icon = th.querySelector('i') || document.createElement('i');
+            icon.className = 'sort-arrow fas';
             
             if (th.dataset.column === currentSortColumn) {
-                const newClass = currentSortOrder === 'ASC' ? 'fa-sort-up' : 'fa-sort-down';
-                icon.classList.add(newClass);
+                icon.classList.remove('fa-sort');
+                icon.classList.add(currentSortOrder === 'ASC' ? 'fa-sort-up' : 'fa-sort-down');
                 
                 // Update aria-sort attribute for accessibility
                 th.setAttribute('aria-sort', currentSortOrder === 'ASC' ? 'ascending' : 'descending');
             } else {
+                icon.classList.remove('fa-sort-up', 'fa-sort-down');
                 icon.classList.add('fa-sort');
                 th.removeAttribute('aria-sort');
+            }
+            
+            // Add icon if it doesn't exist
+            if (!th.querySelector('i')) {
+                th.appendChild(icon);
             }
         });
     }
@@ -339,15 +370,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Event handlers
     function handleSearch() {
         currentPage = 1;
-        isListingAll = true; // Explicitly reset
-        fetchDonations("");
-    }
-
-    function handleEmptySearch() {
-        if (!searchInput.value.trim()) {
-            currentPage = 1;
-            fetchDonations();
-        }
+        fetchDonations(searchInput.value);
     }
 
     // Event listeners
@@ -372,16 +395,20 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    searchButton.addEventListener("click", handleSearch);
+    // 修复搜索按钮事件监听器
+    if (searchButton) {
+        searchButton.addEventListener("click", handleSearch);
+    }
 
-    searchInput.addEventListener("keypress", function(e) {
-        if (e.key === "Enter") {
-            e.preventDefault();
-            handleSearch();
-        }
-    });
-
-    searchInput.addEventListener("input", handleEmptySearch);
+    // 修复搜索输入框回车键事件监听器
+    if (searchInput) {
+        searchInput.addEventListener("keypress", function(e) {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                handleSearch();
+            }
+        });
+    }
 
     donationTableBody.addEventListener('click', function(e) {
         const target = e.target;
@@ -396,11 +423,65 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
     
-    itemsPerPageSelect.addEventListener("change", function() {
-        itemsPerPage = parseInt(this.value);
-        currentPage = 1;
-        fetchDonations(searchInput.value);
-    });
+    if (itemsPerPageSelect) {
+        itemsPerPageSelect.addEventListener("change", function() {
+            itemsPerPage = parseInt(this.value);
+            currentPage = 1;
+            fetchDonations(searchInput.value);
+        });
+    }
+
+    // Table column resizing
+    function initializeResizableColumns() {
+        tableHeaders.forEach(th => {
+            // Create resizer element if it doesn't exist
+            let resizer = th.querySelector('.resizer');
+            if (!resizer) {
+                resizer = document.createElement('div');
+                resizer.className = 'resizer';
+                th.appendChild(resizer);
+            }
+            
+            let startX, startWidth;
+            
+            resizer.addEventListener('mousedown', function(e) {
+                startX = e.pageX;
+                startWidth = th.offsetWidth;
+                
+                const tableContainer = table.closest('.table-container');
+                if (tableContainer) {
+                    tableContainer.classList.add('resizing');
+                }
+                
+                document.addEventListener('mousemove', resizeColumn);
+                document.addEventListener('mouseup', stopResize);
+                e.preventDefault();
+            });
+            
+            function resizeColumn(e) {
+                const width = startWidth + (e.pageX - startX);
+                if (width >= 50) { // Minimum width
+                    th.style.width = `${width}px`;
+                }
+            }
+            
+            function stopResize() {
+                const tableContainer = table.closest('.table-container');
+                if (tableContainer) {
+                    tableContainer.classList.remove('resizing');
+                }
+                
+                document.removeEventListener('mousemove', resizeColumn);
+                document.removeEventListener('mouseup', stopResize);
+                
+                // Save column widths
+                saveColumnWidths();
+            }
+        });
+        
+        // Load saved column widths
+        loadColumnWidths();
+    }
 
     // Save column widths to localStorage
     function saveColumnWidths() {
@@ -435,7 +516,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Global functions
     window.editDonation = function(id) {
-        window.location.href = `edit_donation.html?id=${id}`;
+        window.location.href = `donate.html?id=${id}`;
     };
 
     window.deleteDonation = async function(id) {
@@ -459,7 +540,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
 
                 const data = await response.json();
-                if (data.success) {
+                if (data.success || data.status === 'success') {
                     alert("捐赠记录已成功删除！");
                     fetchDonations(searchInput.value);
                 } else {
@@ -472,40 +553,8 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
-    // Table column resizing
-    tableHeaders.forEach(th => {
-        const resizer = th.querySelector('.resizer');
-        if (!resizer) return;
-
-        let startX, startWidth;
-
-        resizer.addEventListener('mousedown', function(e) {
-            startX = e.pageX;
-            startWidth = th.offsetWidth;
-            
-            function resizeColumn(e) {
-                const newWidth = startWidth + (e.pageX - startX);
-                if (newWidth > 50) {
-                    th.style.width = newWidth + 'px';
-                }
-            }
-
-            function stopResize() {
-                document.removeEventListener('mousemove', resizeColumn);
-                document.removeEventListener('mouseup', stopResize);
-                
-                // Save column widths when resizing is done
-                saveColumnWidths();
-            }
-            
-            document.addEventListener('mousemove', resizeColumn);
-            document.addEventListener('mouseup', stopResize);
-            e.preventDefault();
-        });
-    });
-
-    // Load saved column widths
-    loadColumnWidths();
+    // Initialize resizable columns
+    initializeResizableColumns();
 
     // Initial fetch
     fetchDonations();

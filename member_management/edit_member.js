@@ -42,6 +42,37 @@ const handleApiResponse = async (response) => {
     }
 };
 
+const designation_of_applicant=document.getElementById('designation_of_applicant')
+    
+  
+fetchApplicantType();
+
+
+async function fetchApplicantType() {
+    try {
+        const response = await fetch(`${API_BASE_URL}?table=applicants%20types&limit=100`);
+        const data = await response.json();
+        
+        if (data && data.data) {
+            // Clear existing options except the first one
+            while (designation_of_applicant.options.length > 1) {
+                designation_of_applicant.remove(1);
+            }
+            
+            // Add unique applicant types to the dropdown
+            const uniqueApplicant = data.data;
+            uniqueApplicant.forEach(item => {
+                const option = document.createElement("option");
+                option.value = item.ID;
+                option.textContent = `${item["designation of applicant"]}`;
+                designation_of_applicant.appendChild(option);
+            });
+        }
+    } catch(error) {
+        console.error("Error fetching applicant type options:", error);
+    }
+}
+
 function formatDate(dateString) {
     if (!dateString) return '';
     const date = new Date(dateString);
@@ -328,6 +359,7 @@ function populateForm(memberData) {
         'birthday': ['Birthday'],
         'expired': ['expired date',],
         'birthplace': ['place of birth'],
+        'others':['others'],
         'remarks': ['remarks']
     };
 
@@ -343,6 +375,7 @@ function populateForm(memberData) {
         
         setFormValue(elementId, value);
     });
+    console.log('Populated others field:', document.getElementById('others').value);
     console.log('Populated expired date:', document.getElementById('expired').value);
     console.log('Populated birthplace:', document.getElementById('birthplace').value);
 }
@@ -369,6 +402,10 @@ async function handleSubmit(event) {
     }
 
     const formData = new FormData(event.target);
+
+    const othersValue = document.getElementById('others').value;
+    console.log('Explicitly captured others value:', othersValue);
+
     const designation = window.designationHandler.getCurrentDesignation();
     const birthdayMonth = formData.get('birthday');
 
@@ -398,11 +435,12 @@ async function handleSubmit(event) {
         Birthday: birthdayValue,
         'expired date': formData.get('expired') || null,
         'place of birth': formData.get('birthplace') || null,
-        other: formData.get('other') || null,
+        others: othersValue  || null,
         remarks: formData.get('remarks') || null,
         action: 'add_member'
     };
 
+    console.log('others field value:', formData.get('others'));
     console.log('Submitting member data:', memberData);
 
     try {
@@ -476,6 +514,7 @@ function printData() {
     
     const expired = document.getElementById('expired').value;
     const birthplace = document.getElementById('birthplace').value;
+    const others=document.getElementById('others').value;
     const remarks = document.getElementById('remarks').value;
 
     // Get the print template
@@ -496,7 +535,7 @@ function printData() {
         .replace('{{birthday}}', birthdayMonth)
         .replace('{{expiredDate}}', expired)
         .replace('{{birthplace}}', birthplace)
-        .replace('{{other}}', other)
+        .replace('{{others}}', others)
         .replace('{{remarks}}', remarks);
 
     // Open a new window for printing

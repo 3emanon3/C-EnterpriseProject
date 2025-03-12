@@ -1,25 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Donation Management System - Search</title>
+    <title>乐捐管理系统 - 搜索</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="searchDonate.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Donation Management System</h1>
-            <nav class="system-nav">
-                <button class="btn btn-primary" onclick="location.href='../project.html'">
-                    <i class="fas fa-home"></i> Back
-                </button>
-                <button class="btn btn-success" onclick="location.href='donate.html'">
-                    <i class="fas fa-hand-holding-heart"></i> Add New Donation
-                </button>
-                
-            </nav>
+            <div class="header-container">
+                <h1>乐捐管理系统</h1>
+                <nav class="system-nav">
+                    <button class="btn btn-primary" onclick="location.href='../project.html'">
+                        <i class="fas fa-home"></i> 返回
+                    </button>
+                    <button class="btn btn-success" onclick="location.href='donate.html'">
+                        <i class="fas fa-hand-holding-heart"></i> 添加新乐捐
+                    </button>
+                </nav>
+            </div>
         </header>
         
         <section class="search-container">
@@ -29,15 +30,15 @@
                     <input
                         type="text"
                         id="searchInput"
-                        placeholder="Search donations ..."
-                        aria-label="Search donations">
+                        placeholder="搜索乐捐..."
+                        aria-label="搜索乐捐">
                     <button id="searchButton" class="btn btn-search">
-                        Search
+                        搜索
                     </button>
                 </div>
             </div>
             <div class="search-stats">
-                <span class="stats-label">Total Donations:</span>
+                <span class="stats-label">乐捐总数:</span>
                 <span id="totalDonations" class="stats-value">0</span>
             </div>
         </section>
@@ -45,38 +46,38 @@
         <section class="table-container">
             <div class="loader">
                 <div class="spinner"></div>
-                <span>Loading donations...</span>
+                <span>正在加载乐捐...</span>
             </div>
             
             <div class="table-responsive">
-                <table id="donationTable" aria-label="Donation list">
+                <table id="donationTable" aria-label="乐捐列表">
                     <thead>
                         <tr>
-                            <th data-column="id">ID <i class="fas fa-sort"></i><div class="resizer"></div></th>
-                            <th data-column="donor_name">Name/Company Name <i class="fas fa-sort"></i><div class="resizer"></div></th>
-                            <th data-column="donationTypes">Donation Type <i class="fas fa-sort"></i><div class="resizer"></div></th>
-                            <th data-column="Bank">Bank <i class="fas fa-sort"></i><div class="resizer"></div></th>
-                            <th data-column="membership">Membership <i class="fas fa-sort"></i><div class="resizer"></div></th>
-                            <th data-column="payment_date">Payment Date <i class="fas fa-sort"></i><div class="resizer"></div></th>
-                            <th data-column="receipt_no">Receipt No <i class="fas fa-sort"></i><div class="resizer"></div></th>
-                            <th data-column="amount">amount <i class="fas fa-sort"></i><div class="resizer"></div></th>
-                            <th data-column="Remarks">Remarks <i class="fas fa-sort"></i><div class="resizer"></div></th>
-                            <th>Actions</th>
+                            <th data-column="id">编号 <i class="fas fa-sort"></i><div class="resizer"></div></th>
+                            <th data-column="donor_name">姓名/公司名称 <i class="fas fa-sort"></i><div class="resizer"></div></th>
+                            <th data-column="donationTypes">乐捐类型 <i class="fas fa-sort"></i><div class="resizer"></div></th>
+                            <th data-column="Bank">银行 <i class="fas fa-sort"></i><div class="resizer"></div></th>
+                            <th data-column="membership">会员资格 <i class="fas fa-sort"></i><div class="resizer"></div></th>
+                            <th data-column="payment_date">支付日期 <i class="fas fa-sort"></i><div class="resizer"></div></th>
+                            <th data-column="receipt_no">收据编号 <i class="fas fa-sort"></i><div class="resizer"></div></th>
+                            <th data-column="amount">金额 <i class="fas fa-sort"></i><div class="resizer"></div></th>
+                            <th data-column="Remarks">备注 <i class="fas fa-sort"></i><div class="resizer"></div></th>
+                            <th>操作</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Dynamic Content -->
+                        <!-- 动态内容 -->
                     </tbody>
                 </table>
             </div>
             
             <div class="pagination-container">
-                <!-- Pagination will be added here -->
+                <!-- 分页将在此处添加 -->
                 <button id="prevPage" class="btn btn-primary">←</button>
                 <div class="pagination"></div>
                 <button id="nextPage" class="btn btn-primary">→</button>
                 <div class="items-per-page">
-                    <label for="itemsPerPage">Items per page:</label>
+                    <label for="itemsPerPage">每页显示项目:</label>
                     <select id="itemsPerPage">
                         <option value="10">10</option>
                         <option value="25">25</option>

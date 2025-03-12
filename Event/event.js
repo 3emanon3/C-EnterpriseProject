@@ -6,8 +6,6 @@ class EventManager {
         this.form = document.getElementById('eventForm');
         this.errorMessages = document.getElementById('errorMessages');
         this.loadingIndicator = document.getElementById('loadingIndicator');
-        this.printButton = document.getElementById('printButton');
-        this.deleteButton = document.getElementById('deleteButton');
 
         this.initializeEventListeners();
         if (this.eventId) {
@@ -19,24 +17,31 @@ class EventManager {
         // Form submission
         this.form.addEventListener('submit', (e) => {
             e.preventDefault();
-            this.saveEvent();
+            if (this.validateForm()) {
+                this.saveEvent();
+            }
         });
 
-        // Print button
-        this.printButton.addEventListener('click', () => {
-            window.print();
-        });
-
-        // Delete button
-        this.deleteButton.addEventListener('click', () => {
-            this.deleteEvent();
-        });
-
-        // Set minimum date for event date input
-        const dateInput = document.getElementById('eventDate');
+        // Set minimum date for event date inputs
+        const startTimeInput = document.getElementById('eventStartTime');
+        const endTimeInput = document.getElementById('eventEndTime');
+        const registrationDeadlineInput = document.getElementById('eventRegistrationDeadline');
+        
         const today = new Date();
         today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
-        dateInput.min = today.toISOString().slice(0, 16);
+        const todayStr = today.toISOString().slice(0, 16);
+        
+        startTimeInput.min = todayStr;
+        endTimeInput.min = todayStr;
+        registrationDeadlineInput.min = todayStr;
+        
+        // Ensure end time is after start time
+        startTimeInput.addEventListener('change', () => {
+            endTimeInput.min = startTimeInput.value;
+            if (endTimeInput.value && endTimeInput.value < startTimeInput.value) {
+                endTimeInput.value = startTimeInput.value;
+            }
+        });
     }
 
     showLoading() {
@@ -58,7 +63,7 @@ class EventManager {
     async loadEventDetails() {
         this.showLoading();
         try {
-            const response = await fetch(`${API_BASE_URL}?action=getEvent&id=${this.eventId}`);
+            const response = await fetch(`${API_BASE_URL}?table=event&id=${this.eventId}`);
             const data = await response.json();
 
             if (data.status === 'success') {
@@ -76,28 +81,65 @@ class EventManager {
 
     populateForm(event) {
         document.getElementById('eventId').value = event.id;
-        document.getElementById('eventName').value = event.name;
-        document.getElementById('eventDate').value = event.date.replace(' ', 'T');
-        document.getElementById('eventVenue').value = event.venue;
+        document.getElementById('eventTitle').value = event.title;
         document.getElementById('eventStatus').value = event.status;
-        document.getElementById('eventCapacity').value = event.capacity;
-        document.getElementById('eventOrganizer').value = event.organizer;
+        document.getElementById('eventStartTime').value = this.formatDateTimeForInput(event.start_time);
+        document.getElementById('eventEndTime').value = this.formatDateTimeForInput(event.end_time);
+        document.getElementById('eventCreatedAt').value = this.formatDateTimeForInput(event.created_at);
+        document.getElementById('eventLocation').value = event.location;
         document.getElementById('eventDescription').value = event.description || '';
+        document.getElementById('eventMaxParticipant').value = event.max_participant;
+        document.getElementById('eventRegistrationDeadline').value = this.formatDateTimeForInput(event.registration_deadline);
+        document.getElementById('eventPrice').value = event.price;
+        document.getElementById('eventOnlineLink').value = event.online_link || '';
+    }
+
+    formatDateTimeForInput(dateTimeStr) {
+        if (!dateTimeStr) return '';
+        // Convert MySQL datetime format to HTML datetime-local input format
+        return dateTimeStr.replace(' ', 'T');
     }
 
     async saveEvent() {
         this.showLoading();
         try {
+            // Instead of FormData, create a JSON object
             const formData = new FormData(this.form);
-            const method = this.eventId ? 'PUT' : 'POST';
-
-            const response = await fetch(`${API_BASE_URL}?action=saveEvent`, {
-                method: method,
-                body: formData
+            const jsonData = {};
+            
+            // Convert FormData to JSON object
+            formData.forEach((value, key) => {
+                jsonData[key] = value;
             });
-
+            
+            // If updating an existing event, ensure the ID is included
+            if (this.eventId) {
+                jsonData.id = this.eventId;
+            }
+            
+            // If this is a new event, set created_at to current time
+            if (!this.eventId) {
+                const now = new Date();
+                jsonData.created_at = now.toISOString().slice(0, 19).replace('T', ' ');
+            }
+            
+            const response = await fetch(`${API_BASE_URL}?table=event`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(jsonData)
+            });
+    
+            if (!response.ok) {
+                console.error('Server response:', response.status, response.statusText);
+                const errorText = await response.text();
+                console.error('Error details:', errorText);
+                throw new Error(`Server returned ${response.status}`);
+            }
+    
             const data = await response.json();
-
+    
             if (data.status === 'success') {
                 alert('Event saved successfully!');
                 window.location.href = 'searchEvent.html';
@@ -106,51 +148,39 @@ class EventManager {
             }
         } catch (error) {
             console.error('Error saving event:', error);
-            this.showError('Failed to connect to the server.');
-        } finally {
-            this.hideLoading();
-        }
-    }
-
-    async deleteEvent() {
-        if (!this.eventId || !confirm('Are you sure you want to delete this event?')) {
-            return;
-        }
-
-        this.showLoading();
-        try {
-            const response = await fetch(`${API_BASE_URL}?action=deleteEvent&id=${this.eventId}`, {
-                method: 'DELETE'
-            });
-
-            const data = await response.json();
-
-            if (data.status === 'success') {
-                alert('Event deleted successfully!');
-                window.location.href = 'searchEvent.html';
-            } else {
-                this.showError(data.message || 'Failed to delete event.');
-            }
-        } catch (error) {
-            console.error('Error deleting event:', error);
-            this.showError('Failed to connect to the server.');
+            this.showError('Failed to connect to the server: ' + error.message);
         } finally {
             this.hideLoading();
         }
     }
 
     validateForm() {
-        const form = this.form;
-        const eventDate = new Date(form.date.value);
+        // Get form values
+        const startTime = new Date(document.getElementById('eventStartTime').value);
+        const endTime = new Date(document.getElementById('eventEndTime').value);
+        const registrationDeadline = new Date(document.getElementById('eventRegistrationDeadline').value);
+        const maxParticipants = parseInt(document.getElementById('eventMaxParticipant').value);
         const now = new Date();
 
-        if (eventDate < now) {
-            this.showError('Event date cannot be in the past.');
+        // Validate dates
+        if (startTime < now) {
+            this.showError('Start time cannot be in the past.');
             return false;
         }
 
-        if (parseInt(form.capacity.value) <= 0) {
-            this.showError('Capacity must be greater than 0.');
+        if (endTime <= startTime) {
+            this.showError('End time must be after start time.');
+            return false;
+        }
+
+        if (registrationDeadline > startTime) {
+            this.showError('Registration deadline must be before the event starts.');
+            return false;
+        }
+
+        // Validate other fields
+        if (maxParticipants <= 0) {
+            this.showError('Maximum participants must be greater than 0.');
             return false;
         }
 
