@@ -17,7 +17,7 @@ function confirmCancel() {
 
 async function loadRecordData() {
     const urlParams = new URLSearchParams(window.location.search);
-    const recordId = urlParams.get('id');
+    const recordId = urlParams.get('ID');
 
     if (!recordId) {
         alert('无法获取记录ID');
@@ -26,14 +26,14 @@ async function loadRecordData() {
     }
 
     try {
-        const response = await fetch(`${API_BASE_URL}?table=soldrecord&id=${recordId}`);
+        const response = await fetch(`${API_BASE_URL}?table=soldrecord&search=true&ID=${recordId}`);
         const data = await response.json();
 
         if (data && data.data && data.data.length > 0) {
             const record = data.data[0];
             
             // Set form values
-            document.getElementById('membership').value = record.membership === '新人' ? '1' : '2';
+            document.getElementById('membership').value = '2'; //set to two because 
             document.getElementById('Name/Company Name').value = record['Name/Company Name'] || '';
             document.getElementById('quantity_in').value = record.quantity_in || 0;
             document.getElementById('quantity_out').value = record.quantity_out || 0;
@@ -45,9 +45,11 @@ async function loadRecordData() {
             // Update member section based on membership type
             updateMemberSection();
 
-            // If it's an existing member, store the member ID
-            if (record.membership === '旧人' && record.member_id) {
-                selectedMemberId = record.member_id;
+            // If it's an existing member, store the member ID and fetch member details
+            if (record.membership) {
+                selectedMemberId = record.membership;
+                // Fetch and display the member information
+                await fetchAndDisplayMemberInfo(record.membership);
             }
         } else {
             alert('找不到记录');
@@ -61,7 +63,7 @@ async function loadRecordData() {
 
 async function saveChanges() {
     const urlParams = new URLSearchParams(window.location.search);
-    const recordId = urlParams.get('id');
+    const recordId = urlParams.get('ID');
 
     if (!recordId) {
         alert('无法获取记录ID');
@@ -80,6 +82,12 @@ async function saveChanges() {
     // Validate required fields
     if (!date) {
         alert('请填写必要的字段：日期');
+        return;
+    }
+    
+    // Validate quantity constraint - only one of quantity_in or quantity_out can have a value
+    if ((quantityIn > 0 && quantityOut > 0) || (quantityIn === 0 && quantityOut === 0)) {
+        alert('请只填写一个数量字段：增加数量或减少数量');
         return;
     }
 
@@ -167,18 +175,17 @@ async function saveChanges() {
         const recordData = {
             ID: recordId,
             'Name/Company Name': companyName,
-            quantity_in: quantityIn,
-            quantity_out: quantityOut,
+            quantity_in: quantityIn > 0 ? quantityIn : null,
+            quantity_out: quantityOut > 0 ? quantityOut : null,
             InvoiceNo: invoiceNo,
             Date: date,
             price: price,
             Remarks: remarks,
-            membership: membershipType === '1' ? '新人' : '旧人',
-            member_id: memberId
+            membership: memberId,
         };
 
         // Update record
-        const response = await fetch(`${API_BASE_URL}?table=soldrecord`, {
+        const response = await fetch(`${API_BASE_URL}?table=soldrecord&ID=${recordId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -341,4 +348,33 @@ function clearSelectedMember() {
     document.getElementById('Name/Company Name').value = '';
     document.querySelector('.member-results').innerHTML = '';
     document.getElementById('memberSearch').value = '';
+}
+
+
+async function fetchAndDisplayMemberInfo(memberId) {
+    try {
+        // Fetch member details using the member ID
+        const response = await fetch(`${API_BASE_URL}?table=members&search=true&ID=${memberId}`);
+        const data = await response.json();
+
+        if (data && data.data && data.data.length > 0) {
+            const member = data.data[0];
+            
+            // Display the selected member in the member-results container
+            const resultsContainer = document.querySelector('.member-results');
+            resultsContainer.innerHTML = `
+                <div class="selected-member">
+                    已选择: ${member.Name || ''} (${member.CName || ''})
+                    <button class="btn btn-small btn-danger" onclick="clearSelectedMember()">清除</button>
+                </div>
+            `;
+            
+            // Update the company name field if it's empty
+            if (!document.getElementById('Name/Company Name').value && member.componyName) {
+                document.getElementById('Name/Company Name').value = member.componyName;
+            }
+        }
+    } catch (error) {
+        console.error('Error fetching member information:', error);
+    }
 }

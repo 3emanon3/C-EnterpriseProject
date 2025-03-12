@@ -57,8 +57,6 @@ class DatabaseAPI {
     private $tableToView = [
         'members' => 'vmembers',
         'donation' => 'vdonation',
-        'soldrecord' => 'vsoldrecord',
-        'participants' => 'vparticipants'
     ];
     
     // Special conditions that need processing through the original tables

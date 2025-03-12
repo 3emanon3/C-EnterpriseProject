@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", function () {
         recordsTableBody.innerHTML = "";
         
         const params = new URLSearchParams();
-        params.append("table", "soldrecord");
+        params.append("table", "vsoldrecord");
         params.append("limit", itemsPerPage);
         params.append("page", currentPage);
         

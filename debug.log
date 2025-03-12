@@ -1,0 +1,246 @@
+2025-03-12 04:40:35: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [search] => true
+            [ID] => 9
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => soldrecord
+            [search] => true
+            [ID] => 9
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&search=true&ID=9
+    [METHOD] => GET
+)
+
+2025-03-12 04:40:35: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [search] => true
+            [ID] => 82
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [search] => true
+            [ID] => 82
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&search=true&ID=82
+    [METHOD] => GET
+)
+
+2025-03-12 04:40:43: Array
+(
+    [GET] => Array
+        (
+            [table] => vsoldrecord
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => vsoldrecord
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=vsoldrecord&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-03-12 04:40:43: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => stock
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock
+    [METHOD] => GET
+)
+
+2025-03-12 04:40:45: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [search] => true
+            [ID] => 9
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => soldrecord
+            [search] => true
+            [ID] => 9
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&search=true&ID=9
+    [METHOD] => GET
+)
+
+2025-03-12 04:40:45: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [search] => true
+            [ID] => 82
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [search] => true
+            [ID] => 82
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&search=true&ID=82
+    [METHOD] => GET
+)
+
+2025-03-12 04:40:58: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [search] => true
+            [ID] => 9
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => soldrecord
+            [search] => true
+            [ID] => 9
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&search=true&ID=9
+    [METHOD] => GET
+)
+
+2025-03-12 04:40:58: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [search] => true
+            [ID] => 82
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [search] => true
+            [ID] => 82
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&search=true&ID=82
+    [METHOD] => GET
+)
+
+2025-03-12 04:49:49: Array
+(
+    [GET] => Array
+        (
+            [table] => soldrecord
+            [search] => true
+            [ID] => 9
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => soldrecord
+            [search] => true
+            [ID] => 9
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=soldrecord&search=true&ID=9
+    [METHOD] => GET
+)
+
+2025-03-12 04:49:49: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [search] => true
+            [ID] => 82
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [search] => true
+            [ID] => 82
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&search=true&ID=82
+    [METHOD] => GET
+)
+
