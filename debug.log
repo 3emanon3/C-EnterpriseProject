@@ -244,3 +244,136 @@
     [METHOD] => GET
 )
 
+2025-03-12 05:06:57: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => stock
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock
+    [METHOD] => GET
+)
+
+2025-03-12 05:06:57: Array
+(
+    [GET] => Array
+        (
+            [table] => vsoldrecord
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => vsoldrecord
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=vsoldrecord&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-03-12 05:06:58: Array
+(
+    [GET] => Array
+        (
+            [table] => vsoldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Mystery Novel - The Silent Creek
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => vsoldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Mystery Novel - The Silent Creek
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=vsoldrecord&limit=10&page=1&Book=Mystery+Novel+-+The+Silent+Creek&search=true
+    [METHOD] => GET
+)
+
+2025-03-12 05:07:01: Array
+(
+    [GET] => Array
+        (
+            [table] => vsoldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Wireless Ergonomic Mouse
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => vsoldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Wireless Ergonomic Mouse
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=vsoldrecord&limit=10&page=1&Book=Wireless+Ergonomic+Mouse&search=true
+    [METHOD] => GET
+)
+
+2025-03-12 05:07:03: Array
+(
+    [GET] => Array
+        (
+            [table] => vsoldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Laptop - High Performance
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => vsoldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Laptop - High Performance
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=vsoldrecord&limit=10&page=1&Book=Laptop+-+High+Performance&search=true
+    [METHOD] => GET
+)
+

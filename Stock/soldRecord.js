@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const uniqueBooks = data.data;
                 uniqueBooks.forEach(item => {
                     const option = document.createElement("option");
-                    option.value = item.ID;
+                    option.value = item.Name;
                     option.textContent = `${item.Name} (${item.Price})`;
                     bookFilter.appendChild(option);
                 });
