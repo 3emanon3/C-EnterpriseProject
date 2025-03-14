@@ -54,11 +54,6 @@ class DatabaseAPI {
         'donationtypes'=>['ID','donation Types'],
     ];
     
-    // Table mappings
-    private $tableToView = [
-        'members' => 'vmembers',
-    ];
-    
     // Special conditions that need processing through the original tables
     private $specialConditions = [
         'members' => [

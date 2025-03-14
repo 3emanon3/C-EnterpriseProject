@@ -209,6 +209,14 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
+    // Add reset columns functionality
+    const resetColumnsButton = document.getElementById('resetColumns');
+    resetColumnsButton.addEventListener('click', function() {
+        tableHeaders.forEach(th => {
+            th.style.width = ''; // Remove inline width to reset to CSS default
+        });
+    });
+
     // Initial fetch
     fetchStocks();
 });
