@@ -36,7 +36,7 @@
                         <div class="form-group">
                             <label for="eventStatus">Status</label>
                             <select id="eventStatus" name="status" required>
-                                <option value="not_started">Not Started</option>
+                                <option value="not started">Not Started</option>
                                 <option value="started">Started</option>
                                 <option value="cancelled">Cancelled</option>
                                 <option value="ended">Ended</option>
@@ -51,6 +51,11 @@
                         <div class="form-group">
                             <label for="eventEndTime">End Time</label>
                             <input type="datetime-local" id="eventEndTime" name="end_time" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="eventCreateTime">created_at Time</label>
+                            <input type="datetime-local" id="eventCreateTime" name="created_at" required>
                         </div>
 
                         <div class="form-group">

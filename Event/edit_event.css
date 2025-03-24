@@ -1,0 +1,78 @@
+/* Edit Form Styles */
+.container {
+    max-width: 100%;
+}
+
+.edit-container {
+    background: white;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    padding: 30px;
+    margin: 20px 0;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 14px;
+    width: 100%;
+}
+
+.form-group input:read-only {
+    background-color: #f8f9fa;
+    cursor: not-allowed;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.btn-primary {
+    margin: 10px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .edit-container {
+        padding: 20px;
+        margin: 10px;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .form-actions button {
+        width: 100%;
+    }
+}

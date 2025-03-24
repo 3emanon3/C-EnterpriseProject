@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>乐捐详情</title>
+    <title>编辑乐捐信息</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="donate.css">
+    <link rel="stylesheet" href="editDonate.css">
 </head>
 <body>
     <div class="container">
@@ -13,17 +13,15 @@
             <a href="searchDonate.html" class="btn btn-secondary" aria-label="返回搜索">
                 <i class="fas fa-arrow-left"></i> 返回搜索
             </a>
-            <button id="printButton" class="btn btn-primary" aria-label="打印详情">
-                <i class="fas fa-print"></i> 打印详情
-            </button>
         </div>
 
-        <div id="printArea">
-            <h1>乐捐详情</h1>
+        <div id="editArea">
+            <h1>编辑乐捐信息</h1>
             
             <div id="errorMessages" class="alert alert-danger" style="display: none;"></div>
+            <div id="successMessage" class="alert alert-success" style="display: none;"></div>
 
-            <form id="donationForm" action="databaseConnection.php" method="POST">
+            <form id="editDonationForm" method="POST">
                 <input type="hidden" id="donationId" name="id">
                 <input type="hidden" name="csrf_token" value="<?php echo generateToken(); ?>">
                 <input type="hidden" id="selectedMemberId" name="memberId">
@@ -40,39 +38,33 @@
                         <div class="form-group">
                             <label for="donationTypes">乐捐类型</label>
                             <select id="donationTypes" name="donationTypes" required aria-label="乐捐类型">
-                                <option value="" disabled selected>选择乐捐类型</option>
+                                <option value="" disabled>选择乐捐类型</option>
                                 <option value="1">乐捐</option>
                                 <option value="2">蒲公英乐捐</option>
                                 <option value="3">哲商</option>
                                 <option value="4">KK老师外出公益讲堂所收到的红包</option>
                                 <option value="5">模范班乐捐</option>
                                 <option value="6">外籍人士享有塾员福利乐捐</option>
-                                
                             </select>
                         </div>
 
                         <div class="form-group">
                             <label for="bank">银行</label>
                             <select id="bank" name="bank" required aria-label="银行">
-                                <option value="" disabled selected>选择银行</option>
+                                <option value="" disabled>选择银行</option>
                                 <option value="1">Public Bank</option>
                                 <option value="2">Hong Leong Bank</option>
                                 <option value="3">Alliance Bank</option>
-                               
                             </select>
                         </div> 
 
                         <div class="form-group">
                             <label for="membership">会员身份</label>
-                            <select id="membership" name="membership" required aria-label="乐捐类型">
-                                <option value="" disabled selected>选择会员身份</option>
-                                <option value="1"> Old Member</option>
-                                <option value="2"> Non Member</option>
-                              
-                               
-                        
+                            <select id="membership" name="membership" required aria-label="会员身份">
+                                <option value="" disabled>选择会员身份</option>
+                                <option value="1">Old Member</option>
+                                <option value="2">Non Member</option>
                             </select>
-                        
                         </div>
 
                         <div class="form-group">
@@ -101,11 +93,8 @@
                     </div>
 
                     <div class="form-actions">
-                        <button type="submit" id="saveButton" class="btn btn-primary no-print donation-btn">
-                            <i class="fas fa-save"></i> 保存乐捐
-                        </button>
-                        <button type="button" id="deleteButton" class="btn btn-danger no-print donation-btn">
-                            <i class="fas fa-trash"></i> 删除乐捐
+                        <button type="submit" id="updateButton" class="btn btn-primary">
+                            <i class="fas fa-save"></i> 更新乐捐
                         </button>
                     </div>
                 </fieldset>
@@ -113,48 +102,42 @@
         </div>
     </div>
 
+    <div id="loadingIndicator" class="loading-spinner" style="display: none;">
+        加载中...
+    </div>
+    
     <!-- 会员搜索模态框 -->
-    <div id="memberSearchModal" class="modal" style="display: none;">
+    <div id="memberSearchModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>会员搜索</h2>
                 <span class="close">&times;</span>
+                <h2>搜索会员</h2>
             </div>
             <div class="modal-body">
                 <div class="search-container">
-                    <input type="text" id="modalSearchInput" placeholder="输入会员姓名、ID或公司名称搜索..." autofocus>
-                    <button id="modalSearchButton"><i class="fas fa-search"></i> 搜索</button>
+                    <input type="text" id="modalSearchInput" placeholder="输入会员姓名或公司名称搜索...">
+                    <button id="modalSearchButton">搜索</button>
                 </div>
-                
-                <div class="results-container">
-                    <table id="modalResultsTable">
+                <div id="modalLoadingIndicator" class="loading-spinner" style="display: none;">加载中...</div>
+                <div id="modalNoResults" style="display: none;">未找到匹配的会员</div>
+                <div class="table-container">
+                    <table class="results-table">
                         <thead>
                             <tr>
-                                <th>会员ID</th>
+                                <th>ID</th>
                                 <th>姓名</th>
                                 <th>公司名称</th>
                                 <th>联系方式</th>
                             </tr>
                         </thead>
-                        <tbody id="modalResultsBody">
-                            <!-- 结果将在这里显示 -->
-                        </tbody>
+                        <tbody id="modalResultsBody"></tbody>
                     </table>
-                    <div id="modalLoadingIndicator" class="loading" style="display: none;">正在加载...</div>
-                    <div id="modalNoResults" class="no-results" style="display: none;">没有找到匹配的会员</div>
                 </div>
-                
-                <div id="modalPagination" class="pagination">
-                    <!-- 分页按钮将在这里显示 -->
-                </div>
+                <div id="modalPagination" class="pagination"></div>
             </div>
         </div>
     </div>
-
-    <div id="loadingIndicator" class="loading-spinner" style="display: none;">
-        加载中...
-    </div>
     
-    <script src="donate.js"></script>
+    <script src="editDonate.js"></script>
 </body>
 </html>

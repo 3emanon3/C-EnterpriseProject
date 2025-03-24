@@ -12,6 +12,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const paginationContainer = document.querySelector(".pagination");
     const table = document.getElementById('eventTable');
     const tableHeaders = table.querySelectorAll('th');
+    const pageInput = document.getElementById('pageInput');
+    const jumpButton = document.getElementById('jumpButton');
 
     let currentSortColumn = null;
     let currentSortOrder = null;
@@ -19,11 +21,40 @@ document.addEventListener("DOMContentLoaded", function () {
     let itemsPerPage = parseInt(itemsPerPageSelect.value);
     let currentPage = 1;
     let totalPages = 0;
+    let currentSearchQuery = "";
     
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+    
+    // Implement the debounced search
+    const debouncedSearch = debounce((searchText) => {
+        console.log("Searching for events:", searchText);
+        currentPage = 1; // Reset to first page when searching
+        fetchEvents(searchText);
+    }, 300); // 300ms delay
+    
+    // Add this event listener after your other listeners
+    if (searchInput) {
+        searchInput.addEventListener("input", function() {
+            debouncedSearch(this.value);
+        });
+    }
 
     async function fetchEvents(query = "") {
         loader.style.display = "flex";
         eventTableBody.innerHTML = "";
+        
+        // Store the current search query
+        currentSearchQuery = query;
         
         const params = new URLSearchParams();
         params.append("table", "event");
@@ -38,10 +69,16 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         
         const url = `${API_BASE_URL}?${params.toString()}`;
+        console.log("API URL:", url);
         
         try {
+            console.log("Fetching events...");
             const response = await fetch(url);
+            console.log("Raw response status:", response.status);
+            
             if (!response.ok) {
+                const errorText = await response.text();
+                console.error(`Server error response: ${errorText}`);
                 throw new Error(`Server responded with status: ${response.status}`);
             }
             const data = await response.json();
@@ -50,6 +87,7 @@ document.addEventListener("DOMContentLoaded", function () {
             totalPages = Math.ceil((data.total || eventData.length) / itemsPerPage);
             displayEvents(eventData);
             updatePagination();
+            updatePageInputMax();
         } catch (error) {
             console.error("Error fetching events:", error);
             eventTableBody.innerHTML = `<tr><td colspan="13" class="error-message">Failed to load events. Please try again later. Error: ${error.message}</td></tr>`;
@@ -113,7 +151,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function formatPrice(price) {
         if (price === null || price === undefined) return '';
-        return `¥${parseFloat(price).toFixed(2)}`;
+        return `RM${parseFloat(price).toFixed(2)}`;
     }
 
     function updatePagination() {
@@ -171,8 +209,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         button.textContent = pageNum;
         button.addEventListener('click', () => {
-            currentPage = pageNum;
-            fetchEvents(searchInput.value);
+            changePage(pageNum);
         });
         paginationContainer.appendChild(button);
     }
@@ -193,7 +230,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         currentPage = 1;
         updateSortIcons();
-        fetchEvents(searchInput.value);
+        fetchEvents(currentSearchQuery);
     }
 
     function updateSortIcons() {
@@ -209,6 +246,46 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
     
+    // New pagination functions
+    window.changePage = function(page) {
+        if (page >= 1 && page <= totalPages && page !== currentPage) {
+            currentPage = page;
+            fetchEvents(currentSearchQuery);
+        }
+    };
+    
+    window.jumpToPage = function() {
+        const pageInputElement = document.getElementById('pageInput');
+        if (!pageInputElement) return;
+        
+        let targetPage = parseInt(pageInputElement.value);
+        
+        // Validate input
+        if (isNaN(targetPage)) {
+            alert('请输入有效的页码');
+            return;
+        }
+        
+        if (targetPage < 1) {
+            targetPage = 1;
+        } else if (targetPage > totalPages) {
+            targetPage = totalPages;
+        }
+        
+        // Only change page if it's different from current page
+        if (targetPage !== currentPage) {
+            changePage(targetPage);
+        }
+        
+        // Clear input after jumping
+        pageInputElement.value = '';
+    };
+
+    function updatePageInputMax() {
+        if (pageInput) {
+            pageInput.max = totalPages;
+        }
+    }
 
     document.querySelectorAll('th[data-column]').forEach(th => {
         th.addEventListener('click', function() {
@@ -218,25 +295,32 @@ document.addEventListener("DOMContentLoaded", function () {
 
     prevPageButton.addEventListener("click", function () {
         if (currentPage > 1) {
-            currentPage -= 1;
-            fetchEvents(searchInput.value);
+            changePage(currentPage - 1);
         }
     });
 
     nextPageButton.addEventListener("click", function () {
         if (currentPage < totalPages) {
-            currentPage += 1;
-            fetchEvents(searchInput.value);
+            changePage(currentPage + 1);
         }
     });
 
     // Handle search button click
-    searchButton.addEventListener("click", function() {
-        currentPage = 1;
-        fetchEvents(searchInput.value);
-    });
+    if (searchButton && searchInput) {
+        searchButton.addEventListener("click", function() {
+            currentPage = 1;
+            fetchEvents(searchInput.value);
+        });
+        
+        // Also search when Enter key is pressed
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                searchButton.click();
+            }
+        });
+    }
     
-    // Also search when Enter key is pressed
     eventTableBody.addEventListener('click', function(e) {
         if (e.target.classList.contains('btn-edit')) {
             const id = e.target.dataset.id;
@@ -244,15 +328,32 @@ document.addEventListener("DOMContentLoaded", function () {
         } else if (e.target.classList.contains('btn-delete')) {
             const id = e.target.dataset.id;
             deleteEvent(id);
-        } // etc.
+        }
     });
 
     // Update itemsPerPage handler to refresh data immediately
     itemsPerPageSelect.addEventListener("change", function () {
         itemsPerPage = parseInt(this.value);
         currentPage = 1; // Reset to first page when changing items per page
-        fetchEvents(searchInput.value);
+        fetchEvents(currentSearchQuery);
     });
+
+    // Jump button event handler
+    if (jumpButton) {
+        jumpButton.addEventListener('click', function() {
+            jumpToPage();
+        });
+    }
+
+    // Also handle Enter key press in page input
+    if (pageInput) {
+        pageInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                jumpToPage();
+            }
+        });
+    }
 
     window.editEvent = function (id) {
         window.location.href = `edit_event.html?id=${id}`;
@@ -261,16 +362,25 @@ document.addEventListener("DOMContentLoaded", function () {
     window.deleteEvent = async function (id) {
         if (confirm("确定要删除这个活动吗？")) {
             try {
-                const response = await fetch(`${API_BASE_URL}`, {
-                    method: "DELETE",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ table: "event", id: id }),
-                });
+                const params = new URLSearchParams();
+            params.append("table", "event");
+            params.append("ID", id);
+            
+            const response = await fetch(`${API_BASE_URL}?${params.toString()}`, {
+                method: "DELETE"
+            });
+
+            if (!response.ok) {
+                console.error(`Delete failed with status: ${response.status}`);
+                const errorText = await response.text();
+                console.error(`Error response: ${errorText}`);
+                throw new Error(`Server responded with status: ${response.status}`);
+            }
     
                 const data = await response.json();
                 if (data.success) {
                     alert("活动已成功删除！");
-                    fetchEvents(searchInput.value);
+                    fetchEvents(currentSearchQuery);
                 } else {
                     alert("删除活动失败: " + (data.message || "未知错误"));
                 }
@@ -280,7 +390,6 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
     };
-    
 
     window.viewEventDetails = function (id) {
         window.location.href = `eventDetails.html?id=${id}`;

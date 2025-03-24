@@ -6,6 +6,7 @@ class EventManager {
         this.form = document.getElementById('eventForm');
         this.errorMessages = document.getElementById('errorMessages');
         this.loadingIndicator = document.getElementById('loadingIndicator');
+        // Remove the delete button reference
 
         this.initializeEventListeners();
         if (this.eventId) {
@@ -21,6 +22,8 @@ class EventManager {
                 this.saveEvent();
             }
         });
+
+        // Delete button event listener has been removed
 
         // Set minimum date for event date inputs
         const startTimeInput = document.getElementById('eventStartTime');
@@ -63,7 +66,7 @@ class EventManager {
     async loadEventDetails() {
         this.showLoading();
         try {
-            const response = await fetch(`${API_BASE_URL}?table=event&id=${this.eventId}`);
+            const response = await fetch(`${API_BASE_URL}?table=event&ID=${this.eventId}`);
             const data = await response.json();
 
             if (data.status === 'success') {
@@ -80,17 +83,17 @@ class EventManager {
     }
 
     populateForm(event) {
-        document.getElementById('eventId').value = event.id;
-        document.getElementById('eventTitle').value = event.title;
-        document.getElementById('eventStatus').value = event.status;
-        document.getElementById('eventStartTime').value = this.formatDateTimeForInput(event.start_time);
-        document.getElementById('eventEndTime').value = this.formatDateTimeForInput(event.end_time);
-        document.getElementById('eventCreatedAt').value = this.formatDateTimeForInput(event.created_at);
-        document.getElementById('eventLocation').value = event.location;
+        document.getElementById('eventId').value = event.ID || event.id || '';
+        document.getElementById('eventTitle').value = event.title || '';
+        document.getElementById('eventStatus').value = event.status || 'not started';
+        document.getElementById('eventStartTime').value = this.formatDateTimeForInput(event.start_time) || '';
+        document.getElementById('eventEndTime').value = this.formatDateTimeForInput(event.end_time) || '';
+        document.getElementById('eventCreateTime').value = this.formatDateTimeForInput(event.created_at) || '';
+        document.getElementById('eventLocation').value = event.location || '';
         document.getElementById('eventDescription').value = event.description || '';
-        document.getElementById('eventMaxParticipant').value = event.max_participant;
-        document.getElementById('eventRegistrationDeadline').value = this.formatDateTimeForInput(event.registration_deadline);
-        document.getElementById('eventPrice').value = event.price;
+        document.getElementById('eventMaxParticipant').value = event.max_participant || '';
+        document.getElementById('eventRegistrationDeadline').value = this.formatDateTimeForInput(event.registration_deadline) || '';
+        document.getElementById('eventPrice').value = event.price || '';
         document.getElementById('eventOnlineLink').value = event.online_link || '';
     }
 
@@ -109,7 +112,12 @@ class EventManager {
             
             // Convert FormData to JSON object
             formData.forEach((value, key) => {
-                jsonData[key] = value;
+                // Ensure status is properly captured even if it's "Not Started"
+                if (key === 'eventStatus' && value === "Not Started") {
+                    jsonData[key] = "Not Started";
+                } else {
+                    jsonData[key] = value;
+                }
             });
             
             // If updating an existing event, ensure the ID is included
@@ -117,12 +125,8 @@ class EventManager {
                 jsonData.id = this.eventId;
             }
             
-            // If this is a new event, set created_at to current time
-            if (!this.eventId) {
-                const now = new Date();
-                jsonData.created_at = now.toISOString().slice(0, 19).replace('T', ' ');
-            }
-            
+            console.log('Data being sent:', jsonData); 
+
             const response = await fetch(`${API_BASE_URL}?table=event`, {
                 method: 'POST',
                 headers: {
@@ -153,6 +157,8 @@ class EventManager {
             this.hideLoading();
         }
     }
+
+    // deleteEvent method has been removed
 
     validateForm() {
         // Get form values

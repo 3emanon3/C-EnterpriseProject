@@ -24,20 +24,28 @@ body {
 }
 
 .container {
-    width: 1575px;
-    margin: 10 auto;
+    max-width: 2200px;
+    margin: 0 auto;
     padding: 20px;
     min-height: 95vh;
+    padding-top: 100px;
 }
 
 /* Header Styles */
 header {
     display: flex;
-    justify-content:  flex-start;
+    justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
-    padding-bottom: 20px;
+    padding: 15px 20px;
     border-bottom: 2px solid var(--border-color);
+    background-color: var(--background-color);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    height: 80px; 
+    width: 100%; 
 }
 
 h1 {
@@ -86,7 +94,9 @@ h1 {
 }
 
 .search-wrapper {
-    margin-bottom: 20px;
+    margin-bottom: 30px;
+    position: relative;
+    z-index: 50;
 }
 
 .search-input-group {
@@ -124,6 +134,8 @@ h1 {
     box-shadow: var(--shadow);
     padding: 20px;
     margin-bottom: 30px;
+    overflow-x: auto; /* This ensures horizontal scrolling works properly */
+    position: relative; /* Add this to establish a new stacking context */
 }
 
 .table-responsive {
@@ -241,6 +253,14 @@ tr:hover {
     border-radius: 4px;
 }
 
+.system-nav {
+    position: fixed;
+top: 20px;    
+right: 20px; 
+z-index: 101;
+}
+
+
 /* Responsive Design */
 @media (max-width: 768px) {
     header {
@@ -250,8 +270,10 @@ tr:hover {
     }
 
     .system-nav {
-        display: flex;
-        gap: 10px;
+        position: fixed;
+    top: 20px;    
+    right: 20px; 
+    z-index: 100;
     }
 
     .search-input-group {

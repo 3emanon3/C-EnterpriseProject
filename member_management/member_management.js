@@ -129,9 +129,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const designationField = safeGetElement('designation_of_applicant');
         if (designationField) {
             const designationValue = parseInt(designationField.value, 10);
-            if (isNaN(designationValue) || designationValue < 1 || designationValue > 6) {
+            if (isNaN(designationValue) || designationValue < 1 || designationValue > 7) {
                 isValid = false;
-                errors.push('Designation must be between 1 and 6');
+                errors.push('Designation must be between 1 and 7');
                 designationField.classList.add('error');
             }
         }

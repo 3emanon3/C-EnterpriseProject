@@ -1,4 +1,4 @@
-const API_BASE_URL = '../recervingAPI.php';
+const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
 
 document.addEventListener('DOMContentLoaded', function() {
     const donationForm = document.getElementById('donationForm');
@@ -81,14 +81,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 300); // 300毫秒延迟
     });
 
-    // Add event listener for membership select to handle new/old/non member selection
+    // Add event listener for membership select to handle old/non member selection
     membershipSelect.addEventListener('change', async function() {
-        if (this.value === '1') { // New Member
-            // Save current form data to session storage before navigating away
-            saveFormDataToSession();
-            // Redirect to member management page to add a new member
-            window.location.href = '../member_management/member_management.html?returnUrl=' + encodeURIComponent(window.location.href);
-        } else if (this.value === '2') { // Old Member
+        if (this.value === '1') { // Old Member
             // 直接使用模态框搜索，不再提供独立页面选项
             memberSearchModal.style.display = 'block';
             modalSearchInput.focus();
@@ -96,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function() {
             modalResultsBody.innerHTML = '';
             modalNoResults.style.display = 'none';
             modalPagination.innerHTML = '';
-        } else if (this.value === '3') { // Non Member
+        } else if (this.value === '2') { // Non Member
             // Clear any previously selected member ID
             if (document.getElementById('selectedMemberId')) {
                 document.getElementById('selectedMemberId').value = '';
@@ -104,6 +99,10 @@ document.addEventListener('DOMContentLoaded', function() {
             // Continue with donation form without member association
         }
     });
+
+function closeSearchModal() {
+  memberSearchModal.style.display = 'none';
+}
 
     // 模态框搜索功能 - 增强版，支持实时搜索
     function performModalSearch(page = 1) {
@@ -186,6 +185,13 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('选择会员:', member);
         console.log('会员ID:', memberId);
         
+        // 检查会员ID是否有效
+        if (!memberId) {
+            console.error('无效的会员ID:', memberId);
+            alert('选择的会员ID无效，请重新选择');
+            return;
+        }
+        
         // 如果会员同时拥有姓名和公司名称，弹出选择框
         if (companyName && companyName.trim() !== '' && memberName && memberName.trim() !== '') {
             const useCompanyName = confirm('检测到该会员同时拥有姓名和公司名称：\n\n姓名：' + memberName + '\n公司名称：' + companyName + '\n\n点击"确定"使用公司名称，点击"取消"使用姓名');
@@ -206,21 +212,14 @@ document.addEventListener('DOMContentLoaded', function() {
             donationForm.appendChild(selectedMemberIdField);
         }
         
-        // 存储会员ID到隐藏字段 - 确保是数字类型
-        const memberIdNum = parseInt(memberId, 10);
-        if (!isNaN(memberIdNum) && memberIdNum > 0) {
-            selectedMemberIdField.value = memberIdNum;
-            console.log('设置会员ID为:', memberIdNum);
-        } else {
-            console.error('无效的会员ID:', memberId);
-            alert('选择的会员ID无效，请重新选择');
-            return;
-        }
+        // 存储会员ID到隐藏字段 - 保留原始格式，不再转换为数字
+        selectedMemberIdField.value = memberId;
+        console.log('设置会员ID为:', memberId);
         
         // 将此会员添加为下拉列表中的选项（如果尚不存在）
         let memberExists = false;
         for (let i = 0; i < membershipSelect.options.length; i++) {
-            if (membershipSelect.options[i].value === memberIdNum.toString()) {
+            if (membershipSelect.options[i].value === memberId) {
                 memberExists = true;
                 break;
             }
@@ -229,12 +228,12 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!memberExists) {
             // 为此会员创建新选项
             const newOption = document.createElement('option');
-            newOption.value = memberIdNum; // 使用membersID
-            newOption.textContent = `${memberName || '未知'} (ID: ${memberIdNum})`;
+            newOption.value = memberId; // 使用原始membersID，不转换
+            newOption.textContent = `${memberName || '未知'} (ID: ${memberId})`;
             
             // 在任何分隔符或特殊选项之前添加选项
             const specialIndex = Array.from(membershipSelect.options).findIndex(opt => 
-                opt.value === '1' || opt.value === '2' || opt.value === '3' || opt.disabled);
+                opt.value === '1' || opt.value === '2' || opt.disabled);
             
             if (specialIndex !== -1) {
                 membershipSelect.insertBefore(newOption, membershipSelect.options[specialIndex]);
@@ -244,7 +243,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // 在下拉列表中选择该会员
-        membershipSelect.value = memberIdNum;
+        membershipSelect.value = memberId;
         
         // 关闭模态框
         memberSearchModal.style.display = 'none';
@@ -349,21 +348,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return isValid;
     }
 
-    // Save form data to session storage
-    function saveFormDataToSession() {
-        const formData = {};
-        // Get values from all form fields
-        const formElements = donationForm.elements;
-        for (let i = 0; i < formElements.length; i++) {
-            const element = formElements[i];
-            if (element.name && element.name !== 'membership') { // Skip the membership field
-                formData[element.name] = element.value;
-            }
-        }
-        // Store in session storage
-        sessionStorage.setItem('donationFormData', JSON.stringify(formData));
-    }
-
     // Restore form data from session storage
     function restoreFormDataFromSession() {
         const storedData = sessionStorage.getItem('donationFormData');
@@ -391,16 +375,15 @@ document.addEventListener('DOMContentLoaded', function() {
             // 只恢复表单数据，不设置会员
             restoreFormDataFromSession();
             // 选择'Non Member'选项
-            membershipSelect.value = '3';
+            membershipSelect.value = '2';
             return;
         }
         
-        // 确保memberId是数字类型
-        const memberIdNum = parseInt(memberId, 10);
-        if (isNaN(memberIdNum) || memberIdNum <= 0) {
+        // 检查memberId是否为有效值（不再转换为数字）
+        if (!memberId || memberId.trim() === '') {
             console.log('无效的会员ID，设置为非会员');
             restoreFormDataFromSession();
-            membershipSelect.value = '3';
+            membershipSelect.value = '2';
             return;
         }
         
@@ -418,12 +401,12 @@ document.addEventListener('DOMContentLoaded', function() {
             donationForm.appendChild(selectedMemberIdField);
         }
         
-        // 设置selectedMemberId字段的值
-        selectedMemberIdField.value = memberIdNum;
-        console.log('设置selectedMemberId字段值为:', memberIdNum);
+        // 设置selectedMemberId字段的值 - 保留原始格式
+        selectedMemberIdField.value = memberId;
+        console.log('设置selectedMemberId字段值为:', memberId);
         
         // 获取会员详情以获取名称
-        fetch(`${API_BASE_URL}?table=members&action=get_member&id=${memberIdNum}`)
+        fetch(`${API_BASE_URL}?table=members&action=get_member&id=${memberId}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`API请求失败: ${response.status}`);
@@ -433,13 +416,13 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 console.log('获取到会员详情:', data);
                 if (data.status === 'success' && data.member) {
-                    const memberName = data.member.Name || data.member.CName || `会员 ID: ${memberIdNum}`;
+                    const memberName = data.member.Name || data.member.CName || `会员 ID: ${memberId}`;
                     console.log('会员名称:', memberName);
                     
                     // 检查是否已存在此会员的选项
                     let existingOption = null;
                     for (let i = 0; i < membershipSelect.options.length; i++) {
-                        if (membershipSelect.options[i].value === memberIdNum.toString()) {
+                        if (membershipSelect.options[i].value === memberId) {
                             existingOption = membershipSelect.options[i];
                             break;
                         }
@@ -447,19 +430,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     if (existingOption) {
                         console.log('更新现有选项');
-                        existingOption.textContent = `${memberName} (ID: ${memberIdNum})`;
+                        existingOption.textContent = `${memberName} (ID: ${memberId})`;
                     } else {
                         console.log('创建新选项');
                         // 创建并添加新选项
                         const newOption = document.createElement('option');
-                        newOption.value = memberIdNum;
-                        newOption.textContent = `${memberName} (ID: ${memberIdNum})`;
+                        newOption.value = memberId;
+                        newOption.textContent = `${memberName} (ID: ${memberId})`;
                         membershipSelect.appendChild(newOption);
                     }
                     
                     // 选择新选项
-                    membershipSelect.value = memberIdNum;
-                    console.log('设置下拉框选中值为:', memberIdNum);
+                    membershipSelect.value = memberId;
+                    console.log('设置下拉框选中值为:', memberId);
                     
                     // 更新表单中的姓名字段
                     const nameCompanyField = document.getElementById('nameCompany');
@@ -469,7 +452,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 } else {
                     console.error('API返回错误或无会员数据:', data);
-                    showError('无法获取新会员详情');
+                    showError('无法获取会员详情');
                 }
             })
             .catch(error => {
@@ -490,7 +473,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const fieldMap = {
             'Name/Company Name': 'Name/Company Name',
-            'donationTypes': 'membership',
+            'donationTypes': 'donationTypes',
             'Remarks': 'Remarks',
             'receipt_no': 'official receipt no',
             'bank': 'Bank',
@@ -530,42 +513,30 @@ document.addEventListener('DOMContentLoaded', function() {
         const selectedMemberId = document.getElementById('selectedMemberId')?.value;
         console.log('提交表单时的selectedMemberId值:', selectedMemberId);
         
-        // 处理会员身份 - 修复外键约束问题
-        if (membershipValue === '3') {
+        // 处理会员身份 - 保持原始格式，不使用parseInt
+        if (membershipValue === '2') {
             // 非会员情况下，设置membership为null
             data.membership = null;
             console.log('Non-member selected, setting membership to null');
-        } else if (membershipValue === '1' || membershipValue === '2') {
-            // 新会员或老会员选项，但没有具体会员ID
+        } else if (membershipValue === '1') {
+            // 老会员选项，但没有具体会员ID
             // 检查是否有selectedMemberId
             if (selectedMemberId && selectedMemberId.trim() !== '') {
-                const memberId = parseInt(selectedMemberId, 10);
-                if (!isNaN(memberId) && memberId > 0) {
-                    data.membership = memberId;
-                    console.log('Using selected member ID for new/old member:', data.membership);
-                } else {
-                    data.membership = null;
-                    console.log('Invalid selected member ID for new/old member, setting to null');
-                }
+                // 保持原始的会员ID格式
+                data.membership = selectedMemberId.trim();
+                console.log('Using selected member ID for old member:', data.membership);
             } else {
                 data.membership = null;
-                console.log('Member type selected but no specific member, setting to null');
+                console.log('No valid member ID for old member, setting to null');
             }
         } else if (selectedMemberId && selectedMemberId.trim() !== '') {
             // 如果有选择具体会员，使用selectedMemberId
-            const memberId = parseInt(selectedMemberId, 10);
-            if (!isNaN(memberId) && memberId > 0) {
-                data.membership = memberId;
-                console.log('Using selected member ID:', data.membership);
-            } else {
-                data.membership = null;
-                console.log('Invalid selected member ID, setting to null');
-            }
+            data.membership = selectedMemberId.trim();
+            console.log('Using selected member ID:', data.membership);
         } else if (membershipValue && membershipValue !== 'null' && membershipValue !== 'custom') {
-            // 尝试直接使用membershipValue作为会员ID
-            const memberId = parseInt(membershipValue, 10);
-            if (!isNaN(memberId) && memberId > 0) {
-                data.membership = memberId;
+            // 直接使用membershipValue作为会员ID，保持原始格式
+            if (membershipValue && membershipValue.trim() !== '') {
+                data.membership = membershipValue.trim();
                 console.log('Using membership value as ID:', data.membership);
             } else {
                 data.membership = null;
@@ -577,13 +548,10 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('No valid membership ID found, setting to null');
         }
         
-        // 最后检查一次membership值，确保它是有效的整数或null
-        if (data.membership !== null) {
-            const memberId = parseInt(data.membership, 10);
-            if (isNaN(memberId) || memberId <= 0) {
-                data.membership = null;
-                console.log('Final check: Invalid membership ID, setting to null');
-            }
+        // 最后检查一次membership值，确保它不是空字符串
+        if (data.membership !== null && data.membership.trim() === '') {
+            data.membership = null;
+            console.log('Final check: Empty membership ID, setting to null');
         }
         
         console.log('Final data being sent:', JSON.stringify(data));
@@ -676,63 +644,55 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Handle membership field with proper display
         if (donation.membership) {
-            // 确保membership是数字
-            const membershipId = parseInt(donation.membership, 10);
+            // 保持membership的原始格式，不再使用parseInt
+            const membershipId = donation.membership;
             
-            if (!isNaN(membershipId) && membershipId > 0) {
-                // 确保selectedMemberId字段存在并设置值
-                let selectedMemberIdField = document.getElementById('selectedMemberId');
-                if (!selectedMemberIdField) {
-                    selectedMemberIdField = document.createElement('input');
-                    selectedMemberIdField.type = 'hidden';
-                    selectedMemberIdField.id = 'selectedMemberId';
-                    selectedMemberIdField.name = 'memberId';
-                    donationForm.appendChild(selectedMemberIdField);
-                }
-                selectedMemberIdField.value = membershipId;
+            // 确保selectedMemberId字段存在并设置值
+            let selectedMemberIdField = document.getElementById('selectedMemberId');
+            if (!selectedMemberIdField) {
+                selectedMemberIdField = document.createElement('input');
+                selectedMemberIdField.type = 'hidden';
+                selectedMemberIdField.id = 'selectedMemberId';
+                selectedMemberIdField.name = 'memberId';
+                donationForm.appendChild(selectedMemberIdField);
+            }
+            selectedMemberIdField.value = membershipId;
+            
+            // 检查是否已有此会员ID作为选项
+            let memberOption = Array.from(membershipSelect.options).find(opt => opt.value == membershipId);
+            
+            if (!memberOption) {
+                // 如果没有，创建一个新选项
+                memberOption = document.createElement('option');
+                memberOption.value = membershipId;
+                memberOption.textContent = `会员 ID: ${membershipId}`;
                 
-                // 检查是否已有此会员ID作为选项
-                let memberOption = Array.from(membershipSelect.options).find(opt => opt.value == membershipId);
+                // 在预设选项之前添加
+                const specialIndex = Array.from(membershipSelect.options).findIndex(opt => 
+                    opt.value === '1' || opt.value === '2' || opt.disabled);
                 
-                if (!memberOption) {
-                    // 如果没有，创建一个新选项
-                    memberOption = document.createElement('option');
-                    memberOption.value = membershipId;
-                    memberOption.textContent = `会员 ID: ${membershipId}`;
-                    
-                    // 在预设选项之前添加
-                    const specialIndex = Array.from(membershipSelect.options).findIndex(opt => 
-                        opt.value === '1' || opt.value === '2' || opt.value === '3' || opt.disabled);
-                    
-                    if (specialIndex !== -1) {
-                        membershipSelect.insertBefore(memberOption, membershipSelect.options[specialIndex]);
-                    } else {
-                        membershipSelect.appendChild(memberOption);
-                    }
-                }
-                
-                // 选择会员选项
-                membershipSelect.value = membershipId;
-                
-                // 获取会员详情以显示正确的名称
-                fetch(`${API_BASE_URL}?table=members&action=get_member&id=${membershipId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.status === 'success' && data.member) {
-                            const memberName = data.member.Name || data.member.CName || `会员 ID: ${membershipId}`;
-                            document.getElementById('nameCompany').value = memberName;
-                        }
-                    })
-                    .catch(error => console.error('获取会员详情失败:', error));
-            } else {
-                // 如果不是有效的数字ID，设为非会员
-                membershipSelect.value = '3'; // 非会员
-                if (document.getElementById('selectedMemberId')) {
-                    document.getElementById('selectedMemberId').value = '';
+                if (specialIndex !== -1) {
+                    membershipSelect.insertBefore(memberOption, membershipSelect.options[specialIndex]);
+                } else {
+                    membershipSelect.appendChild(memberOption);
                 }
             }
+            
+            // 选择会员选项
+            membershipSelect.value = membershipId;
+            
+            // 获取会员详情以显示正确的名称
+            fetch(`${API_BASE_URL}?table=members&action=get_member&id=${membershipId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success' && data.member) {
+                        const memberName = data.member.Name || data.member.CName || `会员 ID: ${membershipId}`;
+                        document.getElementById('nameCompany').value = memberName;
+                    }
+                })
+                .catch(error => console.error('获取会员详情失败:', error));
         } else {
-            membershipSelect.value = '3'; // 设为非会员
+            membershipSelect.value = '2'; // 设为非会员
             if (document.getElementById('selectedMemberId')) {
                 document.getElementById('selectedMemberId').value = '';
             }
@@ -800,7 +760,6 @@ document.addEventListener('DOMContentLoaded', function() {
         selectElement.appendChild(customOption);
     }
 
-
     function resetSelectToDefault(selectElement) {
         // Reset to first non-disabled option
         for (let i = 0; i < selectElement.options.length; i++) {
@@ -812,99 +771,195 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     /**
-     * Handles the selection of the custom option
+     * Handles selection of the custom option
      * @param {HTMLSelectElement} selectElement - The select dropdown
-     * @param {string} itemType - The type of item being added (for display)
+     * @param {string} itemType - Type of item being added (e.g., "银行")
+     * @param {string} apiField - The field name in the API (e.g., "bank")
      */
-    async function handleCustomOptionSelection(selectElement, itemType, tableType) {
+    function handleCustomOptionSelection(selectElement, itemType, apiField) {
         if (selectElement.value === 'custom') {
-            const newOption = prompt(`请输入新的${itemType}:`);
+            // Prompt for new value
+            const newValue = prompt(`请输入新的${itemType}:`);
             
-            if (newOption && newOption.trim() !== '') {
-                try {
-                    // Show loading indicator
-                    showLoading();
-                    
-                    // Make an API call to add the new option to the database
-                    const response = await fetch(`${API_BASE_URL}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            table: tableType,
-                            action: 'add_new_option',
-                            name: newOption
-                        })
-                    });
-                    
-                    const data = await response.json();
-                    
-                    if (data.status === 'success' && data.id) {
-                        // Create new option with the returned ID
-                        const optionElement = document.createElement('option');
-                        optionElement.value = data.id;  // Use the ID from the database
-                        optionElement.textContent = newOption;
-                        
-                        // Insert before the separator
-                        const separatorIndex = Array.from(selectElement.options).findIndex(opt => opt.disabled);
-                        if (separatorIndex !== -1) {
-                            selectElement.insertBefore(optionElement, selectElement.options[separatorIndex]);
-                            selectElement.value = data.id;
-                        } else {
-                            selectElement.insertBefore(optionElement, selectElement.options[0]);
-                            selectElement.value = data.id;
-                        }
-                        
-                        alert(`新的${itemType}已添加成功！`);
-                    } else {
-                        alert(`添加${itemType}失败: ${data.message || '未知错误'}`);
-                        resetSelectToDefault(selectElement);
-                    }
-                } catch (error) {
-                    alert(`添加${itemType}时出错: ${error.message}`);
-                    resetSelectToDefault(selectElement);
-                } finally {
-                    hideLoading();
-                }
-            } else {
+            // If user cancels or enters empty string, reset dropdown
+            if (!newValue || newValue.trim() === '') {
                 resetSelectToDefault(selectElement);
-            }
-        }
-    }
-
-    // Delete donation functionality
-    if (deleteButton) {
-        deleteButton.addEventListener('click', async function() {
-            if (!donationId) {
-                alert('无法删除未保存的捐赠记录');
                 return;
             }
-
-            if (confirm('确定要删除此捐赠记录吗？此操作不可撤销。')) {
-                try {
-                    showLoading();
-                    const response = await fetch(`../recervingAPI.php?table=donation&action=delete_donation&id=${donationId}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    });
-
-                    const data = await response.json();
-
-                    if (data.status === 'success') {
-                        alert('捐赠记录已成功删除');
-                        window.location.href = 'searchDonate.html';
+            
+            // Show loading indicator
+            showLoading();
+            
+            // Save current form data to session storage
+            saveFormDataToSession();
+            
+            // Send API request to add new option
+            fetch(`${API_BASE_URL}?table=options&action=add_option`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    type: apiField,
+                    value: newValue
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                hideLoading();
+                
+                if (data.status === 'success') {
+                    // Create new option
+                    const newOption = document.createElement('option');
+                    newOption.value = newValue;
+                    newOption.textContent = newValue;
+                    
+                    // Add before separator
+                    const separatorIndex = Array.from(selectElement.options).findIndex(opt => opt.disabled);
+                    if (separatorIndex !== -1) {
+                        selectElement.insertBefore(newOption, selectElement.options[separatorIndex]);
                     } else {
-                        showError('删除捐赠记录失败: ' + (data.message || '未知错误'));
+                        // If no separator found, add at end
+                        selectElement.insertBefore(newOption, selectElement.options[selectElement.options.length - 2]);
                     }
-                } catch (error) {
-                    showError('删除捐赠记录时出错: ' + error.message);
-                } finally {
-                    hideLoading();
+                    
+                    // Select the new option
+                    selectElement.value = newValue;
+                    
+                } else {
+                    alert(`添加新${itemType}失败: ${data.message || '未知错误'}`);
+                    resetSelectToDefault(selectElement);
                 }
+            })
+            .catch(error => {
+                hideLoading();
+                console.error(`添加${itemType}错误:`, error);
+                alert(`添加新${itemType}时出错: ${error.message}`);
+                resetSelectToDefault(selectElement);
+            });
+        }
+    }
+    
+    // Function to save form data to session storage
+    function saveFormDataToSession() {
+        const formData = {};
+        const formElements = donationForm.elements;
+        
+        for (let i = 0; i < formElements.length; i++) {
+            const element = formElements[i];
+            if (element.name && element.value) {
+                formData[element.name || element.id] = element.value;
+            }
+        }
+        
+        sessionStorage.setItem('donationFormData', JSON.stringify(formData));
+    }
+    
+    // Initialize form data from session storage if available
+    if (!donationId) {
+        restoreFormDataFromSession();
+    }
+    
+    // Delete button functionality
+    if (deleteButton) {
+        deleteButton.addEventListener('click', function() {
+            if (confirm('确定要删除此捐赠记录吗？此操作不可撤销。')) {
+                deleteDonation();
             }
         });
     }
+    
+    // Function to delete donation
+    async function deleteDonation() {
+        if (!donationId) {
+            showError('无法删除：记录ID未找到');
+            return;
+        }
+        
+        try {
+            showLoading();
+            
+            const response = await fetch(`../recervingAPI.php?table=donation&action=delete_donation`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id: donationId
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.status === 'success') {
+                alert('捐赠记录已成功删除');
+                window.location.href = 'searchDonate.html';
+            } else {
+                showError('删除捐赠记录失败: ' + (data.message || '未知错误'));
+            }
+        } catch (error) {
+            showError('删除捐赠记录时出错: ' + error.message);
+            console.error('删除捐赠记录错误:', error);
+        } finally {
+            hideLoading();
+        }
+    }
+    
+    // Initialize dropdowns with options from API
+    async function initializeDropdowns() {
+        try {
+            const response = await fetch(`${API_BASE_URL}?table=options&action=get_options`);
+            const data = await response.json();
+            
+            if (data.status === 'success' && data.options) {
+                // Populate bank dropdown
+                if (data.options.bank && Array.isArray(data.options.bank)) {
+                    populateDropdown(bankSelect, data.options.bank);
+                }
+                
+                // Populate donation types dropdown
+                if (data.options.donation_type && Array.isArray(data.options.donation_type)) {
+                    populateDropdown(donationTypesSelect, data.options.donation_type);
+                }
+            }
+        } catch (error) {
+            console.error('加载下拉选项错误:', error);
+        }
+    }
+    
+    // Function to populate dropdown with options
+    function populateDropdown(selectElement, options) {
+        // Save current value
+        const currentValue = selectElement.value;
+        
+        // Clear existing options, keeping only the first default option
+        while (selectElement.options.length > 1) {
+            selectElement.remove(1);
+        }
+        
+        // Add new options
+        options.forEach(option => {
+            const optionElement = document.createElement('option');
+            optionElement.value = option;
+            optionElement.textContent = option;
+            selectElement.appendChild(optionElement);
+        });
+        
+        // Add custom option and separator
+        addCustomOption(selectElement, selectElement === bankSelect ? '添加新银行...' : '添加新乐捐类型...');
+        
+        // Restore previous value if exists
+        if (currentValue && currentValue !== 'custom') {
+            // Check if the value still exists in options
+            for (let i = 0; i < selectElement.options.length; i++) {
+                if (selectElement.options[i].value === currentValue) {
+                    selectElement.value = currentValue;
+                    break;
+                }
+            }
+        }
+    }
+    
+    // Call dropdown initialization on page load
+    initializeDropdowns();
 });

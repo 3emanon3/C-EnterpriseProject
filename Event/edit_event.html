@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Management System - Edit Event</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="searchEvent.css">
+    <link rel="stylesheet" href="edit_event.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>活动管理系统 - 编辑活动</h1>
+            <nav class="system-nav">
+                <button class="btn btn-primary" onclick="goBack()">
+                    <i class="fas fa-times"></i> 取消
+                </button>
+            </nav>
+        </header>
+
+        <section class="edit-container">
+            <form class="edit-form" id="eventForm">
+                <div class="form-group">
+                    <label for="eventId">活动ID:</label>
+                    <input type="text" id="eventId" name="id" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="eventTitle">活动标题:</label>
+                    <input type="text" id="eventTitle" name="title" required>
+                </div>
+                <div class="form-group">
+                    <label for="eventStatus">状态:</label>
+                    <select id="eventStatus" name="status" required>
+                        <option value="not started">未开始</option>
+                        <option value="started">已开始</option>
+                        <option value="cancelled">已取消</option>
+                        <option value="ended">已结束</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="eventStartTime">开始时间:</label>
+                    <input type="datetime-local" id="eventStartTime" name="start_time" required>
+                </div>
+                <div class="form-group">
+                    <label for="eventEndTime">结束时间:</label>
+                    <input type="datetime-local" id="eventEndTime" name="end_time" required>
+                </div>
+                <div class="form-group">
+                    <label for="eventLocation">地点:</label>
+                    <input type="text" id="eventLocation" name="location" required>
+                </div>
+                <div class="form-group">
+                    <label for="eventDescription">描述:</label>
+                    <textarea id="eventDescription" name="description" rows="4"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="eventMaxParticipant">最大参与者数量:</label>
+                    <input type="number" id="eventMaxParticipant" name="max_participant" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="eventRegistrationDeadline">报名截止日期:</label>
+                    <input type="datetime-local" id="eventRegistrationDeadline" name="registration_deadline" required>
+                </div>
+                <div class="form-group">
+                    <label for="eventPrice">价格:</label>
+                    <input type="number" id="eventPrice" name="price" step="0.01" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="eventOnlineLink">在线链接 (如适用):</label>
+                    <input type="text" id="eventOnlineLink" name="online_link">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save"></i> 保存更改
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="goBack()">
+                        <i class="fas fa-times"></i> 取消
+                    </button>
+                </div>
+            </form>
+        </section>
+    </div>
+
+    <script src="edit_event.js"></script>
+</body>
+</html>

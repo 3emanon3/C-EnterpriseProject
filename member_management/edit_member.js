@@ -1,5 +1,5 @@
 const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
-const CUSTOM_DESIGNATION_VALUE = '6';  // Changed from '5' to '6' since 5 is now used for "逾期"
+const CUSTOM_DESIGNATION_VALUE = '8';  // Changed from '5' to '6' since 5 is now used for "逾期"
 
 // Static designation mappings - updated to include "逾期" (Overdue)
 const STATIC_DESIGNATIONS = [

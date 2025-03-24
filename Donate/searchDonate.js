@@ -21,6 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentPage = 1;
     let totalPages = 0;
     let currentSearchType = 'all'; // Flag to indicate listing all data
+    
 
     // Debounce function to limit API calls during rapid typing
     function debounce(func, wait) {
@@ -121,11 +122,11 @@ document.addEventListener("DOMContentLoaded", function () {
         const mapping = {
             'id': 'ID',
             'donor_name': 'Name/Company Name',
-            'donationTypes': 'vdonation',
+            'donationTypes': 'donationTypes',
             'Bank': 'Bank',
             'membership': 'membership',
-            'payment_date': 'payment_date',
-            'receipt_no': 'receipt_no',
+            'payment_date': 'paymentDate',
+            'receipt_no': 'official receipt no',
             'amount': 'amount',
             'Remarks': 'Remarks'
         };
@@ -516,7 +517,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Global functions
     window.editDonation = function(id) {
-        window.location.href = `donate.html?id=${id}`;
+        window.location.href = `editDonate.html?id=${id}`;
     };
 
     window.deleteDonation = async function(id) {
