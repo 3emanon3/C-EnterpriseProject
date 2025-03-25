@@ -116,6 +116,24 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+// Debounce search function
+function debounce(func, delay) {
+  let timeoutId;
+  return function() {
+    const context = this;
+    const args = arguments;
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      func.apply(context, args);
+    }, delay);
+  };
+}
+
+// Example usage
+modalSearchInput.addEventListener('input', 
+  debounce(performModalSearch, 300)
+);
+
     // Membership selection event - updated with new values
     membershipSelect.addEventListener('change', async function() {
         if (this.value === '1') { // Old Member (was '2' before)

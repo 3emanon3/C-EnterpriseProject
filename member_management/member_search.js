@@ -405,56 +405,153 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
     
-    // Set up column resizing
     function initializeResizableColumns() {
         tableHeaders.forEach(th => {
-            // Create resizer element if it doesn't exist
-            let resizer = th.querySelector('.resizer');
-            if (!resizer) {
-                resizer = document.createElement('div');
-                resizer.className = 'resizer';
-                th.appendChild(resizer);
-            }
+            const resizer = document.createElement('div');
+            resizer.className = 'resizer';
+            th.appendChild(resizer);
             
-            let startX, startWidth;
-            
-            resizer.addEventListener('mousedown', function(e) {
-                startX = e.pageX;
-                startWidth = th.offsetWidth;
-                
-                const tableContainer = table.closest('.table-container');
-                if (tableContainer) {
-                    tableContainer.classList.add('resizing');
-                }
-                
-                document.addEventListener('mousemove', resizeColumn);
-                document.addEventListener('mouseup', stopResize);
+            // Prevent text selection during resize
+            resizer.addEventListener('selectstart', (e) => e.preventDefault());
+    
+            // More precise resize logic
+            resizer.addEventListener('mousedown', initResize);
+    
+            function initResize(e) {
+                // Prevent default to stop text selection
                 e.preventDefault();
-            });
-            
-            function resizeColumn(e) {
-                const width = startWidth + (e.pageX - startX);
-                if (width >= 50) { // Minimum width
-                    th.style.width = `${width}px`;
-                }
-            }
-            
-            function stopResize() {
+                e.stopPropagation();
+    
+                const startX = e.pageX;
+                const startWidth = th.offsetWidth;
                 const tableContainer = table.closest('.table-container');
-                if (tableContainer) {
-                    tableContainer.classList.remove('resizing');
+    
+                // Add resizing class for styling
+                tableContainer?.classList.add('resizing');
+    
+                // Use document-level event listeners for better tracking
+                document.addEventListener('mousemove', performResize);
+                document.addEventListener('mouseup', stopResize);
+    
+                function performResize(moveEvent) {
+                    // Calculate new width
+                    const newWidth = startWidth + (moveEvent.pageX - startX);
+                    
+                    // Enforce minimum and maximum width constraints
+                    const constrainedWidth = Math.max(50, Math.min(newWidth, 500));
+                    
+                    // Apply width with more precise CSS
+                    th.style.width = `${constrainedWidth}px`;
+                    th.style.minWidth = `${constrainedWidth}px`;
+                    th.style.maxWidth = `${constrainedWidth}px`;
+                    
+                    // Optional: Adjust other columns if needed
+                    updateRelatedColumns(th, constrainedWidth);
                 }
-                
-                document.removeEventListener('mousemove', resizeColumn);
-                document.removeEventListener('mouseup', stopResize);
-                
-                // Save column widths
-                saveColumnWidths();
+    
+                function stopResize() {
+                    // Remove event listeners
+                    document.removeEventListener('mousemove', performResize);
+                    document.removeEventListener('mouseup', stopResize);
+    
+                    // Remove resizing class
+                    tableContainer?.classList.remove('resizing');
+    
+                    // Save column widths
+                    saveColumnWidths();
+                }
             }
         });
-        
-        // Load saved column widths
+    
+        // Load saved widths on initialization
         loadColumnWidths();
+    }
+    
+    function updateRelatedColumns(resizedHeader, newWidth) {
+        // Optional: Add logic to adjust other columns if needed
+        // For example, you might want to redistribute extra space
+        const table = resizedHeader.closest('table');
+        const headers = table.querySelectorAll('th');
+        const totalColumns = headers.length;
+        
+        // Simple redistribution logic
+        const averageWidth = (table.offsetWidth - newWidth) / (totalColumns - 1);
+        
+        headers.forEach(header => {
+            if (header !== resizedHeader) {
+                header.style.width = `${averageWidth}px`;
+            }
+        });
+    }
+    
+    function saveColumnWidths() {
+        try {
+            const widths = {};
+            tableHeaders.forEach(header => {
+                const column = header.dataset.column;
+                if (column) {
+                    widths[column] = {
+                        width: header.style.width,
+                        minWidth: header.style.minWidth,
+                        maxWidth: header.style.maxWidth
+                    };
+                }
+            });
+            localStorage.setItem('columnWidths', JSON.stringify(widths));
+        } catch (error) {
+            console.error('Error saving column widths:', error);
+        }
+    }
+    
+    function loadColumnWidths() {
+        try {
+            const savedWidths = JSON.parse(localStorage.getItem('columnWidths') || '{}');
+            
+            tableHeaders.forEach(header => {
+                const column = header.dataset.column;
+                if (savedWidths[column]) {
+                    const columnWidth = savedWidths[column];
+                    header.style.width = columnWidth.width || '100px';
+                    header.style.minWidth = columnWidth.minWidth || '50px';
+                    header.style.maxWidth = columnWidth.maxWidth || '500px';
+                } else {
+                    // Default width logic
+                    setDefaultColumnWidth(header);
+                }
+            });
+        } catch (error) {
+            console.error('Error loading column widths:', error);
+        }
+    }
+    
+    function setDefaultColumnWidth(header) {
+        const column = header.dataset.column;
+        switch (column) {
+            case 'membersID':
+            case 'gender':
+                header.style.width = '80px';
+                break;
+            case 'Name':
+            case 'CName':
+            case 'email':
+                header.style.width = '150px';
+                break;
+            case 'Address':
+            case 'remarks':
+                header.style.width = '200px';
+                break;
+            case 'phone_number':
+            case 'IC':
+            case 'oldIC':
+                header.style.width = '120px';
+                break;
+            default:
+                header.style.width = '100px';
+        }
+        
+        // Set min and max widths
+        header.style.minWidth = '50px';
+        header.style.maxWidth = '500px';
     }
     
     // Save column widths to localStorage

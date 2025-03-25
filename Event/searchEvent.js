@@ -362,21 +362,16 @@ document.addEventListener("DOMContentLoaded", function () {
     window.deleteEvent = async function (id) {
         if (confirm("确定要删除这个活动吗？")) {
             try {
-                const params = new URLSearchParams();
-            params.append("table", "event");
-            params.append("ID", id);
-            
-            const response = await fetch(`${API_BASE_URL}?${params.toString()}`, {
-                method: "DELETE"
-            });
-
-            if (!response.ok) {
-                console.error(`Delete failed with status: ${response.status}`);
-                const errorText = await response.text();
-                console.error(`Error response: ${errorText}`);
-                throw new Error(`Server responded with status: ${response.status}`);
-            }
+                const response = await fetch(`${API_BASE_URL}?table=event&action=delete&ID=${id}`, {
+                    method: "DELETE"
+                });
     
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error(`Error response: ${errorText}`);
+                    throw new Error(`Server responded with status: ${response.status}`);
+                }
+        
                 const data = await response.json();
                 if (data.success) {
                     alert("活动已成功删除！");

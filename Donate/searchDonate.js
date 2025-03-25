@@ -22,6 +22,29 @@ document.addEventListener("DOMContentLoaded", function () {
     let totalPages = 0;
     let currentSearchType = 'all'; // Flag to indicate listing all data
     
+    const DONATION_TYPES = {
+1: 'Donation',
+2: '蒲公英乐捐',
+3: '哲商',
+4: 'KK老师外出公益讲堂所收到的红包',
+5: '模范班乐捐',
+6: '外籍人士享有塾员福利乐捐',
+
+    };
+
+    const BANKS = {
+       1:'Public Bank', 
+       2:'Hong Leong Bank',
+       3:'Alliance Bank',
+    };
+
+    function mapDonationType(typeNumber) {
+        return DONATION_TYPES[typeNumber] || typeNumber;
+    }
+
+    function mapBankName(bankNumber) {
+        return BANKS[bankNumber] || bankNumber;
+    }
 
     // Debounce function to limit API calls during rapid typing
     function debounce(func, wait) {
@@ -158,8 +181,8 @@ document.addEventListener("DOMContentLoaded", function () {
             // Handle potential property name variations
             const id = donation.ID || donation.id || '';
             const donorName = donation['Name/Company Name'] || donation.donor_name || '';
-            const donationType = donation.donationTypes || donation.donation_type || '';
-            const bank = donation.Bank || donation.bank || '';
+            const donationType = mapDonationType(donation.donationTypes || donation.donation_type || '');
+            const bank = mapBankName(donation.Bank || donation.bank || '');
             const membership = donation.membership || '';
             const paymentDate = formatDateTime(donation.paymentDate || donation.payment_date || '');
             const receiptNo = donation['official receipt no'] || donation.receipt_no || '';
@@ -523,9 +546,11 @@ document.addEventListener("DOMContentLoaded", function () {
     window.deleteDonation = async function(id) {
         if (confirm("确定要删除这个捐赠记录吗？")) {
             try {
-                const response = await fetch(`${API_BASE_URL}`, {
+                const response = await fetch(`${API_BASE_URL}?table=donation&action=checkRelations&ID=${id}`, {
                     method: "DELETE",
-                    headers: { "Content-Type": "application/json" },
+                    headers: { 
+                        "Content-Type": "application/json"
+                     },
                     body: JSON.stringify({ table: "donation", id: id }),
                 });
 
