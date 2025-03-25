@@ -8868,3 +8868,325 @@
     [METHOD] => GET
 )
 
+2025-03-25 03:38:43: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [birthday] => true
+            [search] => John
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [birthday] => true
+            [search] => John
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&birthday=true&search=John
+    [METHOD] => GET
+)
+
+2025-03-25 03:39:03: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [birthday] => true
+            [search] => John
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [birthday] => true
+            [search] => John
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&birthday=true&search=John
+    [METHOD] => GET
+)
+
+2025-03-25 03:39:33: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-03-25 03:39:34: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => stock
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock
+    [METHOD] => GET
+)
+
+2025-03-25 03:39:34: Array
+(
+    [GET] => Array
+        (
+            [table] => vsoldrecord
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => vsoldrecord
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=vsoldrecord&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-03-25 03:39:36: Array
+(
+    [GET] => Array
+        (
+            [table] => vsoldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Cotton T-Shirt - Blue, Size L
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => vsoldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Cotton T-Shirt - Blue, Size L
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=vsoldrecord&limit=10&page=1&Book=Cotton+T-Shirt+-+Blue%2C+Size+L&search=true
+    [METHOD] => GET
+)
+
+2025-03-25 03:39:38: Array
+(
+    [GET] => Array
+        (
+            [table] => vsoldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Laptop - High Performance
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => vsoldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Laptop - High Performance
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=vsoldrecord&limit=10&page=1&Book=Laptop+-+High+Performance&search=true
+    [METHOD] => GET
+)
+
+2025-03-25 03:39:39: Array
+(
+    [GET] => Array
+        (
+            [table] => vsoldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Mystery Novel - The Silent Creek
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => vsoldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Mystery Novel - The Silent Creek
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=vsoldrecord&limit=10&page=1&Book=Mystery+Novel+-+The+Silent+Creek&search=true
+    [METHOD] => GET
+)
+
+2025-03-25 03:39:40: Array
+(
+    [GET] => Array
+        (
+            [table] => vsoldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Denim Jeans - Slim Fit, Size 32
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => vsoldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Denim Jeans - Slim Fit, Size 32
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=vsoldrecord&limit=10&page=1&Book=Denim+Jeans+-+Slim+Fit%2C+Size+32&search=true
+    [METHOD] => GET
+)
+
+2025-03-25 03:39:41: Array
+(
+    [GET] => Array
+        (
+            [table] => vsoldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Denim Jeans - Slim Fit, Size 32
+            [sort] => membership
+            [order] => ASC
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => vsoldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Denim Jeans - Slim Fit, Size 32
+            [sort] => membership
+            [order] => ASC
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=vsoldrecord&limit=10&page=1&Book=Denim+Jeans+-+Slim+Fit%2C+Size+32&sort=membership&order=ASC
+    [METHOD] => GET
+)
+
+2025-03-25 03:40:18: Array
+(
+    [GET] => Array
+        (
+            [table] => vsoldrecord
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => vsoldrecord
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=vsoldrecord&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-03-25 03:40:24: Array
+(
+    [GET] => Array
+        (
+            [table] => vsoldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Cotton T-Shirt - Blue, Size L
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => vsoldrecord
+            [limit] => 10
+            [page] => 1
+            [Book] => Cotton T-Shirt - Blue, Size L
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=vsoldrecord&limit=10&page=1&Book=Cotton+T-Shirt+-+Blue%2C+Size+L&search=true
+    [METHOD] => GET
+)
+
