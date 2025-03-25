@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // Add options for each applicant type
             applicantTypes.forEach(item => {
                 const option = document.createElement("option");
-                option.value = item.ID;
+                option.value = item["designation of applicant"];
                 option.textContent = item["designation of applicant"];
                 memberFilter.appendChild(option);
             });
@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
         memberTableBody.innerHTML = "";
         
         const params = new URLSearchParams();
-        params.append("table", "members");
+        params.append("table", "vmembers");
         params.append("limit", itemsPerPage);
         params.append("page", currentPage);
         
@@ -114,9 +114,11 @@ document.addEventListener("DOMContentLoaded", function () {
             const currentMonth = new Date().getMonth() + 1; // JavaScript 月份从 0 开始，+1 后为 1-12
             params.append("Birthday", "true");
             params.append("month", currentMonth.toString());
+            params.append("search", "true"); 
             console.log(`Searching for birthdays in month ${currentMonth}`);
         } else if (currentSearchType === 'expired') {
             params.append("expired", "true");
+            params.append("search", "true");
         } else if (query.trim() !== "") {
             params.append("search", query);
             //params.append("search_fields", "membersID,Name,CName,Address,phone_number,email,IC,oldIC,gender,companyName,Birthday,remarks");
@@ -127,15 +129,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Add applicant filter if selected
         if (memberFilter.value) {
-            params.append("applicant", memberFilter.value);
+            params.append("search", "true");
+            params.append("designation of applicant", memberFilter.value);
             console.log("Filtering by applicant:", memberFilter.value);
         }
-        
-       // Add the filter for designation of applicant if selected
-    if (currentFilterValue && currentFilterValue !== "") {
-        params.append("designation_of_applicant",  parseInt(currentFilterValue, 10));
-        console.log("Filtering by applicant type:",  parseInt(currentFilterValue, 10));
-    }
+
 
         // Add sorting parameters
         if (sortColumn) {
@@ -242,18 +240,7 @@ document.addEventListener("DOMContentLoaded", function () {
             };
             
             // Get proper field values with fallbacks
-            const designation = member['Designation of Applicant']
-
-                               
-                               
-            const designationDisplay = designation === 3 ? '外国人' :
-                                     designation === 2 ? '非会员' :
-                                     designation === 1 ? '会员' :
-                                     designation === 4 ? '拒绝续费' :
-                                     designation === 5 ? '逾期' :
-                                     designation === 6 ? '黑名单' :
-                                     designation === 7? '合作伙伴' :
-                                     formatData(designation);
+            const designation = member['designation of applicant'];
             
             const expiredDate = member['expired date'] || 
                                member['expired_date'] || 
@@ -297,7 +284,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <td>${formatData(member.membersID)}</td>
                 <td>${formatData(member.Name)}</td>
                 <td>${formatData(member.CName)}</td>
-                <td>${designationDisplay}</td>
+                <td>${formatData(designation)}</td>
                 <td>${formatData(member.Address)}</td>
                 <td>${formatPhone(member.phone_number)}</td>
                 <td>${formatData(member.email)}</td>

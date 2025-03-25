@@ -67,20 +67,18 @@ class DatabaseAPI {
             'expired' => [
                 'conditions'=>['(YEAR(`expired date`) < YEAR(CURDATE())) OR (YEAR(`expired date`) = YEAR(CURDATE()) AND MONTH(`expired date`) <= MONTH(CURDATE())) '],
             ],
-            'applicant' => [
-                'conditions'=>['`designation of applicant` = ? '],
-                'params' => ['applicant'],
-                'type' => 'i'
+        ],
+        'vmembers' => [
+            'Birthday' =>[
+                'conditions'=>['Birthday = MONTH(CURDATE()) '],
+            ], 
+            'expired' => [
+                'conditions'=>['(YEAR(`expired date`) < YEAR(CURDATE())) OR (YEAR(`expired date`) = YEAR(CURDATE()) AND MONTH(`expired date`) <= MONTH(CURDATE())) '],
             ],
         ],
         'soldrecord' => [
             'Date' => [
                 'conditions'=>['Date = MONTH(CURDATE()) '],
-            ],
-            'Book' => [
-                'conditions' => ['Book = ?'],
-                'params' => ['Book'],
-                'type' => 'i'
             ],
         ],
     ];
