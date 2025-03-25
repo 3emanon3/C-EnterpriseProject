@@ -184,40 +184,42 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Populate form data
-    function populateForm(donation) {
-        // Handle possible property name variations
-        document.getElementById('nameCompany').value = donation['Name/Company Name'] || donation.donor_name || '';
-        
-        // Handle select fields
-        setSelectIfExists('donationTypes', donation.donationTypes || donation.donation_type || '');
-        setSelectIfExists('bank', donation.Bank || donation.bank || '');
-       
-            // Handle membership field correctly
-const membershipValue = document.getElementById('membership').value;
-let actualMembershipValue = null;
-
-// If "Old Member" is selected, use the selectedMemberId value
-if (membershipValue === '1') {
-    actualMembershipValue = document.getElementById('selectedMemberId').value || null;
-}
-        
-        // Handle date format
-        const paymentDate = donation.paymentDate || donation.payment_date || '';
-        if (paymentDate) {
-            // Ensure date format is YYYY-MM-DD
-            document.getElementById('paymentDate').value = formatDateForInput(paymentDate);
-        }
-      
-
-        document.getElementById('receiptNo').value = donation['official receipt no'] || donation.receipt_no || '';
-        document.getElementById('amount').value = donation.amount || '';
-        document.getElementById('remarks').value = donation.Remarks || donation.remarks || '';
-        
-        // If there's a member ID, set the hidden field
-        if (donation.memberId) {
-            document.getElementById('selectedMemberId').value = donation.memberId;
+    // Modify the populateForm function to correctly handle membership value:
+function populateForm(donation) {
+    // Handle possible property name variations
+    document.getElementById('nameCompany').value = donation['Name/Company Name'] || donation.donor_name || '';
+    
+    // Handle select fields
+    setSelectIfExists('donationTypes', donation.donationTypes || donation.donation_type || '');
+    setSelectIfExists('bank', donation.Bank || donation.bank || '');
+    
+    // Handle membership field correctly - this is the key fix
+    const membershipValue = donation.membership || donation.Membership || null;
+    // Default to value "2" (Non Member) if membership is null
+    setSelectIfExists('membership', membershipValue === null ? '2' : membershipValue);
+    
+    // If there's a member ID, set the hidden field and select Old Member
+    if (donation.memberId) {
+        document.getElementById('selectedMemberId').value = donation.memberId;
+        setSelectIfExists('membership', '1'); // Set to Old Member
+    } else {
+        // Clear the selected member ID if no member is associated
+        if (document.getElementById('selectedMemberId')) {
+            document.getElementById('selectedMemberId').value = '';
         }
     }
+    
+    // Handle date format
+    const paymentDate = donation.paymentDate || donation.payment_date || '';
+    if (paymentDate) {
+        // Ensure date format is YYYY-MM-DD
+        document.getElementById('paymentDate').value = formatDateForInput(paymentDate);
+    }
+
+    document.getElementById('receiptNo').value = donation['official receipt no'] || donation.receipt_no || '';
+    document.getElementById('amount').value = donation.amount || '';
+    document.getElementById('remarks').value = donation.Remarks || donation.remarks || '';
+}
 
     // Helper function to set select value if element exists
     function setSelectIfExists(id, value) {
@@ -325,7 +327,8 @@ if (membershipValue === '1') {
                 donor_name: document.getElementById('nameCompany').value || null,
                 donationTypes: document.getElementById('donationTypes').value || null,
                 Bank: document.getElementById('bank').value || null,
-                membership: document.getElementById('membership').value || null,
+                membership: document.getElementById('membership').value === '1' ? 
+                document.getElementById('selectedMemberId').value || null : null,
                 paymentDate: document.getElementById('paymentDate').value || null,
                 receipt_no: document.getElementById('receiptNo').value || null,
                 amount: document.getElementById('amount').value || null,

@@ -56,7 +56,8 @@ document.addEventListener("DOMContentLoaded", function () {
             { ID: "3", designation: "Foreigner" },
             { ID: "4", designation: "Refuse continue" },
             { ID: "5", designation: "逾期" },
-            { ID: "6", designation: "BlackList" }
+            { ID: "6", designation: "BlackList" },
+            { ID: "7", designation: "合作伙伴" }
         ];
         
         applicantTypes.forEach(item => {
@@ -83,6 +84,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     break;
                 case "6":
                     displayText = "黑名单";
+                    break;
+                case "7":
+                    displayText = "合作伙伴";
                     break;
                 default:
                     displayText = item.designation;
@@ -258,8 +262,7 @@ document.addEventListener("DOMContentLoaded", function () {
             };
             
             // Get proper field values with fallbacks
-            const designation = member['designation of applicant'] || 
-                               member['designation_of_applicant'];
+            const designation = member['Designation of Applicant']
 
                                
                                
@@ -269,6 +272,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                      designation === 4 ? '拒绝续费' :
                                      designation === 5 ? '逾期' :
                                      designation === 6 ? '黑名单' :
+                                     designation === 7? '合作伙伴' :
                                      formatData(designation);
             
             const expiredDate = member['expired date'] || 

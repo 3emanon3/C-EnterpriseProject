@@ -119,8 +119,8 @@ async function saveEvent(eventId) {
         console.log('发送的数据:', eventData);
         
         // 发送请求
-        const response = await fetch(API_BASE_URL, {
-            method: 'POST',
+        const response = await fetch(`${API_BASE_URL}?table=event&ID=${eventId}`, {
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
