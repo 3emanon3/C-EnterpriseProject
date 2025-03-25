@@ -5339,3 +5339,752 @@
     [METHOD] => GET
 )
 
+2025-03-24 10:49:48: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-03-24 10:49:55: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-03-24 10:50:23: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-03-24 10:50:52: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-03-24 10:50:56: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [designation_of_applicant] => 2
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [designation_of_applicant] => 2
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1&designation_of_applicant=2
+    [METHOD] => GET
+)
+
+2025-03-24 10:51:13: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-03-24 10:51:16: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [designation_of_applicant] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [designation_of_applicant] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1&designation_of_applicant=1
+    [METHOD] => GET
+)
+
+2025-03-24 10:54:10: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-03-24 10:54:11: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [designation_of_applicant] => 2
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [designation_of_applicant] => 2
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1&designation_of_applicant=2
+    [METHOD] => GET
+)
+
+2025-03-24 10:54:16: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [designation_of_applicant] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [designation_of_applicant] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1&designation_of_applicant=1
+    [METHOD] => GET
+)
+
+2025-03-24 10:54:19: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [designation_of_applicant] => 2
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [designation_of_applicant] => 2
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1&designation_of_applicant=2
+    [METHOD] => GET
+)
+
+2025-03-24 10:54:20: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [designation_of_applicant] => 3
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [designation_of_applicant] => 3
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1&designation_of_applicant=3
+    [METHOD] => GET
+)
+
+2025-03-24 10:54:22: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [designation_of_applicant] => 4
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [designation_of_applicant] => 4
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1&designation_of_applicant=4
+    [METHOD] => GET
+)
+
+2025-03-24 10:54:30: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [designation_of_applicant] => 5
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [designation_of_applicant] => 5
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1&designation_of_applicant=5
+    [METHOD] => GET
+)
+
+2025-03-24 10:54:31: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [designation_of_applicant] => 6
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [designation_of_applicant] => 6
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1&designation_of_applicant=6
+    [METHOD] => GET
+)
+
+2025-03-24 10:54:33: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [designation_of_applicant] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [designation_of_applicant] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1&designation_of_applicant=1
+    [METHOD] => GET
+)
+
+2025-03-24 10:59:20: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-03-24 10:59:22: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-03-24 11:13:33: Array
+(
+    [GET] => Array
+        (
+            [table] => applicants types
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => applicants types
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=applicants%20types
+    [METHOD] => GET
+)
+
+2025-03-24 11:13:33: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-03-24 11:13:34: Array
+(
+    [GET] => Array
+        (
+            [table] => applicants types
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => applicants types
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=applicants%20types
+    [METHOD] => GET
+)
+
+2025-03-24 11:13:34: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-03-24 11:13:35: Array
+(
+    [GET] => Array
+        (
+            [table] => applicants types
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => applicants types
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=applicants%20types
+    [METHOD] => GET
+)
+
+2025-03-24 11:13:35: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-03-24 11:13:37: Array
+(
+    [GET] => Array
+        (
+            [table] => applicants types
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => applicants types
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=applicants%20types
+    [METHOD] => GET
+)
+
+2025-03-24 11:13:37: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-03-24 11:13:43: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [applicant] => 1
+            [designation_of_applicant] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [applicant] => 1
+            [designation_of_applicant] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1&applicant=1&designation_of_applicant=1
+    [METHOD] => GET
+)
+
+2025-03-24 11:13:55: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [applicant] => 1
+            [designation_of_applicant] => 1
+            [sort] => CName
+            [order] => ASC
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [applicant] => 1
+            [designation_of_applicant] => 1
+            [sort] => CName
+            [order] => ASC
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1&applicant=1&designation_of_applicant=1&sort=CName&order=ASC
+    [METHOD] => GET
+)
+
+2025-03-24 11:13:58: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [applicant] => 1
+            [designation_of_applicant] => 1
+            [sort] => Designation of Applicant
+            [order] => ASC
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [limit] => 10
+            [page] => 1
+            [applicant] => 1
+            [designation_of_applicant] => 1
+            [sort] => Designation of Applicant
+            [order] => ASC
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&limit=10&page=1&applicant=1&designation_of_applicant=1&sort=Designation+of+Applicant&order=ASC
+    [METHOD] => GET
+)
+

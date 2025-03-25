@@ -49,48 +49,26 @@ document.addEventListener("DOMContentLoaded", function () {
         defaultOption.textContent = "选择会员种类";
         memberFilter.appendChild(defaultOption);
         
-        // Directly add the applicant types without fetching from API
-        const applicantTypes = [
-            { ID: "1", designation: "Member" },
-            { ID: "2", designation: "Non-Member" },
-            { ID: "3", designation: "Foreigner" },
-            { ID: "4", designation: "Refuse continue" },
-            { ID: "5", designation: "逾期" },
-            { ID: "6", designation: "BlackList" }
-        ];
-        
-        applicantTypes.forEach(item => {
-            const option = document.createElement("option");
-            option.value = item.ID;
-            
-            // Map numerical values to user-friendly text (in Chinese if needed)
-            let displayText;
-            switch(item.ID) {
-                case "1":
-                    displayText = "会员";
-                    break;
-                case "2":
-                    displayText = "非会员";
-                    break;
-                case "3":
-                    displayText = "外国人";
-                    break;
-                case "4":
-                    displayText = "拒绝续费";
-                    break;
-                case "5":
-                    displayText = "逾期";
-                    break;
-                case "6":
-                    displayText = "黑名单";
-                    break;
-                default:
-                    displayText = item.designation;
+        try {
+            // Fetch applicant types from API
+            const response = await fetch(`${API_BASE_URL}?table=applicants types`);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch applicant types: ${response.status}`);
             }
             
-            option.textContent = displayText;
-            memberFilter.appendChild(option);
-        });
+            const data = await response.json();
+            const applicantTypes = data.data || [];
+            
+            // Add options for each applicant type
+            applicantTypes.forEach(item => {
+                const option = document.createElement("option");
+                option.value = item.ID;
+                option.textContent = item["designation of applicant"];
+                memberFilter.appendChild(option);
+            });
+        } catch (error) {
+            console.error("Error fetching applicant types:", error);
+        }
     }
 
     
@@ -145,6 +123,12 @@ document.addEventListener("DOMContentLoaded", function () {
             currentSearchType = 'search';
         } else {
             currentSearchType = 'all';
+        }
+
+        // Add applicant filter if selected
+        if (memberFilter.value) {
+            params.append("applicant", memberFilter.value);
+            console.log("Filtering by applicant:", memberFilter.value);
         }
         
        // Add the filter for designation of applicant if selected
