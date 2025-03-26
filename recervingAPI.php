@@ -38,20 +38,19 @@ class DatabaseAPI {
     
     // Table configuration
     private $allowedTables = [
-        'members' => ['ID', 'membersID', 'Name', 'CName', 'Designation of Applicant', 'Address', 'phone_number', 'email', 'IC', 'oldIC', 'gender', 'componyName', 'Birthday', 'expired date', 'place of birth', 'others', 'remarks'],
-        'applicants types' => ['ID', 'designation of applicant'],
-        'vmembers' => ['ID', 'membersID', 'Name', 'CName', 'designation of applicant', 'Address', 'phone_number', 'email', 'IC', 'oldIC', 'gender', 'componyName', 'Birthday', 'expired date', 'place of birth', 'others','remarks'],
-        'donation' => ['ID', 'Name/Company Name', 'donationTypes', 'Bank', 'membership', 'paymentDate', 'official receipt no', 'amount', 'Remarks'],
-        'vdonation' => ['ID', 'Name/Company Name', 'donationTypes', 'Bank', 'membership', 'paymentDate', 'official receipt no', 'amount', 'Remarks'],
-        'stock' => ['ID', 'Product ID', 'Name', 'stock', 'Price', 'Publisher', 'Remarks', 'Picture'],
-        'soldrecord' => ['ID', 'Book', 'membership', 'Name/Company Name', 'quantity_in', 'quantity_out', 'InvoiceNo', 'Date', 'price', 'Remarks'],
-        'vsoldrecord' => ['ID', 'Book', 'membership', 'Name/Company Name', 'quantity_in', 'quantity_out', 'InvoiceNo', 'Date', 'price', 'Remarks'],
+        'members' => ['ID', 'membersID', 'Name', 'CName', 'Designation_of_Applicant', 'Address', 'phone_number', 'email', 'IC', 'oldIC', 'gender', 'componyName', 'Birthday', 'expired_date', 'place_of_birth', 'others', 'remarks'],
+        'applicants_types' => ['ID', 'designation_of_applicant'],
+        'members_with_applicant_designation' => ['ID', 'membersID', 'Name', 'CName', 'designation_of_applicant', 'Address', 'phone_number', 'email', 'IC', 'oldIC', 'gender', 'componyName', 'Birthday', 'expired_date', 'place_of_birth', 'others','remarks'],
+        'donation' => ['ID', 'Name/Company_Name', 'donationTypes', 'Bank', 'membership', 'paymentDate', 'official_receipt_no', 'amount', 'Remarks'],
+        'donation_details' => ['ID', 'Name/Company_Name', 'donationTypes', 'Bank', 'membership', 'paymentDate', 'official_receipt_no', 'amount', 'Remarks'],
+        'stock' => ['ID', 'Product_ID', 'Name', 'stock', 'Price', 'Publisher', 'Remarks', 'Picture'],
+        'soldrecord' => ['ID', 'Book', 'membership', 'Name/Company_Name', 'quantity_in', 'quantity_out', 'InvoiceNo', 'Date', 'price', 'Remarks'],
+        'vsoldrecord' => ['ID', 'Book', 'membership', 'Name/Company_Name', 'quantity_in', 'quantity_out', 'InvoiceNo', 'Date', 'price', 'Remarks'],
         'event' => ['ID', 'title', 'status', 'start_time', 'end_time', 'created_at', 'location', 'description', 'max_participant', 'registration_deadline', 'price', 'online_link'],
         'participants' => ['ID', 'eventID', 'memberID', 'joined_at'],
         'vparticipants' => ['ID', 'memberID', 'Name', 'CName', 'phone_number', 'email', 'IC', 'eventID', 'joined_at'],
-        'blacklist' => ['ID', 'membersID', 'Name', 'CName', 'designation of applicant', 'Address', 'phone_number', 'email', 'IC', 'oldIC', 'gender', 'componyName', 'Birthday', 'expired date', 'place of birth', 'others','remarks'],
         'bank'=>['ID','Bank'],
-        'donationtypes'=>['ID','donation Types'],
+        'donationtypes'=>['ID','donation_Types'],
     ];
     
     // Table mappings
@@ -200,13 +199,21 @@ class DatabaseAPI {
      * Handle search with specific parameters including special conditions
      */
     private function handleParameterizedSearch($table, $specificParams) {
+        error_log('Specific Params: ' . print_r($specificParams, true));
+        
         $allowedColumns = $this->allowedTables[$table];
         
+        $normalizedParams = [];
+        foreach ($specificParams as $key => $value) {
+            $normalizedKey = str_replace(['+', '%20'], ' ', $key);
+            $normalizedParams[$normalizedKey] = $value;
+        }
+
         // Separate special and normal parameters
         //specialParams is the special conditions
         //normalParams is other specific params that is not inside the special paramas
-        $specialParams = array_intersect_key($specificParams, $this->specialConditions[$table] ?? []);
-        $normalParams = array_diff_key($specificParams, $specialParams);
+        $specialParams = array_intersect_key($normalizedParams, $this->specialConditions[$table] ?? []);
+        $normalParams = array_diff_key($normalizedParams, $specialParams);
         
         // Filter normal params to only include allowed columns
         $searchColumns = array_intersect_key($normalParams, array_flip($allowedColumns));
@@ -304,8 +311,9 @@ class DatabaseAPI {
         $types = '';
         
         foreach ($searchColumns as $column => $value) {
+            $normalizedColumn = str_replace(['+', '%20'], ' ', $column);
             if (!empty($value)) {
-                $conditions[] = "`$column` = ?";
+                $conditions[] = "`$normalizedColumn` = ?";
                 $params[] = $value;
                 $types .= is_numeric($value) ? 'i' : 's';
             }

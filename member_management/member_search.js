@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", function () {
         
         try {
             // Fetch applicant types from API
-            const response = await fetch(`${API_BASE_URL}?table=applicants types`);
+            const response = await fetch(`${API_BASE_URL}?table=applicants_types`);
             if (!response.ok) {
                 throw new Error(`Failed to fetch applicant types: ${response.status}`);
             }
@@ -62,8 +62,8 @@ document.addEventListener("DOMContentLoaded", function () {
             // Add options for each applicant type
             applicantTypes.forEach(item => {
                 const option = document.createElement("option");
-                option.value = item["designation of applicant"];
-                option.textContent = item["designation of applicant"];
+                option.value = item["designation_of_applicant"];
+                option.textContent = item["designation_of_applicant"];
                 memberFilter.appendChild(option);
             });
         } catch (error) {
@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
         memberTableBody.innerHTML = "";
         
         const params = new URLSearchParams();
-        params.append("table", "vmembers");
+        params.append("table", "members_with_applicant_designation");
         params.append("limit", itemsPerPage);
         params.append("page", currentPage);
         
