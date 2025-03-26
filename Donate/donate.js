@@ -4,8 +4,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const donationForm = document.getElementById('donationForm');
     const errorMessages = document.getElementById('errorMessages');
     const loadingIndicator = document.getElementById('loadingIndicator');
-    const printButton = document.getElementById('printButton');
-    const deleteButton = document.getElementById('deleteButton');
     const donationId = new URLSearchParams(window.location.search).get('id');
     const membershipSelect = document.getElementById('membership');
     const newMemberId = new URLSearchParams(window.location.search).get('memberId');
@@ -47,9 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    printButton.addEventListener('click', function() {
-        window.print();
-    });
+  
 
     // 模态框事件监听器
     modalClose.addEventListener('click', function() {
@@ -472,18 +468,19 @@ function closeSearchModal() {
         }
 
         const fieldMap = {
-            'Name/Company Name': 'Name/Company Name',
-            'donationTypes': 'donationTypes',
-            'Remarks': 'Remarks',
-            'receipt_no': 'official receipt no',
-            'bank': 'Bank',
-            'amount': 'amount',
-            'paymentDate': 'paymentDate',
-            'id': 'ID',
-            'membership': 'membership'
+    'nameCompany': 'Name/Company Name',
+    'donationTypes': 'Donation Type',
+    'remarks': 'Remarks',
+    'receiptNo': 'Official Receipt No',
+    'bank': 'Bank',
+    'amount': 'Amount',
+    'paymentDate': 'Payment Date',
+    'donationId': 'ID',
+    'membership': 'Membership'
         };
 
         formData.forEach((value, key) => {
+            console.log(`Processing key: ${key}, Value: ${value}`);
             if (fieldMap[key]) {
                 // Use the mapped field name
                 const mappedKey = fieldMap[key];
@@ -500,10 +497,12 @@ function closeSearchModal() {
                 } else {
                     data[mappedKey] = value;
                 }
+                console.log(`Mapped ${key} to ${mappedKey}: ${data[mappedKey]}`);
             } else if (key !== 'membership' && key !== 'csrf_token' && key !== 'memberId') {
                 // For unmapped fields (except special handling ones)
                 data[key] = value;
             }
+            console.log('Final data being sent:', JSON.stringify(data, null, 2));
         });
 
         // Handle membership value from select
@@ -581,6 +580,7 @@ function closeSearchModal() {
             try {
                 parsedData = JSON.parse(rawResponse);
             } catch (e) {
+                console.error('Response parsing error:', e);
                 showError('API返回格式错误: ' + rawResponse);
                 return;
             }
@@ -793,15 +793,34 @@ function closeSearchModal() {
             // Save current form data to session storage
             saveFormDataToSession();
             
+            const tableMapping = {
+                'bank': {
+                    table: 'bank',
+                    fields: {
+                        type: 'Bank',
+                        value: newValue.trim()
+                    }
+                },
+                'donation_type': {
+                    table: 'donationtypes',
+                    fields: {
+                        type: 'donation Types',
+                        value: newValue.trim()
+                    }
+                }
+            };
+
+            const mappingConfig = tableMapping[apiField] || tableMapping['bank'];
+
             // Send API request to add new option
-            fetch(`${API_BASE_URL}?table=options&action=add_option`, {
+            fetch(`${API_BASE_URL}?table=${mappingConfig.table}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    type: apiField,
-                    value: newValue
+                    type: mappingConfig.fields.type,
+                    value: mappingConfig.fields.value
                 })
             })
             .then(response => response.json())
@@ -824,8 +843,8 @@ function closeSearchModal() {
                     }
                     
                     // Select the new option
-                    selectElement.value = newValue;
-                    
+                    selectElement.value = newValue.trim();
+                    alert(`${itemType}添加成功！`);
                 } else {
                     alert(`添加新${itemType}失败: ${data.message || '未知错误'}`);
                     resetSelectToDefault(selectElement);
@@ -859,56 +878,14 @@ function closeSearchModal() {
     if (!donationId) {
         restoreFormDataFromSession();
     }
+   
     
-    // Delete button functionality
-    if (deleteButton) {
-        deleteButton.addEventListener('click', function() {
-            if (confirm('确定要删除此捐赠记录吗？此操作不可撤销。')) {
-                deleteDonation();
-            }
-        });
-    }
     
-    // Function to delete donation
-    async function deleteDonation() {
-        if (!donationId) {
-            showError('无法删除：记录ID未找到');
-            return;
-        }
-        
-        try {
-            showLoading();
-            
-            const response = await fetch(`../recervingAPI.php?table=donation&action=delete_donation`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    id: donationId
-                })
-            });
-            
-            const data = await response.json();
-            
-            if (data.status === 'success') {
-                alert('捐赠记录已成功删除');
-                window.location.href = 'searchDonate.html';
-            } else {
-                showError('删除捐赠记录失败: ' + (data.message || '未知错误'));
-            }
-        } catch (error) {
-            showError('删除捐赠记录时出错: ' + error.message);
-            console.error('删除捐赠记录错误:', error);
-        } finally {
-            hideLoading();
-        }
-    }
     
     // Initialize dropdowns with options from API
     async function initializeDropdowns() {
         try {
-            const response = await fetch(`${API_BASE_URL}?table=options&action=get_options`);
+            const response = await fetch(`${API_BASE_URL}?table=donationtypes`);
             const data = await response.json();
             
             if (data.status === 'success' && data.options) {
@@ -960,6 +937,12 @@ function closeSearchModal() {
         }
     }
     
+
+
+
+
+    
+
     // Call dropdown initialization on page load
     initializeDropdowns();
 });

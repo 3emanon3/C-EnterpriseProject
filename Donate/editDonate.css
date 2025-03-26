@@ -251,11 +251,28 @@ legend {
     border-collapse: collapse;
 }
 
+.modal table tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  .modal table tr:hover {
+    background-color: #f0f0f0;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
 .modal th, .modal td {
     padding: 10px;
     text-align: left;
     border-bottom: 1px solid #ddd;
 }
+
+.modal .modal-content {
+    width: 95%;
+    max-width: 900px;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
 
 .modal th {
     background-color: #f8f9fa;
@@ -299,3 +316,14 @@ legend {
     opacity: 0.5;
     cursor: not-allowed;
 }
+
+
+@media (max-width: 600px) {
+    .search-container {
+      flex-direction: column;
+    }
+    
+    .modal table {
+      font-size: 0.9rem;
+    }
+  }

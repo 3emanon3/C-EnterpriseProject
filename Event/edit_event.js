@@ -90,6 +90,7 @@ function populateForm(event) {
     document.getElementById('eventStatus').value = event.status || 'not started';
     document.getElementById('eventStartTime').value = formatDateTimeForInput(event.start_time) || '';
     document.getElementById('eventEndTime').value = formatDateTimeForInput(event.end_time) || '';
+    document.getElementById('eventCreateTime').value = this.formatDateTimeForInput(event.created_at) || '';
     document.getElementById('eventLocation').value = event.location || '';
     document.getElementById('eventDescription').value = event.description || '';
     document.getElementById('eventMaxParticipant').value = event.max_participant || '';
