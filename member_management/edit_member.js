@@ -484,7 +484,7 @@ async function handleSubmit(event) {
         
         if (responseData.status === 'success' || response.ok) {
             alert('Member information saved successfully!');
-            window.location.href = 'member_search.html?update=success';
+            window.history.back();
         } else {
             throw new Error(responseData.message || 'Operation failed');
         }

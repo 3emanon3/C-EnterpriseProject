@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Members Joined</title>
+    <link rel="stylesheet" href="eventDetails.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header-actions">
+            <button class="btn btn-secondary" onclick="location.href='searchEvent.html'">
+                <i class="fas fa-arrow-left"></i> 返回
+            </button>
+            <button class="btn btn-success" id="addMemberBtn">
+                <i class="fas fa-user-plus"></i> 增加会员
+            </button>
+        </div>
+    <h1>Members List</h1>
+    <table>
+        <thead>
+            <tr>
+              
+            </tr>
+        </thead>
+        <tbody>
+            
+        </tbody>
+    </table>
+
+    <!-- 会员搜索模态框 -->
+    <div id="memberSearchModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>搜索会员</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="search-container">
+                    <input type="text" id="modalSearchInput" placeholder="输入会员姓名、ID或公司名称搜索..." autofocus>
+                    <button id="modalSearchButton"><i class="fas fa-search"></i> 搜索</button>
+                </div>
+                <div id="modalLoadingIndicator" class="loading" style="display: none;">正在加载...</div>
+                <div id="modalNoResults" class="no-results" style="display: none;">没有找到匹配的会员</div>
+                <div class="results-container">
+                    <table id="modalResultsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>姓名(英)</th>
+                                <th>姓名(中)</th>
+                                <th>联系方式</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modalResultsBody">
+                        </tbody>
+                    </table>
+                </div>
+                <div id="modalPagination" class="pagination">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="eventDetails.js"></script>
+</body>
+</html>

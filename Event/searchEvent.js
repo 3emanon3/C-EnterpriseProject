@@ -124,6 +124,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <td>
                 <button class="btn btn-edit" data-id="${event.ID}">编辑</button>
                 <button class="btn btn-delete" data-id="${event.ID}">删除</button>
+                <button class="btn btn-view" data-id="${event.ID}">查看</button>
                 </td>
             `;
             eventTableBody.appendChild(row);
@@ -386,9 +387,26 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
-    window.viewEventDetails = function (id) {
-        window.location.href = `eventDetails.html?id=${id}`;
-    };
+
+    
+    // Existing viewEventDetails function (already present in the code)
+window.viewEventDetails = function (id) {
+    window.location.href = `eventDetails.html?id=${id}`;
+};
+
+// Update the event listener to include view button handling
+eventTableBody.addEventListener('click', function(e) {
+    if (e.target.classList.contains('btn-edit')) {
+        const id = e.target.dataset.id;
+        editEvent(id);
+    } else if (e.target.classList.contains('btn-delete')) {
+        const id = e.target.dataset.id;
+        deleteEvent(id);
+    } else if (e.target.classList.contains('btn-view')) {
+        const id = e.target.dataset.id;
+        viewEventDetails(id);
+    }
+});
     
     // Table column resizing
     tableHeaders.forEach(th => {
