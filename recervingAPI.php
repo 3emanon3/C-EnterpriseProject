@@ -38,9 +38,9 @@ class DatabaseAPI {
     
     // Table configuration
     private $allowedTables = [
-        'members' => ['ID', 'membersID', 'Name', 'CName', 'Designation_of_Applicant', 'Address', 'phone_number', 'email', 'IC', 'oldIC', 'gender', 'componyName', 'Birthday', 'expired_date', 'place_of_birth', 'others', 'remarks'],
+        'members' => ['ID', 'membersID', 'Name', 'CName', 'Designation_of_Applicant', 'Address', 'phone_number', 'email', 'IC', 'oldIC', 'gender', 'componyName', 'Birthday', 'expired_date', 'place_of_birth', 'position', 'others', 'remarks'],
         'applicants_types' => ['ID', 'designation_of_applicant'],
-        'members_with_applicant_designation' => ['ID', 'membersID', 'Name', 'CName', 'designation_of_applicant', 'Address', 'phone_number', 'email', 'IC', 'oldIC', 'gender', 'componyName', 'Birthday', 'expired_date', 'place_of_birth', 'others','remarks'],
+        'members_with_applicant_designation' => ['ID', 'membersID', 'Name', 'CName', 'designation_of_applicant', 'Address', 'phone_number', 'email', 'IC', 'oldIC', 'gender', 'componyName', 'Birthday', 'expired_date', 'place_of_birth', 'position', 'others','remarks'],
         'donation' => ['ID', 'Name/Company_Name', 'donationTypes', 'Bank', 'membership', 'paymentDate', 'official_receipt_no', 'amount', 'Remarks'],
         'donation_details' => ['ID', 'Name/Company_Name', 'donationTypes', 'Bank', 'membership', 'paymentDate', 'official_receipt_no', 'amount', 'Remarks'],
         'stock' => ['ID', 'Product_ID', 'Name', 'stock', 'Price', 'Publisher', 'Remarks', 'Picture'],
