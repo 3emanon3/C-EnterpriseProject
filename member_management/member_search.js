@@ -1,8 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
+    // ===== CONFIGURATION =====
     const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
 
-   
-    // DOM Elements
+    // ===== DOM ELEMENTS =====
     const searchInput = document.getElementById("searchInput");
     const memberTableBody = document.querySelector("#memberTable tbody");
     const totalMembers = document.getElementById("totalMembers");
@@ -13,25 +13,30 @@ document.addEventListener("DOMContentLoaded", function () {
     const birthdayButton = document.getElementById("searchBirthday");
     const expiredButton = document.getElementById("searchExpiry");
     const listAllMembersButton = document.getElementById("listAllMembers");
-    const memberFilterSelect = document.getElementById("memberFilter"); // Add reference to the new filter
+    const memberFilter = document.getElementById("memberFilter");
     const table = document.getElementById('memberTable');
     const tableHeaders = table.querySelectorAll('th');
     const paginationContainer = document.querySelector('.pagination');
-    const memberFilter=document.getElementById('memberFilter')
 
-    // State variables
+    // ===== STATE VARIABLES =====
     let currentPage = 1;
     let itemsPerPage = parseInt(itemsPerPageSelect?.value || 10);
     let sortColumn = '';
     let sortDirection = '';
     let totalPages = 0;
     let currentSearchType = 'all';
-    let currentFilterValue = ''; // New variable to track current filter
+    let currentFilterValue = '';
     let membersData = [];
     
-    fetchApplicantType();
+    // ===== INITIALIZATION =====
+    function initializePage() {
+        fetchApplicantType();
+        initializeEventListeners();
+        initializeResizableColumns();
+        fetchMembers(); // Initial data fetch
+    }
 
-
+    // ===== DATA FETCHING FUNCTIONS =====
     async function fetchApplicantType() {
         if (!memberFilter) {
             console.log("memberFilter element not found in the DOM");
@@ -71,41 +76,13 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    
-
-
-    
-    // Debounce function to limit API calls during rapid typing
-    function debounce(func, wait) {
-        let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
-    }
-    
-    // Debounced search
-    const debouncedSearch = debounce((searchText) => {
-        console.log("Searching for:", searchText); 
-        currentPage = 1; // Reset to first page when searching
-        fetchMembers(searchText);
-    }, 300); // 300ms delay
-    
-    searchInput?.addEventListener("input", function() {
-        debouncedSearch(this.value);
-    });
-
     // Fetch members data from API
     async function fetchMembers(query = "") {
         loader.style.display = "block";
         memberTableBody.innerHTML = "";
         
         const params = new URLSearchParams();
-        params.append("table", "members");
+        params.append("table", "members_with_applicant_designation");
         params.append("limit", itemsPerPage);
         params.append("page", currentPage);
         
@@ -122,7 +99,6 @@ document.addEventListener("DOMContentLoaded", function () {
             
         } else if (query.trim() !== "") {
             params.append("search", query);
-            //params.append("search_fields", "membersID,Name,CName,Address,phone_number,email,IC,oldIC,gender,companyName,Birthday,remarks");
             currentSearchType = 'search';
         } else {
             currentSearchType = 'all';
@@ -135,19 +111,18 @@ document.addEventListener("DOMContentLoaded", function () {
             console.log("Filtering by applicant:", memberFilter.value);
         }
 
-
         // Add sorting parameters
         if (sortColumn) {
             // Fix any column name mismatches between frontend and database
             let dbSortColumn = sortColumn;
             if (sortColumn === 'componyName') {
-                dbSortColumn = 'componyName'; // Fixing a possible typo in column name
+                dbSortColumn = 'componyName';
             } else if (sortColumn === 'expired_date' || sortColumn === 'expiredDate') {
-                dbSortColumn = 'expired_date'; // Use the actual database column name
+                dbSortColumn = 'expired_date';
             } else if (sortColumn === 'place of birth' || sortColumn === 'placeOfBirth') {
-                dbSortColumn = 'place of birth'; // Use the actual database column name
-            }else if (sortColumn === 'Designation of Applicant') {
-                dbSortColumn = 'designation_of_applicant'; // Match the actual database column name
+                dbSortColumn = 'place of birth';
+            } else if (sortColumn === 'Designation of Applicant') {
+                dbSortColumn = 'designation_of_applicant';
             }
             
             params.append("sort", dbSortColumn);
@@ -203,6 +178,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
     
+    // ===== DISPLAY FUNCTIONS =====
     // Display members in the table
     function displayMembers(members) {
         memberTableBody.innerHTML = "";
@@ -243,21 +219,10 @@ document.addEventListener("DOMContentLoaded", function () {
             };
             
             // Get proper field values with fallbacks
-<<<<<<< HEAD
             const designation = member['designation_of_applicant'];
-=======
-            const designation = member['Designation_of_Applicant'];
-          
->>>>>>> 84b8fdaf3b8e29bfdeb5ef6d9d987b7003bac84a
-            
-            const expiredDate = member['expired_date'] 
-                             
-                                   
-            const placeOfBirth =  member['place_of_birth']
-                               
-
-            const gender = member['gender'] 
-                         
+            const expiredDate = member['expired_date'];
+            const placeOfBirth = member['place_of_birth'];
+            const gender = member['gender'];
             
             // Format functions
             const formatPhone = (phone) => {
@@ -312,40 +277,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 </td>
             `;
             memberTableBody.appendChild(row);
-        });
-    }
-    
-    // Handle sort column click
-    function handleSortClick(columnName) {
-        if (sortColumn === columnName) {
-            sortDirection = sortDirection === 'ASC' ? 'DESC' : 'ASC';
-        } else {
-            sortColumn = columnName;
-            sortDirection = 'ASC';
-        }
-        currentPage = 1;
-        updateSortIcons();
-        fetchMembers(searchInput.value);
-    }
-    
-    // Update sort icons in table headers
-    function updateSortIcons() {
-        document.querySelectorAll('th[data-column]').forEach(th => {
-            const icon = th.querySelector('i') || document.createElement('i');
-            icon.className = 'sort-arrow fas';
-            
-            if (th.dataset.column === sortColumn) {
-                icon.classList.remove('fa-sort');
-                icon.classList.add(sortDirection === 'ASC' ? 'fa-sort-up' : 'fa-sort-down');
-            } else {
-                icon.classList.remove('fa-sort-up', 'fa-sort-down');
-                icon.classList.add('fa-sort');
-            }
-            
-            // Add icon if it doesn't exist
-            if (!th.querySelector('i')) {
-                th.appendChild(icon);
-            }
         });
     }
     
@@ -407,120 +338,119 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
     
-    function initializeResizableColumns() {
-    const table = document.getElementById('memberTable'); // Ensure we get the table
-    if (!table) return;
-    const tableHeaders = table.querySelectorAll('thead th'); // Select only thead headers
-
-    tableHeaders.forEach(th => {
-        // Ensure the header is one that should be resizable (e.g., has data-column)
-        if (!th.dataset.column && !th.querySelector('.resizer')) return; 
-
-        const resizer = th.querySelector('.resizer') || document.createElement('div');
-        if (!th.querySelector('.resizer')) {
-             resizer.className = 'resizer';
-             th.appendChild(resizer);
-        }
-
-        // Prevent text selection during resize
-        resizer.addEventListener('selectstart', (e) => e.preventDefault());
-
-        // Use mousedown on the resizer
-        resizer.addEventListener('mousedown', initResize);
-
-        function initResize(e) {
-            // Ensure we are resizing the correct header (the parent of the resizer)
-            const currentTh = e.target.parentElement; 
-            if (!currentTh || currentTh.tagName !== 'TH') return;
-
-            // Prevent default to stop text selection etc.
-            e.preventDefault();
-            e.stopPropagation();
-
-            const startX = e.pageX;
-            const startWidth = currentTh.offsetWidth;
-            // Get the container for visual feedback
-            const tableContainer = table.closest('.table-container'); 
-
-            // Add resizing class for styling feedback
-            currentTh.classList.add('resizing');
-            if (tableContainer) tableContainer.classList.add('resizing'); // On outer container too
-
-            // Use document-level event listeners for reliable tracking
-            document.addEventListener('mousemove', performResize);
-            document.addEventListener('mouseup', stopResize);
-
-            function performResize(moveEvent) {
-                // Calculate new width
-                let newWidth = startWidth + (moveEvent.pageX - startX);
-
-                // Enforce minimum width (e.g., 50px)
-                const minWidth = 50; 
-                newWidth = Math.max(minWidth, newWidth);
-                
-                // Optional: Enforce a maximum width if desired (e.g., 800px)
-                // const maxWidth = 800; 
-                // newWidth = Math.min(maxWidth, newWidth);
-
-                // Apply width directly to the TH element
-                // Using style.width is fine with table-layout: fixed
-                currentTh.style.width = `${newWidth}px`; 
-                
-                 // Setting min/max width might be overly restrictive, 
-                 // but can prevent collapsing too much if needed.
-                 // currentTh.style.minWidth = `${newWidth}px`; 
-                  
-                 // REMOVED/COMMENTED OUT: No need to adjust others automatically for this goal
-                 // updateRelatedColumns(currentTh, newWidth); 
+    // Update sort icons in table headers
+    function updateSortIcons() {
+        document.querySelectorAll('th[data-column]').forEach(th => {
+            const icon = th.querySelector('i') || document.createElement('i');
+            icon.className = 'sort-arrow fas';
+            
+            if (th.dataset.column === sortColumn) {
+                icon.classList.remove('fa-sort');
+                icon.classList.add(sortDirection === 'ASC' ? 'fa-sort-up' : 'fa-sort-down');
+            } else {
+                icon.classList.remove('fa-sort-up', 'fa-sort-down');
+                icon.classList.add('fa-sort');
             }
-
-            function stopResize() {
-                // Remove event listeners
-                document.removeEventListener('mousemove', performResize);
-                document.removeEventListener('mouseup', stopResize);
-
-                // Remove resizing class feedback
-                currentTh.classList.remove('resizing');
-                 if (tableContainer) tableContainer.classList.remove('resizing');
-
-                // Optional: Save column widths after resizing stops
-                saveColumnWidths();
-            }
-        }
-    });
-
-    // Load saved widths on initialization
-    loadColumnWidths(); // Make sure this works with the applied style.width
-}
-    
-    function updateRelatedColumns(resizedHeader, newWidth) {
-        // Optional: Add logic to adjust other columns if needed
-        // For example, you might want to redistribute extra space
-        const table = resizedHeader.closest('table');
-        const headers = table.querySelectorAll('th');
-        const totalColumns = headers.length;
-        
-        // Simple redistribution logic
-        const averageWidth = (table.offsetWidth - newWidth) / (totalColumns - 1);
-        
-        headers.forEach(header => {
-            if (header !== resizedHeader) {
-                header.style.width = `${averageWidth}px`;
+            
+            // Add icon if it doesn't exist
+            if (!th.querySelector('i')) {
+                th.appendChild(icon);
             }
         });
     }
     
+    // ===== SORTING FUNCTIONS =====
+    // Handle sort column click
+    function handleSortClick(columnName) {
+        if (sortColumn === columnName) {
+            sortDirection = sortDirection === 'ASC' ? 'DESC' : 'ASC';
+        } else {
+            sortColumn = columnName;
+            sortDirection = 'ASC';
+        }
+        currentPage = 1;
+        updateSortIcons();
+        fetchMembers(searchInput.value);
+    }
+    
+    // ===== COLUMN RESIZING FUNCTIONS =====
+    function initializeResizableColumns() {
+        const table = document.getElementById('memberTable');
+        if (!table) return;
+        const tableHeaders = table.querySelectorAll('thead th');
+
+        tableHeaders.forEach(th => {
+            // Ensure the header is one that should be resizable
+            if (!th.dataset.column && !th.querySelector('.resizer')) return; 
+
+            const resizer = th.querySelector('.resizer') || document.createElement('div');
+            if (!th.querySelector('.resizer')) {
+                resizer.className = 'resizer';
+                th.appendChild(resizer);
+            }
+
+            // Prevent text selection during resize
+            resizer.addEventListener('selectstart', (e) => e.preventDefault());
+
+            // Use mousedown on the resizer
+            resizer.addEventListener('mousedown', initResize);
+
+            function initResize(e) {
+                // Ensure we are resizing the correct header
+                const currentTh = e.target.parentElement; 
+                if (!currentTh || currentTh.tagName !== 'TH') return;
+
+                // Prevent default to stop text selection etc.
+                e.preventDefault();
+                e.stopPropagation();
+
+                const startX = e.pageX;
+                const startWidth = currentTh.offsetWidth;
+                const tableContainer = table.closest('.table-container'); 
+
+                // Add resizing class for styling feedback
+                currentTh.classList.add('resizing');
+                if (tableContainer) tableContainer.classList.add('resizing');
+
+                // Use document-level event listeners for reliable tracking
+                document.addEventListener('mousemove', performResize);
+                document.addEventListener('mouseup', stopResize);
+
+                function performResize(moveEvent) {
+                    // Calculate new width
+                    let newWidth = startWidth + (moveEvent.pageX - startX);
+                    const minWidth = 50; 
+                    newWidth = Math.max(minWidth, newWidth);
+                    currentTh.style.width = `${newWidth}px`; 
+                }
+
+                function stopResize() {
+                    // Remove event listeners
+                    document.removeEventListener('mousemove', performResize);
+                    document.removeEventListener('mouseup', stopResize);
+
+                    // Remove resizing class feedback
+                    currentTh.classList.remove('resizing');
+                    if (tableContainer) tableContainer.classList.remove('resizing');
+
+                    // Save column widths after resizing stops
+                    saveColumnWidths();
+                }
+            }
+        });
+
+        // Load saved widths on initialization
+        loadColumnWidths();
+    }
+    
+    // Save column widths to localStorage
     function saveColumnWidths() {
         try {
             const widths = {};
             tableHeaders.forEach(header => {
                 const column = header.dataset.column;
                 if (column) {
-                    widths[column] = {
-                        width: header.style.width,
-                        minWidth: header.style.minWidth,
-                        maxWidth: header.style.maxWidth
-                    };
+                    widths[column] = header.style.width;
                 }
             });
             localStorage.setItem('columnWidths', JSON.stringify(widths));
@@ -529,6 +459,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
     
+    // Load column widths from localStorage
     function loadColumnWidths() {
         try {
             const savedWidths = JSON.parse(localStorage.getItem('columnWidths') || '{}');
@@ -536,12 +467,9 @@ document.addEventListener("DOMContentLoaded", function () {
             tableHeaders.forEach(header => {
                 const column = header.dataset.column;
                 if (savedWidths[column]) {
-                    const columnWidth = savedWidths[column];
-                    header.style.width = columnWidth.width || '100px';
-                    header.style.minWidth = columnWidth.minWidth || '50px';
-                    header.style.maxWidth = columnWidth.maxWidth || '500px';
+                    header.style.width = savedWidths[column];
                 } else {
-                    // Default width logic
+                    // Set default widths based on column type
                     setDefaultColumnWidth(header);
                 }
             });
@@ -550,6 +478,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
     
+    // Set default column width based on column type
     function setDefaultColumnWidth(header) {
         const column = header.dataset.column;
         switch (column) {
@@ -580,126 +509,122 @@ document.addEventListener("DOMContentLoaded", function () {
         header.style.maxWidth = '500px';
     }
     
-    // Save column widths to localStorage
-    function saveColumnWidths() {
+    // Function to reset column widths to default values
+    function resetColumnWidths() {
         try {
-            const widths = {};
-            tableHeaders.forEach(header => {
-                widths[header.dataset.column] = header.style.width;
-            });
-            localStorage.setItem('columnWidths', JSON.stringify(widths));
-        } catch (error) {
-            console.error('Error saving column widths:', error);
-        }
-    }
-    
-    // Load column widths from localStorage
-    function loadColumnWidths() {
-        try {
-            const savedWidths = JSON.parse(localStorage.getItem('columnWidths') || '{}');
+            // Remove saved column widths from localStorage
+            localStorage.removeItem('columnWidths');
             
+            // Apply default widths to all table headers
             tableHeaders.forEach(header => {
-                const column = header.dataset.column;
-                if (savedWidths[column]) {
-                    header.style.width = savedWidths[column];
-                } else {
-                    // Set default widths based on column type
-                    switch (column) {
-                        case 'membersID':
-                        case 'gender':
-                            header.style.width = '80px';
-                            break;
-                        case 'Name':
-                        case 'CName':
-                        case 'email':
-                            header.style.width = '150px';
-                            break;
-                        case 'Address':
-                        case 'remarks':
-                            header.style.width = '200px';
-                            break;
-                        case 'phone_number':
-                        case 'IC':
-                        case 'oldIC':
-                            header.style.width = '120px';
-                            break;
-                        default:
-                            header.style.width = '100px';
-                    }
-                }
+                setDefaultColumnWidth(header);
             });
+            
+            console.log('Column widths reset to default values');
         } catch (error) {
-            console.error('Error loading column widths:', error);
+            console.error('Error resetting column widths:', error);
         }
     }
     
-    // Add event listeners
-    tableHeaders.forEach(th => {
-        if (th.dataset.column) {
-            th.addEventListener('click', function() {
-                handleSortClick(th.dataset.column);
-            });
-        }
-    });
+    // ===== UTILITY FUNCTIONS =====
+    // Debounce function to limit API calls during rapid typing
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
     
-    prevPageButton?.addEventListener("click", function () {
-        if (currentPage > 1) {
-            currentPage -= 1;
-            fetchMembers(searchInput.value);
-        }
-    });
+    // ===== EVENT LISTENERS =====
+    function initializeEventListeners() {
+        // Search input
+        const debouncedSearch = debounce((searchText) => {
+            console.log("Searching for:", searchText); 
+            currentPage = 1; // Reset to first page when searching
+            fetchMembers(searchText);
+        }, 300); // 300ms delay
+        
+        searchInput?.addEventListener("input", function() {
+            debouncedSearch(this.value);
+        });
+        
+        // Table header sorting
+        tableHeaders.forEach(th => {
+            if (th.dataset.column) {
+                th.addEventListener('click', function() {
+                    handleSortClick(th.dataset.column);
+                });
+            }
+        });
+        
+        // Pagination controls
+        prevPageButton?.addEventListener("click", function () {
+            if (currentPage > 1) {
+                currentPage -= 1;
+                fetchMembers(searchInput.value);
+            }
+        });
+        
+        nextPageButton?.addEventListener("click", function () {
+            if (currentPage < totalPages) {
+                currentPage += 1;
+                fetchMembers(searchInput.value);
+            }
+        });
+        
+        // Filter buttons
+        birthdayButton?.addEventListener("click", function() {
+            console.log("Birthday button clicked");
+            currentPage = 1;
+            currentSearchType = 'Birthday';
+            currentFilterValue = ''; // Reset filter when changing search type
+            if (memberFilter) memberFilter.selectedIndex = 0; // Reset filter dropdown
+            if (searchInput) searchInput.value = '';
+            fetchMembers();
+        });
+        
+        expiredButton?.addEventListener("click", function() {
+            currentPage = 1;
+            currentSearchType = 'expired';
+            currentFilterValue = ''; // Reset filter when changing search type
+            if (memberFilter) memberFilter.selectedIndex = 0; // Reset filter dropdown
+            if (searchInput) searchInput.value = '';
+            fetchMembers();
+        });
+        
+        listAllMembersButton?.addEventListener("click", function() {
+            currentPage = 1;
+            currentSearchType = 'all';
+            currentFilterValue = ''; // Reset filter when changing search type
+            if (memberFilter) memberFilter.selectedIndex = 0; // Reset filter dropdown
+            if (searchInput) searchInput.value = '';
+            fetchMembers();
+        });
+        
+        // Member filter dropdown
+        memberFilter?.addEventListener('change', function() {
+            currentFilterValue = this.value;
+            currentPage = 1; // Reset to first page when filtering
+            fetchMembers();
+        });
+        
+        // Items per page change
+        itemsPerPageSelect?.addEventListener("change", function () {
+            itemsPerPage = parseInt(this.value);
+            currentPage = 1; // Reset to first page when changing items per page
+            fetchMembers(searchInput?.value || '');
+        });
+    }
     
-    nextPageButton?.addEventListener("click", function () {
-        if (currentPage < totalPages) {
-            currentPage += 1;
-            fetchMembers(searchInput.value);
-        }
-    });
+    // ===== GLOBAL FUNCTIONS =====
+    // These functions need to be accessible from the global scope
     
-    birthdayButton?.addEventListener("click", function() {
-        console.log("Birthday button clicked"); // Debugging
-        currentPage = 1;
-        currentSearchType = 'Birthday';
-        currentFilterValue = ''; // Reset filter when changing search type
-        if (memberFilterSelect) memberFilterSelect.selectedIndex = 0; // Reset filter dropdown
-        if (searchInput) searchInput.value = '';
-        fetchMembers();
-    });
-    
-    expiredButton?.addEventListener("click", function() {
-        currentPage = 1;
-        currentSearchType = 'expired';
-        currentFilterValue = ''; // Reset filter when changing search type
-        if (memberFilterSelect) memberFilterSelect.selectedIndex = 0; // Reset filter dropdown
-        if (searchInput) searchInput.value = '';
-        fetchMembers();
-    });
-    
-    listAllMembersButton?.addEventListener("click", function() {
-        currentPage = 1;
-        currentSearchType = 'all';
-        currentFilterValue = ''; // Reset filter when changing search type
-        if (memberFilterSelect) memberFilterSelect.selectedIndex = 0; // Reset filter dropdown
-        if (searchInput) searchInput.value = '';
-        fetchMembers();
-    });
-    
-    
-    // Add event listener for member filter
-    memberFilter?.addEventListener('change', function() {
-        currentFilterValue = this.value;
-        currentPage = 1; // Reset to first page when filtering
-        fetchMembers();
-    });
-    
-    // Items per page change
-    itemsPerPageSelect?.addEventListener("change", function () {
-        itemsPerPage = parseInt(this.value);
-        currentPage = 1; // Reset to first page when changing items per page
-        fetchMembers(searchInput?.value || '');
-    });
-    
-    // Global functions
+    // Edit member function
     window.editMember = function(id) {
         if (!id) {
             console.error("Cannot edit member: No ID provided");
@@ -709,6 +634,7 @@ document.addEventListener("DOMContentLoaded", function () {
         window.location.href = `edit_member.html?id=${id}`;
     };
     
+    // Delete member function
     window.deleteMember = async function(id) {
         if (!id) {
             console.error("Cannot delete member: No ID provided");
@@ -774,7 +700,8 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
-    window.checkMember = async function (id) {
+    // Check member details function
+    window.checkMember = function(id) {
         if (!id) {
             console.error("Cannot edit member: No ID provided");
             alert("无法查看：会员ID未提供");
@@ -783,14 +710,15 @@ document.addEventListener("DOMContentLoaded", function () {
         window.location.href = `check_details.html?id=${id}`;
     };
      
+    // Change page function
     window.changePage = function(page) {
         if (page >= 1 && page <= totalPages && page !== currentPage) {
             currentPage = page;
             fetchMembers(searchInput?.value || '');
-            
         }
     };
     
+    // Jump to page function
     window.jumpToPage = function() {
         const pageInput = document.getElementById('pageInput');
         if (!pageInput) return;
@@ -817,30 +745,10 @@ document.addEventListener("DOMContentLoaded", function () {
         // Clear input after jumping
         pageInput.value = '';
     };
-    
-    // Function to reset column widths to default values
-    function resetColumnWidths() {
-        try {
-            // Remove saved column widths from localStorage
-            localStorage.removeItem('columnWidths');
-            
-            // Apply default widths to all table headers
-            tableHeaders.forEach(header => {
-                setDefaultColumnWidth(header);
-            });
-            
-            console.log('Column widths reset to default values');
-        } catch (error) {
-            console.error('Error resetting column widths:', error);
-        }
-    }
-    
+
     // Make resetColumnWidths available globally
     window.resetColumnWidths = resetColumnWidths;
     
-    // Initialize resizable columns
-    initializeResizableColumns();
-    
-    // Initial fetch
-    fetchMembers();
+    // Initialize the page
+    initializePage();
 });
