@@ -376,7 +376,7 @@ function populateForm(donation) {
                 showSuccess('Donation updated successfully!');
                 setTimeout(() => {
                     window.location.href = redirectUrl;
-                }, 300);
+                }, 200);
             } else {
                 throw new Error(responseData.message || 'Donation update failed');
             }

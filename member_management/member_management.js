@@ -136,12 +136,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Validate Place of Birth (added)
-        const placeOfBirthField = safeGetElement('place of birth');
-        if (placeOfBirthField && !placeOfBirthField.value.trim()) {
-            isValid = false;
-            errors.push('出生地不能为空');
-            placeOfBirthField.classList.add('error');
-        }
+        
         
         if (!isValid) {
             showError(errors.join('<br>'));

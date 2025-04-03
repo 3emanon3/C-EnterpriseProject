@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", function () {
         memberTableBody.innerHTML = "";
         
         const params = new URLSearchParams();
-        params.append("table", "members_with_applicant_designation");
+        params.append("table", "members");
         params.append("limit", itemsPerPage);
         params.append("page", currentPage);
         

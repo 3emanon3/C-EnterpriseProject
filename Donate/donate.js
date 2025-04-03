@@ -468,7 +468,7 @@ function closeSearchModal() {
         }
 
         const fieldMap = {
-    'nameCompany': 'Name/Company Name',
+    'nameCompany': 'Name/Company_Name',
     'donationTypes': 'donationTypes',
     'remarks': 'Remarks',
     'receiptNo': 'official_receipt_no',
@@ -564,7 +564,7 @@ function closeSearchModal() {
             // Debug log to check what's being sent to server
             console.log('Sending data to server:', JSON.stringify(data));
             
-            const response = await fetch('../recervingAPI.php?table=donation', {
+            const response = await fetch(`${API_BASE_URL}?table=donation`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -610,7 +610,7 @@ function closeSearchModal() {
     async function loadDonationDetails() {
         try {
             showLoading();
-            const response = await fetch(`../recervingAPI.php?table=donation&action=get_donation&id=${donationId}`);
+            const response = await fetch(`${API_BASE_URL}?table=donation&action=get_donation&id=${donationId}`);
 
             const rawResponse = await response.text();
             console.log('Raw API Response:', rawResponse);
