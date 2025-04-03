@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
         memberTableBody.innerHTML = "";
         
         const params = new URLSearchParams();
-        params.append("table", "members_with_applicant_designation");
+        params.append("table", "members");
         params.append("limit", itemsPerPage);
         params.append("page", currentPage);
         
@@ -119,6 +119,7 @@ document.addEventListener("DOMContentLoaded", function () {
         } else if (currentSearchType === 'expired') {
             params.append("expired", "true");
             params.append("search", "true");
+            
         } else if (query.trim() !== "") {
             params.append("search", query);
             //params.append("search_fields", "membersID,Name,CName,Address,phone_number,email,IC,oldIC,gender,companyName,Birthday,remarks");
@@ -141,10 +142,12 @@ document.addEventListener("DOMContentLoaded", function () {
             let dbSortColumn = sortColumn;
             if (sortColumn === 'componyName') {
                 dbSortColumn = 'componyName'; // Fixing a possible typo in column name
-            } else if (sortColumn === 'expired date' || sortColumn === 'expiredDate') {
-                dbSortColumn = 'expired date'; // Use the actual database column name
+            } else if (sortColumn === 'expired_date' || sortColumn === 'expiredDate') {
+                dbSortColumn = 'expired_date'; // Use the actual database column name
             } else if (sortColumn === 'place of birth' || sortColumn === 'placeOfBirth') {
                 dbSortColumn = 'place of birth'; // Use the actual database column name
+            }else if (sortColumn === 'Designation of Applicant') {
+                dbSortColumn = 'designation_of_applicant'; // Match the actual database column name
             }
             
             params.append("sort", dbSortColumn);
@@ -240,22 +243,21 @@ document.addEventListener("DOMContentLoaded", function () {
             };
             
             // Get proper field values with fallbacks
+<<<<<<< HEAD
             const designation = member['designation_of_applicant'];
+=======
+            const designation = member['Designation_of_Applicant'];
+          
+>>>>>>> 84b8fdaf3b8e29bfdeb5ef6d9d987b7003bac84a
             
-            const expiredDate = member['expired date'] || 
-                               member['expired_date'] || 
-                               member['expiredDate'] || 
-                               member['expireddate'];
+            const expiredDate = member['expired_date'] 
+                             
                                    
-            const placeOfBirth = member['place of birth'] || 
-                               member['place_of_birth'] || 
-                               member['placeOfBirth'] || 
-                               member['placeofbirth'];
+            const placeOfBirth =  member['place_of_birth']
+                               
 
-            const gender = member['gender'] ||
-                         member['Gender'] ||
-                         member['sex'] ||
-                         member['Sex'];
+            const gender = member['gender'] 
+                         
             
             // Format functions
             const formatPhone = (phone) => {

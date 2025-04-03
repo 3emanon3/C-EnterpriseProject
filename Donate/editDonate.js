@@ -10,29 +10,32 @@ document.addEventListener('DOMContentLoaded', function() {
     const donationId = new URLSearchParams(window.location.search).get('id');
     const membershipSelect = document.getElementById('membership');
     
-    // Get return button and update its href to preserve pagination and search state
-    const returnButton = document.querySelector('.header-actions a.btn-secondary');
-    if (returnButton) {
-        const urlParams = new URLSearchParams(window.location.search);
-        const page = urlParams.get('page') || '';
-        const query = urlParams.get('query') || '';
-        const donationType = urlParams.get('donationType') || '';
-        
-        // Build the return URL with all relevant parameters
-        let returnUrl = 'searchDonate.html';
-        const params = [];
-        
-        if (page) params.push(`page=${page}`);
-        if (query) params.push(`query=${encodeURIComponent(query)}`);
-        if (donationType) params.push(`donationType=${donationType}`);
-        
-        if (params.length > 0) {
-            returnUrl += '?' + params.join('&');
-        }
-        
-        returnButton.href = returnUrl;
-    }
+ // Get URL parameters for return navigation
+ const urlParams = new URLSearchParams(window.location.search);
+ const pageParam = urlParams.get('page') || '';
+ const queryParam = urlParams.get('query') || '';
+ const donationTypeParam = urlParams.get('donationType') || '';
+ 
+ // Function to build return URL - centralized for consistency
+ function buildReturnUrl() {
+     let returnUrl = 'searchDonate.html';
+     const params = [];
+     
+     if (pageParam) params.push(`page=${pageParam}`);
+     if (queryParam) params.push(`query=${encodeURIComponent(queryParam)}`);
+     if (donationTypeParam) params.push(`donationType=${donationTypeParam}`);
+     
+     if (params.length > 0) {
+         returnUrl += '?' + params.join('&');
+     }
+     
+     return returnUrl;
+ }
     
+ const returnButton = document.querySelector('.header-actions a.btn-secondary');
+ if (returnButton) {
+     returnButton.href = buildReturnUrl();
+ }
     // Modal elements
     const memberSearchModal = document.getElementById('memberSearchModal');
     const modalSearchInput = document.getElementById('modalSearchInput');
@@ -52,25 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('donationId').value = donationId;
         loadDonationDetails();
     } else {
-        // If no ID parameter, redirect back to search page
-        // Use the same return URL logic as for the button
-        const urlParams = new URLSearchParams(window.location.search);
-        const page = urlParams.get('page') || '';
-        const query = urlParams.get('query') || '';
-        const donationType = urlParams.get('donationType') || '';
-        
-        let redirectUrl = 'searchDonate.html';
-        const params = [];
-        
-        if (page) params.push(`page=${page}`);
-        if (query) params.push(`query=${encodeURIComponent(query)}`);
-        if (donationType) params.push(`donationType=${donationType}`);
-        
-        if (params.length > 0) {
-            redirectUrl += '?' + params.join('&');
-        }
-        
-        window.location.href = redirectUrl;
+        window.location.href = buildReturnUrl();
     }
 
     // Event listeners
@@ -146,7 +131,7 @@ modalSearchInput.addEventListener('input',
             modalPagination.innerHTML = '';
 
             performModalSearch(1);
-        } else if (this.value === '2') { // Non Member (was '3' before)
+        } else if (this.value === '2') { 
             // Clear previously selected member ID
             if (document.getElementById('selectedMemberId')) {
                 document.getElementById('selectedMemberId').value = '';
@@ -205,7 +190,7 @@ modalSearchInput.addEventListener('input',
     // Modify the populateForm function to correctly handle membership value:
 function populateForm(donation) {
     // Handle possible property name variations
-    document.getElementById('nameCompany').value = donation['Name/Company Name'] || donation.donor_name || '';
+    document.getElementById('nameCompany').value = donation['Name/Company_Name'] || donation.donor_name || '';
     
     // Handle select fields
     setSelectIfExists('donationTypes', donation.donationTypes || donation.donation_type || '');
@@ -234,7 +219,7 @@ function populateForm(donation) {
         document.getElementById('paymentDate').value = formatDateForInput(paymentDate);
     }
 
-    document.getElementById('receiptNo').value = donation['official receipt no'] || donation.receipt_no || '';
+    document.getElementById('receiptNo').value = donation['official_receipt_no'] || donation.receipt_no || '';
     document.getElementById('amount').value = donation.amount || '';
     document.getElementById('remarks').value = donation.Remarks || donation.remarks || '';
 }
@@ -531,7 +516,7 @@ function displayModalResults(members) {
         
         // Set name/company name
         const nameField = document.getElementById('nameCompany');
-        nameField.value = member.Name || member['Company Name'] || '';
+        nameField.value = member.Name || member['Name/Company_Name'] || '';
         
         // Close modal
         memberSearchModal.style.display = 'none';

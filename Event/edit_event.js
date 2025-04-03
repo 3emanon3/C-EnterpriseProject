@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 设置日期时间输入的最小值
     const startTimeInput = document.getElementById('eventStartTime');
     const endTimeInput = document.getElementById('eventEndTime');
-    const registrationDeadlineInput = document.getElementById('eventRegistrationDeadline');
+   
     
     // 确保结束时间在开始时间之后
     startTimeInput.addEventListener('change', () => {
@@ -178,5 +178,5 @@ function validateForm() {
 
 // 返回上一页
 function goBack() {
-    window.location.href = 'searchEvent.html';
+    window.history.back();
 }

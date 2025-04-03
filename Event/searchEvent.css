@@ -69,6 +69,36 @@ h1 {
     transition: all 0.3s ease;
 }
 
+btn-info {
+    background-color: #17a2b8;
+    color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-info:hover {
+    background-color: #138496;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+.btn-info:focus {
+    outline: none;
+    background-color: #117a8b;
+    box-shadow: 0 0 0 3px rgba(23, 162, 184, 0.5);
+}
+
+.btn-info:active {
+    background-color: #117a8b;
+    transform: translateY(1px);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Icon Styling within Buttons */
+.btn i {
+    margin-right: 6px;
+}
+
+
 .btn-primary {
     background-color: var(--primary-color);
     color: white;
@@ -93,6 +123,13 @@ h1 {
 
 .btn-delete {
     background-color: #e74c3c;
+    color: white;
+    padding: 5px 10px;
+    font-size: 12px;
+}
+
+.btn-view {
+    background-color: #40ff00;
     color: white;
     padding: 5px 10px;
     font-size: 12px;
@@ -330,6 +367,14 @@ right: 20px;
 z-index: 100;
 }
 
+/* Add this to your CSS file */
+.highlight {
+    background-color: #FFFF00;
+    font-weight: bold;
+    padding: 1px 0;
+    border-radius: 2px;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     header {
@@ -366,5 +411,14 @@ z-index: 100;
     
     .pagination-info, .items-per-page {
         margin-top: 10px;
+    }
+
+    .btn {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+    
+    .btn i {
+        margin-right: 4px;
     }
 }

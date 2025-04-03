@@ -109,25 +109,47 @@ document.addEventListener("DOMContentLoaded", function () {
         events.forEach(event => {
             const row = document.createElement("tr");
             row.innerHTML = `
-                <td>${event.ID || ''}</td>
-                <td>${event.title || ''}</td>
-                <td>${event.status || ''}</td>
-                <td>${formatDateTime(event.start_time) || ''}</td>
-                <td>${formatDateTime(event.end_time) || ''}</td>
-                <td>${formatDateTime(event.created_at) || ''}</td>
-                <td>${event.location || ''}</td>
-                <td>${truncateText(event.description, 50) || ''}</td>
-                <td>${event.max_participant || ''}</td>
-                <td>${formatDateTime(event.registration_deadline) || ''}</td>
-                <td>${formatPrice(event.price) || ''}</td>
-                <td>${truncateText(event.online_link, 30) || ''}</td>
+                 <td>${highlightText(event.ID || '', currentSearchQuery)}</td>
+                <td>${highlightText(event.title || '', currentSearchQuery)}</td>
+                <td>${highlightText(event.status || '', currentSearchQuery)}</td>
+                <td>${highlightText(formatDateTime(event.start_time) || '', currentSearchQuery)}</td>
+                <td>${highlightText(formatDateTime(event.end_time) || '', currentSearchQuery)}</td>
+                <td>${highlightText(formatDateTime(event.created_at) || '', currentSearchQuery)}</td>
+                <td>${highlightText(event.location || '', currentSearchQuery)}</td>
+                <td>${highlightText(truncateText(event.description, 50) || '', currentSearchQuery)}</td>
+                <td>${highlightText(event.max_participant || '', currentSearchQuery)}</td>
+                <td>${highlightText(formatDateTime(event.registration_deadline) || '', currentSearchQuery)}</td>
+                <td>${highlightText(formatPrice(event.price) || '', currentSearchQuery)}</td>
+                <td>${highlightText(truncateText(event.online_link, 30) || '', currentSearchQuery)}</td>
                 <td>
                 <button class="btn btn-edit" data-id="${event.ID}">编辑</button>
                 <button class="btn btn-delete" data-id="${event.ID}">删除</button>
+                <button class="btn btn-view" data-id="${event.ID}">查看</button>
                 </td>
             `;
             eventTableBody.appendChild(row);
         });
+    }
+
+    function highlightText(text, searchQuery) {
+        if (!searchQuery || searchQuery.trim() === '' || !text) return text;
+        
+        // Convert both text and search to lowercase for case-insensitive matching
+        const textStr = String(text).toLowerCase();
+        const searchStr = searchQuery.toLowerCase();
+        
+        if (textStr.includes(searchStr)) {
+            // Create a regular expression with the search query to match case-insensitively
+            const regex = new RegExp(`(${escapeRegExp(searchStr)})`, 'gi');
+            return String(text).replace(regex, '<span class="highlight">$1</span>');
+        }
+        
+        return text;
+    }
+    
+    // Helper function to escape special characters in search query for safe regex use
+    function escapeRegExp(string) {
+        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
 
     function truncateText(text, maxLength) {
@@ -386,9 +408,26 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
-    window.viewEventDetails = function (id) {
-        window.location.href = `eventDetails.html?id=${id}`;
-    };
+
+    
+    // Existing viewEventDetails function (already present in the code)
+window.viewEventDetails = function (id) {
+    window.location.href = `eventDetails.html?id=${id}`;
+};
+
+// Update the event listener to include view button handling
+eventTableBody.addEventListener('click', function(e) {
+    if (e.target.classList.contains('btn-edit')) {
+        const id = e.target.dataset.id;
+        editEvent(id);
+    } else if (e.target.classList.contains('btn-delete')) {
+        const id = e.target.dataset.id;
+        deleteEvent(id);
+    } else if (e.target.classList.contains('btn-view')) {
+        const id = e.target.dataset.id;
+        viewEventDetails(id);
+    }
+});
     
     // Table column resizing
     tableHeaders.forEach(th => {

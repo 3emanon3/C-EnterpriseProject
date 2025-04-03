@@ -144,12 +144,12 @@ document.addEventListener("DOMContentLoaded", function () {
         // Updated mapping to match HTML data-column attributes
         const mapping = {
             'id': 'ID',
-            'donor_name': 'Name/Company Name',
+            'donor_name': 'Name/Company_Name',
             'donationTypes': 'donationTypes',
             'Bank': 'Bank',
             'membership': 'membership',
             'payment_date': 'paymentDate',
-            'receipt_no': 'official receipt no',
+            'receipt_no': 'official_receipt_no',
             'amount': 'amount',
             'Remarks': 'Remarks'
         };
@@ -180,12 +180,12 @@ document.addEventListener("DOMContentLoaded", function () {
             
             // Handle potential property name variations
             const id = donation.ID || donation.id || '';
-            const donorName = donation['Name/Company Name'] || donation.donor_name || '';
+            const donorName = donation['Name/Company_Name'] || donation.donor_name || '';
             const donationType = mapDonationType(donation.donationTypes || donation.donation_type || '');
             const bank = mapBankName(donation.Bank || donation.bank || '');
             const membership = donation.membership || '';
             const paymentDate = formatDateTime(donation.paymentDate || donation.payment_date || '');
-            const receiptNo = donation['official receipt no'] || donation.receipt_no || '';
+            const receiptNo = donation['official_receipt_no'] || donation.receipt_no || '';
             const amount = formatPrice(donation.amount || 0);
             const remarks = truncateText(donation.Remarks || donation.remarks || '', 50);
             
