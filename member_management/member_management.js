@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 uniqueApplicant.forEach(item => {
                     const option = document.createElement("option");
                     option.value = item.ID;
-                    option.textContent = `${item["designation of applicant"]}`;
+                    option.textContent = `${item["designation_of_applicant"]}`;
                     designation_of_applicant.appendChild(option);
                 });
             }

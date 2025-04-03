@@ -232,11 +232,11 @@ class DesignationHandler {
         const response = await fetch(makeApiUrl('applicants_types'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ designation_name: designationName })
+            body: JSON.stringify({ designation_of_applicant: designationName })
         });
 
         const result = await handleApiResponse(response);
-        return result.id || result.data?.id;
+        return result.data?.id;
     }
 
     getCurrentDesignation() {
