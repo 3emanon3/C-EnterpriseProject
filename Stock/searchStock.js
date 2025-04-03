@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", function () {
         stocks.forEach(stock => {
             const row = document.createElement("tr");
             row.innerHTML = `
-                <td>${stock["Product ID"]}</td>
+                <td>${stock["Product_ID"]}</td>
                 <td>${stock.Name}</td>
                 <td>${stock.stock}</td>
                 <td>${stock.Price}</td>

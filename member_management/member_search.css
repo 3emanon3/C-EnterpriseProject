@@ -221,6 +221,10 @@ th {
     position: relative;
 }
 
+th.Action {
+    width: 200px;
+}
+
 .resizer {
     position: absolute;
     top: 0;

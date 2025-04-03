@@ -501,7 +501,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 header.style.width = '120px';
                 break;
             default:
-                header.style.width = '100px';
+                header.style.width = '200px';
         }
         
         // Set min and max widths
