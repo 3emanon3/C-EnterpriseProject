@@ -130,7 +130,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Add applicant filter if selected
         if (memberFilter.value) {
             params.append("search", "true");
-            params.append("designation of applicant", memberFilter.value);
+            params.append("designation_of_applicant", memberFilter.value);
             console.log("Filtering by applicant:", memberFilter.value);
         }
 
@@ -240,7 +240,7 @@ document.addEventListener("DOMContentLoaded", function () {
             };
             
             // Get proper field values with fallbacks
-            const designation = member['designation of applicant'];
+            const designation = member['designation_of_applicant'];
             
             const expiredDate = member['expired date'] || 
                                member['expired_date'] || 
@@ -295,7 +295,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <td>${formatData(member.Birthday)}</td>
                 <td>${formatDate(expiredDate)}</td>
                 <td>${formatData(placeOfBirth)}</td>
-                <td>${formatData(member.other)}</td>
+                <td>${formatData(member.others)}</td>
                 <td>${formatData(member.remarks)}</td>
                 <td>
                     <button class="btn btn-edit" onclick="editMember('${member.ID || member.id || ''}')">
@@ -406,66 +406,90 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     
     function initializeResizableColumns() {
-        tableHeaders.forEach(th => {
-            const resizer = document.createElement('div');
-            resizer.className = 'resizer';
-            th.appendChild(resizer);
-            
-            // Prevent text selection during resize
-            resizer.addEventListener('selectstart', (e) => e.preventDefault());
-    
-            // More precise resize logic
-            resizer.addEventListener('mousedown', initResize);
-    
-            function initResize(e) {
-                // Prevent default to stop text selection
-                e.preventDefault();
-                e.stopPropagation();
-    
-                const startX = e.pageX;
-                const startWidth = th.offsetWidth;
-                const tableContainer = table.closest('.table-container');
-    
-                // Add resizing class for styling
-                tableContainer?.classList.add('resizing');
-    
-                // Use document-level event listeners for better tracking
-                document.addEventListener('mousemove', performResize);
-                document.addEventListener('mouseup', stopResize);
-    
-                function performResize(moveEvent) {
-                    // Calculate new width
-                    const newWidth = startWidth + (moveEvent.pageX - startX);
-                    
-                    // Enforce minimum and maximum width constraints
-                    const constrainedWidth = Math.max(50, Math.min(newWidth, 500));
-                    
-                    // Apply width with more precise CSS
-                    th.style.width = `${constrainedWidth}px`;
-                    th.style.minWidth = `${constrainedWidth}px`;
-                    th.style.maxWidth = `${constrainedWidth}px`;
-                    
-                    // Optional: Adjust other columns if needed
-                    updateRelatedColumns(th, constrainedWidth);
-                }
-    
-                function stopResize() {
-                    // Remove event listeners
-                    document.removeEventListener('mousemove', performResize);
-                    document.removeEventListener('mouseup', stopResize);
-    
-                    // Remove resizing class
-                    tableContainer?.classList.remove('resizing');
-    
-                    // Save column widths
-                    saveColumnWidths();
-                }
+    const table = document.getElementById('memberTable'); // Ensure we get the table
+    if (!table) return;
+    const tableHeaders = table.querySelectorAll('thead th'); // Select only thead headers
+
+    tableHeaders.forEach(th => {
+        // Ensure the header is one that should be resizable (e.g., has data-column)
+        if (!th.dataset.column && !th.querySelector('.resizer')) return; 
+
+        const resizer = th.querySelector('.resizer') || document.createElement('div');
+        if (!th.querySelector('.resizer')) {
+             resizer.className = 'resizer';
+             th.appendChild(resizer);
+        }
+
+        // Prevent text selection during resize
+        resizer.addEventListener('selectstart', (e) => e.preventDefault());
+
+        // Use mousedown on the resizer
+        resizer.addEventListener('mousedown', initResize);
+
+        function initResize(e) {
+            // Ensure we are resizing the correct header (the parent of the resizer)
+            const currentTh = e.target.parentElement; 
+            if (!currentTh || currentTh.tagName !== 'TH') return;
+
+            // Prevent default to stop text selection etc.
+            e.preventDefault();
+            e.stopPropagation();
+
+            const startX = e.pageX;
+            const startWidth = currentTh.offsetWidth;
+            // Get the container for visual feedback
+            const tableContainer = table.closest('.table-container'); 
+
+            // Add resizing class for styling feedback
+            currentTh.classList.add('resizing');
+            if (tableContainer) tableContainer.classList.add('resizing'); // On outer container too
+
+            // Use document-level event listeners for reliable tracking
+            document.addEventListener('mousemove', performResize);
+            document.addEventListener('mouseup', stopResize);
+
+            function performResize(moveEvent) {
+                // Calculate new width
+                let newWidth = startWidth + (moveEvent.pageX - startX);
+
+                // Enforce minimum width (e.g., 50px)
+                const minWidth = 50; 
+                newWidth = Math.max(minWidth, newWidth);
+                
+                // Optional: Enforce a maximum width if desired (e.g., 800px)
+                // const maxWidth = 800; 
+                // newWidth = Math.min(maxWidth, newWidth);
+
+                // Apply width directly to the TH element
+                // Using style.width is fine with table-layout: fixed
+                currentTh.style.width = `${newWidth}px`; 
+                
+                 // Setting min/max width might be overly restrictive, 
+                 // but can prevent collapsing too much if needed.
+                 // currentTh.style.minWidth = `${newWidth}px`; 
+                  
+                 // REMOVED/COMMENTED OUT: No need to adjust others automatically for this goal
+                 // updateRelatedColumns(currentTh, newWidth); 
             }
-        });
-    
-        // Load saved widths on initialization
-        loadColumnWidths();
-    }
+
+            function stopResize() {
+                // Remove event listeners
+                document.removeEventListener('mousemove', performResize);
+                document.removeEventListener('mouseup', stopResize);
+
+                // Remove resizing class feedback
+                currentTh.classList.remove('resizing');
+                 if (tableContainer) tableContainer.classList.remove('resizing');
+
+                // Optional: Save column widths after resizing stops
+                saveColumnWidths();
+            }
+        }
+    });
+
+    // Load saved widths on initialization
+    loadColumnWidths(); // Make sure this works with the applied style.width
+}
     
     function updateRelatedColumns(resizedHeader, newWidth) {
         // Optional: Add logic to adjust other columns if needed
@@ -791,6 +815,26 @@ document.addEventListener("DOMContentLoaded", function () {
         // Clear input after jumping
         pageInput.value = '';
     };
+    
+    // Function to reset column widths to default values
+    function resetColumnWidths() {
+        try {
+            // Remove saved column widths from localStorage
+            localStorage.removeItem('columnWidths');
+            
+            // Apply default widths to all table headers
+            tableHeaders.forEach(header => {
+                setDefaultColumnWidth(header);
+            });
+            
+            console.log('Column widths reset to default values');
+        } catch (error) {
+            console.error('Error resetting column widths:', error);
+        }
+    }
+    
+    // Make resetColumnWidths available globally
+    window.resetColumnWidths = resetColumnWidths;
     
     // Initialize resizable columns
     initializeResizableColumns();
