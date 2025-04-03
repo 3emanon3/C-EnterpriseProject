@@ -23,6 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let totalPages = 0;
     let currentSearchQuery = "";
     
+    
     function debounce(func, wait) {
         let timeout;
         return function executedFunction(...args) {

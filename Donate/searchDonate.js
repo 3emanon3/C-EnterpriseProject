@@ -183,7 +183,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const donorName = donation['Name/Company_Name'] || donation.donor_name || '';
             const donationType = mapDonationType(donation.donationTypes || donation.donation_type || '');
             const bank = mapBankName(donation.Bank || donation.bank || '');
-            const membership = donation.membership || '';
+            const membership = donation.membership || 'Non Member';
             const paymentDate = formatDateTime(donation.paymentDate || donation.payment_date || '');
             const receiptNo = donation['official_receipt_no'] || donation.receipt_no || '';
             const amount = formatPrice(donation.amount || 0);

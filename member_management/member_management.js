@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     async function fetchApplicantType() {
         try {
-            const response = await fetch(`${API_BASE_URL}?table=applicants%20types&limit=100`);
+            const response = await fetch(`${API_BASE_URL}?table=applicants_types&limit=100`);
             const data = await response.json();
             
             if (data && data.data) {
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 uniqueApplicant.forEach(item => {
                     const option = document.createElement("option");
                     option.value = item.ID;
-                    option.textContent = `${item["designation of applicant"]}`;
+                    option.textContent = `${item["designation_of_applicant"]}`;
                     designation_of_applicant.appendChild(option);
                 });
             }
@@ -52,7 +52,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const requiredFields = addMemberForm.querySelectorAll('[required]');
         let isValid = true;
         const errors = [];
-
         // Reset all error states
         addMemberForm.querySelectorAll('.error').forEach(field => {
             field.classList.remove('error');

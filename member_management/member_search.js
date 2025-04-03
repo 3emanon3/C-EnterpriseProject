@@ -27,6 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentSearchType = 'all';
     let currentFilterValue = '';
     let membersData = [];
+<<<<<<< HEAD
     
     // ===== INITIALIZATION =====
     function initializePage() {
@@ -37,6 +38,12 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // ===== DATA FETCHING FUNCTIONS =====
+=======
+
+    fetchApplicantType();
+    
+    
+>>>>>>> 606320d19529d74fd91fe921691be52ed2270d20
     async function fetchApplicantType() {
         if (!memberFilter) {
             console.log("memberFilter element not found in the DOM");
@@ -107,7 +114,11 @@ document.addEventListener("DOMContentLoaded", function () {
         // Add applicant filter if selected
         if (memberFilter.value) {
             params.append("search", "true");
+<<<<<<< HEAD
             params.append("designation_of_applicant", memberFilter.value);
+=======
+            params.append("designation_of_applicant", memberFilter.value)
+>>>>>>> 606320d19529d74fd91fe921691be52ed2270d20
             console.log("Filtering by applicant:", memberFilter.value);
         }
 
