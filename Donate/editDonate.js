@@ -176,7 +176,7 @@ modalSearchInput.addEventListener('input',
                     }
                     
                     window.location.href = redirectUrl;
-                }, 2000);
+                }, 300);
             }
         } catch (error) {
             console.error('Error loading donation details:', error);
@@ -193,11 +193,11 @@ function populateForm(donation) {
     document.getElementById('nameCompany').value = donation['Name/Company_Name'] || donation.donor_name || '';
     
     // Handle select fields
-    setSelectIfExists('donationTypes', donation.donationTypes || donation.donation_type || '');
-    setSelectIfExists('bank', donation.Bank || donation.bank || '');
+    setSelectIfExists('donationTypes', donation.donationTypes ||  '');
+    setSelectIfExists('bank', donation.Bank ||  '');
     
     // Handle membership field correctly - this is the key fix
-    const membershipValue = donation.membership || donation.Membership || null;
+    const membershipValue = donation.membership ||  null;
     // Default to value "2" (Non Member) if membership is null
     setSelectIfExists('membership', membershipValue === null ? '2' : membershipValue);
     
@@ -219,9 +219,9 @@ function populateForm(donation) {
         document.getElementById('paymentDate').value = formatDateForInput(paymentDate);
     }
 
-    document.getElementById('receiptNo').value = donation['official_receipt_no'] || donation.receipt_no || '';
+    document.getElementById('receiptNo').value = donation.official_receipt_no || '';
     document.getElementById('amount').value = donation.amount || '';
-    document.getElementById('remarks').value = donation.Remarks || donation.remarks || '';
+    document.getElementById('remarks').value = donation.Remarks || '';
 }
 
     // Helper function to set select value if element exists
@@ -323,20 +323,21 @@ function populateForm(donation) {
                 hideLoading();
                 return;
             }
+
+            
             
             // Create a structured object that matches API expectations
             const donationData = {
-               // ID: document.getElementById('ID').value,
-                donor_name: document.getElementById('nameCompany').value || null,
+                ID: donationId,
+                "Name/Company_Name": document.getElementById('nameCompany').value || null,
                 donationTypes: document.getElementById('donationTypes').value || null,
                 Bank: document.getElementById('bank').value || null,
                 membership: document.getElementById('membership').value === '1' ? 
-                document.getElementById('selectedMemberId').value || null : null,
+                    document.getElementById('selectedMemberId').value || null : null,
                 paymentDate: document.getElementById('paymentDate').value || null,
-                receipt_no: document.getElementById('receiptNo').value || null,
+                official_receipt_no: document.getElementById('receiptNo').value || null,
                 amount: document.getElementById('amount').value || null,
-                Remarks: document.getElementById('remarks').value || null,
-                memberId: document.getElementById('selectedMemberId')?.value || null
+                Remarks: document.getElementById('remarks').value || null
             };
             
            
@@ -374,25 +375,8 @@ function populateForm(donation) {
             if (responseData.status === 'success' || response.ok) {
                 showSuccess('Donation updated successfully!');
                 setTimeout(() => {
-                    // Use the preserved return URL logic when redirecting after success
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const page = urlParams.get('page') || '';
-                    const query = urlParams.get('query') || '';
-                    const donationType = urlParams.get('donationType') || '';
-                    
-                    let redirectUrl = 'searchDonate.html';
-                    const params = [];
-                    
-                    if (page) params.push(`page=${page}`);
-                    if (query) params.push(`query=${encodeURIComponent(query)}`);
-                    if (donationType) params.push(`donationType=${donationType}`);
-                    
-                    if (params.length > 0) {
-                        redirectUrl += '?' + params.join('&');
-                    }
-                    
                     window.location.href = redirectUrl;
-                }, 3000);
+                }, 300);
             } else {
                 throw new Error(responseData.message || 'Donation update failed');
             }
@@ -512,11 +496,11 @@ function displayModalResults(members) {
     // Select member
     function selectMember(member) {
         // Set member ID to hidden field
-        document.getElementById('selectedMemberId').value = member.ID;
+        document.getElementById('selectedMemberId').value = member.ID || member.membersID;
         
         // Set name/company name
         const nameField = document.getElementById('nameCompany');
-        nameField.value = member.Name || member['Name/Company_Name'] || '';
+        nameField.value = member.Name || member.CName || '';
         
         // Close modal
         memberSearchModal.style.display = 'none';
@@ -531,7 +515,7 @@ function displayModalResults(members) {
         // Hide error message after 5 seconds
         setTimeout(() => {
             errorMessages.style.display = 'none';
-        }, 5000);
+        }, 1000);
     }
 
     // Show success message

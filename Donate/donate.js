@@ -469,14 +469,14 @@ function closeSearchModal() {
 
         const fieldMap = {
     'nameCompany': 'Name/Company Name',
-    'donationTypes': 'Donation Type',
+    'donationTypes': 'donationTypes',
     'remarks': 'Remarks',
-    'receiptNo': 'Official Receipt No',
+    'receiptNo': 'official_receipt_no',
     'bank': 'Bank',
-    'amount': 'Amount',
-    'paymentDate': 'Payment Date',
+    'amount': 'amount',
+    'paymentDate': 'paymentDate',
     'donationId': 'ID',
-    'membership': 'Membership'
+    'membership': 'membership'
         };
 
         formData.forEach((value, key) => {
@@ -704,7 +704,7 @@ function closeSearchModal() {
             document.getElementById('paymentDate').value = dateOnly;
         }
 
-        document.getElementById('receiptNo').value = donation.receipt_no || '';
+        document.getElementById('receiptNo').value = donation.official_receipt_no || '';
         document.getElementById('amount').value = donation.amount ? parseFloat(donation.amount).toFixed(2) : '';
         document.getElementById('remarks').value = donation.remarks || '';
     }
@@ -804,7 +804,7 @@ function closeSearchModal() {
                 'donation_type': {
                     table: 'donationtypes',
                     fields: {
-                        type: 'donation Types',
+                        type: 'donationTypes',
                         value: newValue.trim()
                     }
                 }

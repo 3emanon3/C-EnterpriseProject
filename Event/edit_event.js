@@ -86,6 +86,7 @@ async function loadEventDetails(eventId) {
 // 填充表单
 function populateForm(event) {
     document.getElementById('eventId').value = event.ID || '';
+    console.log('Set event ID to:', id);
     document.getElementById('eventTitle').value = event.title || '';
     document.getElementById('eventStatus').value = event.status || 'not started';
     document.getElementById('eventStartTime').value = formatDateTimeForInput(event.start_time) || '';
@@ -110,8 +111,12 @@ async function saveEvent(eventId) {
             eventData[key] = value;
         });
         
-        // 确保ID正确设置
-        eventData.ID = eventId;
+        const formIdValue = document.getElementById('eventId').value;
+        
+        // Use the form value if it exists and is not zero, otherwise use the parameter
+        eventData.ID = (formIdValue && formIdValue !== '0') ? formIdValue : eventId;
+        
+        console.log('Using ID for update:', eventData.ID);22
         
         // 添加必要的参数
         eventData.action = 'update';
