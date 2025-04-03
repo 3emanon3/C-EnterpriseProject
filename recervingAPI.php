@@ -64,15 +64,15 @@ class DatabaseAPI {
                 'conditions'=>['Birthday = MONTH(CURDATE()) '],
             ], 
             'expired' => [
-                'conditions'=>['(YEAR(`expired date`) < YEAR(CURDATE())) OR (YEAR(`expired date`) = YEAR(CURDATE()) AND MONTH(`expired date`) <= MONTH(CURDATE())) '],
+                'conditions'=>['(YEAR(`expired_date`) < YEAR(CURDATE())) OR (YEAR(`expired_date`) = YEAR(CURDATE()) AND MONTH(`expired_date`) <= MONTH(CURDATE())) '],
             ],
         ],
-        'vmembers' => [
+        'members_with_applicant_designation' => [
             'Birthday' =>[
                 'conditions'=>['Birthday = MONTH(CURDATE()) '],
             ], 
             'expired' => [
-                'conditions'=>['(YEAR(`expired date`) < YEAR(CURDATE())) OR (YEAR(`expired date`) = YEAR(CURDATE()) AND MONTH(`expired date`) <= MONTH(CURDATE())) '],
+                'conditions'=>['(YEAR(`expired_date`) < YEAR(CURDATE())) OR (YEAR(`expired_date`) = YEAR(CURDATE()) AND MONTH(`expired_date`) <= MONTH(CURDATE())) '],
             ],
         ],
         'soldrecord' => [

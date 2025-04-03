@@ -7,10 +7,19 @@ body {
 }
 
 .btn-secondary {
-    background-color: white;
-    color: #000000;
-    border: 1px solid #e0e6ed;
+    background-color: #28a745;
+    color: white;
+    border: 1px solid #28a745;
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 4px;
 }
+
+.btn-secondary:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
 
 .btn-success {
     background-color: #28a745;
@@ -215,4 +224,185 @@ tr:hover {
 
 .delete-btn:hover {
     background-color: #c82333;
+}
+
+/* Event details styling */
+.event-details {
+    margin-bottom: 30px;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.event-details h2 {
+    margin-top: 0;
+    color: #800000;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.event-info {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.info-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.info-item {
+    flex: 1;
+    min-width: 200px;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.label {
+    font-weight: bold;
+    color: #555;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.value {
+    color: #333;
+}
+
+.description {
+    white-space: pre-line;
+    line-height: 1.5;
+    margin-top: 5px;
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 3px;
+    border: 1px solid #eee;
+}
+
+/* Status styling */
+.status-not\\ started {
+    color: #0066cc;
+    font-weight: bold;
+}
+
+.status-started {
+    color: #009900;
+    font-weight: bold;
+}
+
+.status-cancelled {
+    color: #cc0000;
+    font-weight: bold;
+}
+
+.status-ended {
+    color: #666666;
+    font-weight: bold;
+}
+
+/* Heading styling */
+h1 {
+    margin-bottom: 20px;
+    color: #800000;
+}
+
+/* Loading spinner */
+.loading-spinner {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
+/* Alert styling */
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+/* Participants table styling */
+.participants-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.participants-table th, 
+.participants-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.participants-table th {
+    background-color: #ffffff;
+    color: rgb(0, 0, 0);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.participants-table tr {
+    border-bottom: none;
+    background-color: #ffffff;
+    color: rgb(0, 0, 0);
+    padding: 14px;
+    text-align: left;
+    font-weight: 600;
+}
+
+.participants-table tr:hover {
+    background-color: #e9e9e9;
+    transition: background-color 0.3s ease;
+}
+
+.participants-table .member-id {
+    color: #000000;
+    font-family: monospace;
+}
+
+
+
+.participants-table .member-contact {
+    color: #0066cc;
+}
+
+.participants-table .member-type {
+    color: #009900;
+    font-weight: 500;
+}
+
+.participants-table .join-date {
+    color: #000000;
+}
+
+.no-data {
+    text-align: center;
+    padding: 20px;
+    font-style: italic;
+    color: #666;
+    background-color: #f9f9f9;
 }

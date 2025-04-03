@@ -32,6 +32,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const urlParams = new URLSearchParams(window.location.search);
     const eventId = urlParams.get('id');
     
+    // Store return navigation parameters
+let returnPage = urlParams.get('returnPage') || '';
+let returnQuery = urlParams.get('returnQuery') || '';
+let returnStatus = urlParams.get('returnStatus') || '';
+
     // 模态框事件监听
     if (modalClose) {
         modalClose.addEventListener('click', function() {
@@ -73,28 +78,40 @@ document.addEventListener('DOMContentLoaded', function() {
             openMemberSearchModal();
         });
     }
+
+
     
-    // Get return button and update its href to preserve pagination and search state
-    const returnButton = document.querySelector('.header-actions a.btn-secondary');
-    if (returnButton) {
-        const page = urlParams.get('page') || '';
-        const query = urlParams.get('query') || '';
-        const status = urlParams.get('status') || '';
+    function updateReturnButtonUrl() {
+        const returnButtons = document.querySelectorAll('.header-actions a.btn-secondary, .back-btn, a[href="searchEvent.html"]');
         
-        // Build the return URL with all relevant parameters
-        let returnUrl = 'searchEvent.html';
-        const params = [];
-        
-        if (page) params.push(`page=${page}`);
-        if (query) params.push(`query=${encodeURIComponent(query)}`);
-        if (status) params.push(`status=${status}`);
-        
-        if (params.length > 0) {
-            returnUrl += '?' + params.join('&');
+        if (returnButtons.length > 0) {
+          
+            
+            // Then construct the return URL
+            let returnUrl = 'searchEvent.html';
+            const params = [];
+            
+            if (returnPage) params.push(`page=${returnPage}`);
+            if (returnQuery) params.push(`query=${encodeURIComponent(returnQuery)}`);
+            if (returnStatus) params.push(`status=${statusParam}`);
+            
+            if (params.length > 0) {
+                returnUrl += '?' + params.join('&');
+            }
+            
+            // Apply to all return buttons
+            returnButtons.forEach(button => {
+                button.href = returnUrl;
+                
+               
+            });
+            
+            // Also handle browser back button when possible
+            window.history.replaceState({returnUrl: returnUrl}, '', window.location.href);
         }
-        
-        returnButton.href = returnUrl;
     }
+
+        updateReturnButtonUrl();
     
     // Initialize - If there's an ID parameter, load event details
     if (eventId) {
@@ -103,17 +120,13 @@ document.addEventListener('DOMContentLoaded', function() {
         // If no ID parameter, redirect back to search page
         showError('No event ID provided');
         setTimeout(() => {
-            // Use the same return URL logic as for the button
-            const page = urlParams.get('page') || '';
-            const query = urlParams.get('query') || '';
-            const status = urlParams.get('status') || '';
-            
+            // Build return URL
             let redirectUrl = 'searchEvent.html';
             const params = [];
             
-            if (page) params.push(`page=${page}`);
-            if (query) params.push(`query=${encodeURIComponent(query)}`);
-            if (status) params.push(`status=${status}`);
+            if (returnPage) params.push(`page=${returnPage}`);
+            if (returnQuery) params.push(`query=${encodeURIComponent(returnQuery)}`);
+            if (returnStatus) params.push(`status=${returnStatus}`);
             
             if (params.length > 0) {
                 redirectUrl += '?' + params.join('&');
@@ -141,21 +154,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 displayEventDetails(event);
                 // After displaying event details, fetch participants
                 fetchParticipants(eventId);
+                updateReturnButtonUrl();
             } else {
                 showError('Event record not found');
                 setTimeout(() => {
-                    // Use the preserved return URL logic when redirecting
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const page = urlParams.get('page') || '';
-                    const query = urlParams.get('query') || '';
-                    const status = urlParams.get('status') || '';
-                    
                     let redirectUrl = 'searchEvent.html';
                     const params = [];
                     
-                    if (page) params.push(`page=${page}`);
-                    if (query) params.push(`query=${encodeURIComponent(query)}`);
-                    if (status) params.push(`status=${status}`);
+                    if (returnPage) params.push(`page=${returnPage}`);
+                    if (returnQuery) params.push(`query=${encodeURIComponent(returnQuery)}`);
+                    if (returnStatus) params.push(`status=${returnStatus}`);
                     
                     if (params.length > 0) {
                         redirectUrl += '?' + params.join('&');
@@ -208,7 +216,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                     <div class="info-item">
                         <span class="label">价格:</span>
-                        <span class="value">${event.price || '0'} 元</span>
+                        <span class="value">RM${event.price || '0'} </span>
                     </div>
                 </div>
                 <div class="info-row">
@@ -361,7 +369,7 @@ document.addEventListener('DOMContentLoaded', function() {
         showLoading();
         try {
             console.log(`Fetching participants for event ID: ${eventId}`);
-            const response = await fetch(`${API_BASE_URL}?table=participants&search=true&EventID=${eventId}`);
+            const response = await fetch(`${API_BASE_URL}?table=participants&search=true&eventID=${eventId}`);
             if (!response.ok) {
                 throw new Error(`Loading failed: ${response.status}`);
             }
@@ -369,8 +377,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.json();
             console.log('Loaded participants data:', data);
             
-            // If we have participants, fetch detailed member information for each
+            let validParticipants = [];
             if (data.data && data.data.length > 0) {
+                // Only keep participants whose eventID matches the current eventId
+                validParticipants = data.data.filter(participant => participant.eventID == eventId);
+            // If we have participants, fetch detailed member information for each
+            if (validParticipants.length > 0) {
                 const participantsWithMemberInfo = await Promise.all(
                     data.data.map(async (participant) => {
                         if (participant.memberID) {
@@ -395,6 +407,9 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 populateParticipantsTable([]);
             }
+        } else {
+            populateParticipantsTable([]);
+        }
         } catch (error) {
             console.error('Error loading participants:', error);
             showError(`Failed to load participants: ${error.message}`);
@@ -421,64 +436,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Enhanced CSS for improved table design
         const styleTag = document.createElement('style');
-        styleTag.textContent = `
-            .participants-table {
-                width: 100%;
-                border-collapse: separate;
-                border-spacing: 0;
-                margin-top: 20px;
-                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-                border-radius: 8px;
-                overflow: hidden;
-            }
-            .participants-table th, .participants-table td {
-                padding: 12px 15px;
-                text-align: left;
-                border-bottom: 1px solid #e0e0e0;
-            }
-            .participants-table th {
-                background-color: #800000;
-                color: white;
-                font-weight: 600;
-                text-transform: uppercase;
-                letter-spacing: 1px;
-            }
-            .participants-table tr:last-child td {
-                border-bottom: none;
-            }
-            .participants-table tr:nth-child(even) {
-                background-color: #f4f4f4;
-            }
-            .participants-table tr:hover {
-                background-color: #e9e9e9;
-                transition: background-color 0.3s ease;
-            }
-            .participants-table .member-id {
-                color: #666;
-                font-family: monospace;
-            }
-            .participants-table .member-name {
-                font-weight: 500;
-                color: #333;
-            }
-            .participants-table .member-contact {
-                color: #0066cc;
-            }
-            .participants-table .member-type {
-                color: #009900;
-                font-weight: 500;
-            }
-            .participants-table .join-date {
-                color: #888;
-            }
-            .no-data {
-                text-align: center;
-                padding: 20px;
-                font-style: italic;
-                color: #666;
-                background-color: #f9f9f9;
-            }
-        `;
+      
         document.head.appendChild(styleTag);
         
         // Add table class for new styling
@@ -496,13 +454,13 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
         
         // Populate table with enhanced participant data
-        participants.forEach((participant, index) => {
-            // Get member info if available
-           
-            
+        participants.forEach((participant,index ) => {
+            // Get member info if available   
             const row = document.createElement('tr');
+            const sequentialNumber =participant.ID;
+
             row.innerHTML = `
-                <td>${index + 1}</td>
+                 <td>${sequentialNumber}</td>
                 <td class="member-id">${participant.memberID || 'N/A'}</td>
                 <td class="event-id">${escapeHTML(participant.eventID || 'N/A')}</td>
                 <td class="join-date">${formatDate(participant.joined_at)}</td>
@@ -520,7 +478,7 @@ document.addEventListener('DOMContentLoaded', function() {
               const deleteBtn = row.querySelector('.delete-btn');
               deleteBtn.addEventListener('click', () => deleteParticipant(participant));
 
-            tableBody.insertAdjacentHTML('beforeend', row);
+              tableBody.appendChild(row);
         });
     }
     
@@ -533,17 +491,12 @@ document.addEventListener('DOMContentLoaded', function() {
         showLoading();
         
         try {
-            const response = await fetch(API_BASE_URL, {
+            const response = await fetch(`${API_BASE_URL}?table=participants&action=delete&ID=${participant.ID}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    table: 'participants',
-                    ID: participant.ID,
-                    memberID: participant.memberID,
-                    eventID: participant.eventID
-                })
+               
             });
             
             if (!response.ok) {
@@ -552,10 +505,9 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const result = await response.json();
             
-            if (result.success) {
-                // Remove the row from the table
-                const rowToRemove = document.querySelector(`button[data-participant-id="${participant.ID}"]`).closest('tr');
-                rowToRemove.remove();
+            if (result.status === 'success') {
+                
+                
                 
                 // Show success message
                 showError('参与者删除成功');
@@ -607,6 +559,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // 如果有搜索词，添加搜索参数
             if (searchTerm) {
                 apiUrl += `&search=${encodeURIComponent(searchTerm)}`;
+                 //apiUrl += '&searchFields=ID,Name,CName,phone_number';
             }
             
             const response = await fetch(apiUrl);
@@ -643,14 +596,15 @@ document.addEventListener('DOMContentLoaded', function() {
         modalResultsBody.innerHTML = '';
         
         members.forEach(member => {
+            const fullMemberId = member.membersID || '';
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${escapeHTML(member.ID || '')}</td>
+                <td>${escapeHTML(fullMemberId || '')}</td>
                 <td>${escapeHTML(member.Name || '')}</td>
                 <td>${escapeHTML(member.CName || '')}</td>
                 <td>${escapeHTML(member.phone_number || '')}</td>
                 <td>
-                    <button class="select-btn" data-member-id="${member.ID}" data-member-name="${escapeHTML(member.Name || '')}">
+                    <button class="select-btn" data-member-id="${fullMemberId}" data-member-name="${escapeHTML(member.Name || '')}">
                         选择
                     </button>
                 </td>
@@ -658,7 +612,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // 添加选择按钮点击事件
             const selectBtn = row.querySelector('.select-btn');
-            selectBtn.addEventListener('click', () => selectMember(member));
+            selectBtn.addEventListener('click', () => selectMember({...member, ID: fullMemberId}));
             
             modalResultsBody.appendChild(row);
         });
@@ -711,7 +665,16 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 选择会员并添加到活动
     async function selectMember(member) {
+        const memberIdToUse = member.membersID || member.ID;
+        console.log("Full member ID being used:", memberIdToUse);
+        console.log("Complete member object:", member);
         // 确认添加
+
+        if (!memberIdToUse || memberIdToUse === '0' || memberIdToUse === 0) {
+            showError('无效的会员ID，请选择有效的会员');
+            return;
+        }
+
         const confirmAdd = confirm(`确定要将会员 ${member.Name || member.CName || member.ID} 添加到此活动吗？`);
         
         if (!confirmAdd) return;
@@ -719,23 +682,61 @@ document.addEventListener('DOMContentLoaded', function() {
         showLoading();
         
         try {
+            const checkResponse = await fetch(`${API_BASE_URL}?table=participants&search=true&eventID=${eventId}&memberID=${memberIdToUse}`);
+            const checkData = await checkResponse.json();
+            
+            if (checkData.data && checkData.data.length > 0) {
+                showError(`该会员已经添加到此活动中`);
+                hideLoading();
+                return;
+            }
+            
+            // Get the current max ID to ensure sequential IDs
+            const maxIdResponse = await fetch(`${API_BASE_URL}?table=participants&action=maxid`);
+            const maxIdData = await maxIdResponse.json();
+            console.log("maxIdData response:", maxIdData);
+
+            let nextId;
+if (maxIdData.maxId !== undefined) {
+    nextId = parseInt(maxIdData.maxId) + 1;
+} else if (maxIdData.data && maxIdData.data.maxId !== undefined) {
+    // Check if it's nested under a data property
+    nextId = parseInt(maxIdData.data.maxId) + 1;
+} else {
+    // If we're getting a completely different response format, check the whole response
+    console.log("Full maxId response:", maxIdData);
+    
+    // Try to get the highest ID from existing participants
+    const allParticipantsResponse = await fetch(`${API_BASE_URL}?table=participants&search=true`);
+    const allParticipants = await allParticipantsResponse.json();
+    
+    if (allParticipants.data && allParticipants.data.length > 0) {
+        // Find the highest ID in the existing data
+        const highestId = Math.max(...allParticipants.data.map(p => parseInt(p.ID) || 0));
+        nextId = highestId + 1;
+    } else {
+        // If no participants exist, start with 1
+        nextId = 1;
+    }
+}
+            
+
             // 创建参与者记录
             const participantData = {
+                table: 'participants',
+                ID: nextId, 
                 eventID: eventId,
-                memberID: member.ID,
+                memberID: memberIdToUse,
                 joined_at: new Date().toISOString().slice(0, 19).replace('T', ' ')
             };
             
             // 发送POST请求添加参与者
-            const response = await fetch(`${API_BASE_URL}`, {
+            const response = await fetch(`${API_BASE_URL}?table=participants`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    table: 'participants',
-                    ...participantData
-                })
+                body: JSON.stringify(participantData)
             });
             
             if (!response.ok) {
@@ -749,7 +750,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 memberSearchModal.style.display = 'none';
                 
                 // 显示成功消息
-                showError(`会员 ${member.Name || member.CName || member.ID} 已成功添加到活动`);
+                showError(`会员 ${member.Name || member.CName || memberIdToUse} 已成功添加到活动`);
                 
                 // 重新加载参与者列表
                 fetchParticipants(eventId);
