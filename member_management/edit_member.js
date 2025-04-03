@@ -7,7 +7,9 @@ const STATIC_DESIGNATIONS = [
     { id: '2', name: '非会员', englishName: 'Non-Member' },
     { id: '3', name: '外国人', englishName: 'Foreigner' },
     { id: '4', name: '拒绝继续', englishName: 'Reject' },
-    { id: '5', name: '逾期', englishName: 'Overdue' }
+    { id: '5', name: '逾期', englishName: 'Overdue' },
+    { id: '6', name: '黑名单', englishName: 'Blacklist'},
+    { id: '7', name: '合作伙伴', englishName: 'Partner'},
 ];
 
 // Month names mapping
@@ -50,7 +52,7 @@ fetchApplicantType();
 
 async function fetchApplicantType() {
     try {
-        const response = await fetch(`${API_BASE_URL}?table=applicants%20types&limit=100`);
+        const response = await fetch(`${API_BASE_URL}?table=applicants_types&limit=100`);
         const data = await response.json();
         
         if (data && data.data) {
@@ -137,7 +139,7 @@ class DesignationHandler {
     async loadDesignations() {
         try {
             console.log('Fetching designations...');
-            const response = await fetch(makeApiUrl('applicants types'));
+            const response = await fetch(makeApiUrl('applicants_types'));
             const data = await handleApiResponse(response);
 
             if (!data.data || !Array.isArray(data.data)) {
@@ -227,7 +229,7 @@ class DesignationHandler {
     }
 
     async saveNewDesignation(designationName) {
-        const response = await fetch(makeApiUrl('applicants types'), {
+        const response = await fetch(makeApiUrl('applicants_types'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ designation_name: designationName })
@@ -345,10 +347,10 @@ function populateForm(memberData) {
     };
 
     const fieldMappings = {
-        'memberId': ['ID', 'membersID'],
+        'memberId': [ 'membersID'],
         'name': ['Name'],
         'cname': ['CName'],
-        'designation_of_applicant': ['Designation of Applicant'],
+        'designation_of_applicant': ['Designation_of_Applicant', 'designation_of_applicant'],
         'address': ['Address'],
         'phone': ['phone_number'],
         'email': ['email'],
@@ -357,8 +359,8 @@ function populateForm(memberData) {
         'gender': ['gender'],
         'company': [ 'componyName'],
         'birthday': ['Birthday'],
-        'expired': ['expired date',],
-        'birthplace': ['place of birth'],
+        'expired': ['expired_date',],
+        'birthplace': ['place_of_birth'],
         'others':['others'],
         'remarks': ['remarks']
     };
@@ -423,7 +425,7 @@ async function handleSubmit(event) {
         ID: memberId,
         Name: formData.get('name') || null,
         CName: formData.get('cname') || null,
-        'Designation of Applicant': designation?.id || null,
+        'Designation_of_Applicant': designation?.id || null,
         Address: formData.get('address') || null,
         phone_number: formData.get('phone') || null,
         email: formData.get('email') || null,

@@ -28,10 +28,10 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentSearchType = 'all';
     let currentFilterValue = ''; // New variable to track current filter
     let membersData = [];
-    
+
     fetchApplicantType();
-
-
+    
+    
     async function fetchApplicantType() {
         if (!memberFilter) {
             console.log("memberFilter element not found in the DOM");
@@ -131,7 +131,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Add applicant filter if selected
         if (memberFilter.value) {
             params.append("search", "true");
-            params.append("designation of applicant", memberFilter.value);
+            params.append("designation_of_applicant", memberFilter.value)
             console.log("Filtering by applicant:", memberFilter.value);
         }
 
