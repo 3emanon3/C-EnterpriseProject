@@ -468,16 +468,19 @@ function closeSearchModal() {
         }
 
         const fieldMap = {
-    'nameCompany': 'Name/Company_Name',
-    'donationTypes': 'donationTypes',
-    'remarks': 'Remarks',
-    'receiptNo': 'official_receipt_no',
-    'bank': 'Bank',
-    'amount': 'amount',
-    'paymentDate': 'paymentDate',
-    'donationId': 'ID',
-    'membership': 'membership'
+            'nameCompany': 'Name/Company_Name',  // Using space as seen in your debug log
+            'donationTypes': 'donationTypes',
+            'remarks': 'Remarks',
+            'receiptNo': 'official_receipt_no',          // As seen in your debug log
+            'bank': 'Bank',
+            'amount': 'amount',
+            'paymentDate': 'paymentDate',
+            'donationId': 'ID',
+            'membership': 'membership'
         };
+
+        // Add action type
+        data.action = donationId ? 'update_donation' : 'add_donation';
 
         formData.forEach((value, key) => {
             console.log(`Processing key: ${key}, Value: ${value}`);
@@ -502,7 +505,7 @@ function closeSearchModal() {
                 // For unmapped fields (except special handling ones)
                 data[key] = value;
             }
-            console.log('Final data being sent:', JSON.stringify(data, null, 2));
+
         });
 
         // Handle membership value from select
@@ -555,8 +558,6 @@ function closeSearchModal() {
         
         console.log('Final data being sent:', JSON.stringify(data));
     
-        // Add action type
-        data.action = donationId ? 'update_donation' : 'add_donation';
 
         try {
             showLoading();
@@ -567,7 +568,7 @@ function closeSearchModal() {
             const response = await fetch(`${API_BASE_URL}?table=donation`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(data)
             });

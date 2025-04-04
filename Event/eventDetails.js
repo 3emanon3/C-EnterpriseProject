@@ -452,16 +452,21 @@ let returnStatus = urlParams.get('returnStatus') || '';
             <th>加入活动日期</th>
             <th>操作</th>
         `;
+
+        
         
         // Populate table with enhanced participant data
-        participants.forEach((participant,index ) => {
+        participants.forEach((participant ) => {
             // Get member info if available   
             const row = document.createElement('tr');
             const sequentialNumber =participant.ID;
 
+
+             displayMemberId = participant.memberID || 'N/A';
+
             row.innerHTML = `
                  <td>${sequentialNumber}</td>
-                <td class="member-id">${participant.memberID || 'N/A'}</td>
+                <td class="member-id">${displayMemberId || 'N/A'}</td>
                 <td class="event-id">${escapeHTML(participant.eventID || 'N/A')}</td>
                 <td class="join-date">${formatDate(participant.joined_at)}</td>
                 <td>
@@ -597,6 +602,8 @@ let returnStatus = urlParams.get('returnStatus') || '';
         
         members.forEach(member => {
             const fullMemberId = member.membersID || '';
+            const actualMemberId = member.ID || '';
+
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${escapeHTML(fullMemberId || '')}</td>
@@ -604,7 +611,10 @@ let returnStatus = urlParams.get('returnStatus') || '';
                 <td>${escapeHTML(member.CName || '')}</td>
                 <td>${escapeHTML(member.phone_number || '')}</td>
                 <td>
-                    <button class="select-btn" data-member-id="${fullMemberId}" data-member-name="${escapeHTML(member.Name || '')}">
+                    <button class="select-btn" 
+                    data-member-display-id="${fullMemberId}" 
+                    data-member-actual-id="${actualMemberId}" 
+                    data-member-name="${escapeHTML(member.Name || '')}">
                         选择
                     </button>
                 </td>
@@ -612,7 +622,10 @@ let returnStatus = urlParams.get('returnStatus') || '';
             
             // 添加选择按钮点击事件
             const selectBtn = row.querySelector('.select-btn');
-            selectBtn.addEventListener('click', () => selectMember({...member, ID: fullMemberId}));
+            selectBtn.addEventListener('click', () => selectMember({
+                displayId: fullMemberId,
+                actualId: actualMemberId
+            }));
             
             modalResultsBody.appendChild(row);
         });
@@ -665,7 +678,9 @@ let returnStatus = urlParams.get('returnStatus') || '';
     
     // 选择会员并添加到活动
     async function selectMember(member) {
-        const memberIdToUse = member.membersID || member.ID;
+        const memberIdToUse = member.actualId;
+         displayMemberId =member.displayId;
+
         console.log("Full member ID being used:", memberIdToUse);
         console.log("Complete member object:", member);
         // 确认添加
@@ -719,14 +734,13 @@ if (maxIdData.maxId !== undefined) {
         nextId = 1;
     }
 }
-            
-
+        
             // 创建参与者记录
             const participantData = {
                 table: 'participants',
                 ID: nextId, 
                 eventID: eventId,
-                memberID: memberIdToUse,
+                memberID: memberIdToUse,//check in database of foreign key
                 joined_at: new Date().toISOString().slice(0, 19).replace('T', ' ')
             };
             

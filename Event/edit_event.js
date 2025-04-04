@@ -86,12 +86,12 @@ async function loadEventDetails(eventId) {
 // 填充表单
 function populateForm(event) {
     document.getElementById('eventId').value = event.ID || '';
-    console.log('Set event ID to:', id);
+    console.log('Set event ID to:',  event.ID);
     document.getElementById('eventTitle').value = event.title || '';
     document.getElementById('eventStatus').value = event.status || 'not started';
     document.getElementById('eventStartTime').value = formatDateTimeForInput(event.start_time) || '';
     document.getElementById('eventEndTime').value = formatDateTimeForInput(event.end_time) || '';
-    document.getElementById('eventCreateTime').value = this.formatDateTimeForInput(event.created_at) || '';
+    document.getElementById('eventCreateTime').value =formatDateTimeForInput(event.created_at) || '';
     document.getElementById('eventLocation').value = event.location || '';
     document.getElementById('eventDescription').value = event.description || '';
     document.getElementById('eventMaxParticipant').value = event.max_participant || '';

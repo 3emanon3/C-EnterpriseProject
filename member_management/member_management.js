@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const errorMessages = document.getElementById('errorMessages');
     const loadingIndicator = document.getElementById('loadingIndicator');
     const designation_of_applicant=document.getElementById('designation_of_applicant');
+    const selectElement = document.getElementById('expiredDateOptions');
     
     // 获取URL参数中的returnUrl
     const urlParams = new URLSearchParams(window.location.search);
@@ -12,6 +13,11 @@ document.addEventListener('DOMContentLoaded', function() {
   
     fetchApplicantType();
 
+  // Add this to your existing code
+document.getElementById('expiredDateOptions').addEventListener('change', handleExpiryOptionChange);
+
+// Call it once when the page loads
+handleExpiryOptionChange();
 
     async function fetchApplicantType() {
         try {
@@ -37,6 +43,12 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error("Error fetching applicant type options:", error);
         }
     }
+    function formatDateForDisplay(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}/${month}/${day}`;
+}
 
     // Form submission handler
     addMemberForm.addEventListener('submit', function(e) {
@@ -147,6 +159,73 @@ document.addEventListener('DOMContentLoaded', function() {
         return isValid;
     }
 
+    // Modify the handleExpiryOptionChange function
+    function handleExpiryOptionChange() {
+        const selectedOption = document.getElementById('expiredDateOptions').value;
+        const dateInput = document.getElementById('expiredDate');
+        const expiryPreview = document.getElementById('expiryDatePreview');
+        const today = new Date();
+        
+        // Hide preview if custom or empty selection
+        if (selectedOption === 'custom' || selectedOption === '') {
+            if (expiryPreview) {
+                expiryPreview.style.display = 'none';
+            }
+            
+            if (selectedOption === 'custom') {
+                dateInput.style.display = 'block';
+                dateInput.value = ''; // Clear any existing date
+            } else {
+                dateInput.style.display = 'none';
+            }
+            return;
+        }
+        
+        // Calculate expiry date based on selection
+        let expiryDate;
+        if (selectedOption === '1year') {
+            expiryDate = new Date(today);
+            expiryDate.setFullYear(today.getFullYear() + 1);
+            expiryDate.setDate(expiryDate.getDate() - 1);
+        } else if (selectedOption === '2year') {
+            expiryDate = new Date(today);
+            expiryDate.setFullYear(today.getFullYear() + 2);
+            expiryDate.setDate(expiryDate.getDate() - 1);
+        } else if (selectedOption === '3years') {
+            expiryDate = new Date(today);
+            expiryDate.setFullYear(today.getFullYear() + 3);
+            expiryDate.setDate(expiryDate.getDate() - 1);
+        }
+        
+        // Format and update display
+        if (expiryDate) {
+            // Format date as YYYY-MM-DD for the input field
+            const year = expiryDate.getFullYear();
+            const month = String(expiryDate.getMonth() + 1).padStart(2, '0');
+            const day = String(expiryDate.getDate()).padStart(2, '0');
+            
+            // Update date input
+            dateInput.value = `${year}-${month}-${day}`;
+            dateInput.style.display = 'block';
+            
+            // Show date preview in DD/MM/YYYY format
+            if (expiryPreview) {
+                expiryPreview.textContent = `${day}/${month}/${year}`;
+                expiryPreview.style.display = 'block';
+            }
+        }
+    }
+    
+    // Helper function to format and set date
+    function setDateValue(date) {
+        const dateInput = document.getElementById('expiredDate');
+        // Format date as YYYY-MM-DD for the input field
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        dateInput.value = `${year}-${month}-${day}`;
+    }
+
     // Submit form data
     async function submitForm() {
         
@@ -194,7 +273,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('会员添加成功！');
                 
                 // 获取会员类型
-                const designationType = parseInt(data['Designation_of_Applicant'], 10);
+                const designationType = parseInt(data['Designation of Applicant'], 10);
                 
                 // 如果有returnUrl参数，则跳转回原页面并根据会员类型决定是否带上新会员ID
                 if (returnUrl) {

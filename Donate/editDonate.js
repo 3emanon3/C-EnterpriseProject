@@ -10,31 +10,34 @@ document.addEventListener('DOMContentLoaded', function() {
     const donationId = new URLSearchParams(window.location.search).get('id');
     const membershipSelect = document.getElementById('membership');
     
- // Get URL parameters for return navigation
+     // Get URL parameters for return navigation
  const urlParams = new URLSearchParams(window.location.search);
  const pageParam = urlParams.get('page') || '';
  const queryParam = urlParams.get('query') || '';
  const donationTypeParam = urlParams.get('donationType') || '';
+
  
  // Function to build return URL - centralized for consistency
  function buildReturnUrl() {
-     let returnUrl = 'searchDonate.html';
-     const params = [];
-     
-     if (pageParam) params.push(`page=${pageParam}`);
-     if (queryParam) params.push(`query=${encodeURIComponent(queryParam)}`);
-     if (donationTypeParam) params.push(`donationType=${donationTypeParam}`);
-     
-     if (params.length > 0) {
-         returnUrl += '?' + params.join('&');
-     }
-     
-     return returnUrl;
- }
+    let returnUrl = 'searchDonate.html';
+    const params = [];
+
+    if (pageParam) params.push(`page=${pageParam}`);
+    if (queryParam) params.push(`query=${encodeURIComponent(queryParam)}`);
+    if (donationTypeParam) params.push(`donationType=${donationTypeParam}`);
+
+    if (params.length > 0) {
+        returnUrl += '?' + params.join('&');
+    }
+
+    console.log('Return URL:', returnUrl);
+    return returnUrl;
+}
     
- const returnButton = document.querySelector('.header-actions a.btn-secondary');
+ const returnButton = document.querySelector('.header-actions a.btn.btn-secondary');
  if (returnButton) {
      returnButton.href = buildReturnUrl();
+     console.log('Return button href set to:', returnButton.href);
  }
     // Modal elements
     const memberSearchModal = document.getElementById('memberSearchModal');
@@ -164,18 +167,16 @@ modalSearchInput.addEventListener('input',
                     const query = urlParams.get('query') || '';
                     const donationType = urlParams.get('donationType') || '';
                     
-                    let redirectUrl = 'searchDonate.html';
+                  
                     const params = [];
                     
                     if (page) params.push(`page=${page}`);
                     if (query) params.push(`query=${encodeURIComponent(query)}`);
                     if (donationType) params.push(`donationType=${donationType}`);
                     
-                    if (params.length > 0) {
-                        redirectUrl += '?' + params.join('&');
-                    }
+                   
                     
-                    window.location.href = redirectUrl;
+                    window.location.href = buildReturnUrl();
                 }, 300);
             }
         } catch (error) {
@@ -324,8 +325,6 @@ function populateForm(donation) {
                 return;
             }
 
-            
-            
             // Create a structured object that matches API expectations
             const donationData = {
                 ID: donationId,
@@ -333,14 +332,12 @@ function populateForm(donation) {
                 donationTypes: document.getElementById('donationTypes').value || null,
                 Bank: document.getElementById('bank').value || null,
                 membership: document.getElementById('membership').value === '1' ? 
-                    document.getElementById('selectedMemberId').value || null : null,
+                document.getElementById('selectedMemberId').value || null : null,
                 paymentDate: document.getElementById('paymentDate').value || null,
                 official_receipt_no: document.getElementById('receiptNo').value || null,
                 amount: document.getElementById('amount').value || null,
                 Remarks: document.getElementById('remarks').value || null
             };
-            
-           
             
             console.log('Sending data:', donationData);
             
@@ -352,7 +349,6 @@ function populateForm(donation) {
                 },
                 body: JSON.stringify(donationData)
             });
-
 
             const responseText = await response.text();
             console.log('Raw response:', responseText);
@@ -368,15 +364,17 @@ function populateForm(donation) {
             if (!response.ok) {
                 throw new Error(`API request failed: ${response.status} - ${response.statusText}`);
             }
-            
-           
+              
             console.log('API response:', responseData);
             
             if (responseData.status === 'success' || response.ok) {
                 showSuccess('Donation updated successfully!');
+                const returnUrl = buildReturnUrl();
+                console.log('Redirecting to:', returnUrl);
+                
                 setTimeout(() => {
-                    window.location.href = redirectUrl;
-                }, 200);
+                    window.location.href = returnUrl;
+                }, 1000);
             } else {
                 throw new Error(responseData.message || 'Donation update failed');
             }
