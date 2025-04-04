@@ -369,7 +369,7 @@ let returnStatus = urlParams.get('returnStatus') || '';
         showLoading();
         try {
             console.log(`Fetching participants for event ID: ${eventId}`);
-            const response = await fetch(`${API_BASE_URL}?table=participants&search=true&eventID=${eventId}`);
+            const response = await fetch(`${API_BASE_URL}?table=vparticipants&search=true&eventID=${eventId}`);
             if (!response.ok) {
                 throw new Error(`Loading failed: ${response.status}`);
             }
@@ -496,7 +496,7 @@ let returnStatus = urlParams.get('returnStatus') || '';
         showLoading();
         
         try {
-            const response = await fetch(`${API_BASE_URL}?table=participants&action=delete&ID=${participant.ID}`, {
+            const response = await fetch(`${API_BASE_URL}?table=vparticipants&action=delete&ID=${participant.ID}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
@@ -697,7 +697,7 @@ let returnStatus = urlParams.get('returnStatus') || '';
         showLoading();
         
         try {
-            const checkResponse = await fetch(`${API_BASE_URL}?table=participants&search=true&eventID=${eventId}&memberID=${memberIdToUse}`);
+            const checkResponse = await fetch(`${API_BASE_URL}?table=vparticipants&search=true&eventID=${eventId}&memberID=${memberIdToUse}`);
             const checkData = await checkResponse.json();
             
             if (checkData.data && checkData.data.length > 0) {
@@ -707,7 +707,7 @@ let returnStatus = urlParams.get('returnStatus') || '';
             }
             
             // Get the current max ID to ensure sequential IDs
-            const maxIdResponse = await fetch(`${API_BASE_URL}?table=participants&action=maxid`);
+            const maxIdResponse = await fetch(`${API_BASE_URL}?table=vparticipants&action=maxid`);
             const maxIdData = await maxIdResponse.json();
             console.log("maxIdData response:", maxIdData);
 
@@ -722,7 +722,7 @@ if (maxIdData.maxId !== undefined) {
     console.log("Full maxId response:", maxIdData);
     
     // Try to get the highest ID from existing participants
-    const allParticipantsResponse = await fetch(`${API_BASE_URL}?table=participants&search=true`);
+    const allParticipantsResponse = await fetch(`${API_BASE_URL}?table=vparticipants&search=true`);
     const allParticipants = await allParticipantsResponse.json();
     
     if (allParticipants.data && allParticipants.data.length > 0) {
@@ -737,7 +737,7 @@ if (maxIdData.maxId !== undefined) {
         
             // 创建参与者记录
             const participantData = {
-                table: 'participants',
+                table: 'vparticipants',
                 ID: nextId, 
                 eventID: eventId,
                 memberID: memberIdToUse,//check in database of foreign key
@@ -745,7 +745,7 @@ if (maxIdData.maxId !== undefined) {
             };
             
             // 发送POST请求添加参与者
-            const response = await fetch(`${API_BASE_URL}?table=participants`, {
+            const response = await fetch(`${API_BASE_URL}?table=vparticipants`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
