@@ -124,7 +124,7 @@ handleExpiryOptionChange();
         }
 
         // Validate Expired Date
-        const expiredDateField = safeGetElement('expired date');
+        const expiredDateField = safeGetElement('expired_date');
         if (expiredDateField && expiredDateField.value) {
             const expiredDate = new Date(expiredDateField.value);
             const today = new Date();
@@ -239,6 +239,12 @@ handleExpiryOptionChange();
                 data[key] = value.trim();
             }
         });
+
+        const expiredDateValue = document.getElementById('expiredDate').value;
+
+        if (expiredDateValue && expiredDateValue.trim() !== '') {
+            data['expired_date'] = expiredDateValue; // Make sure this matches your API field name
+        }
 
         data.action = 'add_member';
 
