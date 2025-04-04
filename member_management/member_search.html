@@ -43,22 +43,20 @@
                         <strong>当前月份：</strong> 指系统运行时自动获取的服务器或您本地设备的当前日历月份。按钮点击时，系统会使用这个月份值进行匹配查找。
                     </span>
                 </button>
-                <button id="searchExpiry" class="btn btn-warning tooltip">
-                    <i class="fas fa-calendar-times"></i> 到期塾员
+                <button id="searchExpiry" class="btn btn-warning tooltip" onclick="openExpiryModal()">
+                    <i class="fas fa-calendar-times"></i> 到期塾员 (选择年月)
                     <span class="tooltip-text">
-                        <strong>核心功能：</strong>显示所有本月过生日的塾员，帮助您及时准备祝福或提醒。
+                        <strong>核心功能：</strong> 查找并显示在指定年月或之前到期的塾员。
                         <br>
-                        <strong>使用须知：</strong>
+                        <strong>使用须知：</strong><br>
+                        1.  <strong>选择年月：</strong> 点击此按钮后，您需要输入或选择一个目标年份和月份。
                         <br>
-                        1. <strong>数据依赖: </strong>本功能仅对比“生日月期”与当前月份是否相同。
+                        2.  <strong>筛选逻辑：</strong> 系统将查找所有“到期日期”早于或等于您所选年月最后一天的塾员。例如，选择 2024 年 6 月，将显示到期日在 2024-06-30 及之前的所有塾员。
                         <br>
-                        2. <strong>无到期日期的处理: </strong>若塾员的“到期日期”为空，系统无法显示（历史数据问题）。解决方法为通过“塾员种类”筛选功能，选择特定分类（如“逾期，拒绝续费”）查找此类塾员。
+                        3.  <strong>数据依赖：</strong> 依赖于塾员信息中准确的“到期日期”记录（格式应为 YYYY-MM-DD）。若该字段为空或格式错误，对应塾员可能无法被正确筛选。
                         <br>
-                        <strong>补充：词语解释</strong>
-                        <br>
-                        <strong>到期日期: </strong>记录塾员为塾员的最后日期（如“2024-06-1”表示在2024年5月30日后不为塾员）。
-                        <br>
-                        <strong>当前日期: </strong>指系统运行时自动获取的服务器或您本地设备的当前日历月份。按钮点击时，系统会使用这个月份值进行匹配查找。
+                        <strong>补充：词语解释</strong><br>
+                        <strong>到期日期：</strong> 记录塾员会籍有效期的最后日期。
                     </span>
                 </button>
                 <button id="listAllMembers" class="btn btn-secondary tooltip">
@@ -156,6 +154,42 @@
         </section>
     </div>
 
+    <div id="expiryModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeExpiryModal()">×</span>
+            <h2>选择查询的到期年月</h2>
+            <p>查找在指定年月或之前到期的塾员。</p>
+            <div class="modal-form">
+                <label for="expiryYearInput">年份 (YYYY):</label>
+                <input type="number" id="expiryYearInput" placeholder="例如: 2024" min="1900" max="2100">
+    
+                <label for="expiryMonthInput">月份 (1-12):</label>
+                <select id="expiryMonthInput">
+                    <option value="">--选择月份--</option>
+                    <option value="1">1 (一月)</option>
+                    <option value="2">2 (二月)</option>
+                    <option value="3">3 (三月)</option>
+                    <option value="4">4 (四月)</option>
+                    <option value="5">5 (五月)</option>
+                    <option value="6">6 (六月)</option>
+                    <option value="7">7 (七月)</option>
+                    <option value="8">8 (八月)</option>
+                    <option value="9">9 (九月)</option>
+                    <option value="10">10 (十月)</option>
+                    <option value="11">11 (十一月)</option>
+                    <option value="12">12 (十二月)</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button id="confirmExpirySearch" class="btn btn-success">查询</button>
+                <button type="button" class="btn btn-secondary" onclick="closeExpiryModal()">取消</button>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Overlay -->
+    <div id="modalOverlay" class="modal-overlay"></div>
+
     <script type="module" src="member_search.js"></script>
+    
 </body>
 </html>
