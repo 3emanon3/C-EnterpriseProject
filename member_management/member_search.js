@@ -1,7 +1,6 @@
-document.addEventListener("DOMContentLoaded", function () {
-    // ===== CONFIGURATION =====
-    const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
+import { API_BASE_URL } from '../config.js';
 
+document.addEventListener("DOMContentLoaded", function () {
     // ===== DOM ELEMENTS =====
     const searchInput = document.getElementById("searchInput");
     const memberTableBody = document.querySelector("#memberTable tbody");

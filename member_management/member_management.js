@@ -194,7 +194,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('会员添加成功！');
                 
                 // 获取会员类型
-                const designationType = parseInt(data['Designation of Applicant'], 10);
+                const designationType = parseInt(data['Designation_of_Applicant'], 10);
                 
                 // 如果有returnUrl参数，则跳转回原页面并根据会员类型决定是否带上新会员ID
                 if (returnUrl) {

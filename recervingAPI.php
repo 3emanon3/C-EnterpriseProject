@@ -64,7 +64,9 @@ class DatabaseAPI {
                 'conditions'=>['Birthday = MONTH(CURDATE()) '],
             ], 
             'expired' => [
-                'conditions'=>['(YEAR(`expired_date`) < YEAR(CURDATE())) OR (YEAR(`expired_date`) = YEAR(CURDATE()) AND MONTH(`expired_date`) <= MONTH(CURDATE())) '],
+                'conditions'=>['(YEAR(`expired_date`) < ?) OR (YEAR(`expired_date`) = ? AND MONTH(`expired_date`) <= ?) '],
+                'param' => ['targetYear', 'targetYear', 'targetMonth'],
+                'paramTypes' => 'iii'
             ],
         ],
         'members_with_applicant_designation' => [
@@ -72,7 +74,10 @@ class DatabaseAPI {
                 'conditions'=>['Birthday = MONTH(CURDATE()) '],
             ], 
             'expired' => [
-                'conditions'=>['(YEAR(`expired_date`) < YEAR(CURDATE())) OR (YEAR(`expired_date`) = YEAR(CURDATE()) AND MONTH(`expired_date`) <= MONTH(CURDATE())) '],
+                // Same modification as in 'members'
+                'conditions'=>['(YEAR(`expired_date`) < ?) OR (YEAR(`expired_date`) = ? AND MONTH(`expired_date`) <= ?) '],
+                'param' => ['targetYear', 'targetYear', 'targetMonth'],
+                'paramTypes' => 'iii'
             ],
         ],
         'soldrecord' => [
@@ -186,7 +191,7 @@ class DatabaseAPI {
         
         if (!empty($specificParams)) {
             //if got specific params, then go to handleParameterizedSearch
-            $this->handleParameterizedSearch($table, $specificParams);
+            $this->handleParameterizedSearch($table, $specificParams, $params);
         } else if (!empty($searchTerm)) {
             //if not, then go to handleGeneralSearch
             $this->handleGeneralSearch($table, $searchTerm);
@@ -198,9 +203,10 @@ class DatabaseAPI {
     /**
      * Handle search with specific parameters including special conditions
      */
-    private function handleParameterizedSearch($table, $specificParams) {
+    private function handleParameterizedSearch($table, $specificParams, $allGetParams) {
         error_log('Specific Params: ' . print_r($specificParams, true));
-        
+        error_log('All GET Params: ' . print_r($allGetParams, true));
+
         $allowedColumns = $this->allowedTables[$table];
         
         $normalizedParams = [];
@@ -226,16 +232,21 @@ class DatabaseAPI {
         
         // Process special conditions
         if (!empty($specialParams)) {
-            $specialIds = $this->getIdsFromSpecialConditions($originalTable, $specialParams);
-            
-            if (empty($specialIds)) {
-                // No matches found, return empty result
-                $this->sendEmptyResponse();
+            try {  
+                $specialIds = $this->getIdsFromSpecialConditions($originalTable, $specialParams, $allGetParams);
+                
+                if (empty($specialIds)) {
+                    // No matches found, return empty result
+                    $this->sendEmptyResponse();
+                    return;
+                }
+                
+                $idParams = $specialIds;
+                $idTypes = str_repeat('i', count($specialIds));
+            } catch (Exception $e) {
+                $this->sendError($e->getMessage(), self::HTTP_BAD_REQUEST);
                 return;
-            }
-            
-            $idParams = $specialIds;
-            $idTypes = str_repeat('i', count($specialIds));
+            }    
         }
         
         // Construct base and count queries
@@ -245,13 +256,18 @@ class DatabaseAPI {
         // Add condition for IDs from special parameters
         if (!empty($idParams)) {
             $placeholders = implode(',', array_fill(0, count($idParams), '?'));
-            $baseQuery .= " AND ID IN ($placeholders)";
-            $countQuery .= " AND ID IN ($placeholders)";
+            if (strpos($baseQuery, 'WHERE') === false) {
+                $baseQuery .= " WHERE ID IN ($placeholders)";
+                $countQuery .= " WHERE ID IN ($placeholders)";
+            } else {
+                 $baseQuery .= " AND ID IN ($placeholders)";
+                 $countQuery .= " AND ID IN ($placeholders)";
+            }
         }
         
         // Combine all parameters and types
-        $allParams = array_merge($idParams, $normalParamsValues);
-        $allTypes = $idTypes . $normalTypes;
+        $allParams = array_merge($normalParamsValues, $idParams);
+        $allTypes = $normalTypes . $idTypes;
         
         // Execute the query
         $this->executeQuery($table, $baseQuery, $countQuery, $allParams, $allTypes);
@@ -273,19 +289,31 @@ class DatabaseAPI {
     /**
      * Get IDs matching special conditions from original table
      */
-    private function getIdsFromSpecialConditions($table, $specialParams) {
+    private function getIdsFromSpecialConditions($table, $specialParams, $allGetParams) {
         $conditions = [];
-        $specialParamsValues = [];
-        $specialTypes = '';
+        $specialConditionParamsValues  = [];
+        $specialConditionTypes = '';
         
         foreach ($specialParams as $key => $value) {
             if (isset($this->specialConditions[$table][$key])) {
                 $condition = $this->specialConditions[$table][$key];
                 $conditions[] = $condition['conditions'][0];
                 
-                if (isset($condition['params'])) {
-                    $specialParamsValues[] = $value;
-                    $specialTypes .= $condition['type'];
+                if (isset($condition['param'])) {
+                    foreach ($condition['param'] as $param) {
+                        if (!isset($allGetParams[$param])) {
+                            throw new Exception("Missing required parameter '{$param}' for condition '{$key}'.");
+                        }
+                        $paramsValue = $allGetParams[$param];
+                        if (!is_numeric($paramsValue)) {
+                            throw new Exception("Parameter '{$param}' must be numeric for condition '{$key}'. Received: " . print_r($condition, true));
+                        }
+                        $specialConditionParamsValues[] = $paramsValue;
+                    }
+                    $specialConditionTypes .= $condition['paramTypes'];
+                } else if (isset($condition)) {
+                    $specialConditionParamsValues[] = $value;
+                    $specialConditionTypes .= $condition['paramTypes'];
                 }
             }
         }
@@ -296,11 +324,22 @@ class DatabaseAPI {
         
         $whereClause = implode(' AND ', $conditions);
         $idQuery = "SELECT ID FROM `$table` WHERE $whereClause";
-        $stmt = $this->prepareAndExecute($idQuery, $specialParamsValues, $specialTypes);
+
+        error_log("Special Condition ID Query: $idQuery");
+        error_log("Special Condition Params: " . print_r($specialConditionParamsValues, true));
+        error_log("Special Condition Types: " . $specialConditionTypes);
+
+        $stmt = $this->prepareAndExecute($idQuery, $specialConditionParamsValues , $specialConditionTypes);
         $result = $stmt->get_result();
+
+        if (!$result) {
+            throw new Exception("Failed to get result for special condition query: " . $this->dsn->error);
+        }
         
         return array_column($result->fetch_all(MYSQLI_ASSOC), 'ID');
     }
+
+    
     
     /**
      * Build search queries for column-specific searches
@@ -360,13 +399,13 @@ class DatabaseAPI {
                 $baseQuery .= " AND " . $condition['conditions'][0];
                 $countQuery .= " AND " . $condition['conditions'][0];
 
-                if (isset($condition['params'])) {
-                    foreach ($condition['params'] as $param) {
+                if (isset($condition['param'])) {
+                    foreach ($condition['param'] as $param) {
                         if (isset($params[$param])) {
                             $queryParams[] = $params[$param];
-                            $queryTypes .= $condition['type'];
                         }
                     }
+                    $queryTypes .= $condition['paramType'];
                 }
             }
         }
