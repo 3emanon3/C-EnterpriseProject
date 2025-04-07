@@ -114,7 +114,7 @@
             </div>
 
             <div class="detail-section" id="participationHistory">
-                <h2>参与历史</h2>
+                <h2>参与活动历史</h2>
                 <div class="table-container">
                     <table id="participationTable">
                         <thead>
@@ -122,7 +122,6 @@
                                 <th>活动ID</th>
                                 <th>活动名称</th>
                                 <th>日期</th>
-                                <th>参与状态</th>
                                 <th>备注</th>
                             </tr>
                         </thead>
@@ -145,12 +144,41 @@
                                 <th>捐款日期</th>
                                 <th>金额</th>
                                 <th>捐款类型</th>
+                                <th>银行类型</th>
+                                <th>收据号码</th>
                                 <th>备注</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td colspan="5" class="loading-message">加载中...</td>
+                                <td colspan="6" class="loading-message">加载中...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- New section for Purchase Records -->
+            <div class="detail-section" id="purchaseHistory">
+                <h2>购买记录</h2>
+                <div class="table-container">
+                    <table id="purchaseTable">
+                        <thead>
+                            <tr>
+                                <th>订单ID</th>
+                                <th>商品名称</th>
+                                <th>购买日期</th> 
+                                <th>数量</th>
+                                <th>进入数量</th>
+                                <th>剩余数量</th>
+                                <th>单价</th>
+                                <th>金额</th>
+                                <th>备注</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="8" class="loading-message">加载中...</td>
                             </tr>
                         </tbody>
                     </table>

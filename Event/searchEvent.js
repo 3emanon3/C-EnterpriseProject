@@ -163,7 +163,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function formatDateTime(dateTimeStr) {
-        if (!dateTimeStr) return '';
+        if (!dateTimeStr || dateTimeStr === '0000-00-00 00:00:00') return '-';
         const date = new Date(dateTimeStr);
         if (isNaN(date.getTime())) return dateTimeStr;
         

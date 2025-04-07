@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const memberDetailsContainer = document.getElementById("memberDetails");
     const participationTable = document.getElementById("participationTable").querySelector("tbody");
     const donationTable = document.getElementById("donationTable").querySelector("tbody");
+    const purchaseTable = document.getElementById("purchaseTable").querySelector("tbody");
     
     // Get member ID from URL
     const urlParams = new URLSearchParams(window.location.search);
@@ -33,6 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const cname = document.getElementById('CName').textContent;
             const designation = document.getElementById('designation').textContent;
             const address = document.getElementById('Address').textContent;
+            const position = document.getElementById('position').textContent;
             const phone = document.getElementById('phone_number').textContent;
             const email = document.getElementById('email').textContent;
             const ic = document.getElementById('IC').textContent;
@@ -56,7 +58,15 @@ document.addEventListener("DOMContentLoaded", function () {
             // Get donation history table
             const donationRows = Array.from(document.querySelectorAll('#donationTable tbody tr')).map(row => {
                 if(row.querySelector('.no-results') || row.querySelector('.error-message') || row.querySelector('.loading-message')) {
-                    return '<tr><td colspan="5" style="text-align:center;">没有捐款记录</td></tr>';
+                    return '<tr><td colspan="7" style="text-align:center;">没有捐款记录</td></tr>';
+                }
+                return row.outerHTML;
+            }).join('');
+            
+            // Get purchase history table
+            const purchaseRows = Array.from(document.querySelectorAll('#purchaseTable tbody tr')).map(row => {
+                if(row.querySelector('.no-results') || row.querySelector('.error-message') || row.querySelector('.loading-message')) {
+                    return '<tr><td colspan="9" style="text-align:center;">没有购买记录</td></tr>';
                 }
                 return row.outerHTML;
             }).join('');
@@ -219,6 +229,10 @@ document.addEventListener("DOMContentLoaded", function () {
                                 <label>地址:</label>
                                 <span>${address}</span>
                             </div>
+                            <div class="detail-item">
+                                <label>职位:</label>
+                                <span>${position}</span>
+                            </div>
                         </div>
                     </div>
                     
@@ -285,7 +299,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     </div>
                     
                     <div class="detail-section page-break">
-                        <h2>参与历史</h2>
+                        <h2>参与活动历史</h2>
                         <div class="table-container">
                             <table>
                                 <thead>
@@ -293,7 +307,6 @@ document.addEventListener("DOMContentLoaded", function () {
                                         <th>活动ID</th>
                                         <th>活动名称</th>
                                         <th>日期</th>
-                                        <th>参与状态</th>
                                         <th>备注</th>
                                     </tr>
                                 </thead>
@@ -314,11 +327,37 @@ document.addEventListener("DOMContentLoaded", function () {
                                         <th>捐款日期</th>
                                         <th>金额</th>
                                         <th>捐款类型</th>
+                                        <th>银行类型</th>
+                                        <th>收据号码</th>
                                         <th>备注</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     ${donationRows}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h2>购买记录</h2>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>订单ID</th>
+                                        <th>商品名称</th>
+                                        <th>购买日期</th> 
+                                        <th>数量</th>
+                                        <th>进入数量</th>
+                                        <th>剩余数量</th>
+                                        <th>单价</th>
+                                        <th>金额</th>
+                                        <th>备注</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${purchaseRows}
                                 </tbody>
                             </table>
                         </div>
@@ -423,7 +462,7 @@ document.addEventListener("DOMContentLoaded", function () {
         loader.style.display = "block";
         
         try {
-            const response = await fetch(`${API_BASE_URL}?table=members&ID=${memberId}`);
+            const response = await fetch(`${API_BASE_URL}?table=members&search=true&ID=${memberId}`);
             
             if (!response.ok) {
                 throw new Error(`服务器返回错误: ${response.status}`);
@@ -441,7 +480,8 @@ document.addEventListener("DOMContentLoaded", function () {
             // After displaying member details, fetch related data
             await Promise.all([
                 fetchParticipationHistory(),
-                fetchDonationHistory()
+                fetchDonationHistory(),
+                fetchPurchaseHistory()
             ]);
             
         } catch (error) {
@@ -521,7 +561,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Fetch participation history
     async function fetchParticipationHistory() {
         try {
-            const response = await fetch(`${API_BASE_URL}?table=participants&member_id=${memberId}`);
+            const response = await fetch(`${API_BASE_URL}?table=vparticipants&search=true&membersID=${memberId}`);
             
             if (!response.ok) {
                 throw new Error(`服务器返回错误: ${response.status}`);
@@ -532,8 +572,12 @@ document.addEventListener("DOMContentLoaded", function () {
             if (!data || !data.data) {
                 throw new Error("获取参与历史失败");
             }
+
+            const filteredParticipations = data.data.filter(vparticipation => 
+                vparticipation.membersID == memberId
+            );
             
-            displayParticipationHistory(data.data);
+            displayParticipationHistory(filteredParticipations);
             
         } catch (error) {
             console.error("Error fetching participation history:", error);
@@ -553,33 +597,25 @@ document.addEventListener("DOMContentLoaded", function () {
         participations.forEach(participation => {
             const row = document.createElement('tr');
             
-            // Get status display
-            let statusDisplay = '未知';
-            if (participation.status) {
-                switch(participation.status.toString()) {
-                    case '1': statusDisplay = '<span class="status-tag attending">参加</span>'; break;
-                    case '2': statusDisplay = '<span class="status-tag not-attending">不参加</span>'; break;
-                    case '3': statusDisplay = '<span class="status-tag maybe">待定</span>'; break;
-                    default: statusDisplay = participation.status;
-                }
-            }
             
             row.innerHTML = `
                 <td>${participation.event_id || '无'}</td>
                 <td>${participation.event_name || '无'}</td>
                 <td>${formatDate(participation.event_date)}</td>
-                <td>${statusDisplay}</td>
                 <td>${participation.remarks || '无'}</td>
             `;
             
             participationTable.appendChild(row);
         });
+        if (participationTable.children.length === 0) {
+            participationTable.innerHTML = `<tr><td colspan="5" class="no-results">没有参与记录</td></tr>`;
+        }
     }
     
     // Fetch donation history
     async function fetchDonationHistory() {
         try {
-            const response = await fetch(`${API_BASE_URL}?table=donation&member_id=${memberId}`);
+            const response = await fetch(`${API_BASE_URL}?table=donation&search=true&member_id=${memberId}`);
             
             if (!response.ok) {
                 throw new Error(`服务器返回错误: ${response.status}`);
@@ -595,14 +631,14 @@ document.addEventListener("DOMContentLoaded", function () {
             
         } catch (error) {
             console.error("Error fetching donation history:", error);
-            donationTable.innerHTML = `<tr><td colspan="5" class="error-message">获取捐款历史失败: ${error.message}</td></tr>`;
+            donationTable.innerHTML = `<tr><td colspan="7" class="error-message">获取捐款历史失败: ${error.message}</td></tr>`;
         }
     }
     
     // Display donation history
     function displayDonationHistory(donations) {
         if (!donations || donations.length === 0) {
-            donationTable.innerHTML = `<tr><td colspan="5" class="no-results">没有捐款记录</td></tr>`;
+            donationTable.innerHTML = `<tr><td colspan="7" class="no-results">没有捐款记录</td></tr>`;
             return;
         }
         
@@ -621,6 +657,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 <td>${formatDate(donation.donation_date)}</td>
                 <td>${formatCurrency(donation.amount)}</td>
                 <td>${donation.donation_type || '无'}</td>
+                <td>${donation.bank_type || '无'}</td>
+                <td>${donation.receipt_no || '无'}</td>
                 <td>${donation.remarks || '无'}</td>
             `;
             
@@ -633,10 +671,77 @@ document.addEventListener("DOMContentLoaded", function () {
         totalRow.innerHTML = `
             <td colspan="2" class="total-label">总计</td>
             <td class="total-amount">${formatCurrency(totalAmount)}</td>
-            <td colspan="2"></td>
+            <td colspan="4"></td>
         `;
         
         donationTable.appendChild(totalRow);
+    }
+    
+    // Fetch purchase history
+    async function fetchPurchaseHistory() {
+        try {
+            const response = await fetch(`${API_BASE_URL}?table=soldrecord&search=true&member_id=${memberId}`);
+            
+            if (!response.ok) {
+                throw new Error(`服务器返回错误: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            if (!data || !data.data) {
+                throw new Error("获取购买记录失败");
+            }
+            
+            displayPurchaseHistory(data.data);
+            
+        } catch (error) {
+            console.error("Error fetching purchase history:", error);
+            purchaseTable.innerHTML = `<tr><td colspan="9" class="error-message">获取购买记录失败: ${error.message}</td></tr>`;
+        }
+    }
+    
+    // Display purchase history
+    function displayPurchaseHistory(purchases) {
+        if (!purchases || purchases.length === 0) {
+            purchaseTable.innerHTML = `<tr><td colspan="9" class="no-results">没有购买记录</td></tr>`;
+            return;
+        }
+        
+        purchaseTable.innerHTML = '';
+        
+        // Calculate total
+        let totalAmount = 0;
+        
+        purchases.forEach(purchase => {
+            const amount = parseFloat(purchase.amount) || 0;
+            totalAmount += amount;
+            
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${purchase.order_id || '无'}</td>
+                <td>${purchase.product_name || '无'}</td>
+                <td>${formatDate(purchase.purchase_date)}</td>
+                <td>${purchase.quantity || '0'}</td>
+                <td>${purchase.used_quantity || '0'}</td>
+                <td>${purchase.remaining_quantity || '0'}</td>
+                <td>${formatCurrency(purchase.unit_price)}</td>
+                <td>${formatCurrency(purchase.amount)}</td>
+                <td>${purchase.remarks || '无'}</td>
+            `;
+            
+            purchaseTable.appendChild(row);
+        });
+        
+        // Add total row
+        const totalRow = document.createElement('tr');
+        totalRow.className = 'total-row';
+        totalRow.innerHTML = `
+            <td colspan="7" class="total-label">总计</td>
+            <td class="total-amount">${formatCurrency(totalAmount)}</td>
+            <td></td>
+        `;
+        
+        purchaseTable.appendChild(totalRow);
     }
     
     // Initialize page
