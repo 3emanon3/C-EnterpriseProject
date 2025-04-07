@@ -369,7 +369,7 @@ let returnStatus = urlParams.get('returnStatus') || '';
         showLoading();
         try {
             console.log(`Fetching participants for event ID: ${eventId}`);
-            const response = await fetch(`${API_BASE_URL}?table=vparticipants&search=true&eventID=${eventId}`);
+            const response = await fetch(`${API_BASE_URL}?table=participants&search=true&eventID=${eventId}`);
             if (!response.ok) {
                 throw new Error(`Loading failed: ${response.status}`);
             }
@@ -448,28 +448,39 @@ let returnStatus = urlParams.get('returnStatus') || '';
         tableHeaders.innerHTML = `
             <th>序号</th>
             <th>会员ID</th>
+            <th>会员英文姓名</th>
+            <th>会员华文姓名</th>   
+            <th>会员电话</th>
+            <th>会员邮箱</th>
+            <th>会员IC</th>
             <th>事件ID</th>
             <th>加入活动日期</th>
             <th>操作</th>
         `;
 
-        
-        
         // Populate table with enhanced participant data
         participants.forEach((participant ) => {
             // Get member info if available   
             const row = document.createElement('tr');
             const sequentialNumber =participant.ID;
-
-
-             displayMemberId = participant.memberID || 'N/A';
+            displayMemberId = participant.memberID || 'N/A';
+            const englishName = participant.Name || 'N/A';
+            const chineseName = participant.CName || 'N/A';
+            const phoneNumber = participant.phone_number || 'N/A';
+            const email = participant.email || 'N/A';
+            const ic = participant.IC || 'N/A';
 
             row.innerHTML = `
                  <td>${sequentialNumber}</td>
-                <td class="member-id">${displayMemberId || 'N/A'}</td>
-                <td class="event-id">${escapeHTML(participant.eventID || 'N/A')}</td>
-                <td class="join-date">${formatDate(participant.joined_at)}</td>
-                <td>
+            <td class="member-id">${escapeHTML(displayMemberId)}</td>
+            <td class="member-name">${escapeHTML(englishName)}</td>
+            <td class="member-cname">${escapeHTML(chineseName)}</td>
+            <td class="member-phone">${escapeHTML(phoneNumber)}</td>
+            <td class="member-email">${escapeHTML(email)}</td>
+            <td class="member-ic">${escapeHTML(ic)}</td>
+            <td class="event-id">${escapeHTML(participant.eventID || 'N/A')}</td>
+            <td class="join-date">${formatDate(participant.joined_at)}</td>
+            <td>
                     <button class="delete-btn" 
                             data-participant-id="${participant.ID}" 
                             data-member-id="${participant.memberID}" 
@@ -488,15 +499,16 @@ let returnStatus = urlParams.get('returnStatus') || '';
     }
     
     async function deleteParticipant(participant) {
+        const memberIdToDisplay = participant.membersID || participant.memberID || 'N/A';
         // Confirm deletion
-        const confirmDelete = confirm(`确定要删除该参与者吗？\n会员ID: ${participant.memberID}\n事件ID: ${participant.eventID}`);
+        const confirmDelete = confirm(`确定要删除该参与者吗？\n会员ID: ${memberIdToDisplay}\n事件ID: ${participant.eventID}`);
         
         if (!confirmDelete) return;
         
         showLoading();
         
         try {
-            const response = await fetch(`${API_BASE_URL}?table=vparticipants&action=delete&ID=${participant.ID}`, {
+            const response = await fetch(`${API_BASE_URL}?table=participants&action=delete&ID=${participant.ID}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
@@ -511,8 +523,6 @@ let returnStatus = urlParams.get('returnStatus') || '';
             const result = await response.json();
             
             if (result.status === 'success') {
-                
-                
                 
                 // Show success message
                 showError('参与者删除成功');
@@ -677,107 +687,104 @@ let returnStatus = urlParams.get('returnStatus') || '';
     }
     
     // 选择会员并添加到活动
-    async function selectMember(member) {
-        const memberIdToUse = member.actualId;
-         displayMemberId =member.displayId;
+    // Function to select a member and add them to the event
+async function selectMember(member) {
+    const memberIdToUse = member.actualId;
+    const displayMemberId = member.displayId;
 
-        console.log("Full member ID being used:", memberIdToUse);
-        console.log("Complete member object:", member);
-        // 确认添加
+    console.log("Full member ID being used:", memberIdToUse);
+    console.log("Complete member object:", member);
 
-        if (!memberIdToUse || memberIdToUse === '0' || memberIdToUse === 0) {
-            showError('无效的会员ID，请选择有效的会员');
+    if (!memberIdToUse || memberIdToUse === '0' || memberIdToUse === 0) {
+        showError('无效的会员ID，请选择有效的会员');
+        return;
+    }
+
+    const confirmAdd = confirm(`确定要将会员 ${member.Name || member.CName || member.ID} 添加到此活动吗？`);
+    
+    if (!confirmAdd) return;
+    
+    showLoading();
+    
+    try {
+        // Check if the member is already added to this event - using vparticipants and membersID
+        const checkResponse = await fetch(`${API_BASE_URL}?table=vparticipants&search=true&eventID=${eventId}&membersID=${memberIdToUse}`);
+        const checkData = await checkResponse.json();
+        
+        if (checkData.data && checkData.data.length > 0) {
+            showError(`该会员已经添加到此活动中`);
+            hideLoading();
             return;
         }
+        
+        // Get the current max ID to ensure sequential IDs
+        const maxIdResponse = await fetch(`${API_BASE_URL}?table=participants&action=maxid`);
+        const maxIdData = await maxIdResponse.json();
+        console.log("maxIdData response:", maxIdData);
 
-        const confirmAdd = confirm(`确定要将会员 ${member.Name || member.CName || member.ID} 添加到此活动吗？`);
-        
-        if (!confirmAdd) return;
-        
-        showLoading();
-        
-        try {
-            const checkResponse = await fetch(`${API_BASE_URL}?table=vparticipants&search=true&eventID=${eventId}&memberID=${memberIdToUse}`);
-            const checkData = await checkResponse.json();
+        let nextId;
+        if (maxIdData.maxId !== undefined) {
+            nextId = parseInt(maxIdData.maxId) + 1;
+        } else if (maxIdData.data && maxIdData.data.maxId !== undefined) {
+            nextId = parseInt(maxIdData.data.maxId) + 1;
+        } else {
+            console.log("Full maxId response:", maxIdData);
             
-            if (checkData.data && checkData.data.length > 0) {
-                showError(`该会员已经添加到此活动中`);
-                hideLoading();
-                return;
+            // Try to get the highest ID from existing participants
+            const allParticipantsResponse = await fetch(`${API_BASE_URL}?table=participants&search=true`);
+            const allParticipants = await allParticipantsResponse.json();
+            
+            if (allParticipants.data && allParticipants.data.length > 0) {
+                const highestId = Math.max(...allParticipants.data.map(p => parseInt(p.ID) || 0));
+                nextId = highestId + 1;
+            } else {
+                nextId = 1;
             }
+        }
+    
+        // Create participant record - Store in participants table using memberID (not membersID)
+        const participantData = {
+            table: 'participants',
+            ID: nextId, 
+            eventID: eventId,
+            memberID: memberIdToUse,  // Use memberID for the participants table
+            joined_at: new Date().toISOString().slice(0, 19).replace('T', ' ')
+        };
+        
+        // Send POST request to add participant
+        const response = await fetch(`${API_BASE_URL}?table=participants`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(participantData)
+        });
+        
+        if (!response.ok) {
+            throw new Error(`添加失败: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        
+        if (result.status === 'success') {
+            // Close modal
+            memberSearchModal.style.display = 'none';
             
-            // Get the current max ID to ensure sequential IDs
-            const maxIdResponse = await fetch(`${API_BASE_URL}?table=vparticipants&action=maxid`);
-            const maxIdData = await maxIdResponse.json();
-            console.log("maxIdData response:", maxIdData);
-
-            let nextId;
-if (maxIdData.maxId !== undefined) {
-    nextId = parseInt(maxIdData.maxId) + 1;
-} else if (maxIdData.data && maxIdData.data.maxId !== undefined) {
-    // Check if it's nested under a data property
-    nextId = parseInt(maxIdData.data.maxId) + 1;
-} else {
-    // If we're getting a completely different response format, check the whole response
-    console.log("Full maxId response:", maxIdData);
-    
-    // Try to get the highest ID from existing participants
-    const allParticipantsResponse = await fetch(`${API_BASE_URL}?table=vparticipants&search=true`);
-    const allParticipants = await allParticipantsResponse.json();
-    
-    if (allParticipants.data && allParticipants.data.length > 0) {
-        // Find the highest ID in the existing data
-        const highestId = Math.max(...allParticipants.data.map(p => parseInt(p.ID) || 0));
-        nextId = highestId + 1;
-    } else {
-        // If no participants exist, start with 1
-        nextId = 1;
+            // Show success message
+            showError(`会员 ${member.Name || member.CName || memberIdToUse} 已成功添加到活动`);
+            
+            // Reload participants list - use vparticipants for display
+            fetchParticipants(eventId);
+        } else {
+            throw new Error(result.message || '添加参与者失败');
+        }
+    } catch (error) {
+        console.error('添加参与者时出错:', error);
+        showError(`添加失败: ${error.message}`);
+    } finally {
+        hideLoading();
     }
 }
-        
-            // 创建参与者记录
-            const participantData = {
-                table: 'vparticipants',
-                ID: nextId, 
-                eventID: eventId,
-                memberID: memberIdToUse,//check in database of foreign key
-                joined_at: new Date().toISOString().slice(0, 19).replace('T', ' ')
-            };
-            
-            // 发送POST请求添加参与者
-            const response = await fetch(`${API_BASE_URL}?table=vparticipants`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(participantData)
-            });
-            
-            if (!response.ok) {
-                throw new Error(`添加失败: ${response.status}`);
-            }
-            
-            const result = await response.json();
-            
-            if (result.status === 'success') {
-                // 关闭模态框
-                memberSearchModal.style.display = 'none';
-                
-                // 显示成功消息
-                showError(`会员 ${member.Name || member.CName || memberIdToUse} 已成功添加到活动`);
-                
-                // 重新加载参与者列表
-                fetchParticipants(eventId);
-            } else {
-                throw new Error(result.message || '添加参与者失败');
-            }
-        } catch (error) {
-            console.error('添加参与者时出错:', error);
-            showError(`添加失败: ${error.message}`);
-        } finally {
-            hideLoading();
-        }
-    }
     
     // 防抖函数
     function debounce(func, wait) {

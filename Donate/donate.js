@@ -96,10 +96,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-function closeSearchModal() {
-  memberSearchModal.style.display = 'none';
-}
-
     // 模态框搜索功能 - 增强版，支持实时搜索
     function performModalSearch(page = 1) {
         const searchTerm = modalSearchInput.value.trim();

@@ -499,6 +499,7 @@ document.addEventListener("DOMContentLoaded", function () {
         updateElement('Birthday', member.Birthday);
         updateElement('companyName', companyName);
         updateElement('expiredDate', expiredDate, formatDate);
+        updateElement('position', member.position);
         updateElement('remarks', member.remarks);
         updateElement('other', member.other);
         

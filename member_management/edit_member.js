@@ -420,11 +420,12 @@ function populateForm(memberData) {
         'ic': ['IC'],
         'oldic': ['oldIC'],
         'gender': ['gender'],
-        'company': ['companyName', 'componyName'],
-        'birthday': ['Birthday'], // This key from API holds the month number
-        'expired': ['expired_date', 'expired date'],
-        'birthplace': ['place_of_birth', 'place of birth'],
-        'others': ['others'],
+        'company': [ 'componyName'],
+        'birthday': ['Birthday'],
+        'expired': ['expired_date',],
+        'birthplace': ['place_of_birth'],
+        'position': ['position', 'Position'],
+        'others':['others'],
         'remarks': ['remarks']
     };
 
@@ -451,6 +452,7 @@ function populateForm(memberData) {
     console.log('Form population complete (excluding memberId field).');
 }
 
+
 async function handleSubmit(event) {
     event.preventDefault();
     console.log('Form submission initiated...');
@@ -465,6 +467,12 @@ async function handleSubmit(event) {
         return;
     }
 
+    // Block new member creation entirely
+    if (memberId.startsWith('NEW')) {
+        alert('只能编辑现有会员，不能添加新会员。');
+        return;
+    }
+
     const expiredDateField = document.getElementById('expired');
     if (expiredDateField && expiredDateField.value && !isValidDateFormat(expiredDateField.value)) {
         alert('到期日期格式无效。请使用 YYYY-MM-DD 或留空。');
@@ -475,8 +483,14 @@ async function handleSubmit(event) {
     const formData = new FormData(event.target);
     const designation = window.designationHandler.getCurrentDesignation();
 
-    // MODIFIED: Get the raw birthday month value (e.g., '1', '12', or '')
-    const birthdayMonthValue = formData.get('birthday');
+    // Store just the month value for birthday
+    let birthdayValue = null;
+    if (birthdayMonth) {
+        // Create a date object for the first day of the selected month in the current year
+        const currentYear = new Date().getFullYear();
+        const birthdayDate = new Date(currentYear, parseInt(birthdayMonth) - 1, 1);
+        birthdayValue = birthdayDate.getTime();
+    }
 
     const memberData = {
         Name: formData.get('name') || null,
@@ -489,43 +503,21 @@ async function handleSubmit(event) {
         oldIC: formData.get('oldic') || null,
         gender: formData.get('gender') || null,
         componyName: formData.get('company') || null,
-        // MODIFIED: Send the selected month number string, or null if empty
-        Birthday: birthdayMonthValue || null,
-        'expired_date': formData.get('expired') || null,
-        'place_of_birth': formData.get('birthplace') || null,
-        others: formData.get('others') || null,
+        Birthday: birthdayValue,
+        'expired date': formData.get('expired') || null,
+        'place of birth': formData.get('birthplace') || null,
+        'position': ['position', 'Position'] || null,
+        others: othersValue  || null,
         remarks: formData.get('remarks') || null,
-        // Do NOT include membersID here unless your API specifically requires it for updates
-        // Do NOT include ID here for POST requests
+        action: 'update_member'
     };
 
     console.log('Submitting member data payload:', memberData);
 
     try {
-        let url = '';
-        let method = '';
-
-        // Check the DISPLAYED ID to determine if it's a new member
-        if (displayedMemberId.startsWith('NEW-')) {
-            // Create new member: POST request
-            url = makeApiUrl('members');
-            method = 'POST';
-             console.log(`Preparing POST request to ${url}`);
-            // The backend should generate the real ID and membersID
-        } else {
-            // Update existing member: PUT request
-            // Use the ACTUAL DB ID stored in data-real-id for the URL
-            if (!actualDbId) {
-                 alert('错误：无法找到用于更新的数据库ID。请刷新页面重试。');
-                 console.error('Missing actualDbId for PUT request. Displayed ID:', displayedMemberId);
-                 return;
-            }
-            url = `${makeApiUrl('members')}&ID=${encodeURIComponent(actualDbId)}`; // Use actualDbId
-            method = 'PUT';
-             console.log(`Preparing PUT request to ${url} using actual ID ${actualDbId}`);
-            // If your API needs the ID also in the PUT body, add it:
-            // memberData.ID = actualDbId;
-        }
+        // Only allow PUT requests to update existing members
+        const url = `${API_BASE_URL}?table=members&ID=${memberId}`;
+        const method = 'PUT';
 
 
         const response = await fetch(url, {
@@ -540,24 +532,176 @@ async function handleSubmit(event) {
         console.log('API submission response:', responseData);
 
         if (responseData.status === 'success' || response.ok) {
-            alert('塾员信息保存成功！');
-            goBack();
+            alert('Member information updated successfully!');
+            window.history.back();
         } else {
             throw new Error(responseData.message || '保存失败，请重试。');
         }
-
     } catch (error) {
-        console.error('Error during form submission:', error);
-        alert(`保存塾员信息时出错: ${error.message}`);
+        console.error('Error during submission:', error);
+        alert(`更新会员信息时出错: ${error.message}`);
     }
 }
 
-// Print function - Requires a <template id="print-template"> in the HTML
+// Also modify loadMemberData to prevent new member creation
+async function loadMemberData() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const memberId = urlParams.get('id');
+    const isNew = urlParams.get('new') === 'true';
+
+    if (isNew) {
+        // Redirect or show error when trying to add new member
+        alert('此页面只能用于编辑现有会员，不能添加新会员。');
+        window.location.href = "member_search.html";
+        return;
+    }
+
+    if (!memberId || memberId === 'null' || memberId.trim() === '') {
+        console.error("Error: No valid member ID in URL");
+        alert("无效的会员ID。无法加载数据。");
+        window.location.href = "member_search.html";
+        return;
+    }
+
+    try {
+        const url = `${API_BASE_URL}?table=members&search=true&ID=${memberId}`;
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const responseData = await handleApiResponse(response);
+        
+        if (!responseData.data || !Array.isArray(responseData.data) || responseData.data.length === 0) {
+            throw new Error("No member data found");
+        }
+        
+        populateForm(responseData.data[0]);
+
+    } catch (error) {
+        console.error('Error loading member data:', error);
+        alert(`无法加载会员数据: ${error.message}`);
+    }
+}
+
+// Update initialization to reflect edit-only functionality
+document.addEventListener('DOMContentLoaded', async () => {
+    console.log('Page loaded, initializing edit-only mode...');
+    
+    try {
+        // Update page title to indicate edit-only functionality
+        document.title = '编辑会员信息';
+        const headerElement = document.querySelector('h1, h2, .header');
+        if (headerElement) {
+            headerElement.textContent = '编辑会员信息';
+        }
+        
+        // Initialize DesignationHandler as a global instance
+        window.designationHandler = new DesignationHandler();
+        await window.designationHandler.loadDesignations();
+        console.log('Designations loaded successfully');
+
+        // Load member data
+        await loadMemberData();
+        console.log('Member data loaded and form populated');
+
+        // Set up form submission handler
+        const form = document.getElementById('memberForm');
+        if (form) {
+            form.addEventListener('submit', handleSubmit);
+        } else {
+            console.error('Form element not found');
+        }
+
+        // Set up expiration period buttons if they exist
+        const expirationButtons = document.querySelectorAll('[data-expiration-years]');
+        expirationButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const years = parseInt(button.dataset.expirationYears);
+                if (!isNaN(years)) {
+                    setExpirationPeriod(years);
+                }
+            });
+        });
+
+        // Set up custom expiration input handler
+        const customYearsButton = document.getElementById('setCustomYears');
+        if (customYearsButton) {
+            customYearsButton.addEventListener('click', setCustomExpirationPeriod);
+        }
+
+        console.log('All event handlers initialized');
+
+    } catch (error) {
+        console.error('Initialization error:', error);
+        alert('系统初始化时出错，请刷新页面重试。');
+    }
+});
+
 function printData() {
-    const printTemplateElement = document.getElementById('print-template');
-    if (!printTemplateElement) {
-        alert("打印模板未找到 (print-template)。无法打印。");
-        console.error("Element with ID 'print-template' not found.");
+    const memberId = document.getElementById('memberId').value;
+    const name = document.getElementById('name').value;
+    const cname = document.getElementById('cname').value;
+    const designation = document.getElementById('designation_of_applicant').options[document.getElementById('designation_of_applicant').selectedIndex].text;
+    const address = document.getElementById('address').value;
+    const phone = document.getElementById('phone').value;
+    const email = document.getElementById('email').value;
+    const ic = document.getElementById('ic').value;
+    const oldic = document.getElementById('oldic').value;
+    const gender = document.getElementById('gender').options[document.getElementById('gender').selectedIndex].text;
+    const company = document.getElementById('company').value;
+    
+    // Get the month name instead of number for display
+    const birthdaySelect = document.getElementById('birthday');
+    const birthdayMonth = birthdaySelect.value ? 
+        birthdaySelect.options[birthdaySelect.selectedIndex].text : '';
+    
+    const expired = document.getElementById('expired').value;
+    const birthplace = document.getElementById('birthplace').value;
+    const position = document.getElementById('position').value;
+    const others=document.getElementById('others').value;
+    const remarks = document.getElementById('remarks').value;
+
+    // Get the print template
+    let printTemplate = document.getElementById('print-template').innerHTML;
+    
+    // Replace placeholders with actual data
+    printTemplate = printTemplate.replace('{{memberId}}', memberId)
+        .replace('{{name}}', name)
+        .replace('{{cname}}', cname)
+        .replace('{{designation}}', designation)
+        .replace('{{address}}', address)
+        .replace('{{phone}}', phone)
+        .replace('{{email}}', email)
+        .replace('{{ic}}', ic)
+        .replace('{{oldIc}}', oldic)
+        .replace('{{gender}}', gender)
+        .replace('{{companyName}}', company)
+        .replace('{{birthday}}', birthdayMonth)
+        .replace('{{expiredDate}}', expired)
+        .replace('{{birthplace}}', birthplace)
+        .replace('{{others}}', others)
+        .replace('{{remarks}}', remarks);
+
+    // Open a new window for printing
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(printTemplate);
+    printWindow.document.close();
+}
+
+async function loadMemberData() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const isNew = urlParams.get('new') === 'true';
+
+    if (isNew) {
+        // Set up form for new member
+        document.getElementById('memberId').value = 'NEW-' + Date.now();
+        document.title = '添加新会员';
+        const headerElement = document.querySelector('h1, h2, .header');
+        if (headerElement) {
+            headerElement.textContent = '添加新会员';
+        }
         return;
     }
 

@@ -171,26 +171,34 @@ document.addEventListener("DOMContentLoaded", function () {
     
         console.log(`Processing ${donations.length} donations for display`);
         
-        donations.forEach(donation => {
+        // Calculate starting display ID based on pagination
+        let startDisplayId = (currentPage - 1) * itemsPerPage + 1;
+        
+        donations.forEach((donation, index) => {
             // Log the donation object to see its structure
             console.log("Processing donation:", donation);
             
+            // Get the actual database ID for edit/delete operations - fix the undefined id error
+            const databaseId = donation.ID || donation.id || '';
+            
+            // Use the calculated display ID for showing to users
+            const displayId = startDisplayId + index;
+            
             const row = document.createElement("tr");
-            row.setAttribute('id', `donation-row-${donation.ID || 'unknown'}`);
+            row.setAttribute('id', `donation-row-${databaseId}`);
             
             // Handle potential property name variations
-            const id = donation.ID || donation.id || '';
-            const donorName = donation['Name/Company_Name'] || donation.donor_name || '';
-            const donationType = mapDonationType(donation.donationTypes || donation.donation_type || '');
-            const bank = mapBankName(donation.Bank || donation.bank || '');
+            const donorName = donation['Name/Company_Name'] || donation.donor_name || '-';
+            const donationType = mapDonationType(donation.donationTypes || donation.donation_type || '-');
+            const bank = mapBankName(donation.Bank || donation.bank || '-');
             const membership = donation.membership || 'Non Member';
             const paymentDate = formatDateTime(donation.paymentDate || donation.payment_date || '');
-            const receiptNo = donation['official_receipt_no'] || donation.receipt_no || '';
+            const receiptNo = donation['official_receipt_no'] || donation.receipt_no || '-';
             const amount = formatPrice(donation.amount || 0);
             const remarks = truncateText(donation.Remarks || donation.remarks || '', 50);
             
             row.innerHTML = `
-            <td>${escapeHTML(id)}</td>
+            <td>${displayId}</td>
             <td>${escapeHTML(donorName)}</td>
             <td>${escapeHTML(donationType)}</td>
             <td>${escapeHTML(bank)}</td>
@@ -200,8 +208,8 @@ document.addEventListener("DOMContentLoaded", function () {
             <td>${amount}</td>
             <td>${remarks}</td>
             <td>
-                <button class="btn btn-edit" data-id="${id}" aria-label="Edit donation ${id}">编辑</button>
-                <button class="btn btn-delete" data-id="${id}" aria-label="Delete donation ${id}">删除</button>
+                <button class="btn btn-edit" data-id="${databaseId}" aria-label="Edit donation ${displayId}">编辑</button>
+                <button class="btn btn-delete" data-id="${databaseId}" aria-label="Delete donation ${displayId}">删除</button>
             </td>
             `;
             donationTableBody.appendChild(row);

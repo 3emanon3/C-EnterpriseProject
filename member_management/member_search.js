@@ -223,6 +223,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const expiredDate = member['expired_date'];
             const placeOfBirth = member['place_of_birth'];
             const gender = member['gender'];
+            const position = member['position'];
             
             // Format functions
             const formatPhone = (phone) => {
