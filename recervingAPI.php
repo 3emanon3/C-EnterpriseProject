@@ -291,14 +291,14 @@ class DatabaseAPI {
      */
     private function getIdsFromSpecialConditions($table, $specialParams, $allGetParams) {
         $conditions = [];
-        $specialConditionParamsValues = [];
+        $specialConditionParamsValues  = [];
         $specialConditionTypes = '';
-    
+        
         foreach ($specialParams as $key => $value) {
             if (isset($this->specialConditions[$table][$key])) {
                 $condition = $this->specialConditions[$table][$key];
                 $conditions[] = $condition['conditions'][0];
-    
+                
                 if (isset($condition['param'])) {
                     foreach ($condition['param'] as $param) {
                         if (!isset($allGetParams[$param])) {
@@ -311,29 +311,31 @@ class DatabaseAPI {
                         $specialConditionParamsValues[] = $paramsValue;
                     }
                     $specialConditionTypes .= $condition['paramTypes'];
+                } else if (isset($condition)) {
+                    $specialConditionParamsValues[] = $value;
+                    $specialConditionTypes .= $condition['paramTypes'];
                 }
-                // No else block—do nothing for conditions without 'param'
             }
         }
-    
+        
         if (empty($conditions)) {
             return [];
         }
-    
+        
         $whereClause = implode(' AND ', $conditions);
         $idQuery = "SELECT ID FROM `$table` WHERE $whereClause";
-    
+
         error_log("Special Condition ID Query: $idQuery");
         error_log("Special Condition Params: " . print_r($specialConditionParamsValues, true));
-        error_log("Special Condition Types: $specialConditionTypes");
-    
-        $stmt = $this->prepareAndExecute($idQuery, $specialConditionParamsValues, $specialConditionTypes);
+        error_log("Special Condition Types: " . $specialConditionTypes);
+
+        $stmt = $this->prepareAndExecute($idQuery, $specialConditionParamsValues , $specialConditionTypes);
         $result = $stmt->get_result();
-    
+
         if (!$result) {
             throw new Exception("Failed to get result for special condition query: " . $this->dsn->error);
         }
-    
+        
         return array_column($result->fetch_all(MYSQLI_ASSOC), 'ID');
     }
 
