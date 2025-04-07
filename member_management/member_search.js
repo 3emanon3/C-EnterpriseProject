@@ -1,6 +1,7 @@
-import { API_BASE_URL } from '../config.js';
-
 document.addEventListener("DOMContentLoaded", function () {
+    // ===== CONFIGURATION =====
+    const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
+    
     // ===== DOM ELEMENTS =====
     const searchInput = document.getElementById("searchInput");
     const memberTableBody = document.querySelector("#memberTable tbody");
@@ -17,12 +18,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const tableHeaders = table.querySelectorAll('th');
     const paginationContainer = document.querySelector('.pagination');
 
-    const expiryModal = document.getElementById('expiryModal');
-    const modalOverlay = document.getElementById('modalOverlay');
-    const expiryYearInput = document.getElementById('expiryYearInput');
-    const expiryMonthInput = document.getElementById('expiryMonthInput');
-    const confirmExpirySearchButton = document.getElementById('confirmExpirySearch');
-
     // ===== STATE VARIABLES =====
     let currentPage = 1;
     let itemsPerPage = parseInt(itemsPerPageSelect?.value || 10);
@@ -32,15 +27,12 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentSearchType = 'all';
     let currentFilterValue = '';
     let membersData = [];
-    let selectedExpiryYear = null;
-    let selectedExpiryMonth = null;
     
     // ===== INITIALIZATION =====
     function initializePage() {
         fetchApplicantType();
         initializeEventListeners();
         initializeResizableColumns();
-        loadColumnWidths();
         fetchMembers(); // Initial data fetch
     }
 
@@ -84,191 +76,108 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-        // Fetch members data from API
-        async function fetchMembers(query = "") { // query is specifically the text search term
-            loader.style.display = "block";
-            memberTableBody.innerHTML = "";
-    
-            const params = new URLSearchParams();
-            params.append("table", "members_with_applicant_designation");
-            params.append("limit", itemsPerPage);
-            params.append("page", currentPage);
-    
-            let isFilterActive = false; // Flag to track if ANY filter is applied
-    
-            // --- Apply Filters Based on Current State ---
-            // (State like currentSearchType, selectedExpiryYear/Month, memberFilter.value are set by event listeners BEFORE calling this function)
-    
-            if (currentSearchType === 'Birthday') {
-                const currentMonth = new Date().getMonth() + 1;
-                params.append("Birthday", "true");
-                isFilterActive = true; // Birthday filter is active
-                console.log(`Filtering by Birthday: Month ${currentMonth}`);
-    
-            } else if (currentSearchType === 'expiredSpecificDate' && selectedExpiryYear && selectedExpiryMonth) {
-                params.append("expired", "true");
-                params.append("targetYear", selectedExpiryYear.toString());
-                params.append("targetMonth", selectedExpiryMonth.toString());
-                isFilterActive = true; // Expiry filter is active
-                console.log(`Filtering by Expiry: ${selectedExpiryYear}-${selectedExpiryMonth}`);
-    
-            } else if (currentSearchType === 'search' && query.trim() !== "") {
-                // Use a distinct parameter for the search term if your API supports it
-                // If API strictly uses search=term, adjust accordingly. Assuming search_term here.
-                params.append("search_term", query.trim());
-                isFilterActive = true; // Text search filter is active
-                console.log(`Filtering by Text Search: "${query.trim()}"`);
-    
-            } else if (currentSearchType === 'filter' && memberFilter.value) {
-                 // Check currentSearchType is 'filter' AND dropdown has a value
-                params.append("designation_of_applicant", memberFilter.value);
-                isFilterActive = true; // Dropdown filter is active
-                console.log(`Filtering by Applicant Type: "${memberFilter.value}"`);
-    
+    // Fetch members data from API
+    async function fetchMembers(query = "") {
+        loader.style.display = "block";
+        memberTableBody.innerHTML = "";
+        
+        const params = new URLSearchParams();
+        params.append("table", "members_with_applicant_designation");
+        params.append("limit", itemsPerPage);
+        params.append("page", currentPage);
+        
+        // Add different parameters based on search type
+        if (currentSearchType === 'Birthday') {
+            const currentMonth = new Date().getMonth() + 1; // JavaScript 月份从 0 开始，+1 后为 1-12
+            params.append("Birthday", "true");
+            params.append("month", currentMonth.toString());
+            params.append("search", "true"); 
+            console.log(`Searching for birthdays in month ${currentMonth}`);
+        } else if (currentSearchType === 'expired') {
+            params.append("expired", "true");
+            params.append("search", "true");
+            
+        } else if (query.trim() !== "") {
+            params.append("search", query);
+            currentSearchType = 'search';
+        } else {
+            currentSearchType = 'all';
+        }
+
+        // Add applicant filter if selected
+        if (memberFilter.value) {
+            params.append("search", "true");
+            params.append("designation_of_applicant", memberFilter.value);
+            console.log("Filtering by applicant:", memberFilter.value);
+        }
+
+        // Add sorting parameters
+        if (sortColumn) {
+            // Fix any column name mismatches between frontend and database
+            let dbSortColumn = sortColumn;
+            if (sortColumn === 'componyName') {
+                dbSortColumn = 'componyName';
+            } else if (sortColumn === 'expired_date' || sortColumn === 'expiredDate') {
+                dbSortColumn = 'expired_date';
+            } else if (sortColumn === 'place of birth' || sortColumn === 'placeOfBirth') {
+                dbSortColumn = 'place of birth';
+            } else if (sortColumn === 'Designation of Applicant') {
+                dbSortColumn = 'designation_of_applicant';
+            }
+            
+            params.append("sort", dbSortColumn);
+            params.append("order", sortDirection);
+        }
+        
+        const url = `${API_BASE_URL}?${params.toString()}`;
+        console.log("API URL:", url);
+        console.log("All params:", Object.fromEntries(params.entries()));
+
+        try {
+            const response = await fetch(url);
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error(`Server error response: ${errorText}`);
+                throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+            }
+            
+            const data = await response.json();
+            console.log("API Response:", data);
+            // Check if data and data.data exist before assigning
+            if (data && typeof data === 'object') {
+                membersData = Array.isArray(data.data) ? data.data : [];
+                
+                // Update total count and pages
+                const total = data.pagination?.total_records || membersData.length;
+                totalMembers.textContent = total;
+                totalPages = Math.ceil(total / itemsPerPage) || 1; // Ensure at least 1 page
             } else {
-                // No specific filter type matched or explicitly set to 'all'
-                 console.log("No active filters detected based on currentSearchType or inputs.");
-                 // isFilterActive remains false
-            }
-    
-            // --- Conditionally Add 'search=true' ---
-            // Add it ONLY if any of the above filter conditions were met
-            if (isFilterActive) {
-                params.append("search", "true");
-                console.log("Adding 'search=true' because a filter is active.");
-            } else {
-                console.log("Not adding 'search=true' as no filter is active (fetching all).");
-                // Ensure currentSearchType reflects 'all' if no filter was active
-                // This might already be handled correctly by the event listeners setting the type.
-                if (currentSearchType !== 'all') {
-                     console.warn(`currentSearchType was '${currentSearchType}' but no filter params were added. Treating as 'all'.`);
-                     currentSearchType = 'all'; // Correct state if needed
-                }
-            }
-    
-    
-            // --- Add Sorting Parameters (Independent of filtering) ---
-            if (sortColumn) {
-                let dbSortColumn = sortColumn;
-                // Remap column names if necessary (keep your existing mapping logic)
-                if (sortColumn === 'componyName') dbSortColumn = 'componyName';
-                else if (sortColumn === 'expired_date') dbSortColumn = 'expired_date';
-                else if (sortColumn === 'place_of_birth') dbSortColumn = 'place_of_birth';
-                 // Ensure this matches your <th> data-column attribute exactly
-                else if (sortColumn === 'Designation_of_Applicant') dbSortColumn = 'designation_of_applicant';
-    
-                params.append("sort", dbSortColumn);
-                params.append("order", sortDirection);
-                console.log(`Applying Sort: Column ${dbSortColumn}, Direction ${sortDirection}`);
-            }
-    
-            // --- API Call and Response Handling ---
-            const url = `${API_BASE_URL}?${params.toString()}`;
-            console.log("API URL:", url);
-            console.log("Current Search Type State:", currentSearchType); // Log the state being used
-            console.log("All params sent:", Object.fromEntries(params.entries()));
-    
-            try {
-                const response = await fetch(url);
-    
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error(`Server error response: ${errorText}`);
-                    throw new Error(`Server returned ${response.status}: ${response.statusText}`);
-                }
-    
-                const data = await response.json();
-                console.log("API Response:", data);
-    
-                if (data && typeof data === 'object') {
-                    membersData = Array.isArray(data.data) ? data.data : [];
-                    const total = data.pagination?.total_records ?? membersData.length; // Use nullish coalescing
-                    totalMembers.textContent = total;
-                    totalPages = Math.ceil(total / itemsPerPage) || 1;
-                } else {
-                    membersData = [];
-                    totalMembers.textContent = 0;
-                    totalPages = 1;
-                    console.error("Unexpected API response format:", data);
-                }
-    
-                displayMembers(membersData); // Ensure displayMembers handles all 'no results' messages correctly
-                updatePagination();
-                updateSortIcons();
-    
-            } catch (error) {
-                console.error("Error fetching members:", error);
-                // *** IMPORTANT: Update colspan to match your table columns (e.g., 17) ***
-                memberTableBody.innerHTML = `<tr><td colspan="17" class="no-results">加载失败: ${error.message}</td></tr>`;
-    
+                // Handle unexpected data format
                 membersData = [];
                 totalMembers.textContent = 0;
                 totalPages = 1;
-                updatePagination();
-            } finally {
-                loader.style.display = "none";
+                console.error("Unexpected API response format:", data);
             }
-        } // End of fetchMembers
-
-    //===== MODAL FUNCTIONS =====
-    /**
-     * Opens the Expiry Date selection modal.
-     * Pre-fills year/month inputs with current date as default.
-     */
-    function openExpiryModal() {
-        const now = new Date();
-        // Set default values in the modal inputs
-        expiryYearInput.value = now.getFullYear();
-        expiryMonthInput.value = now.getMonth() + 1; // JS months are 0-indexed
-
-        // Display the modal and overlay
-        if (expiryModal) expiryModal.style.display = 'block';
-        if (modalOverlay) modalOverlay.style.display = 'block';
-    }
-
-    /**
-     * Closes the Expiry Date selection modal.
-     */
-    function closeExpiryModal() {
-        if (expiryModal) expiryModal.style.display = 'none';
-        if (modalOverlay) modalOverlay.style.display = 'none';
-    }
-
-    /**
-     * Handles the click on the modal's "Confirm" button.
-     * Validates input, updates state, closes modal, and triggers member fetch.
-     */
-    function handleConfirmExpirySearch() {
-        const year = parseInt(expiryYearInput.value);
-        const month = parseInt(expiryMonthInput.value);
-
-        // --- Input Validation ---
-        if (isNaN(year) || year < 1900 || year > 2100) {
-            alert('请输入有效的年份 (1900-2100)。');
-            expiryYearInput.focus(); // Focus the problematic input
-            return; // Stop execution
+            
+            displayMembers(membersData);
+            updatePagination();
+            updateSortIcons();
+            
+        } catch (error) {
+            console.error("Error fetching members:", error);
+            memberTableBody.innerHTML = `<tr><td colspan="16" class="no-results">加载失败: ${error.message}</td></tr>`;
+            
+            // Reset data on error
+            membersData = [];
+            totalMembers.textContent = 0;
+            totalPages = 1;
+            updatePagination();
+        } finally {
+            loader.style.display = "none";
         }
-        if (isNaN(month) || month < 1 || month > 12) {
-            alert('请选择有效的月份 (1-12)。');
-            expiryMonthInput.focus(); // Focus the problematic input
-            return; // Stop execution
-        }
-
-        // --- Update State ---
-        selectedExpiryYear = year;
-        selectedExpiryMonth = month;
-        currentSearchType = 'expiredSpecificDate'; // Set the search type
-        currentPage = 1; // Reset to page 1 for the new search
-        currentFilterValue = ''; // Clear any active dropdown filter
-        if (memberFilter) memberFilter.selectedIndex = 0; // Reset dropdown visually
-        if (searchInput) searchInput.value = ''; // Clear any text search
-
-        // --- Close Modal & Fetch Data ---
-        closeExpiryModal(); // Hide the modal
-        console.log(`Confirmed expiry search for: ${year}-${month}`);
-        fetchMembers(); // Trigger the API call with new criteria
     }
-
+    
     // ===== DISPLAY FUNCTIONS =====
     // Display members in the table
     function displayMembers(members) {
@@ -284,7 +193,7 @@ document.addEventListener("DOMContentLoaded", function () {
             let message = '暂无记录';
             if (currentSearchType === 'search') message = '没有找到匹配的记录';
             if (currentSearchType === 'Birthday') message = '本月没有会员生日';
-            if (currentSearchType === 'expiredSpecificDate') message = `没有在 ${selectedExpiryYear}-${selectedExpiryMonth} 或之前到期的会员`;
+            if (currentSearchType === 'expired') message = '本月没有会员需要续期';
             if (currentSearchType === 'blacklist') message = '没有黑名单会员';
             if (currentFilterValue) message = `没有符合"${currentFilterValue}"条件的会员`;
             
@@ -638,17 +547,12 @@ document.addEventListener("DOMContentLoaded", function () {
         // Search input
         const debouncedSearch = debounce((searchText) => {
             console.log("Searching for:", searchText); 
-            currentPage = 1;
-            currentSearchType = 'search';
-            selectedExpiryYear = null;
-            selectedExpiryMonth = null;
-            currentFilterValue = '';
-            if (memberFilter) memberFilter.selectedIndex = 0;
+            currentPage = 1; // Reset to first page when searching
             fetchMembers(searchText);
         }, 300); // 300ms delay
         
         searchInput?.addEventListener("input", function() {
-            debouncedSearch(this.value.trim());
+            debouncedSearch(this.value);
         });
         
         // Table header sorting
@@ -681,8 +585,15 @@ document.addEventListener("DOMContentLoaded", function () {
             currentPage = 1;
             currentSearchType = 'Birthday';
             currentFilterValue = ''; // Reset filter when changing search type
-            selectedExpiryYear = null; // <-- Add reset (already done in fetchMembers, but good practice here too)
-            selectedExpiryMonth = null;
+            if (memberFilter) memberFilter.selectedIndex = 0; // Reset filter dropdown
+            if (searchInput) searchInput.value = '';
+            fetchMembers();
+        });
+        
+        expiredButton?.addEventListener("click", function() {
+            currentPage = 1;
+            currentSearchType = 'expired';
+            currentFilterValue = ''; // Reset filter when changing search type
             if (memberFilter) memberFilter.selectedIndex = 0; // Reset filter dropdown
             if (searchInput) searchInput.value = '';
             fetchMembers();
@@ -692,30 +603,15 @@ document.addEventListener("DOMContentLoaded", function () {
             currentPage = 1;
             currentSearchType = 'all';
             currentFilterValue = ''; // Reset filter when changing search type
-            selectedExpiryYear = null; // <-- Add reset (already done in fetchMembers, but good practice here too)
-            selectedExpiryMonth = null;
             if (memberFilter) memberFilter.selectedIndex = 0; // Reset filter dropdown
             if (searchInput) searchInput.value = '';
             fetchMembers();
-        });
-
-        confirmExpirySearchButton?.addEventListener('click', handleConfirmExpirySearch);
-        modalOverlay?.addEventListener('click', closeExpiryModal); 
-
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape' && expiryModal && expiryModal.style.display === 'block') {
-                closeExpiryModal();
-            }
         });
         
         // Member filter dropdown
         memberFilter?.addEventListener('change', function() {
             currentFilterValue = this.value;
-            currentPage = 1;
-            currentSearchType = this.value ? 'filter' : 'all'; // Set type based on if a filter is selected
-            selectedExpiryYear = null; // <-- Add reset
-            selectedExpiryMonth = null; // <-- Add reset
-            if (searchInput) searchInput.value = '';
+            currentPage = 1; // Reset to first page when filtering
             fetchMembers();
         });
         
@@ -854,8 +750,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Make resetColumnWidths available globally
     window.resetColumnWidths = resetColumnWidths;
-    window.openExpiryModal = openExpiryModal;
-    window.closeExpiryModal = closeExpiryModal;
     
     // Initialize the page
     initializePage();

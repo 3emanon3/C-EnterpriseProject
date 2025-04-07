@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,12 +9,13 @@
     <link rel="stylesheet" href="member_search.css">
     <link rel="stylesheet" href="edit_member.css">
 </head>
+
 <body>
     <div class="container">
         <header>
             <h1>塾员管理系统 - 编辑塾员</h1>
             <nav class="system-nav">
-                
+
                 <button class="btn btn-primary" onclick="goBack()">
                     <i class="fas fa-times"></i> 取消
                 </button>
@@ -28,7 +30,7 @@
                 </div>
                 <div class="form-group">
                     <label for="name">姓名（英）:</label>
-                    <input type="text" id="name" name="name" >
+                    <input type="text" id="name" name="name">
                 </div>
                 <div class="form-group">
                     <label for="cname">姓名（中）:</label>
@@ -36,26 +38,26 @@
                 </div>
                 <div class="form-group">
                     <label for="designation_of_applicant">种类:</label>
-                    <select id="designation_of_applicant" name="designation_of_applicant" >
-                       
+                    <select id="designation_of_applicant" name="designation_of_applicant">
+
                         <!-- Options will be populated by JavaScript -->
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="address">地址:</label>
-                    <textarea id="address" name="address" rows="3" ></textarea>
+                    <textarea id="address" name="address" rows="3"></textarea>
                 </div>
                 <div class="form-group">
                     <label for="phone">手机号码:</label>
-                    <input type="tel" id="phone" name="phone" >
+                    <input type="tel" id="phone" name="phone">
                 </div>
                 <div class="form-group">
                     <label for="email">邮箱:</label>
-                    <input type="email" id="email" name="email" >
+                    <input type="email" id="email" name="email">
                 </div>
                 <div class="form-group">
                     <label for="ic">IC 号码:</label>
-                    <input type="text" id="ic" name="ic" >
+                    <input type="text" id="ic" name="ic">
                 </div>
                 <div class="form-group">
                     <label for="oldic">旧 IC 号码:</label>
@@ -63,8 +65,8 @@
                 </div>
                 <div class="form-group">
                     <label for="gender">性别:</label>
-                    <select id="gender" name="gender" >
-                        <option value=""disabled selected>请选择</option>
+                    <select id="gender" name="gender">
+                        <option value="" disabled selected>请选择</option>
                         <option value="male">男</option>
                         <option value="female">女</option>
                     </select>
@@ -75,8 +77,8 @@
                 </div>
                 <div class="form-group">
                     <label for="birthday">生日月份:</label>
-                    <select id="birthday" name="birthday" >
-                        <option value=""disabled selected>请选择</option>
+                    <select id="birthday" name="birthday">
+                        <option value="" disabled selected>请选择</option>
                         <option value="1">一月</option>
                         <option value="2">二月</option>
                         <option value="3">三月</option>
@@ -93,7 +95,7 @@
                 </div>
                 <div class="form-group">
                     <label for="expired">到期日期:</label>
-                    <input type="text" id="expired" name="expired" placeholder="YYYY-MM-DD" >
+                    <input type="text" id="expired" name="expired" placeholder="YYYY-MM-DD">
                 </div>
                 <div class="form-group expiration-options">
                     <button type="button" class="btn btn-small" data-expiration-years="1">1年</button>
@@ -106,7 +108,7 @@
                 </div>
                 <div class="form-group">
                     <label for="birthplace">出生地点:</label>
-                    <input type="text" id="birthplace" name="birthplace" >
+                    <input type="text" id="birthplace" name="birthplace">
                 </div>
 
                 <div class="form-group">
@@ -116,7 +118,7 @@
 
                 <div class="form-group">
                     <label for="others">其他</label>
-                    <input type="text" id="others" name="others" autocomplete="text" class="form-control" >
+                    <input type="text" id="others" name="others" autocomplete="text" class="form-control">
                 </div>
 
                 <div class="form-group">
@@ -136,12 +138,14 @@
     </div>
 
 
-     
-                </div>
-            </body>
-        </html>
-    </div>
 
-    <script src="edit_member.js"></script>
+    </div>
 </body>
+
+</html>
+</div>
+
+<script src="edit_member.js"></script>
+</body>
+
 </html>
