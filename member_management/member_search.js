@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Add default option
         const defaultOption = document.createElement("option");
         defaultOption.value = "";
-        defaultOption.textContent = "选择会员种类";
+        defaultOption.textContent = "选择种类";
         memberFilter.appendChild(defaultOption);
         
         try {
@@ -192,10 +192,10 @@ document.addEventListener("DOMContentLoaded", function () {
         if (members.length === 0) {
             let message = '暂无记录';
             if (currentSearchType === 'search') message = '没有找到匹配的记录';
-            if (currentSearchType === 'Birthday') message = '本月没有会员生日';
-            if (currentSearchType === 'expired') message = '本月没有会员需要续期';
-            if (currentSearchType === 'blacklist') message = '没有黑名单会员';
-            if (currentFilterValue) message = `没有符合"${currentFilterValue}"条件的会员`;
+            if (currentSearchType === 'Birthday') message = '本月没有塾员生日';
+            if (currentSearchType === 'expired') message = '本月没有塾员需要续期';
+            if (currentSearchType === 'blacklist') message = '没有黑名单';
+            if (currentFilterValue) message = `没有符合"${currentFilterValue}"条件的记录`;
             
             memberTableBody.innerHTML = `<tr><td colspan="16" class="no-results">${message}</td></tr>`;
             return;
@@ -630,7 +630,7 @@ document.addEventListener("DOMContentLoaded", function () {
     window.editMember = function(id) {
         if (!id) {
             console.error("Cannot edit member: No ID provided");
-            alert("无法编辑：会员ID未提供");
+            alert("无法编辑：ID未提供");
             return;
         }
         window.location.href = `edit_member.html?id=${id}`;
@@ -640,11 +640,11 @@ document.addEventListener("DOMContentLoaded", function () {
     window.deleteMember = async function(id) {
         if (!id) {
             console.error("Cannot delete member: No ID provided");
-            alert("无法删除：会员ID未提供");
+            alert("无法删除：ID未提供");
             return;
         }
         
-        if (confirm("确定要删除这个会员吗？所有相关记录也将被删除。")) {
+        if (confirm("确定要删除这个吗？所有相关记录也将被删除。")) {
             try {
                 // First, check if the member has any related records
                 const checkResponse = await fetch(`${API_BASE_URL}?table=members&action=checkRelations&ID=${id}`, {
@@ -661,7 +661,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 
                 if (checkData.hasRelations) {
                     // If member has relations, offer options to the user
-                    if (confirm("此会员有关联的参与记录。您想先删除这些关联记录吗？")) {
+                    if (confirm("此人有关联的参与记录。您想先删除这些关联记录吗？")) {
                         // Delete relations first
                         const deleteRelationsResponse = await fetch(`${API_BASE_URL}?table=participants&action=deleteByMember&memberID=${id}`, {
                             method: 'DELETE'
@@ -706,7 +706,7 @@ document.addEventListener("DOMContentLoaded", function () {
     window.checkMember = function(id) {
         if (!id) {
             console.error("Cannot edit member: No ID provided");
-            alert("无法查看：会员ID未提供");
+            alert("无法查看：ID未提供");
             return;
         }
         window.location.href = `check_details.html?id=${id}`;

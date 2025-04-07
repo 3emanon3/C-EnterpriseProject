@@ -168,7 +168,7 @@ legend {
 }
 
 .input-with-button .btn-add-type {
-    padding: 8px 12px; /* Slightly smaller padding for '+' button */
+    padding: 13.669px 14px; /* Slightly smaller padding for '+' button */
     flex-shrink: 0; /* Prevent button from shrinking */
     line-height: 1; /* Adjust line height for icon alignment */
 }

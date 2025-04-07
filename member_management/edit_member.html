@@ -1,151 +1,261 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Member Management System - Edit Member</title>
+    <title>编辑塾员信息</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="member_search.css">
-    <link rel="stylesheet" href="edit_member.css">
+    <!-- Link to the SAME CSS as member_management.html -->
+    <link rel="stylesheet" href="member_management.css">
+    <!-- We will remove the link to edit_member.css -->
+    <!-- <link rel="stylesheet" href="edit_member.css"> -->
 </head>
-
 <body>
     <div class="container">
-        <header>
-            <h1>塾员管理系统 - 编辑塾员</h1>
-            <nav class="system-nav">
+        <!-- Header Actions - Similar to member_management -->
+        <div class="header-actions">
+            <button class="btn btn-secondary" onclick="goBack()">
+                <i class="fas fa-arrow-left"></i> 返回 (取消)
+            </button>
+            <!-- Add Print Button Here if needed -->
+             <button type="button" id="printButton" class="btn btn-info no-print" style="margin-left: 10px;">
+                 <i class="fas fa-print"></i> 打印
+             </button>
+        </div>
 
-                <button class="btn btn-primary" onclick="goBack()">
-                    <i class="fas fa-times"></i> 取消
-                </button>
-            </nav>
-        </header>
+        <h1>编辑塾员信息</h1>
 
-        <section class="edit-container">
-            <form class="edit-form" id="memberForm">
-                <div class="form-group">
-                    <label for="memberId">塾员ID:</label>
-                    <input type="text" id="memberId" name="memberId" readonly>
-                </div>
-                <div class="form-group">
-                    <label for="name">姓名（英）:</label>
-                    <input type="text" id="name" name="name">
-                </div>
-                <div class="form-group">
-                    <label for="cname">姓名（中）:</label>
-                    <input type="text" id="cname" name="cname">
-                </div>
-                <div class="form-group">
-                    <label for="designation_of_applicant">种类:</label>
-                    <select id="designation_of_applicant" name="designation_of_applicant">
+        <!-- Error Message Container - Copied from member_management -->
+        <div id="errorMessages" class="alert alert-danger" style="display: none;"></div>
 
-                        <!-- Options will be populated by JavaScript -->
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="address">地址:</label>
-                    <textarea id="address" name="address" rows="3"></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="phone">手机号码:</label>
-                    <input type="tel" id="phone" name="phone">
-                </div>
-                <div class="form-group">
-                    <label for="email">邮箱:</label>
-                    <input type="email" id="email" name="email">
-                </div>
-                <div class="form-group">
-                    <label for="ic">IC 号码:</label>
-                    <input type="text" id="ic" name="ic">
-                </div>
-                <div class="form-group">
-                    <label for="oldic">旧 IC 号码:</label>
-                    <input type="text" id="oldic" name="oldic">
-                </div>
-                <div class="form-group">
-                    <label for="gender">性别:</label>
-                    <select id="gender" name="gender">
-                        <option value="" disabled selected>请选择</option>
-                        <option value="male">男</option>
-                        <option value="female">女</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="company">公司名字:</label>
-                    <input type="text" id="company" name="company">
-                </div>
-                <div class="form-group">
-                    <label for="birthday">生日月份:</label>
-                    <select id="birthday" name="birthday">
-                        <option value="" disabled selected>请选择</option>
-                        <option value="1">一月</option>
-                        <option value="2">二月</option>
-                        <option value="3">三月</option>
-                        <option value="4">四月</option>
-                        <option value="5">五月</option>
-                        <option value="6">六月</option>
-                        <option value="7">七月</option>
-                        <option value="8">八月</option>
-                        <option value="9">九月</option>
-                        <option value="10">十月</option>
-                        <option value="11">十一月</option>
-                        <option value="12">十二月</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="expired">到期日期:</label>
-                    <input type="text" id="expired" name="expired" placeholder="YYYY-MM-DD">
-                </div>
-                <div class="form-group expiration-options">
-                    <button type="button" class="btn btn-small" data-expiration-years="1">1年</button>
-                    <button type="button" class="btn btn-small" data-expiration-years="2">2年</button>
-                    <button type="button" class="btn btn-small" data-expiration-years="3">3年</button>
-                    <div class="custom-years">
-                        <input type="number" id="customYears" min="1" max="20" placeholder="自定年数">
-                        <button type="button" id="setCustomYears" class="btn btn-small">设置</button>
+        <!-- Form Structure - Adapted from member_management -->
+        <form id="memberForm">
+            <fieldset>
+                <legend>塾员信息</legend>
+                <!-- Form Container for Grid Layout - Copied from member_management -->
+                <div class="form-container">
+
+                    <div class="form-group">
+                        <label for="memberId">塾员ID:</label>
+                        <!-- Added form-control class and data-real-id attribute -->
+                        <input type="text" id="memberId" name="memberId" class="form-control" readonly data-real-id="">
                     </div>
-                </div>
-                <div class="form-group">
-                    <label for="birthplace">出生地点:</label>
-                    <input type="text" id="birthplace" name="birthplace">
-                </div>
 
-                <div class="form-group">
-                    <label for="position">职位:</label>
-                    <input type="text" id="position" name="position">
-                </div>
+                    <div class="form-group">
+                        <label for="name">姓名（英）<span class="required">*</span></label>
+                        <!-- Added form-control class and required attribute -->
+                        <input type="text" id="name" name="Name" class="form-control" required>
+                    </div>
 
-                <div class="form-group">
-                    <label for="others">其他</label>
-                    <input type="text" id="others" name="others" autocomplete="text" class="form-control">
-                </div>
+                    <div class="form-group">
+                        <label for="cname">姓名（中）</label>
+                        <!-- Added form-control class -->
+                        <input type="text" id="cname" name="CName" class="form-control">
+                    </div>
 
-                <div class="form-group">
-                    <label for="remarks">备注:</label>
-                    <textarea id="remarks" name="remarks" rows="4"></textarea>
-                </div>
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-success">
+                    <!-- Designation Field - Copied EXACT structure from member_management -->
+                    <div class="form-group">
+                        <label for="designation_of_applicant">种类<span class="required">*</span></label>
+                        <div class="input-with-button">
+                            <!-- Changed name attribute -->
+                            <select id="designation_of_applicant" name="Designation_of_Applicant" class="form-control" required>
+                                <!-- Options will be populated dynamically -->
+                                <option value="" disabled selected>请选择或添加</option>
+                            </select>
+                            <!-- Copied Button and Tooltip -->
+                            <button type="button" id="addApplicantTypeBtn" class="btn btn-secondary btn-add-type tooltip">
+                                <i class="fas fa-plus"></i>
+                                <span class="tooltip-text">
+                                    <strong>核心功能：</strong> 添加新的塾员种类到系统。
+                                    <br>
+                                    <strong>使用须知：</strong><br>
+                                    1.  <strong>点击添加：</strong> 点击此 '+' 按钮打开添加窗口。
+                                    <br>
+                                    2.  <strong>输入名称：</strong> 在弹出窗口中输入新的种类名称（例如：“荣誉塾员”）。
+                                    <br>
+                                    3.  <strong>保存：</strong> 点击“保存”将新种类永久添加到数据库和此下拉列表中。
+                                    <br>
+                                    4.  <strong>取消：</strong> 点击“取消”或关闭窗口则不作任何更改。
+                                    <br>
+                                    <strong>数据影响：</strong> 添加后，新种类将可用于所有塾员记录。请谨慎添加，避免重复或不清晰的分类。
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- End Designation Field Modification -->
+
+                    <div class="form-group">
+                        <label for="address">地址</label>
+                        <!-- Changed to textarea, added form-control class -->
+                        <textarea id="address" name="Address" rows="3" class="form-control"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">手机号码</label>
+                        <!-- Changed name, added form-control class -->
+                        <input type="tel" id="phone" name="phone_number" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">邮箱</label>
+                        <!-- Added form-control class -->
+                        <input type="email" id="email" name="email" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ic">IC 号码</label>
+                        <!-- Changed name, added form-control class -->
+                        <input type="text" id="ic" name="IC" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="oldic">旧 IC 号码</label>
+                        <!-- Changed name, added form-control class -->
+                        <input type="text" id="oldic" name="oldIC" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gender">性别</label>
+                        <!-- Added form-control class -->
+                        <select id="gender" name="gender" class="form-control">
+                            <option value="" disabled selected>请选择</option>
+                            <option value="male">男</option>
+                            <option value="female">女</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="company">公司名字</label>
+                        <!-- Changed name, added form-control class -->
+                        <input type="text" id="company" name="componyName" class="form-control">
+                    </div>
+
+                     <div class="form-group">
+                        <label for="position">职位</label>
+                         <!-- Changed name, added form-control class -->
+                        <input type="text" id="position" name="position" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="birthday">生日月份</label>
+                        <!-- Changed name, added form-control class -->
+                        <select id="birthday" name="Birthday" class="form-control">
+                            <option value="" disabled selected>请选择月份</option>
+                            <option value="1">1月</option>
+                            <option value="2">2月</option>
+                            <option value="3">3月</option>
+                            <option value="4">4月</option>
+                            <option value="5">5月</option>
+                            <option value="6">6月</option>
+                            <option value="7">7月</option>
+                            <option value="8">8月</option>
+                            <option value="9">9月</option>
+                            <option value="10">10月</option>
+                            <option value="11">11月</option>
+                            <option value="12">12月</option>
+                        </select>
+                    </div>
+
+                    <!-- Expiry Date Field - Copied structure from member_management -->
+                    <div class="form-group">
+                        <label>到期日期 (YYYY-MM-DD):</label>
+                        <div class="input-group">
+                            <select id="expiredDateOptions" class="form-control">
+                                <option value="">请选择或查看日期</option>
+                                <option value="1year">延长1年</option>
+                                <option value="2year">延长2年</option>
+                                <option value="3years">延长3年</option>
+                                <option value="custom">自定日期</option>
+                            </select>
+                            <!-- Changed name -->
+                            <input type="date" id="expiredDate" name="expired_date" class="form-control" style="display: block;"> <!-- Start visible -->
+                        </div>
+                    </div>
+                    <!-- End Expiry Date Field Modification -->
+
+                    <div class="form-group">
+                        <label for="birthplace">出生地点</label>
+                        <!-- Changed name, added form-control class -->
+                        <input type="text" id="birthplace" name="place_of_birth" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="others">其他</label>
+                        <!-- Added form-control class -->
+                        <input type="text" id="others" name="others" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="remarks">备注</label>
+                        <!-- Added form-control class -->
+                        <textarea id="remarks" name="remarks" rows="4" class="form-control"></textarea>
+                    </div>
+
+                </div> <!-- End of form-container -->
+
+                <!-- Form Actions / Submit Button Area - Adapted from member_management -->
+                <div style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="submit" class="btn btn-primary"> <!-- Changed to btn-primary -->
                         <i class="fas fa-save"></i> 保存更改
                     </button>
-                    <button type="button" class="btn btn-primary" onclick="goBack()">
-                        <i class="fas fa-times"></i> 取消
-                    </button>
+                     <button type="button" class="btn btn-secondary" onclick="goBack()">
+                         <i class="fas fa-times"></i> 取消
+                     </button>
                 </div>
-            </form>
-        </section>
+            </fieldset>
+        </form>
     </div>
 
-
-
+    <!-- Loading Indicator - Copied from member_management -->
+    <div id="loadingIndicator" class="loading-spinner" style="display: none;">
+        保存中...
     </div>
+
+    <!-- Modal for Adding Applicant Type - Copied EXACTLY from member_management -->
+    <div id="addTypeModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h2>添加新塾员种类</h2>
+            <div id="modalErrorMessages" class="alert alert-danger" style="display: none; margin-bottom: 15px;"></div>
+            <div class="form-group">
+                <label for="newApplicantTypeName">新种类名称:</label>
+                <input type="text" id="newApplicantTypeName" class="form-control" placeholder="例如: 十字勋章授予者">
+            </div>
+            <div class="modal-actions">
+                <button type="button" id="saveNewTypeBtn" class="btn btn-primary">
+                    <i class="fas fa-save"></i> 保存
+                </button>
+                <button type="button" id="cancelNewTypeBtn" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> 取消
+                </button>
+            </div>
+            <div id="modalLoadingIndicator" class="loading-spinner-small" style="display: none; margin-top: 10px;">保存中...</div>
+        </div>
+    </div>
+    <!-- End: Add Applicant Type Modal -->
+
+    <!-- Print Template (Hidden) - Keep as is -->
+    <template id="print-template">
+         <!-- Your existing print template content here -->
+         <div class="print-item"><strong>塾员ID:</strong> {{memberId}}</div>
+         <div class="print-item"><strong>姓名（英）:</strong> {{name}}</div>
+         <div class="print-item"><strong>姓名（中）:</strong> {{cname}}</div>
+         <div class="print-item"><strong>种类:</strong> {{designation}}</div>
+         <div class="print-item"><strong>地址:</strong> {{address}}</div>
+         <div class="print-item"><strong>手机号码:</strong> {{phone}}</div>
+         <div class="print-item"><strong>邮箱:</strong> {{email}}</div>
+         <div class="print-item"><strong>IC 号码:</strong> {{ic}}</div>
+         <div class="print-item"><strong>旧 IC 号码:</strong> {{oldIc}}</div>
+         <div class="print-item"><strong>性别:</strong> {{gender}}</div>
+         <div class="print-item"><strong>公司名字:</strong> {{companyName}}</div>
+         <div class="print-item"><strong>职位:</strong> {{position}}</div>
+         <div class="print-item"><strong>生日月份:</strong> {{birthday}}</div>
+         <div class="print-item"><strong>到期日期:</strong> {{expiredDate}}</div>
+         <div class="print-item"><strong>出生地点:</strong> {{birthplace}}</div>
+         <div class="print-item"><strong>其他:</strong> {{others}}</div>
+         <div class="print-item"><strong>备注:</strong> {{remarks}}</div>
+    </template>
+
+    <!-- Link to the MODIFIED edit_member.js -->
+    <script src="edit_member.js"></script>
 </body>
-
-</html>
-</div>
-
-<script src="edit_member.js"></script>
-</body>
-
 </html>
