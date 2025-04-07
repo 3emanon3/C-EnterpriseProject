@@ -375,6 +375,10 @@ z-index: 100;
     border-radius: 2px;
 }
 
+.hidden-id {
+    display: none;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     header {

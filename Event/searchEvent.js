@@ -107,20 +107,24 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
         
-        events.forEach(event => {
+        const startIndex = (currentPage - 1) * itemsPerPage + 1;
+
+        events.forEach((event,index) => {
+            const displayIndex = startIndex + index;
             const row = document.createElement("tr");
             row.innerHTML = `
-                 <td>${highlightText(event.ID || '', currentSearchQuery)}</td>
-                <td>${highlightText(event.title || '', currentSearchQuery)}</td>
-                <td>${highlightText(event.status || '', currentSearchQuery)}</td>
-                <td>${highlightText(formatDateTime(event.start_time) || '', currentSearchQuery)}</td>
-                <td>${highlightText(formatDateTime(event.end_time) || '', currentSearchQuery)}</td>
-                <td>${highlightText(formatDateTime(event.created_at) || '', currentSearchQuery)}</td>
-                <td>${highlightText(event.location || '', currentSearchQuery)}</td>
-                <td>${highlightText(truncateText(event.description, 50) || '', currentSearchQuery)}</td>
-                <td>${highlightText(event.max_participant || '', currentSearchQuery)}</td>
-                <td>${highlightText(formatDateTime(event.registration_deadline) || '', currentSearchQuery)}</td>
-                <td>${highlightText(formatPrice(event.price) || '', currentSearchQuery)}</td>
+                <td>${displayIndex}</td> <!-- Display sequential number -->
+                <td class="hidden-id">${highlightText(event.ID || '-', currentSearchQuery)}</td>
+                <td>${highlightText(event.title || '-', currentSearchQuery)}</td>
+                <td>${highlightText(event.status || '-', currentSearchQuery)}</td>
+                <td>${highlightText(formatDateTime(event.start_time) || '-', currentSearchQuery)}</td>
+                <td>${highlightText(formatDateTime(event.end_time) || '-', currentSearchQuery)}</td>
+                <td>${highlightText(formatDateTime(event.created_at) || '-', currentSearchQuery)}</td>
+                <td>${highlightText(event.location || '-', currentSearchQuery)}</td>
+                <td>${highlightText(truncateText(event.description, 50) || '-', currentSearchQuery)}</td>
+                <td>${highlightText(event.max_participant || '-', currentSearchQuery)}</td>
+                <td>${highlightText(formatDateTime(event.registration_deadline) || '-', currentSearchQuery)}</td>
+                <td>${highlightText(formatPrice(event.price) || '0', currentSearchQuery)}</td>
                 <td>${highlightText(truncateText(event.online_link, 30) || '', currentSearchQuery)}</td>
                 <td>
                 <button class="btn btn-edit" data-id="${event.ID}">编辑</button>
@@ -344,16 +348,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
     
-    eventTableBody.addEventListener('click', function(e) {
-        if (e.target.classList.contains('btn-edit')) {
-            const id = e.target.dataset.id;
-            editEvent(id);
-        } else if (e.target.classList.contains('btn-delete')) {
-            const id = e.target.dataset.id;
-            deleteEvent(id);
-        }
-    });
-
     // Update itemsPerPage handler to refresh data immediately
     itemsPerPageSelect.addEventListener("change", function () {
         itemsPerPage = parseInt(this.value);
@@ -396,7 +390,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
         
                 const data = await response.json();
-                if (data.success) {
+                console.log("Delete response:", data);
+
+                if (data.success || (data.message && data.message.includes("deleted successfully"))) {
                     alert("活动已成功删除！");
                     fetchEvents(currentSearchQuery);
                 } else {
