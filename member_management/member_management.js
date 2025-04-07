@@ -1,348 +1,414 @@
+// member_management.js
 document.addEventListener('DOMContentLoaded', function() {
+    // API endpoint configuration
     const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
 
+    // Main form elements
     const addMemberForm = document.getElementById('addMemberForm');
     const errorMessages = document.getElementById('errorMessages');
     const loadingIndicator = document.getElementById('loadingIndicator');
-    const designation_of_applicant=document.getElementById('designation_of_applicant');
-    const selectElement = document.getElementById('expiredDateOptions');
-    
-    // 获取URL参数中的returnUrl
+    const designation_of_applicant = document.getElementById('designation_of_applicant');
+    const expiredDateOptions = document.getElementById('expiredDateOptions');
+
+    // Modal elements for adding applicant type
+    const addTypeModal = document.getElementById('addTypeModal'); // The overlay
+    const addApplicantTypeBtn = document.getElementById('addApplicantTypeBtn'); // The '+' button
+    const saveNewTypeBtn = document.getElementById('saveNewTypeBtn');
+    const cancelNewTypeBtn = document.getElementById('cancelNewTypeBtn');
+    const newApplicantTypeNameInput = document.getElementById('newApplicantTypeName');
+    const modalErrorMessages = document.getElementById('modalErrorMessages');
+    const modalLoadingIndicator = document.getElementById('modalLoadingIndicator');
+
+    // Get return URL from query parameters
     const urlParams = new URLSearchParams(window.location.search);
     const returnUrl = urlParams.get('returnUrl');
-  
+
+    // --- Crucial Check: Ensure elements are found ---
+    if (!addApplicantTypeBtn) {
+        console.error("Error: Button with ID 'addApplicantTypeBtn' not found!");
+        return; // Stop script execution if button is missing
+    }
+    if (!addTypeModal) {
+        console.error("Error: Modal overlay with ID 'addTypeModal' not found!");
+        return; // Stop script execution if modal is missing
+    }
+    // --- End Crucial Check ---
+
+    // Initial data fetch
     fetchApplicantType();
 
-  // Add this to your existing code
-document.getElementById('expiredDateOptions').addEventListener('change', handleExpiryOptionChange);
+    // Event listeners
+    addMemberForm.addEventListener('submit', handleMainFormSubmit);
+    expiredDateOptions.addEventListener('change', handleExpiryOptionChange);
 
-// Call it once when the page loads
-handleExpiryOptionChange();
+    // --- Event Listeners for Modal ---
+    // Add listener to the '+' button to open the modal
+    addApplicantTypeBtn.addEventListener('click', openAddTypeModal);
 
+    // Add listener to the 'Cancel' button inside the modal
+    cancelNewTypeBtn.addEventListener('click', closeAddTypeModal);
+
+    // Add listener to the 'Save' button inside the modal
+    saveNewTypeBtn.addEventListener('click', handleSaveNewType);
+
+    // Add listener to the modal overlay to close if clicked outside the content
+    addTypeModal.addEventListener('click', (event) => {
+        // Check if the click was directly on the overlay (event.target)
+        // and not on its children (like the modal-content)
+        if (event.target === addTypeModal) {
+            closeAddTypeModal();
+        }
+    });
+    // --- End Event Listeners for Modal ---
+
+    // Initialize expiry date handling
+    handleExpiryOptionChange();
+
+    /**
+     * Fetches applicant types from the API and populates the dropdown.
+     */
     async function fetchApplicantType() {
+        console.log("Fetching applicant types...");
+        // Clear existing options first to prevent duplicates if called multiple times
+        const currentSelectedValue = designation_of_applicant.value;
+        while (designation_of_applicant.options.length > 1) {
+             designation_of_applicant.remove(1);
+        }
+
         try {
             const response = await fetch(`${API_BASE_URL}?table=applicants_types&limit=100`);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const data = await response.json();
-            
+
             if (data && data.data) {
-                // Clear existing options except the first one
-                while (designation_of_applicant.options.length > 1) {
-                    designation_of_applicant.remove(1);
-                }
-                
-                // Add unique applicant types to the dropdown
-                const uniqueApplicant = data.data;
-                uniqueApplicant.forEach(item => {
+                data.data.forEach(item => {
                     const option = document.createElement("option");
                     option.value = item.ID;
-                    option.textContent = `${item["designation_of_applicant"]}`;
+                    option.textContent = item.designation_of_applicant;
                     designation_of_applicant.appendChild(option);
                 });
+                // Restore selection if possible
+                if (designation_of_applicant.querySelector(`option[value="${currentSelectedValue}"]`)) {
+                    designation_of_applicant.value = currentSelectedValue;
+                }
+                console.log("Applicant types populated.");
+            } else {
+                console.warn("No applicant types data received:", data);
             }
         } catch(error) {
             console.error("Error fetching applicant type options:", error);
+            showError("无法加载塾员种类，请检查网络或联系管理员。");
         }
     }
-    function formatDateForDisplay(date) {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}/${month}/${day}`;
-}
 
-    // Form submission handler
-    addMemberForm.addEventListener('submit', function(e) {
+    /**
+     * Handles the submission of the main member form.
+     */
+    function handleMainFormSubmit(e) {
         e.preventDefault();
-        
         if (validateForm()) {
-            submitForm();
+            submitMainForm();
         }
-    });
+    }
 
-    // Form validation
+    /**
+     * Validates the main member form fields.
+     * @returns {boolean} True if the form is valid, false otherwise.
+     */
     function validateForm() {
         const requiredFields = addMemberForm.querySelectorAll('[required]');
         let isValid = true;
         const errors = [];
-        // Reset all error states
-        addMemberForm.querySelectorAll('.error').forEach(field => {
-            field.classList.remove('error');
-        });
 
-        // Check required fields
+        // Reset previous errors visually and the error list
+        addMemberForm.querySelectorAll('.error').forEach(field => field.classList.remove('error'));
+        errorMessages.style.display = 'none';
+        errorMessages.innerHTML = '';
+
         requiredFields.forEach(field => {
-            if (!field.value.trim()) {
+            // Check both value and, for selects, if the value is not empty
+            if (!field.value || (field.tagName === 'SELECT' && field.value === "")) {
                 isValid = false;
-                errors.push(`${field.previousElementSibling ? field.previousElementSibling.textContent : field.name} 是必填项`);
-                field.classList.add('error');
+                // Try to get the label text more reliably
+                const labelElement = field.closest('.form-group')?.querySelector('label');
+                const labelText = labelElement ? labelElement.textContent.replace('*', '').trim() : field.name;
+                errors.push(`${labelText} 是必填项`);
+                field.classList.add('error'); // Add error class for styling
             }
         });
 
-        // Safe element retrieval with fallback
-        function safeGetElement(id) {
-            const element = document.getElementById(id);
-            if (!element) {
-                console.warn(`Element with id '${id}' not found`);
-            }
-            return element;
-        }
-
-        // Validate email
-        const emailField = safeGetElement('email');
+        // --- Add your specific field validations here ---
+        const emailField = document.getElementById('email');
         if (emailField && emailField.value && !isValidEmail(emailField.value)) {
-            isValid = false;
-            errors.push('邮箱格式不正确');
-            emailField.classList.add('error');
+            isValid = false; errors.push('邮箱格式不正确'); emailField.classList.add('error');
         }
-
-        // Validate phone number
-        const phoneField = safeGetElement('phone_number');
+        const phoneField = document.getElementById('phone_number');
         if (phoneField && phoneField.value && !isValidPhone(phoneField.value)) {
-            isValid = false;
-            errors.push('手机号码格式不正确');
-            phoneField.classList.add('error');
+            isValid = false; errors.push('手机号码格式不正确'); phoneField.classList.add('error');
         }
-
-        // Validate IC number
-        const icField = safeGetElement('IC');
+        const icField = document.getElementById('IC');
         if (icField && icField.value && !isValidIC(icField.value)) {
-            isValid = false;
-            errors.push('IC号码格式不正确');
-            icField.classList.add('error');
+             isValid = false; errors.push('IC号码格式不正确'); icField.classList.add('error');
         }
-
-        // Validate Birthday
-        const birthdayField = safeGetElement('Birthday');
-        if (birthdayField && birthdayField.value) {
-            const birthdayMonth = new Date(birthdayField.value).getMonth() + 1;
-            
-            if (isNaN(birthdayMonth) || birthdayMonth < 1 || birthdayMonth > 12) {
-                isValid = false;
-                errors.push('请输入有效的生日月份');
-                birthdayField.classList.add('error');
-            }
-        }
-
-        // Validate Expired Date
-        const expiredDateField = safeGetElement('expired_date');
-        if (expiredDateField && expiredDateField.value) {
+        const expiredDateField = document.getElementById('expiredDate');
+        // Validate expired date only if it's visible and has a value
+        if (expiredDateField && expiredDateField.style.display !== 'none' && expiredDateField.value) {
             const expiredDate = new Date(expiredDateField.value);
             const today = new Date();
-            
+            today.setHours(0, 0, 0, 0); // Compare date part only
             if (expiredDate < today) {
-                isValid = false;
-                errors.push('过期日期不能是过去的日期');
-                expiredDateField.classList.add('error');
+                isValid = false; errors.push('过期日期不能早于今天'); expiredDateField.classList.add('error');
             }
+        } else if (expiredDateField && expiredDateField.style.display !== 'none' && !expiredDateField.value && expiredDateOptions.value !== '' && expiredDateOptions.value !== 'custom') {
+             // If a duration (1/2/3 years) was selected but somehow the date is empty (shouldn't happen with current logic, but good check)
+             isValid = false; errors.push('未能计算到期日期，请重新选择'); expiredDateField.classList.add('error');
         }
+         // --- End specific field validations ---
 
-        // Validate Designation
-        const designationField = safeGetElement('designation_of_applicant');
-        if (designationField) {
-            const designationValue = parseInt(designationField.value, 10);
-            if (isNaN(designationValue) || designationValue < 1 || designationValue > 7) {
-                isValid = false;
-                errors.push('Designation must be between 1 and 7');
-                designationField.classList.add('error');
-            }
-        }
-
-        // Validate Place of Birth (added)
-        
-        
         if (!isValid) {
-            showError(errors.join('<br>'));
-        } else {
-            errorMessages.style.display = 'none';
+            showError(errors.join('<br>')); // Display errors
         }
 
         return isValid;
     }
 
-    // Modify the handleExpiryOptionChange function
-    function handleExpiryOptionChange() {
-        const selectedOption = document.getElementById('expiredDateOptions').value;
-        const dateInput = document.getElementById('expiredDate');
-        const expiryPreview = document.getElementById('expiryDatePreview');
-        const today = new Date();
-        
-        // Hide preview if custom or empty selection
-        if (selectedOption === 'custom' || selectedOption === '') {
-            if (expiryPreview) {
-                expiryPreview.style.display = 'none';
-            }
-            
-            if (selectedOption === 'custom') {
-                dateInput.style.display = 'block';
-                dateInput.value = ''; // Clear any existing date
-            } else {
-                dateInput.style.display = 'none';
-            }
-            return;
-        }
-        
-        // Calculate expiry date based on selection
-        let expiryDate;
-        if (selectedOption === '1year') {
-            expiryDate = new Date(today);
-            expiryDate.setFullYear(today.getFullYear() + 1);
-            expiryDate.setDate(expiryDate.getDate() - 1);
-        } else if (selectedOption === '2year') {
-            expiryDate = new Date(today);
-            expiryDate.setFullYear(today.getFullYear() + 2);
-            expiryDate.setDate(expiryDate.getDate() - 1);
-        } else if (selectedOption === '3years') {
-            expiryDate = new Date(today);
-            expiryDate.setFullYear(today.getFullYear() + 3);
-            expiryDate.setDate(expiryDate.getDate() - 1);
-        }
-        
-        // Format and update display
-        if (expiryDate) {
-            // Format date as YYYY-MM-DD for the input field
-            const year = expiryDate.getFullYear();
-            const month = String(expiryDate.getMonth() + 1).padStart(2, '0');
-            const day = String(expiryDate.getDate()).padStart(2, '0');
-            
-            // Update date input
-            dateInput.value = `${year}-${month}-${day}`;
-            dateInput.style.display = 'block';
-            
-            // Show date preview in DD/MM/YYYY format
-            if (expiryPreview) {
-                expiryPreview.textContent = `${day}/${month}/${year}`;
-                expiryPreview.style.display = 'block';
-            }
-        }
-    }
-    
-    // Helper function to format and set date
-    function setDateValue(date) {
-        const dateInput = document.getElementById('expiredDate');
-        // Format date as YYYY-MM-DD for the input field
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        dateInput.value = `${year}-${month}-${day}`;
-    }
-
-    // Submit form data
-    async function submitForm() {
-        
+     /**
+     * Submits the main member form data to the API.
+     */
+    async function submitMainForm() {
         const formData = new FormData(addMemberForm);
         const data = {};
-
-        
         formData.forEach((value, key) => {
-            console.log(`${key}: ${value}`);
-            if (value.trim() !== '') {
+             if (value.trim() !== '') { // Only include non-empty fields
                 data[key] = value.trim();
             }
         });
 
-        const expiredDateValue = document.getElementById('expiredDate').value;
-
-        if (expiredDateValue && expiredDateValue.trim() !== '') {
-            data['expired_date'] = expiredDateValue; // Make sure this matches your API field name
+        // Ensure expired_date is correctly handled
+        const expiredDateInput = document.getElementById('expiredDate');
+        if (expiredDateInput.style.display !== 'none' && expiredDateInput.value) {
+            data['expired_date'] = expiredDateInput.value;
+        } else {
+             // Explicitly set to null if not provided or hidden
+             data['expired_date'] = null;
         }
 
         data.action = 'add_member';
 
-        // Debug logging
-        console.log ('Submitting JSON data:', JSON.stringify(data, null, 2));
-
-     
+        console.log('Submitting main form data:', JSON.stringify(data, null, 2));
+        showLoading(loadingIndicator);
 
         try {
-            showLoading();
-            const response = await fetch('../recervingAPI.php?table=members', {
+            const response = await fetch(`${API_BASE_URL}?table=members`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             });
 
             const rawResponse = await response.text();
-            console.log('Raw API Response:', rawResponse);
-
-
+            console.log('Raw API Response (Add Member):', rawResponse);
             let parsedData;
-            try {
-                parsedData = JSON.parse(rawResponse);
-            } catch (e) {
-                showError('API返回格式错误: ' + rawResponse);
-                return;
-            }
+            try { parsedData = JSON.parse(rawResponse); } catch (e) { throw new Error('API返回格式错误: ' + rawResponse); }
 
-            if (parsedData.status === 'success') {
+            if (parsedData.status === 'success' && parsedData.memberId) {
                 alert('会员添加成功！');
-                
-                // 获取会员类型
-                const designationType = parseInt(data['Designation of Applicant'], 10);
-                
-                // 如果有returnUrl参数，则跳转回原页面并根据会员类型决定是否带上新会员ID
+                // Handle redirection
+                const designationType = parseInt(data['Designation_of_Applicant'], 10);
                 if (returnUrl) {
-                    // 构建URL
                     const redirectUrl = new URL(returnUrl);
-                    
-                    // 如果会员类型是Member(1)或Foreigner(3)，则返回memberId
-                    if (designationType === 1 || designationType === 3) {
+                    if (designationType === 1 || designationType === 3) { // Example condition
                         redirectUrl.searchParams.set('memberId', parsedData.memberId);
                     } else {
-                        // 其他类型返回null
-                        redirectUrl.searchParams.set('memberId', 'null');
+                         redirectUrl.searchParams.set('memberId', 'null');
                     }
-                    
                     window.location.href = redirectUrl.toString();
                 } else {
-                    // 默认跳转到会员搜索页面
-                    window.location.href = 'member_search.html?add=success&id=' + parsedData.memberId;
+                    window.location.href = `member_search.html?add=success&id=${parsedData.memberId}`;
                 }
             } else {
-                showError('添加会员失败: ' + (parsedData.message || '未知错误'));
-                if (parsedData.error_details) {
-                    console.error('Error details:', parsedData.error_details);
-                }
+                throw new Error(parsedData.message || parsedData.error || '添加会员失败，未知错误');
             }
         } catch (error) {
-            if (error.name === 'TypeError') {
-                showError('网络连接失败，请检查网络');
-            } else {
-                showError('系统错误: ' + error.message);
-            }
-            console.error('Full error:', error);
+            console.error('Error submitting main form:', error);
+            showError('提交失败: ' + error.message); // Show error on main form
         } finally {
-            hideLoading();
+            hideLoading(loadingIndicator);
         }
     }
 
-    // Helper functions
-    function isValidEmail(email) {
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    // --- Modal Handling Functions ---
+
+    /**
+     * Opens the modal to add a new applicant type.
+     */
+    function openAddTypeModal() {
+        console.log("Opening Add Type Modal..."); // Debug log
+        // Reset modal state before showing
+        newApplicantTypeNameInput.value = '';
+        modalErrorMessages.textContent = ''; // Clear previous errors
+        modalErrorMessages.style.display = 'none';
+        newApplicantTypeNameInput.classList.remove('error');
+        saveNewTypeBtn.disabled = false; // Ensure buttons are enabled
+        cancelNewTypeBtn.disabled = false;
+
+        // Show the modal overlay
+        addTypeModal.style.display = 'flex'; // Use flex to enable centering via CSS
+        newApplicantTypeNameInput.focus(); // Focus the input field
     }
 
-    function isValidPhone(phone) {
-        return /^\+?[\d\s-]{8,}$/.test(phone);
+    /**
+     * Closes the modal for adding a new applicant type.
+     */
+    function closeAddTypeModal() {
+        console.log("Closing Add Type Modal..."); // Debug log
+        addTypeModal.style.display = 'none'; // Hide the modal overlay
     }
 
-    function isValidIC(ic) {
-        return /^[\d-]{6,}$/.test(ic);
+    /**
+     * Handles saving the new applicant type entered in the modal.
+     */
+    async function handleSaveNewType() {
+        const newTypeName = newApplicantTypeNameInput.value.trim();
+
+        // Reset modal errors
+        modalErrorMessages.style.display = 'none';
+        newApplicantTypeNameInput.classList.remove('error');
+
+        if (!newTypeName) {
+            showModalError('新种类名称不能为空。');
+            newApplicantTypeNameInput.classList.add('error');
+            newApplicantTypeNameInput.focus();
+            return;
+        }
+
+        const data = {
+            action: 'add_applicant_type',
+            designation_of_applicant: newTypeName
+        };
+
+        console.log('Submitting new applicant type:', JSON.stringify(data));
+        showLoading(modalLoadingIndicator);
+        saveNewTypeBtn.disabled = true;
+        cancelNewTypeBtn.disabled = true;
+
+        try {
+            const response = await fetch(`${API_BASE_URL}?table=applicants_types`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            const rawResponse = await response.text();
+            console.log('Raw API Response (Add Type):', rawResponse);
+            let parsedData;
+            try { parsedData = JSON.parse(rawResponse); } catch (e) { throw new Error('API返回格式错误: ' + rawResponse); }
+
+
+            if (parsedData.status === 'success') {
+                alert('新种类添加成功！');
+                closeAddTypeModal();
+                // Refresh the dropdown and potentially select the new item
+                await fetchApplicantType(); // Use await to ensure fetch completes
+                if (parsedData.newTypeId) {
+                     // Wait a tiny moment for the DOM to update after fetch, then select
+                     setTimeout(() => {
+                         designation_of_applicant.value = parsedData.newTypeId;
+                         console.log(`Selected new type ID: ${parsedData.newTypeId}`);
+                     }, 100); // 100ms delay, adjust if needed
+                }
+            } else {
+                 // Throw an error to be caught below
+                 throw new Error(parsedData.message || parsedData.error || '添加种类失败，未知错误');
+            }
+        } catch (error) {
+            console.error('Error saving new applicant type:', error);
+            showModalError('保存失败: ' + error.message); // Show error in modal
+        } finally {
+            hideLoading(modalLoadingIndicator);
+            saveNewTypeBtn.disabled = false;
+            cancelNewTypeBtn.disabled = false;
+        }
     }
 
+    // --- Helper Functions ---
+
+    /**
+     * Handles changes in the expiry date duration selection.
+     */
+    function handleExpiryOptionChange() {
+        const selectedOption = expiredDateOptions.value;
+        const dateInput = document.getElementById('expiredDate');
+        const today = new Date();
+        const todayString = today.toISOString().split('T')[0]; // YYYY-MM-DD format
+
+        dateInput.min = todayString; // Set min date for custom and calculated dates
+
+        if (selectedOption === 'custom') {
+            dateInput.style.display = 'block';
+            dateInput.value = '';
+        } else if (selectedOption === '') {
+            dateInput.style.display = 'none';
+            dateInput.value = '';
+        } else {
+            let expiryDate = new Date(today);
+            if (selectedOption === '1year') expiryDate.setFullYear(today.getFullYear() + 1);
+            else if (selectedOption === '2year') expiryDate.setFullYear(today.getFullYear() + 2);
+            else if (selectedOption === '3years') expiryDate.setFullYear(today.getFullYear() + 3);
+
+            expiryDate.setDate(expiryDate.getDate() - 1); // One day less for exact duration
+
+             // Ensure calculated date is not in the past (edge case for end of month/year)
+             if (expiryDate < today) {
+                 expiryDate = today; // Default to today if calculation goes wrong
+             }
+
+            dateInput.value = expiryDate.toISOString().split('T')[0]; // Set YYYY-MM-DD
+            dateInput.style.display = 'block';
+        }
+    }
+
+    /**
+     * Validates email format.
+     */
+    function isValidEmail(email) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
+    /**
+     * Validates phone number format (basic).
+     */
+    function isValidPhone(phone) { return /^\+?[\d\s-()]{7,}$/.test(phone); }
+    /**
+     * Validates IC number format (basic).
+     */
+    function isValidIC(ic) { return /^[\d-]{6,}/.test(ic); }
+
+    /**
+     * Displays error messages on the main form.
+     */
     function showError(message) {
         errorMessages.innerHTML = message;
         errorMessages.style.display = 'block';
-        window.scrollTo(0, errorMessages.offsetTop);
+        errorMessages.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
-    function showLoading() {
-        loadingIndicator.style.display = 'block';
+    /**
+     * Displays error messages within the modal.
+     */
+    function showModalError(message) {
+        modalErrorMessages.textContent = message;
+        modalErrorMessages.style.display = 'block';
     }
 
-    function hideLoading() {
-        loadingIndicator.style.display = 'none';
+    /**
+     * Shows a specific loading indicator.
+     */
+    function showLoading(indicator) {
+        if (indicator) indicator.style.display = 'block';
     }
 
-    
-});
+    /**
+     * Hides a specific loading indicator.
+     */
+    function hideLoading(indicator) {
+         if (indicator) indicator.style.display = 'none';
+    }
+
+}); // End DOMContentLoaded

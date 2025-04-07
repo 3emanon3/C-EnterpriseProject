@@ -262,6 +262,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <td>${formatData(member.Birthday)}</td>
                 <td>${formatDate(expiredDate)}</td>
                 <td>${formatData(placeOfBirth)}</td>
+                <td>${formatData(member.position)}</td>
                 <td>${formatData(member.others)}</td>
                 <td>${formatData(member.remarks)}</td>
                 <td>
