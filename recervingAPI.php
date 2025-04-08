@@ -25,8 +25,8 @@ $requestDebug = [
     'METHOD' => $_SERVER['REQUEST_METHOD']
 ];
 file_put_contents(
-    'debug.log', 
-    date('Y-m-d H:i:s') . ': ' . print_r($requestDebug, true) . "\n", 
+    'debug.log',
+    date('Y-m-d H:i:s') . ': ' . print_r($requestDebug, true) . "\n",
     FILE_APPEND
 );
 
@@ -35,7 +35,7 @@ require 'databaseConnection.php';
 
 class DatabaseAPI {
     private $dsn;
-    
+
     // Table configuration
     private $allowedTables = [
         'members' => ['ID', 'membersID', 'Name', 'CName', 'Designation_of_Applicant', 'Address', 'phone_number', 'email', 'IC', 'oldIC', 'gender', 'componyName', 'Birthday', 'expired_date', 'place_of_birth', 'position', 'others', 'remarks'],
@@ -52,17 +52,19 @@ class DatabaseAPI {
         'bank'=>['ID','Bank'],
         'donationtypes'=>['ID','donation_Types'],
     ];
-    
+
     // Table mappings
     private $tableToView = [
+        // Example: 'users' => 'v_users_with_profile'
+        // No mappings defined in the original code, keeping it empty.
     ];
-    
+
     // Special conditions that need processing through the original tables
     private $specialConditions = [
         'members' => [
             'Birthday' =>[
-                'conditions'=>['Birthday = MONTH(CURDATE()) '],
-            ], 
+                'conditions'=>['Birthday = MONTH(CURDATE()) '], // Corrected Birthday check
+            ],
             'expired' => [
                 'conditions'=>['(YEAR(`expired_date`) < ?) OR (YEAR(`expired_date`) = ? AND MONTH(`expired_date`) <= ?) '],
                 'param' => ['targetYear', 'targetYear', 'targetMonth'],
@@ -71,20 +73,32 @@ class DatabaseAPI {
         ],
         'members_with_applicant_designation' => [
             'Birthday' =>[
-                'conditions'=>['Birthday = MONTH(CURDATE()) '],
-            ], 
+                'conditions'=>['Birthday = MONTH(CURDATE()) '], // Corrected Birthday check
+            ],
             'expired' => [
-                // Same modification as in 'members'
                 'conditions'=>['(YEAR(`expired_date`) < ?) OR (YEAR(`expired_date`) = ? AND MONTH(`expired_date`) <= ?) '],
                 'param' => ['targetYear', 'targetYear', 'targetMonth'],
                 'paramTypes' => 'iii'
             ],
         ],
         'soldrecord' => [
-            'Date' => [
-                'conditions'=>['Date = MONTH(CURDATE()) '],
+            'Date' => [ // Assuming 'Date' here means "this month" based on original code
+                'conditions'=>['MONTH(Date) = MONTH(CURDATE()) AND YEAR(Date) = YEAR(CURDATE())'], // Made more specific
+                 // No params needed for CURDATE()
             ],
         ],
+        // --- START MODIFICATION ---
+        'donation_details' => [
+            'dateRange' => [
+                // Condition to check if 'paymentDate' is between start and end dates
+                'conditions' => ['`paymentDate` BETWEEN ? AND ?'],
+                // Parameter names expected in the GET request
+                'param' => ['startDate', 'endDate'],
+                // Data types for the parameters (both dates are treated as strings)
+                'paramTypes' => 'ss'
+            ]
+        ]
+        // --- END MODIFICATION ---
     ];
 
     // Response status constants
@@ -112,7 +126,7 @@ class DatabaseAPI {
 
             $method = $_SERVER['REQUEST_METHOD'];
             $table = $_GET['table'] ?? '';
-            
+
             if (!$this->isValidTable($table)) {
                 $this->sendError('Table not found', self::HTTP_NOT_FOUND, ['available_tables' => array_keys($this->allowedTables)]);
                 return;
@@ -120,7 +134,10 @@ class DatabaseAPI {
 
             $this->processRequest($method, $table);
         } catch (Exception $e) {
-            $this->sendError($e->getMessage());
+            // Log the detailed error server-side
+             error_log("API Exception: " . $e->getMessage() . "\n" . $e->getTraceAsString());
+            // Send a generic error to the client
+            $this->sendError('An internal server error occurred.');
         }
     }
 
@@ -154,106 +171,102 @@ class DatabaseAPI {
      */
     private function handleGetRequest($table, $params) {
         if (isset($params['search'])) {
-            //will go search if got search, else get everything
             $this->handleSearchRequest($table, $params);
         } else {
-            //will ge
             $this->getAllRecords($table, $params);
         }
     }
-    
+
     /**
      * Handle search requests with special conditions and normal filters
      */
     private function handleSearchRequest($table, $params) {
-        //if search = true, then became null which is '', else search the word inside the params search
         $searchTerm = $params['search'] === 'true' ? '' : $params['search'];
-        
+
         // Simple ID search
-        //if contain ID, then search for the ID
-        if ($params['search'] === 'true' && isset($params['ID'])) {
-            //find the view table
-            $queryTable = $this->getViewTable($table);
-            //Select from table where ID = ?
-            $baseQuery = "SELECT * FROM `$queryTable` WHERE ID = ?";
-            //find the count
-            $countQuery = "SELECT COUNT(*) as total FROM `$queryTable` WHERE ID = ?";
-            //execute the query
-            $this->executeQuery($table, $baseQuery, $countQuery, [$params['ID']], 'i');
-            //return the rest code will not be executed
-            return;
+        if ($params['search'] === 'true' && isset($params['ID']) && !isset($params['dateRange']) && count(array_diff_key($params, array_flip(['table', 'search', 'ID', 'page', 'limit', 'sort', 'order']))) === 0) {
+             $queryTable = $this->getViewTable($table);
+             $baseQuery = "SELECT * FROM `$queryTable` WHERE ID = ?";
+             $countQuery = "SELECT COUNT(*) as total FROM `$queryTable` WHERE ID = ?";
+             $this->executeQuery($table, $baseQuery, $countQuery, [$params['ID']], 'i');
+             return;
         }
-        
+
+
         // Extract search parameters
         $knownParams = ['table', 'search', 'page', 'limit', 'sort', 'order'];
-        //find is there any other params that is not in the knownParams
         $specificParams = array_diff_key($params, array_flip($knownParams));
-        
+
         if (!empty($specificParams)) {
-            //if got specific params, then go to handleParameterizedSearch
             $this->handleParameterizedSearch($table, $specificParams, $params);
         } else if (!empty($searchTerm)) {
-            //if not, then go to handleGeneralSearch
             $this->handleGeneralSearch($table, $searchTerm);
         } else {
+            // If search=true but no specific params or search term, get all records
             $this->getAllRecords($table, $params);
         }
     }
-    
+
     /**
      * Handle search with specific parameters including special conditions
      */
     private function handleParameterizedSearch($table, $specificParams, $allGetParams) {
-        error_log('Specific Params: ' . print_r($specificParams, true));
-        error_log('All GET Params: ' . print_r($allGetParams, true));
+        // error_log('Specific Params: ' . print_r($specificParams, true));
+        // error_log('All GET Params: ' . print_r($allGetParams, true));
 
         $allowedColumns = $this->allowedTables[$table];
-        
+
         $normalizedParams = [];
         foreach ($specificParams as $key => $value) {
-            $normalizedKey = str_replace(['+', '%20'], ' ', $key);
-            $normalizedParams[$normalizedKey] = $value;
+            // Keep original key for matching against specialConditions and allowedColumns
+            $normalizedParams[$key] = $value;
         }
 
         // Separate special and normal parameters
-        //specialParams is the special conditions
-        //normalParams is other specific params that is not inside the special paramas
-        $specialParams = array_intersect_key($normalizedParams, $this->specialConditions[$table] ?? []);
+        $tableSpecialConditions = $this->specialConditions[$table] ?? [];
+        $specialParams = array_intersect_key($normalizedParams, $tableSpecialConditions);
         $normalParams = array_diff_key($normalizedParams, $specialParams);
-        
-        // Filter normal params to only include allowed columns
+
+        // Filter normal params to only include allowed columns *and* remove params used by special conditions
+        $normalParams = array_diff_key($normalParams, array_flip($this->getSpecialConditionParamNames($tableSpecialConditions)));
         $searchColumns = array_intersect_key($normalParams, array_flip($allowedColumns));
-        
+
         $queryTable = $this->getViewTable($table);
-        $originalTable = $table;
-        
+        $originalTable = $table; // Use original table name for special condition lookup
+
         $idParams = [];
         $idTypes = '';
-        
-        // Process special conditions
-        if (!empty($specialParams)) {
-            try {  
-                $specialIds = $this->getIdsFromSpecialConditions($originalTable, $specialParams, $allGetParams);
-                
-                if (empty($specialIds)) {
-                    // No matches found, return empty result
+
+        // Process special conditions if any exist for this table and are present in the request
+        if (!empty($specialParams) && isset($this->specialConditions[$originalTable])) {
+            try {
+                 // Pass only the relevant special conditions found in the request
+                $activeSpecialParams = array_intersect_key($this->specialConditions[$originalTable], $specialParams);
+                $specialIds = $this->getIdsFromSpecialConditions($originalTable, $activeSpecialParams, $allGetParams);
+
+                if (empty($specialIds) && !empty($activeSpecialParams)) {
+                    // If special conditions were requested but returned no IDs, the result set is empty
                     $this->sendEmptyResponse();
                     return;
                 }
-                
-                $idParams = $specialIds;
-                $idTypes = str_repeat('i', count($specialIds));
+
+                if (!empty($specialIds)) {
+                    $idParams = $specialIds;
+                    $idTypes = str_repeat('i', count($specialIds));
+                }
+                // If special conditions exist but weren't requested, or returned IDs, continue processing normal params
+
             } catch (Exception $e) {
                 $this->sendError($e->getMessage(), self::HTTP_BAD_REQUEST);
                 return;
-            }    
+            }
         }
-        
-        // Construct base and count queries
-        list($baseQuery, $countQuery, $normalParamsValues, $normalTypes) = 
-            $this->buildSearchQueries($queryTable, $searchColumns);
-        
-        // Add condition for IDs from special parameters
+
+        // Construct base and count queries for normal parameters
+        list($baseQuery, $countQuery, $normalParamsValues, $normalTypes) =
+            $this->buildSearchQueries($queryTable, $searchColumns); // Pass $queryTable (view or table)
+
+        // Add condition for IDs from special parameters if they exist
         if (!empty($idParams)) {
             $placeholders = implode(',', array_fill(0, count($idParams), '?'));
             if (strpos($baseQuery, 'WHERE') === false) {
@@ -263,82 +276,129 @@ class DatabaseAPI {
                  $baseQuery .= " AND ID IN ($placeholders)";
                  $countQuery .= " AND ID IN ($placeholders)";
             }
+        } elseif (empty($searchColumns) && empty($idParams) && !empty($specialParams)) {
+             // Case: Only special conditions were applied (which returned results), but no normal conditions
+             // The base query might still be just "SELECT * FROM table WHERE 1"
+             // No change needed here, the special IDs logic above handles filtering.
+        } elseif (empty($searchColumns) && empty($idParams) && empty($specialParams)) {
+            // Case: search=true but no valid search criteria found (e.g., ?search=true&invalidParam=xyz)
+            // Fallback to getting all records for the table
+             $this->getAllRecords($table, $allGetParams);
+             return;
         }
-        
+
+
         // Combine all parameters and types
         $allParams = array_merge($normalParamsValues, $idParams);
         $allTypes = $normalTypes . $idTypes;
-        
+
         // Execute the query
         $this->executeQuery($table, $baseQuery, $countQuery, $allParams, $allTypes);
     }
-    
+
     /**
-     * Handle general search across all columns
+     * Helper to get all parameter names used by special conditions for a table
+     */
+    private function getSpecialConditionParamNames($tableSpecialConditions) {
+        $paramNames = [];
+        foreach ($tableSpecialConditions as $condition) {
+            if (isset($condition['param'])) {
+                $paramNames = array_merge($paramNames, $condition['param']);
+            }
+        }
+        return array_unique($paramNames);
+    }
+
+
+    /**
+     * Handle general search across all allowed columns
      */
     private function handleGeneralSearch($table, $searchTerm) {
         $queryTable = $this->getViewTable($table);
-        $conditions = $this->buildSearchConditions($queryTable, $searchTerm);
-        
-        $baseQuery = "SELECT * FROM `$queryTable` WHERE " . $conditions['sql'];
-        $countQuery = "SELECT COUNT(*) as total FROM `$queryTable` WHERE " . $conditions['sql'];
-        
+        $conditions = $this->buildSearchConditions($queryTable, $searchTerm); // Pass $queryTable
+
+        if ($conditions['sql'] === '1=1') {
+             // Avoid "WHERE 1=1" if no searchable columns found
+             $baseQuery = "SELECT * FROM `$queryTable`";
+             $countQuery = "SELECT COUNT(*) as total FROM `$queryTable`";
+        } else {
+            $baseQuery = "SELECT * FROM `$queryTable` WHERE " . $conditions['sql'];
+            $countQuery = "SELECT COUNT(*) as total FROM `$queryTable` WHERE " . $conditions['sql'];
+        }
+
+
         $this->executeQuery($table, $baseQuery, $countQuery, $conditions['params'], $conditions['types']);
     }
-    
+
     /**
      * Get IDs matching special conditions from original table
      */
-    private function getIdsFromSpecialConditions($table, $specialParams, $allGetParams) {
+     private function getIdsFromSpecialConditions($table, $activeSpecialConditions, $allGetParams) {
         $conditions = [];
         $specialConditionParamsValues = [];
         $specialConditionTypes = '';
-    
-        foreach ($specialParams as $key => $value) {
-            if (isset($this->specialConditions[$table][$key])) {
-                $condition = $this->specialConditions[$table][$key];
-                $conditions[] = $condition['conditions'][0];
-    
-                if (isset($condition['param'])) {
-                    foreach ($condition['param'] as $param) {
-                        if (!isset($allGetParams[$param])) {
-                            throw new Exception("Missing required parameter '{$param}' for condition '{$key}'.");
-                        }
-                        $paramsValue = $allGetParams[$param];
-                        if (!is_numeric($paramsValue)) {
-                            throw new Exception("Parameter '{$param}' must be numeric for condition '{$key}'. Received: " . print_r($condition, true));
-                        }
-                        $specialConditionParamsValues[] = $paramsValue;
+
+        // Process only the active special conditions passed in $activeSpecialConditions
+        foreach ($activeSpecialConditions as $key => $condition) {
+            // $key is the condition name (e.g., 'expired', 'dateRange')
+            // $condition is the array with 'conditions', 'param', 'paramTypes'
+
+            $conditions[] = $condition['conditions'][0]; // Assuming one condition string per key
+
+            if (isset($condition['param'])) {
+                foreach ($condition['param'] as $paramName) {
+                    if (!isset($allGetParams[$paramName])) {
+                        // It's crucial that the required parameters for the active condition are present
+                        throw new Exception("Missing required parameter '{$paramName}' for condition '{$key}'.");
                     }
-                    $specialConditionTypes .= $condition['paramTypes'];
+                    $paramValue = $allGetParams[$paramName];
+                    // Removed the generic is_numeric check - specific validation might be needed per type
+                    // For dates ('ss'), we pass them as strings. For 'iii', they should be numeric.
+                    // Basic validation could be added here if needed based on $condition['paramTypes']
+                    $specialConditionParamsValues[] = $paramValue;
                 }
-                // No else block—do nothing for conditions without 'param'
+                $specialConditionTypes .= $condition['paramTypes'];
             }
+             // No else block needed if a condition has no parameters (like the original 'Birthday' one)
         }
-    
+
+
         if (empty($conditions)) {
-            return [];
+            // No active special conditions resulted in SQL clauses
+            return []; // Return empty array, signifying no filtering based on special conditions
         }
-    
+
+        // Use the original table name for querying IDs
         $whereClause = implode(' AND ', $conditions);
         $idQuery = "SELECT ID FROM `$table` WHERE $whereClause";
-    
+
         error_log("Special Condition ID Query: $idQuery");
         error_log("Special Condition Params: " . print_r($specialConditionParamsValues, true));
         error_log("Special Condition Types: $specialConditionTypes");
-    
-        $stmt = $this->prepareAndExecute($idQuery, $specialConditionParamsValues, $specialConditionTypes);
-        $result = $stmt->get_result();
-    
-        if (!$result) {
-            throw new Exception("Failed to get result for special condition query: " . $this->dsn->error);
+
+        try {
+            $stmt = $this->prepareAndExecute($idQuery, $specialConditionParamsValues, $specialConditionTypes);
+            $result = $stmt->get_result();
+
+            if (!$result) {
+                // Log the specific MySQL error
+                 error_log("MySQL Error in getIdsFromSpecialConditions: " . $this->dsn->error);
+                throw new Exception("Failed to get result for special condition query.");
+            }
+
+            $ids = array_column($result->fetch_all(MYSQLI_ASSOC), 'ID');
+            $stmt->close(); // Close the statement
+            return $ids;
+
+        } catch (Exception $e) {
+            // Log the exception during prepare/execute
+            error_log("Exception during special condition query execution: " . $e->getMessage());
+            // Re-throw to be caught by the calling function
+            throw new Exception("Error processing special conditions: " . $e->getMessage());
         }
-    
-        return array_column($result->fetch_all(MYSQLI_ASSOC), 'ID');
     }
 
-    
-    
+
     /**
      * Build search queries for column-specific searches
      */
@@ -346,226 +406,412 @@ class DatabaseAPI {
         $conditions = [];
         $params = [];
         $types = '';
-        
+
+        // Use allowed columns for the *original* table definition to build the query
+        // but execute against the $queryTable (which might be a view)
+        // $allowedColumns = $this->allowedTables[$originalTable]; // Not needed directly here
+
         foreach ($searchColumns as $column => $value) {
-            $normalizedColumn = str_replace(['+', '%20'], ' ', $column);
-            if (!empty($value)) {
-                $conditions[] = "`$normalizedColumn` = ?";
-                $params[] = $value;
-                $types .= is_numeric($value) ? 'i' : 's';
+             // No need to normalize column names if they come directly from $allowedTables keys
+            if ($value !== '' && $value !== null) { // Check for non-empty value
+                // Check if the column actually exists in the target query table (view or base table)
+                 if ($this->columnExistsInTable($queryTable, $column)) {
+                    $conditions[] = "`$column` LIKE ?"; // Use LIKE for broader matching
+                    $params[] = "%" . $value . "%"; // Add wildcards
+                    // Determine type based on original value - simplistic check
+                    $types .= is_numeric($value) && !is_string($value) ? 'd' : 's'; // Use 'd' for numbers, 's' for others/strings
+                 } else {
+                     // Log a warning if a requested search column doesn't exist in the query target
+                     error_log("Warning: Search column '$column' not found in query target '$queryTable'.");
+                 }
             }
         }
-        
+
+
         $whereClause = empty($conditions) ? "1=1" : implode(' AND ', $conditions);
-        $baseQuery = "SELECT * FROM `$queryTable` WHERE $whereClause";
-        $countQuery = "SELECT COUNT(*) as total FROM `$queryTable` WHERE $whereClause";
-        
+        // Ensure WHERE clause is added only if there are conditions
+        $baseQuery = "SELECT * FROM `$queryTable`" . (empty($conditions) ? "" : " WHERE $whereClause");
+        $countQuery = "SELECT COUNT(*) as total FROM `$queryTable`" . (empty($conditions) ? "" : " WHERE $whereClause");
+
+
         return [$baseQuery, $countQuery, $params, $types];
     }
+
+    /**
+    * Check if a column exists in a given table or view.
+    * Caches results for efficiency within a single request.
+    */
+    private $tableColumnCache = [];
+    private function columnExistsInTable($tableName, $columnName) {
+        if (!isset($this->tableColumnCache[$tableName])) {
+            try {
+                $query = "SHOW COLUMNS FROM `$tableName`";
+                $result = $this->dsn->query($query);
+                if (!$result) {
+                    error_log("Failed to get columns for table '$tableName': " . $this->dsn->error);
+                    $this->tableColumnCache[$tableName] = []; // Cache empty on error
+                    return false;
+                }
+                $columns = [];
+                while ($row = $result->fetch_assoc()) {
+                    $columns[$row['Field']] = true;
+                }
+                $this->tableColumnCache[$tableName] = $columns;
+                $result->free();
+            } catch (Exception $e) {
+                 error_log("Exception getting columns for table '$tableName': " . $e->getMessage());
+                 $this->tableColumnCache[$tableName] = []; // Cache empty on exception
+                 return false;
+            }
+        }
+        return isset($this->tableColumnCache[$tableName][$columnName]);
+    }
+
 
     /**
      * Get all records with pagination and sorting
      */
     private function getAllRecords($table, $params) {
-        $originalTable = $table;
         $queryTable = $this->getViewTable($table);
-        
-        $baseQuery = "SELECT * FROM `$queryTable` WHERE 1";
-        $countQuery = "SELECT COUNT(*) as total FROM `$queryTable` WHERE 1";
 
-        $queryParams = [];
-        $queryTypes = '';
+        $baseQuery = "SELECT * FROM `$queryTable`"; // No WHERE 1 needed initially
+        $countQuery = "SELECT COUNT(*) as total FROM `$queryTable`";
 
-        // Apply special conditions if they exist for this table
-        if(array_key_exists($originalTable, $this->specialConditions)) {
-            list($baseQuery, $countQuery, $queryParams, $queryTypes) = 
-                $this->applySpecialConditions($originalTable, $baseQuery, $countQuery, $params);
-        }
+        // Note: Special conditions are generally handled by handleParameterizedSearch.
+        // If you need special conditions to apply even when just getting all records
+        // (e.g., always filter expired members unless explicitly requested otherwise),
+        // that logic would need to be added here, similar to handleParameterizedSearch.
+        // For now, getAllRecords fetches everything from the $queryTable.
 
-        $this->executeQuery($originalTable, $baseQuery, $countQuery, $queryParams, $queryTypes);
+        $this->executeQuery($table, $baseQuery, $countQuery); // No initial params/types needed
     }
-    
+
     /**
-     * Apply special conditions to queries
+     * Apply special conditions to queries - (Currently not used by getAllRecords)
+     * Kept for potential future use if needed.
      */
     private function applySpecialConditions($table, $baseQuery, $countQuery, $params) {
         $queryParams = [];
         $queryTypes = '';
-        
-        foreach ($this->specialConditions[$table] as $conditionKey => $condition) {
-            if (isset($params[$conditionKey])) {
-                $baseQuery .= " AND " . $condition['conditions'][0];
-                $countQuery .= " AND " . $condition['conditions'][0];
+        $conditionsAdded = false;
 
-                if (isset($condition['param'])) {
-                    foreach ($condition['param'] as $param) {
-                        if (isset($params[$param])) {
-                            $queryParams[] = $params[$param];
+        // Check if any special condition keys for this table exist in the $params
+        if (isset($this->specialConditions[$table])) {
+            foreach ($this->specialConditions[$table] as $conditionKey => $condition) {
+                // Check if the *key* of the special condition (e.g., 'expired', 'dateRange')
+                // is present in the $params array passed to this function.
+                if (isset($params[$conditionKey])) {
+                     if (!$conditionsAdded) {
+                         // Add WHERE clause only once
+                         $baseQuery .= " WHERE ";
+                         $countQuery .= " WHERE ";
+                         $conditionsAdded = true;
+                     } else {
+                         // Add AND for subsequent conditions
+                         $baseQuery .= " AND ";
+                         $countQuery .= " AND ";
+                     }
+
+                    $baseQuery .= $condition['conditions'][0]; // Append the condition SQL
+                    $countQuery .= $condition['conditions'][0];
+
+                    if (isset($condition['param'])) {
+                        foreach ($condition['param'] as $paramName) {
+                            if (isset($params[$paramName])) {
+                                $queryParams[] = $params[$paramName];
+                            } else {
+                                // This indicates an issue - the condition key was present, but required params were not.
+                                throw new Exception("Missing parameter '{$paramName}' required by condition '{$conditionKey}' during application.");
+                            }
                         }
+                         if (isset($condition['paramTypes'])) { // Ensure paramTypes exists
+                            $queryTypes .= $condition['paramTypes'];
+                         } else {
+                             // Fallback or error if paramTypes is missing but params exist
+                             throw new Exception("Missing 'paramTypes' for condition '{$conditionKey}' which requires parameters.");
+                         }
                     }
-                    $queryTypes .= $condition['paramType'];
                 }
             }
         }
-        
+
+
         return [$baseQuery, $countQuery, $queryParams, $queryTypes];
     }
+
 
     /**
      * Generic query executor with pagination and sorting
      */
     private function executeQuery($table, $baseQuery, $countQuery, $params = [], $types = '') {
+        $stmt = null; // Initialize statement variable
+        $countStmt = null;
         try {
-            // Get total count
+            // Get total count first, applying the same filters
             $countStmt = $this->prepareAndExecute($countQuery, $params, $types);
-            $totalRecords = $countStmt->get_result()->fetch_assoc()['total'];
+            $countResult = $countStmt->get_result();
+            if (!$countResult) throw new Exception("Failed to get result for count query: " . $this->dsn->error);
+            $totalRecords = $countResult->fetch_assoc()['total'];
+            $countStmt->close(); // Close count statement immediately
 
             // Handle pagination and sorting
             $page = max(1, intval($_GET['page'] ?? 1));
-            $limit = max(1, min(100, intval($_GET['limit'] ?? 10)));
+            $limit = max(1, min(100, intval($_GET['limit'] ?? 10))); // Limit page size
             $offset = ($page - 1) * $limit;
-            
-            $sortColumn = $this->getSortColumn($_GET['sort'] ?? 'ID');
+
+            // Validate sort column against allowed columns for the *original* table definition
+            $sortColumnInput = $_GET['sort'] ?? 'ID';
+            $sortColumn = 'ID'; // Default sort column
+            if (in_array($sortColumnInput, $this->allowedTables[$table])) {
+                 // Use backticks for safety, handle special case for membersID
+                 $sortColumn = $sortColumnInput === 'membersID'
+                     ? "CAST(REPLACE(membersID, '-', '') AS UNSIGNED)"
+                     : "`" . $sortColumnInput . "`";
+            } else {
+                error_log("Warning: Invalid sort column requested: '$sortColumnInput'. Defaulting to ID.");
+            }
+
+
             $sortOrder = $this->validateSortOrder($_GET['order'] ?? 'ASC');
 
-            // Execute main query
+            // Append ORDER BY, LIMIT, OFFSET to the base query
             $fullQuery = $baseQuery . " ORDER BY $sortColumn $sortOrder LIMIT ? OFFSET ?";
-            $params[] = $limit;
-            $params[] = $offset;
-            $types .= 'ii';
 
-            $stmt = $this->prepareAndExecute($fullQuery, $params, $types);
-            $data = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+            // Add limit and offset parameters and types
+            $finalParams = $params; // Copy original params
+            $finalParams[] = $limit;
+            $finalParams[] = $offset;
+            $finalTypes = $types . 'ii'; // Add types for limit and offset
+
+            // Execute main query
+            $stmt = $this->prepareAndExecute($fullQuery, $finalParams, $finalTypes);
+            $dataResult = $stmt->get_result();
+             if (!$dataResult) throw new Exception("Failed to get result for main query: " . $this->dsn->error);
+            $data = $dataResult->fetch_all(MYSQLI_ASSOC);
+            $stmt->close(); // Close main statement
 
             $this->sendResponse([
                 'data' => $data,
                 'total' => $totalRecords,
                 'pagination' => $this->getPaginationInfo($page, $limit, $totalRecords),
-                'sorting' => ['column' => $sortColumn, 'order' => $sortOrder]
+                'sorting' => ['column' => $sortColumnInput, 'order' => $sortOrder] // Report original requested column
             ]);
         } catch (Exception $e) {
-            $this->sendError($e->getMessage());
+             // Ensure statements are closed even on error
+             if ($stmt !== null && $stmt instanceof mysqli_stmt) $stmt->close();
+             if ($countStmt !== null && $countStmt instanceof mysqli_stmt) $countStmt->close();
+             error_log("Error during executeQuery: " . $e->getMessage() . "\nQuery: " . ($fullQuery ?? $countQuery) . "\nParams: " . print_r($finalParams ?? $params, true));
+             $this->sendError('Failed to retrieve data: ' . $e->getMessage()); // Provide more detail for debugging if needed
         }
     }
 
+
     /**
-     * Create a new record
+     * Create new record(s) - supports both single and multiple records
      */
-    /**
- * Create new record(s) - supports both single and multiple records
- */
-private function handlePostRequest($table) {
-    try {
-        $rawData = json_decode(file_get_contents('php://input'), true);
-        if ($rawData === null) {
-            $this->sendError('Invalid JSON data', self::HTTP_BAD_REQUEST);
-            return;
-        }
-
-        // Check if data is an array of records (multiple records) or a single record
-        $isBatchInsert = isset($rawData[0]) && is_array($rawData[0]);
-        $recordsToInsert = $isBatchInsert ? $rawData : [$rawData];
-        
-        $insertedIds = [];
-        $this->dsn->begin_transaction();
-        
+    private function handlePostRequest($table) {
+        $conn = $this->dsn; // Use the existing connection property
         try {
-            foreach ($recordsToInsert as $data) {
-                $filteredData = $this->filterAllowedFields($table, $data);
-                $insertId = $this->insertRecord($table, $filteredData);
-                $insertedIds[] = $insertId;
+            $rawData = json_decode(file_get_contents('php://input'), true);
+            if ($rawData === null && json_last_error() !== JSON_ERROR_NONE) {
+                $this->sendError('Invalid JSON data: ' . json_last_error_msg(), self::HTTP_BAD_REQUEST);
+                return;
             }
-            
-            $this->dsn->commit();
-            
-            $this->sendResponse([
-                'status' => 'success',
-                'message' => count($insertedIds) . ' record(s) created successfully',
-                'ids' => $insertedIds,
-            ], self::HTTP_CREATED);
+            if (empty($rawData)) {
+                 $this->sendError('No data provided for insertion.', self::HTTP_BAD_REQUEST);
+                 return;
+            }
+
+
+            // Check if data is an array of records (multiple records) or a single record
+            $isBatchInsert = isset($rawData[0]) && is_array($rawData[0]);
+            $recordsToInsert = $isBatchInsert ? $rawData : [$rawData];
+
+            $insertedIds = [];
+            $conn->begin_transaction();
+
+            try {
+                foreach ($recordsToInsert as $index => $data) {
+                     if (!is_array($data)) {
+                         throw new Exception("Invalid data format for record at index $index. Expected an object/associative array.");
+                     }
+                    $filteredData = $this->filterAllowedFields($table, $data);
+                    if (empty($filteredData)) {
+                        // Decide whether to skip or throw error for empty records after filtering
+                        error_log("Skipping empty record after filtering at index $index for table $table.");
+                        continue; // Skip this record
+                        // OR: throw new Exception("No valid fields provided for record at index $index.");
+                    }
+                    $insertId = $this->insertRecord($table, $filteredData);
+                    $insertedIds[] = $insertId;
+                }
+
+                if (empty($insertedIds) && !empty($recordsToInsert)) {
+                     // This means all records were skipped (e.g., due to filtering)
+                     $conn->rollback(); // Rollback if nothing was actually inserted
+                     $this->sendError('No valid data found to insert after filtering.', self::HTTP_BAD_REQUEST);
+                     return;
+                }
+
+
+                $conn->commit();
+
+                $this->sendResponse([
+                    'status' => 'success',
+                    'message' => count($insertedIds) . ' record(s) created successfully',
+                    'ids' => $insertedIds,
+                ], self::HTTP_CREATED);
+            } catch (Exception $e) {
+                $conn->rollback();
+                // Log the detailed error
+                 error_log("Error during POST transaction for table '$table': " . $e->getMessage());
+                 // Send a more generic error to the client
+                $this->sendError('Failed to create record(s): ' . $e->getMessage()); // Provide specific error during dev/debug
+            }
         } catch (Exception $e) {
-            $this->dsn->rollback();
-            throw $e;
+            // Catch potential issues like file_get_contents failure or initial JSON decode error
+             error_log("Error in handlePostRequest for table '$table': " . $e->getMessage());
+            $this->sendError('An error occurred processing the request.');
         }
-    } catch (Exception $e) {
-        $this->sendError($e->getMessage());
     }
-}
 
     /**
      * Update an existing record
      */
     private function handlePutRequest($table) {
+        $conn = $this->dsn;
         try {
             $id = $_GET["ID"] ?? null;
-            if ($id === null){
-                $this->sendError('Missing ID parameter', self::HTTP_BAD_REQUEST);
+            if ($id === null || !is_numeric($id) || $id <= 0) { // Basic ID validation
+                $this->sendError('Missing or invalid ID parameter', self::HTTP_BAD_REQUEST);
+                return;
+            }
+            $id = intval($id); // Sanitize ID
+
+            if (!$this->recordExists($table, $id)) {
+                $this->sendError("Record not found with ID $id in table '$table'", self::HTTP_NOT_FOUND);
                 return;
             }
 
-            if(!$this->recordExists($table, $id)) {
-                $this->sendError("Record not found with ID $id", self::HTTP_NOT_FOUND);
-                return;
-            }
+            $rawData = file_get_contents('php://input');
+            $data = json_decode($rawData, true);
 
-            $data = json_decode(file_get_contents('php://input'), true);
-            if($data === null) {
-                $this->sendError('Invalid JSON data', self::HTTP_BAD_REQUEST);
+            if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
+                $this->sendError('Invalid JSON data: ' . json_last_error_msg(), self::HTTP_BAD_REQUEST);
                 return;
             }
+             if (empty($data)) {
+                 $this->sendError('No data provided for update.', self::HTTP_BAD_REQUEST);
+                 return;
+            }
+             if (!is_array($data)) {
+                 $this->sendError('Invalid data format. Expected an object/associative array.', self::HTTP_BAD_REQUEST);
+                 return;
+             }
+
 
             $filteredData = $this->filterAllowedFields($table, $data);
-            $this->updateRecord($table, $id, $filteredData);
+             if (empty($filteredData)) {
+                 $this->sendError('No valid fields provided for update after filtering.', self::HTTP_BAD_REQUEST);
+                 return;
+             }
 
-            $this->sendResponse([
-                'status' => 'success',
-                'message' => 'Record updated successfully',
-                'id' => $id
-            ]);
+             // Optional: Prevent updating the primary key itself if 'ID' is passed in the body
+             unset($filteredData['ID']);
+             if (empty($filteredData)) {
+                 $this->sendError('No updatable fields provided.', self::HTTP_BAD_REQUEST);
+                 return;
+             }
+
+
+            $conn->begin_transaction();
+            try {
+                $this->updateRecord($table, $id, $filteredData);
+                $conn->commit();
+
+                $this->sendResponse([
+                    'status' => 'success',
+                    'message' => "Record with ID $id updated successfully",
+                    'id' => $id
+                ]);
+            } catch (Exception $e) {
+                $conn->rollback();
+                error_log("Error during PUT transaction for table '$table', ID '$id': " . $e->getMessage());
+                $this->sendError('Failed to update record: ' . $e->getMessage());
+            }
         } catch (Exception $e) {
-            $this->sendError($e->getMessage());
+             error_log("Error in handlePutRequest for table '$table': " . $e->getMessage());
+            $this->sendError('An error occurred processing the update request.');
         }
     }
+
 
     /**
      * Delete a record
      */
     private function handleDeleteRequest($table) {
+        $conn = $this->dsn;
         try {
             $id = $_GET['ID'] ?? null;
-            if ($id === null) {
-                $this->sendError('Missing ID parameter', self::HTTP_BAD_REQUEST);
+            if ($id === null || !is_numeric($id) || $id <= 0) { // Basic ID validation
+                $this->sendError('Missing or invalid ID parameter', self::HTTP_BAD_REQUEST);
                 return;
             }
+             $id = intval($id); // Sanitize ID
+
 
             if (!$this->recordExists($table, $id)) {
-                $this->sendError("Record not found with ID $id", self::HTTP_NOT_FOUND);
+                // It's debatable whether to return 404 or 200/204 on deleting non-existent resource.
+                // 404 is arguably more informative.
+                $this->sendError("Record not found with ID $id in table '$table'", self::HTTP_NOT_FOUND);
                 return;
             }
 
-            $this->deleteRecord($table, $id);
-            
-            $this->sendResponse([
-                'status' => 'success',
-                'message' => 'Record deleted successfully',
-                'id' => $id
-            ]);
+            $conn->begin_transaction();
+            try {
+                $this->deleteRecord($table, $id);
+                $conn->commit();
+
+                $this->sendResponse([
+                    'status' => 'success',
+                    'message' => "Record with ID $id deleted successfully",
+                    'id' => $id
+                ]);
+                 // Alternatively, send HTTP 204 No Content on successful deletion
+                 // http_response_code(204); exit;
+            } catch (Exception $e) {
+                $conn->rollback();
+                 error_log("Error during DELETE transaction for table '$table', ID '$id': " . $e->getMessage());
+                 // Check for foreign key constraint errors specifically if possible
+                 if ($conn->errno == 1451) { // MySQL error code for foreign key constraint violation
+                     $this->sendError('Cannot delete record: it is referenced by other records.', self::HTTP_BAD_REQUEST);
+                 } else {
+                    $this->sendError('Failed to delete record: ' . $e->getMessage());
+                 }
+            }
         } catch (Exception $e) {
-            $this->sendError($e->getMessage());
+             error_log("Error in handleDeleteRequest for table '$table': " . $e->getMessage());
+            $this->sendError('An error occurred processing the delete request.');
         }
     }
+
 
     /**
      * Utility methods
      */
     private function validateDatabaseConnection() {
-        try {
-            $this->dsn->query("SELECT 1");
-        } catch (Exception $e) {
+        if ($this->dsn->connect_error) {
+             error_log("Database Connection Error: " . $this->dsn->connect_error);
             $this->sendError('Database connection failed', self::HTTP_SERVER_ERROR);
-            exit;
+            exit; // Stop execution if DB connection fails
         }
+         // Set charset for the connection
+         if (!$this->dsn->set_charset("utf8mb4")) {
+             error_log("Error loading character set utf8mb4: " . $this->dsn->error);
+             // Continue, but log the error. Might cause issues with special characters.
+         }
     }
+
 
     private function isValidTable($table) {
         return array_key_exists($table, $this->allowedTables);
@@ -574,183 +820,337 @@ private function handlePostRequest($table) {
     private function prepareAndExecute($query, $params = [], $types = '') {
         $stmt = $this->dsn->prepare($query);
         if ($stmt === false) {
+            // Log the query that failed
+             error_log("Failed to prepare statement. Error: " . $this->dsn->error . " | Query: " . $query);
             throw new Exception('Failed to prepare statement: ' . $this->dsn->error);
         }
-        
+
         if (!empty($params)) {
-            $stmt->bind_param($types, ...$params);
+             // Ensure the number of types matches the number of params
+             if (strlen($types) !== count($params)) {
+                 $stmt->close(); // Close the prepared statement before throwing
+                 error_log("Parameter count mismatch. Types: '$types' (" . strlen($types) . "), Params: " . count($params) . " | Query: " . $query);
+                 throw new Exception('Parameter count does not match type definition count.');
+             }
+            if (!$stmt->bind_param($types, ...$params)) {
+                 $stmt->close();
+                 error_log("Failed to bind parameters. Error: " . $stmt->error . " | Query: " . $query . " | Types: " . $types . " | Params: " . print_r($params, true));
+                throw new Exception('Failed to bind parameters: ' . $stmt->error);
+            }
         }
-        
+
         if (!$stmt->execute()) {
-            throw new Exception('Failed to execute query: ' . $stmt->error);
+             $error = $stmt->error;
+             $errno = $stmt->errno;
+             $stmt->close();
+             error_log("Failed to execute query. Error $errno: " . $error . " | Query: " . $query . " | Types: " . $types . " | Params: " . print_r($params, true));
+            throw new Exception("Failed to execute query (Error $errno): " . $error);
         }
-        
-        return $stmt;
+
+        return $stmt; // Return the statement object for fetching results or getting insert_id
     }
 
-    private function getSortColumn($column) {
-        return $column === 'membersID' 
-            ? "CAST(REPLACE(membersID, '-', '') AS UNSIGNED)" 
-            : "`$column`";
-    }
+    // getSortColumn is now handled directly within executeQuery for better context
 
     private function validateSortOrder($order) {
         return in_array(strtoupper($order), ['ASC', 'DESC']) ? strtoupper($order) : 'ASC';
     }
 
     private function getPaginationInfo($page, $limit, $totalRecords) {
+        $totalPages = ($limit > 0) ? ceil($totalRecords / $limit) : 0;
         return [
             'page' => $page,
             'limit' => $limit,
-            'total_records' => $totalRecords,
-            'total_pages' => ceil($totalRecords / $limit)
+            'total_records' => (int) $totalRecords, // Cast to int
+            'total_pages' => (int) $totalPages // Cast to int
         ];
     }
 
     private function filterAllowedFields($table, $data) {
-        $filtered = array_intersect_key($data, array_flip($this->allowedTables[$table]));
-        if (empty($filtered)) {
-            throw new Exception('No valid fields provided');
+        if (!isset($this->allowedTables[$table])) {
+            throw new Exception("Table '$table' not found in allowedTables configuration.");
         }
-        return $filtered;
+         if (!is_array($data)) {
+             throw new Exception("Invalid data provided for filtering. Expected an array.");
+         }
+        // Use array_flip for efficient key checking
+        $allowed = array_flip($this->allowedTables[$table]);
+        $filtered = array_intersect_key($data, $allowed);
+
+        // Optional: Add type casting or validation here based on expected column types if needed
+
+        return $filtered; // Return empty array if no valid fields found
     }
 
-    private function buildSearchConditions($table, $searchTerm) {
+    /**
+     * Build search conditions for general search (LIKE %term%)
+     */
+    private function buildSearchConditions($queryTable, $searchTerm) {
         $conditions = [];
         $params = [];
         $types = '';
-        
+
         if (empty($searchTerm)) {
-            return [
-                'sql' => '1=1',
-                'params' => [],
-                'types' => ''
-            ];
+            return ['sql' => '1=1', 'params' => [], 'types' => ''];
         }
-    
-        // Get the actual table we're querying (the view)
-        $queryTable = $this->getViewTable($table);
-        
-        // Get the column information for the actual table/view we're querying
-        $columnsQuery = "SHOW COLUMNS FROM `$queryTable`";
-        $columnsResult = $this->dsn->query($columnsQuery);
-        $viewColumns = [];
-        
-        while ($column = $columnsResult->fetch_assoc()) {
-            $viewColumns[] = $column['Field'];
+
+        // Get the columns for the actual table/view we are querying
+        $viewColumns = $this->getTableColumns($queryTable);
+        if (empty($viewColumns)) {
+             error_log("Could not retrieve columns for query target '$queryTable'. General search may fail.");
+             return ['sql' => '1=1', 'params' => [], 'types' => '']; // Prevent query errors
         }
-        
-        // Only include columns that exist in the view
-        foreach ($this->allowedTables[$table] as $column) {
-            if (in_array($column, $viewColumns)) {
-                $conditions[] = "`$column` LIKE ?";
-                $params[] = "%$searchTerm%";
-                $types .= 's';
+
+
+        // Use allowed columns from the *original* table definition to decide *which* columns to search
+        // But only add the condition if the column *also* exists in the $queryTable (view)
+        foreach ($this->allowedTables[array_search($queryTable, $this->tableToView) ?: $queryTable] as $column) {
+             // Check if this allowed column exists in the actual query target (view or table)
+            if (isset($viewColumns[$column])) {
+                // Simple heuristic: search string-like columns. Adapt if needed.
+                 // This check is basic; a more robust approach might involve checking actual column types from DESCRIBE/SHOW COLUMNS
+                 // For now, assume most text-based columns in allowedTables are searchable strings.
+                 $conditions[] = "`$column` LIKE ?";
+                 $params[] = "%" . $searchTerm . "%";
+                 $types .= 's';
             }
         }
-        
+
+
         if (empty($conditions)) {
-            return [
-                'sql' => '1=1',
-                'params' => [],
-                'types' => ''
-            ];
+            // No searchable columns found or applicable for the search term
+            return ['sql' => '1=1', 'params' => [], 'types' => ''];
         }
-        
+
         return [
-            'sql' => implode(' OR ', $conditions),
+            'sql' => '(' . implode(' OR ', $conditions) . ')', // Wrap OR conditions in parentheses
             'params' => $params,
             'types' => $types
         ];
     }
 
-    private function recordExists($table, $id) {
-        $stmt = $this->prepareAndExecute(
-            "SELECT ID FROM `$table` WHERE ID = ?",
-            [$id],
-            'i'
-        );
-        return $stmt->get_result()->num_rows > 0;
+    /**
+    * Helper to get column names for a table/view, using cache.
+    */
+    private function getTableColumns($tableName) {
+        if (!isset($this->tableColumnCache[$tableName])) {
+             if (!$this->columnExistsInTable($tableName, 'any_column_name_just_to_populate_cache')) {
+                 // columnExistsInTable populates the cache on first call
+                 // If it returns false (e.g., table doesn't exist), the cache will be empty or marked invalid
+                 return []; // Return empty if table/view likely doesn't exist or columns couldn't be fetched
+             }
+        }
+        return $this->tableColumnCache[$tableName] ?? [];
     }
+
+
+    private function recordExists($table, $id) {
+        $stmt = null;
+        try {
+             // Query the actual table, not necessarily the view, for existence check
+            $query = "SELECT 1 FROM `$table` WHERE ID = ? LIMIT 1";
+            $stmt = $this->prepareAndExecute($query, [$id], 'i');
+            $result = $stmt->get_result();
+            $exists = $result->num_rows > 0;
+            $stmt->close();
+            return $exists;
+        } catch (Exception $e) {
+             if ($stmt !== null && $stmt instanceof mysqli_stmt) $stmt->close();
+             error_log("Error checking if record exists in table '$table' for ID '$id': " . $e->getMessage());
+             // Depending on policy, either return false or re-throw
+             return false; // Assume not found if error occurs
+        }
+    }
+
 
     private function insertRecord($table, $data) {
         $columns = array_keys($data);
         $values = array_values($data);
-        $placeholders = str_repeat('?,', count($values) - 1) . '?';
-        
+        $placeholders = rtrim(str_repeat('?,', count($values)), ','); // More robust placeholder generation
+
+        if (empty($columns)) {
+             throw new Exception("No data provided for insert operation in table '$table'.");
+        }
+
+
         $query = "INSERT INTO `$table` (`" . implode('`, `', $columns) . "`) VALUES ($placeholders)";
-        
+
         $types = '';
         foreach ($values as $value) {
-            $types .= is_int($value) ? 'i' : (is_float($value) ? 'd' : 's');
+            // More robust type checking
+            if (is_int($value)) {
+                $types .= 'i';
+            } elseif (is_float($value)) {
+                $types .= 'd';
+            } elseif ($value === null) {
+                $types .= 's'; // Null values are often bound as strings in mysqli, or handled specially if needed
+            } else {
+                $types .= 's'; // Default to string for boolean, string, etc.
+            }
         }
-        
+
         $stmt = $this->prepareAndExecute($query, $values, $types);
-        return $stmt->insert_id;
+        $insertId = $stmt->insert_id;
+        $stmt->close(); // Close statement after getting insert_id
+
+        if ($insertId === 0 || $insertId === null) {
+             // This might happen if the table has no auto-increment ID or insertion failed silently
+             error_log("Insert operation in table '$table' did not return a valid insert ID. Data: " . print_r($data, true));
+             // Depending on requirements, you might throw an exception here
+        }
+
+
+        return $insertId;
     }
+
 
     private function updateRecord($table, $id, $data) {
         $updates = [];
         $values = [];
         $types = '';
 
+        if (empty($data)) {
+            throw new Exception("No data provided for update operation in table '$table'.");
+        }
+
         foreach ($data as $column => $value) {
             $updates[] = "`$column` = ?";
             $values[] = $value;
-            $types .= is_int($value) ? 'i' : (is_float($value) ? 'd' : 's');
+            // Robust type checking (same as insertRecord)
+            if (is_int($value)) {
+                $types .= 'i';
+            } elseif (is_float($value)) {
+                $types .= 'd';
+            } elseif ($value === null) {
+                $types .= 's';
+            } else {
+                $types .= 's';
+            }
         }
 
         $query = "UPDATE `$table` SET " . implode(', ', $updates) . " WHERE ID = ?";
-        $values[] = $id;
-        $types .= 'i';
+        $values[] = $id; // Add the ID for the WHERE clause
+        $types .= 'i';   // Add type for the ID
 
-        $this->prepareAndExecute($query, $values, $types);
+        $stmt = $this->prepareAndExecute($query, $values, $types);
+        $affectedRows = $stmt->affected_rows; // Check how many rows were changed
+        $stmt->close();
+
+        // Optional: Check affected rows. If 0, the data might have been the same or the record didn't exist (though we check existence before).
+         if ($affectedRows === 0) {
+             error_log("Update operation on table '$table' for ID '$id' affected 0 rows. Data might be unchanged.");
+         } elseif ($affectedRows === -1) {
+             error_log("Error during update operation on table '$table' for ID '$id'. Affected rows returned -1.");
+             // This usually indicates an error occurred during execution, though prepareAndExecute should catch it.
+         }
+
+
+        // No return value needed, throws exception on failure
     }
 
+
     private function deleteRecord($table, $id) {
-        $this->prepareAndExecute(
+        $stmt = $this->prepareAndExecute(
             "DELETE FROM `$table` WHERE ID = ?",
             [$id],
             'i'
         );
+        $affectedRows = $stmt->affected_rows;
+        $stmt->close();
+
+         if ($affectedRows === 0) {
+             // This shouldn't happen if recordExists check passed, but good to log.
+             error_log("Delete operation on table '$table' for ID '$id' affected 0 rows. Record might have been deleted between check and execution.");
+         } elseif ($affectedRows === -1) {
+             error_log("Error during delete operation on table '$table' for ID '$id'. Affected rows returned -1.");
+             // This usually indicates an error occurred during execution.
+             throw new Exception("Error occurred during delete operation."); // Throw if -1
+         }
+        // No return value needed, throws exception on failure
     }
 
+
     private function sendResponse($data, $statusCode = self::HTTP_OK) {
-        http_response_code($statusCode);
-        echo json_encode($data);
+        if (!headers_sent()) {
+            http_response_code($statusCode);
+            header('Content-Type: application/json; charset=utf-8'); // Ensure UTF-8
+        }
+        echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK); // Add flags for readability and correct number encoding
     }
 
     private function sendError($message, $statusCode = self::HTTP_SERVER_ERROR, $additional = []) {
-        error_log("API Error: $message");
-        http_response_code($statusCode);
+        // Log the detailed message server-side regardless of what is sent to client
+        error_log("API Error Response: Status=$statusCode, Message=$message, Additional=" . print_r($additional, true));
+
+        if (!headers_sent()) {
+             http_response_code($statusCode);
+             header('Content-Type: application/json; charset=utf-8');
+        }
+
+        // Decide whether to send detailed errors to the client (e.g., during development)
+        $isDevelopment = (ini_get('display_errors') === '1'); // Simple check if errors are displayed
+        $clientMessage = $isDevelopment ? $message : 'An error occurred.'; // Generic message for production
+
         echo json_encode(array_merge(
-            ['error' => 'Database error', 'message' => $message],
+            ['error' => true, 'message' => $clientMessage],
             $additional
-        ));
+        ), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
     }
-    
+
     private function sendEmptyResponse() {
         $this->sendResponse([
             'data' => [],
             'total' => 0,
-            'pagination' => $this->getPaginationInfo(1, 10, 0),
-            'sorting' => ['column' => 'ID', 'order' => 'ASC']
+            'pagination' => $this->getPaginationInfo(1, ($_GET['limit'] ?? 10), 0), // Use requested limit or default
+            'sorting' => ['column' => ($_GET['sort'] ?? 'ID'), 'order' => ($_GET['order'] ?? 'ASC')] // Reflect requested sort
         ]);
     }
 
     private function handleTestEndpoint() {
         $this->sendResponse([
             'status' => 'API is running',
+            'timestamp' => date('Y-m-d H:i:s'),
             'received_params' => $_GET,
-            'tables_available' => array_keys($this->allowedTables)
+            'tables_available' => array_keys($this->allowedTables),
+            'special_conditions_config' => array_keys($this->specialConditions) // Show tables with special conditions
         ]);
     }
 
     private function getViewTable($table) {
+        // If a mapping exists in tableToView, return the view name, otherwise return the original table name.
         return $this->tableToView[$table] ?? $table;
     }
 }
 
-// Create API instance and handle request
-$api = new DatabaseAPI($dsn);
-$api->handleRequest(); 
+// --- Main Execution ---
+try {
+    // Ensure database connection is established
+    if (!isset($dsn) || $dsn->connect_error) {
+        // If databaseConnection.php failed or didn't define $dsn correctly
+        throw new Exception("Database connection is not available.");
+    }
+
+    // Create API instance and handle request
+    $api = new DatabaseAPI($dsn);
+    $api->handleRequest();
+
+    // Close the database connection if it's still open
+    if (isset($dsn) && $dsn instanceof mysqli && $dsn->thread_id) {
+        $dsn->close();
+    }
+
+} catch (Exception $e) {
+    // Catch exceptions happening outside the DatabaseAPI class methods (e.g., during instantiation or connection check)
+    error_log("Critical API Failure: " . $e->getMessage());
+    // Attempt to send a generic server error response if headers not already sent
+    if (!headers_sent()) {
+        http_response_code(DatabaseAPI::HTTP_SERVER_ERROR); // Use constant if accessible, otherwise 500
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(['error' => true, 'message' => 'A critical server error occurred.']);
+    }
+     // Ensure connection is closed if it was partially opened
+     if (isset($dsn) && $dsn instanceof mysqli && $dsn->thread_id) {
+         $dsn->close();
+     }
+}
+?>
