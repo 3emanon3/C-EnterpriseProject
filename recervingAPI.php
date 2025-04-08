@@ -73,7 +73,7 @@ class DatabaseAPI {
         ],
         'members_with_applicant_designation' => [
             'Birthday' =>[
-                'conditions'=>['Birthday = MONTH(CURDATE()) '], // Corrected Birthday check
+                'conditions'=>['Birthday = MONTH(CURDATE()) '], 
             ],
             'expired' => [
                 'conditions'=>['(YEAR(`expired_date`) < ?) OR (YEAR(`expired_date`) = ? AND MONTH(`expired_date`) <= ?) '],
