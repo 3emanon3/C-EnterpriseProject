@@ -247,7 +247,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
                 // Convert to string and escape HTML characters
                 return String(value).replace(/[&<>"']/g, (m) => ({
-                    '&': '&', '<': '<', '>': '>', '"': '"', "'": ''
+                    '&': '&', '<': '<', '>': '>', '"': '"', "'": "'"
                 }[m]));
             };
 
