@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const paginationContainer = document.querySelector(".pagination");
     const prevPageButton = document.getElementById("prevPage");
     const nextPageButton = document.getElementById("nextPage");
+    const bankSearchBtn = document.getElementById("bankSearchBtn");
     
     // State variables
     let currentSortColumn = null;
@@ -21,6 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentPage = 1;
     let totalPages = 0;
     let currentSearchType = 'all'; // Flag to indicate listing all data
+    let currentBankFilter = null;
     
     const DONATION_TYPES = {
 1: 'Donation',
@@ -45,6 +47,213 @@ document.addEventListener("DOMContentLoaded", function () {
     function mapBankName(bankNumber) {
         return BANKS[bankNumber] || bankNumber;
     }
+
+        // Bank filter modal creation function
+// Bank filter modal creation function - Updated implementation
+function createBankFilterModal() {
+    // Remove existing modals if any
+    const existingModal = document.getElementById('bankFilterModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+
+    // Create modal elements with improved styling
+    const modalOverlay = document.createElement('div');
+    modalOverlay.className = 'modal-overlay';
+    modalOverlay.id = 'bankFilterModal';
+    
+    const modalContent = document.createElement('div');
+    modalContent.className = 'modal-content bank-filter-screen';
+    
+    const modalHeader = document.createElement('div');
+    modalHeader.className = 'modal-header';
+    modalHeader.innerHTML = `
+        <h3>选择银行</h3>
+        <button class="close-btn" aria-label="关闭">&times;</button>
+    `;
+    
+    const modalBody = document.createElement('div');
+    modalBody.className = 'modal-body bank-selection-grid';
+
+    // Add "All Banks" option
+    const allBanksDiv = document.createElement('div');
+    allBanksDiv.className = 'bank-option-card' + (!currentBankFilter ? ' selected' : '');
+    allBanksDiv.setAttribute('data-bank-id', '');
+    allBanksDiv.innerHTML = `
+        <div class="bank-icon">
+            <i class="fas fa-university"></i>
+        </div>
+        <div class="bank-name">所有银行</div>
+    `;
+    modalBody.appendChild(allBanksDiv);
+    
+    // Add options for each bank
+    Object.entries(BANKS).forEach(([id, name]) => {
+        const bankDiv = document.createElement('div');
+        bankDiv.className = 'bank-option-card' + (currentBankFilter === id ? ' selected' : '');
+        bankDiv.setAttribute('data-bank-id', id);
+        bankDiv.innerHTML = `
+            <div class="bank-icon">
+                <i class="fas fa-landmark"></i>
+            </div>
+            <div class="bank-name">${name}</div>
+        `;
+        modalBody.appendChild(bankDiv);
+    });
+    
+    // Assemble modal
+    modalContent.appendChild(modalHeader);
+    modalContent.appendChild(modalBody);
+    modalOverlay.appendChild(modalContent);
+    
+    // Add modal to DOM
+    document.body.appendChild(modalOverlay);
+    
+    // Add CSS for the bank filter screen
+    const styleElement = document.createElement('style');
+    styleElement.textContent = `
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .bank-filter-screen {
+            width: 600px;
+            max-width: 90%;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+        
+        .modal-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+            font-size: 18px;
+            color: #333;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        .bank-selection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 16px;
+            padding: 20px;
+        }
+        
+        .bank-option-card {
+            padding: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .bank-option-card:hover {
+            border-color: #4a90e2;
+            background-color: #f5f9ff;
+        }
+        
+        .bank-option-card.selected {
+            border-color: #4a90e2;
+            background-color: #f0f7ff;
+            box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+        }
+        
+        .bank-icon {
+            font-size: 24px;
+            margin-bottom: 12px;
+            color: #4a90e2;
+        }
+        
+        .bank-name {
+            font-size: 14px;
+            font-weight: 500;
+        }
+    `;
+    document.head.appendChild(styleElement);
+    
+    // Event listeners for modal
+    document.querySelector('#bankFilterModal .close-btn').addEventListener('click', () => {
+        modalOverlay.remove();
+        styleElement.remove();
+    });
+    
+    // Close on click outside
+    modalOverlay.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) {
+            modalOverlay.remove();
+            styleElement.remove();
+        }
+    });
+    
+    // Handle bank selection
+    const bankOptions = document.querySelectorAll('.bank-option-card');
+    bankOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            // Update selection visually
+            bankOptions.forEach(opt => opt.classList.remove('selected'));
+            option.classList.add('selected');
+            
+            // Apply filter immediately
+            const bankId = option.getAttribute('data-bank-id');
+            currentBankFilter = bankId || null;
+            currentPage = 1; // Reset to first page when filtering
+            
+            // Close the modal after selection
+            modalOverlay.remove();
+            styleElement.remove();
+            
+            // Update filter button text and fetch data
+            updateBankFilterButtonText();
+            fetchDonations(searchInput.value);
+        });
+    });
+}
+
+    
+        // Update bank filter button text to indicate active filter
+// Update bank filter button text to indicate active filter
+function updateBankFilterButtonText() {
+    if (bankSearchBtn) {
+        if (currentBankFilter) {
+            const bankName = BANKS[currentBankFilter] || currentBankFilter;
+            bankSearchBtn.innerHTML = `<i class="fas fa-filter"></i> ${bankName}`;
+            bankSearchBtn.classList.add('active-filter');
+        } else {
+            bankSearchBtn.innerHTML = `<i class="fas fa-university"></i> 银行筛选`;
+            bankSearchBtn.classList.remove('active-filter');
+        }
+    }
+}
+
+// Add event listener for the bank search button
+if (bankSearchBtn) {
+    bankSearchBtn.addEventListener('click', createBankFilterModal);
+}
 
     // Debounce function to limit API calls during rapid typing
     function debounce(func, wait) {
@@ -87,6 +296,12 @@ document.addEventListener("DOMContentLoaded", function () {
         } else {
             currentSearchType = 'all'; // Back to listing all if query is empty
         }
+
+         // Add bank filter to API request
+    if (currentBankFilter) {
+        params.append("Bank", currentBankFilter);
+        params.append("search", "true");
+    }
     
         if (currentSortColumn) {
             // Ensure the column names match what the API expects
@@ -123,6 +338,8 @@ document.addEventListener("DOMContentLoaded", function () {
             }
     
             totalPages = Math.ceil(parseInt(totalDonations.textContent) / itemsPerPage);
+
+
             displayDonations(donationData);
             updatePagination();
             updateSortIcons();
@@ -164,6 +381,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!Array.isArray(donations) || donations.length === 0) {
             let message = '暂无记录';
             if (currentSearchType === 'search') message = '没有找到匹配的记录';
+            if (currentBankFilter) message = '该银行没有匹配的记录';
             
             donationTableBody.innerHTML = `<tr><td colspan="10" class="no-data">${message}</td></tr>`;
             return;
