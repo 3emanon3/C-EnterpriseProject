@@ -157,6 +157,11 @@ modalSearchInput.addEventListener('input',
             
             if (data.data && data.data.length > 0) {
                 const donation = data.data[0];
+                console.log('Donation object details:', {
+                    membership: donation.membership,
+                    memberId: donation.memberId,
+                    memberFields: Object.keys(donation).filter(key => key.toLowerCase().includes('member'))
+                });
                 populateForm(donation);
             } else {
                 showError('Donation record not found');
@@ -199,18 +204,21 @@ function populateForm(donation) {
     
     // Handle membership field correctly - this is the key fix
     const membershipValue = donation.membership ||  null;
+    const selectedMemberIdField = document.getElementById('selectedMemberId');
     // Default to value "2" (Non Member) if membership is null
     setSelectIfExists('membership', membershipValue === null ? '2' : membershipValue);
     
     // If there's a member ID, set the hidden field and select Old Member
-    if (donation.memberId) {
-        document.getElementById('selectedMemberId').value = donation.memberId;
-        setSelectIfExists('membership', '1'); // Set to Old Member
+    if (membershipValue) {
+        // If membership value exists, this is an "Old Member"
+        selectedMemberIdField.value = membershipValue;
+        setSelectIfExists('membership', '1'); // Set to "Old Member"
+        console.log('Setting membership to Old Member with ID:', membershipValue);
     } else {
-        // Clear the selected member ID if no member is associated
-        if (document.getElementById('selectedMemberId')) {
-            document.getElementById('selectedMemberId').value = '';
-        }
+        // No member ID means "Non Member"
+        selectedMemberIdField.value = '';
+        setSelectIfExists('membership', '2'); // Set to "Non Member"
+        console.log('Setting membership to Non Member');
     }
     
     // Handle date format
@@ -290,6 +298,7 @@ function populateForm(donation) {
         const paymentDate = document.getElementById('paymentDate').value;
         const amount = document.getElementById('amount').value;
         
+        
         let errors = [];
         
         if (!nameCompany) errors.push('Please enter name/company name');
@@ -325,14 +334,25 @@ function populateForm(donation) {
                 return;
             }
 
+            const membershipValue = document.getElementById('membership').value;
+            let memberIdValue = null;
+            
+            // Only use member ID if "Old Member" is selected
+            if (membershipValue === '1') {
+                memberIdValue = document.getElementById('selectedMemberId').value;
+                // Double check we have a valid member ID
+             
+                console.log('Using member ID:', memberIdValue);
+            }
+
             // Create a structured object that matches API expectations
             const donationData = {
                 ID: donationId,
                 "Name/Company_Name": document.getElementById('nameCompany').value || null,
                 donationTypes: document.getElementById('donationTypes').value || null,
                 Bank: document.getElementById('bank').value || null,
-                membership: document.getElementById('membership').value === '1' ? 
-                document.getElementById('selectedMemberId').value || null : null,
+                membership: document.getElementById('membership').value === '1' ?
+                document.getElementById('selectedMemberId').value : null,
                 paymentDate: document.getElementById('paymentDate').value || null,
                 official_receipt_no: document.getElementById('receiptNo').value || null,
                 amount: document.getElementById('amount').value || null,
@@ -426,6 +446,15 @@ function performModalSearch(page = 1) {
         .then(data => {
             modalLoadingIndicator.style.display = 'none';
             console.log('Search response:', data);
+
+            if (data.data && data.data.length > 0) {
+                console.log('First member fields:', Object.keys(data.data[0]));
+                console.log('First member ID fields:', {
+                    ID: data.data[0].ID,
+                    membersID: data.data[0].membersID,
+                    id: data.data[0].id
+                });
+            }
             
             // Check if data has the expected structure
             const members = data.data || [];
@@ -492,17 +521,31 @@ function displayModalResults(members) {
     }
 
     // Select member
-    function selectMember(member) {
-        // Set member ID to hidden field
-        document.getElementById('selectedMemberId').value = member.ID || member.membersID;
-        
-        // Set name/company name
-        const nameField = document.getElementById('nameCompany');
-        nameField.value = member.Name || member.CName || '';
-        
-        // Close modal
-        memberSearchModal.style.display = 'none';
+    // Select member
+function selectMember(member) {
+    // Debugging - Check what IDs are available
+    console.log('Member data:', member);
+    
+    // Be more specific about which ID we're using
+    const memberId = member.membersID || member.ID;
+    console.log('Selected member ID:', memberId);
+    
+    if (!memberId) {
+        console.error('No valid member ID found!');
+        showError('Selected member has no valid ID. Please try another member.');
+        return;
     }
+    
+    // Set member ID to hidden field
+    document.getElementById('selectedMemberId').value = memberId;
+    
+    // Set name/company name
+    const nameField = document.getElementById('nameCompany');
+    nameField.value = member.Name || member.CName || '';
+    
+    // Close modal
+    memberSearchModal.style.display = 'none';
+}
 
     // Show error message
     function showError(message) {
