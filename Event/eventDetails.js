@@ -365,32 +365,58 @@ let returnStatus = urlParams.get('returnStatus') || '';
     }
     
     // Fetch participants
-// Update fetchParticipants function to correctly retrieve from vparticipants
-async function fetchParticipants(eventId) {
-    showLoading();
-    try {
-        const response = await fetch(`${API_BASE_URL}?table=vparticipants&search=true&eventID=${eventId}`);
-        if (!response.ok) {
-            throw new Error(`Loading failed: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        
-        // Process and display the data
-        if (data.data && data.data.length > 0) {
-            // Filter to make sure we only get participants for this event
-            const validParticipants = data.data.filter(p => p.eventID == eventId);
-            populateParticipantsTable(validParticipants);
+    async function fetchParticipants(eventId) {
+        showLoading();
+        try {
+            console.log(`Fetching participants for event ID: ${eventId}`);
+            const response = await fetch(`${API_BASE_URL}?table=vparticipants&search=true&eventID=${eventId}`);
+            if (!response.ok) {
+                throw new Error(`Loading failed: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            console.log('Loaded participants data:', data);
+            
+            let validParticipants = [];
+            if (data.data && data.data.length > 0) {
+                // Only keep participants whose eventID matches the current eventId
+                validParticipants = data.data.filter(participant => participant.eventID == eventId);
+            // If we have participants, fetch detailed member information for each
+            if (validParticipants.length > 0) {
+                const participantsWithMemberInfo = await Promise.all(
+                    data.data.map(async (participant) => {
+                        if (participant.memberID) {
+                            try {
+                                const memberResponse = await fetch(`${API_BASE_URL}?table=members&search=true&ID=${participant.memberID}`);
+                                if (memberResponse.ok) {
+                                    const memberData = await memberResponse.json();
+                                    if (memberData.data && memberData.data.length > 0) {
+                                        // Combine participant data with member data
+                                        return { ...participant, memberInfo: memberData.data[0] };
+                                    }
+                                }
+                            } catch (memberError) {
+                                console.error(`Error fetching member data for ID ${participant.memberID}:`, memberError);
+                            }
+                        }
+                        return participant;
+                    })
+                );
+                
+                populateParticipantsTable(participantsWithMemberInfo);
+            } else {
+                populateParticipantsTable([]);
+            }
         } else {
             populateParticipantsTable([]);
         }
-    } catch (error) {
-        console.error('Error loading participants:', error);
-        showError(`Failed to load participants: ${error.message}`);
-    } finally {
-        hideLoading();
+        } catch (error) {
+            console.error('Error loading participants:', error);
+            showError(`Failed to load participants: ${error.message}`);
+        } finally {
+            hideLoading();
+        }
     }
-}
     
     // Populate participants table
     function populateParticipantsTable(participants) {
@@ -437,7 +463,7 @@ async function fetchParticipants(eventId) {
             // Get member info if available   
             const row = document.createElement('tr');
             const sequentialNumber =participant.ID;
-            const displayMemberId = participant.memberID || 'N/A';
+            displayMemberId = participant.memberID || 'N/A';
             const englishName = participant.Name || 'N/A';
             const chineseName = participant.CName || 'N/A';
             const phoneNumber = participant.phone_number || 'N/A';
@@ -473,7 +499,7 @@ async function fetchParticipants(eventId) {
     }
     
     async function deleteParticipant(participant) {
-        const memberIdToDisplay = participant.membersID ||  'N/A';
+        const memberIdToDisplay = participant.membersID || participant.memberID || 'N/A';
         // Confirm deletion
         const confirmDelete = confirm(`确定要删除该参与者吗？\n会员ID: ${memberIdToDisplay}\n事件ID: ${participant.eventID}`);
         
@@ -662,25 +688,27 @@ async function fetchParticipants(eventId) {
     
     // 选择会员并添加到活动
     // Function to select a member and add them to the event
-// Modify the selectMember function to correctly store participant data
 async function selectMember(member) {
-    // Use the actual ID (not the display ID)
     const memberIdToUse = member.actualId;
-    
+    const displayMemberId = member.displayId;
+
+    console.log("Full member ID being used:", memberIdToUse);
+    console.log("Complete member object:", member);
+
     if (!memberIdToUse || memberIdToUse === '0' || memberIdToUse === 0) {
         showError('无效的会员ID，请选择有效的会员');
         return;
     }
-    
-    const confirmAdd = confirm(`确定要将会员 ${member.displayId || memberIdToUse} 添加到此活动吗？`);
+
+    const confirmAdd = confirm(`确定要将会员 ${member.Name || member.CName || member.ID} 添加到此活动吗？`);
     
     if (!confirmAdd) return;
     
     showLoading();
     
     try {
-        // Check if member is already in the event using the correct ID field
-        const checkResponse = await fetch(`${API_BASE_URL}?table=participants&search=true&eventID=${eventId}&memberID=${memberIdToUse}`);
+        // Check if the member is already added to this event - using vparticipants and membersID
+        const checkResponse = await fetch(`${API_BASE_URL}?table=vparticipants&search=true&eventID=${eventId}&membersID=${memberIdToUse}`);
         const checkData = await checkResponse.json();
         
         if (checkData.data && checkData.data.length > 0) {
@@ -689,14 +717,41 @@ async function selectMember(member) {
             return;
         }
         
-        // Create participant record with the correct memberID field
+        // Get the current max ID to ensure sequential IDs
+        const maxIdResponse = await fetch(`${API_BASE_URL}?table=participants&action=maxid`);
+        const maxIdData = await maxIdResponse.json();
+        console.log("maxIdData response:", maxIdData);
+
+        let nextId;
+        if (maxIdData.maxId !== undefined) {
+            nextId = parseInt(maxIdData.maxId) + 1;
+        } else if (maxIdData.data && maxIdData.data.maxId !== undefined) {
+            nextId = parseInt(maxIdData.data.maxId) + 1;
+        } else {
+            console.log("Full maxId response:", maxIdData);
+            
+            // Try to get the highest ID from existing participants
+            const allParticipantsResponse = await fetch(`${API_BASE_URL}?table=participants&search=true`);
+            const allParticipants = await allParticipantsResponse.json();
+            
+            if (allParticipants.data && allParticipants.data.length > 0) {
+                const highestId = Math.max(...allParticipants.data.map(p => parseInt(p.ID) || 0));
+                nextId = highestId + 1;
+            } else {
+                nextId = 1;
+            }
+        }
+    
+        // Create participant record - Store in participants table using memberID (not membersID)
         const participantData = {
             table: 'participants',
+            ID: nextId, 
             eventID: eventId,
-            memberID: memberIdToUse,  // This is the key field that needs to be correct
+            memberID: memberIdToUse,  // Use memberID for the participants table
             joined_at: new Date().toISOString().slice(0, 19).replace('T', ' ')
         };
         
+        // Send POST request to add participant
         const response = await fetch(`${API_BASE_URL}?table=participants`, {
             method: 'POST',
             headers: {
@@ -712,8 +767,13 @@ async function selectMember(member) {
         const result = await response.json();
         
         if (result.status === 'success') {
+            // Close modal
             memberSearchModal.style.display = 'none';
-            showError(`会员 ${member.displayId || memberIdToUse} 已成功添加到活动`);
+            
+            // Show success message
+            showError(`会员 ${member.Name || member.CName || memberIdToUse} 已成功添加到活动`);
+            
+            // Reload participants list - use vparticipants for display
             fetchParticipants(eventId);
         } else {
             throw new Error(result.message || '添加参与者失败');
