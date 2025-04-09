@@ -35,6 +35,7 @@ body {
     background-color: var(--background-color);
     box-shadow: var(--shadow);
     margin-top: 80px;
+    width: fit-content;
 }
 
 /* Header Styles */
