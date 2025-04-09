@@ -211,7 +211,7 @@ document.addEventListener('DOMContentLoaded', function() {
             try { parsedData = JSON.parse(rawResponse); } catch (e) { throw new Error('API返回格式错误: ' + rawResponse); }
 
             if (parsedData.status === 'success' && parsedData.memberId) {
-                alert('会员添加成功！');
+                alert('塾员添加成功！');
                 // Handle redirection
                 const designationType = parseInt(data['Designation_of_Applicant'], 10);
                 if (returnUrl) {
@@ -226,7 +226,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     window.location.href = `member_search.html?add=success&id=${parsedData.memberId}`;
                 }
             } else {
-                throw new Error(parsedData.message || parsedData.error || '添加会员失败，未知错误');
+                throw new Error(parsedData.message || parsedData.error || '添加塾员失败，未知错误');
             }
         } catch (error) {
             console.error('Error submitting main form:', error);

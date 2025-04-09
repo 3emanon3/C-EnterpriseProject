@@ -61,9 +61,9 @@
                         </div> 
 
                         <div class="form-group">
-                            <label for="membership">会员身份</label>
+                            <label for="membership">身份</label>
                             <select id="membership" name="membership"  aria-label="乐捐类型">
-                                <option value="" disabled selected>选择会员身份</option>
+                                <option value="" disabled selected>选择捐款人身份</option>
                                 <option value="1"> Old Member</option>
                                 <option value="2"> Non Member</option>
                               
@@ -112,12 +112,12 @@
     <div id="memberSearchModal" class="modal" style="display: none;">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>会员搜索</h2>
+                <h2>塾员搜索</h2>
                 <span class="close">&times;</span>
             </div>
             <div class="modal-body">
                 <div class="search-container">
-                    <input type="text" id="modalSearchInput" placeholder="输入会员姓名、ID或公司名称搜索..." autofocus>
+                    <input type="text" id="modalSearchInput" placeholder="输入塾员姓名、ID或公司名称搜索..." autofocus>
                     <button id="modalSearchButton"><i class="fas fa-search"></i> 搜索</button>
                 </div>
                 
@@ -125,7 +125,7 @@
                     <table id="modalResultsTable">
                         <thead>
                             <tr>
-                                <th>会员ID</th>
+                                <th>塾员ID</th>
                                 <th>姓名</th>
                                 <th>公司名称</th>
                                 <th>联系方式</th>
@@ -136,7 +136,7 @@
                         </tbody>
                     </table>
                     <div id="modalLoadingIndicator" class="loading" style="display: none;">正在加载...</div>
-                    <div id="modalNoResults" class="no-results" style="display: none;">没有找到匹配的会员</div>
+                    <div id="modalNoResults" class="no-results" style="display: none;">没有找到匹配的塾员</div>
                 </div>
                 
                 <div id="modalPagination" class="pagination">

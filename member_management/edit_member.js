@@ -506,7 +506,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Prevent accidental creation attempt (shouldn't happen with loadMemberData logic, but good check)
         if (memberIdField.value.startsWith('NEW-')) {
-             alert('错误：此页面仅用于编辑，不能创建新会员。');
+             alert('错误：此页面仅用于编辑，不能创建新塾员。');
              return;
         }
 

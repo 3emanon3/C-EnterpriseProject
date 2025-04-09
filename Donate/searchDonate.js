@@ -639,7 +639,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const donorName = donation['Name/Company_Name'] || '-';
             const donationType = donation.donationTypes || '-';
             const bank = donation.Bank || '-';
-            const membership = donation.membership || '非会员';
+            const membership = donation.membership || '非塾员';
             const paymentDate = formatDateTime(donation.paymentDate);
             const receiptNo = donation['official_receipt_no'] || '-';
             const amount = formatPrice(donation.amount);

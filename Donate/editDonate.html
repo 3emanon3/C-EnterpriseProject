@@ -59,9 +59,9 @@
                         </div> 
 
                         <div class="form-group">
-                            <label for="membership">会员身份</label>
-                            <select id="membership" name="membership" required aria-label="会员身份">
-                                <option value="" disabled>选择会员身份</option>
+                            <label for="membership">身份</label>
+                            <select id="membership" name="membership" required aria-label="身份">
+                                <option value="" disabled>选择身份</option>
                                 <option value="1">Old Member</option>
                                 <option value="2">Non Member</option>
                             </select>
@@ -106,20 +106,20 @@
         加载中...
     </div>
     
-    <!-- 会员搜索模态框 -->
+    <!-- 塾员搜索模态框 -->
     <div id="memberSearchModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
                 <span class="close">&times;</span>
-                <h2>搜索会员</h2>
+                <h2>搜索塾员</h2>
             </div>
             <div class="modal-body">
                 <div class="search-container">
-                    <input type="text" id="modalSearchInput" placeholder="输入会员姓名或公司名称搜索...">
+                    <input type="text" id="modalSearchInput" placeholder="输入塾员姓名或公司名称搜索...">
                     <button id="modalSearchButton">搜索</button>
                 </div>
                 <div id="modalLoadingIndicator" class="loading-spinner" style="display: none;">加载中...</div>
-                <div id="modalNoResults" style="display: none;">未找到匹配的会员</div>
+                <div id="modalNoResults" style="display: none;">未找到匹配的塾员</div>
                 <div class="table-container">
                     <table class="results-table">
                         <thead>
