@@ -37,6 +37,10 @@
                     <button class="btn btn-info" type="button" id="amountRangeFilterBtn">
                         <i class="fas fa-dollar-sign"></i> 金额范围筛选
                     </button>
+                    <!-- New Button for Printing -->
+                    <button class="btn btn-secondary" type="button" id="printTableBtn">
+                        <i class="fas fa-print"></i> 打印表格
+                    </button>
                 </div>
             </div>
         </header>
@@ -69,6 +73,7 @@
                 <table id="donationTable" aria-label="乐捐列表">
                     <thead>
                         <tr>
+                            <!-- Table headers remain the same -->
                             <th data-column="id">编号 <i class="fas fa-sort"></i><div class="resizer"></div></th>
                             <th data-column="donor_name">姓名/公司名称 <i class="fas fa-sort"></i><div class="resizer"></div></th>
                             <th data-column="donationTypes">乐捐类型 <i class="fas fa-sort"></i><div class="resizer"></div></th>
@@ -82,7 +87,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- 动态内容 -->
+                        <!-- Dynamic content -->
                     </tbody>
                 </table>
             </div>

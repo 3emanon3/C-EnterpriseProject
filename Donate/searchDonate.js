@@ -13,31 +13,29 @@ document.addEventListener("DOMContentLoaded", function () {
     const nextPageButton = document.getElementById("nextPage");
     const bankSearchBtn = document.getElementById("bankSearchBtn");
     const donationTypeFilterBtn = document.getElementById("donationTypeFilterBtn");
-    // New button references
     const dateRangeFilterBtn = document.getElementById("dateRangeFilterBtn");
     const amountRangeFilterBtn = document.getElementById("amountRangeFilterBtn");
+    const printTableBtn = document.getElementById("printTableBtn"); // Get reference to the new print button
 
     // --- State Variables ---
+    // ... (keep existing state variables)
     let currentSortColumn = null;
     let currentSortOrder = 'ASC';
     let donationData = [];
     let itemsPerPage = parseInt(itemsPerPageSelect.value);
     let currentPage = 1;
     let totalPages = 0;
-    let currentBankFilter = null; // Stores selected bank NAME
-    let currentDonationTypeFilter = null; // Stores selected donation type NAME
-    // New state variables for range filters
+    let currentBankFilter = null;
+    let currentDonationTypeFilter = null;
     let currentStartDate = null;
     let currentEndDate = null;
     let currentStartPrice = null;
     let currentEndPrice = null;
-
-    // Data caches for display/filter modals
-    let DONATION_TYPES = {}; // Stores { id: name }
-    let BANKS = {};          // Stores { id: name }
+    let DONATION_TYPES = {};
+    let BANKS = {};
 
     // --- Utility Functions ---
-
+    // ... (keep existing utility functions: escapeHTML, formatDateTime, etc.)
     function escapeHTML(str) {
         if (!str) return '';
         return String(str)
@@ -48,7 +46,6 @@ document.addEventListener("DOMContentLoaded", function () {
             .replace(/'/g, '&#039;');
     }
     
-
     function formatDateTime(dateTimeStr) {
         if (!dateTimeStr) return null;
         try {
@@ -93,10 +90,11 @@ document.addEventListener("DOMContentLoaded", function () {
     function truncateText(text, maxLength) {
         if (!text) return '';
         const escapedText = escapeHTML(text);
-        if (text.length > maxLength) {
-            return `<span title="${escapedText}">${escapedText.substring(0, maxLength)}...</span>`;
-        }
-        return escapedText;
+        // For print, we don't truncate, CSS handles wrapping
+        // if (text.length > maxLength) {
+        //     return `<span title="${escapedText}">${escapedText.substring(0, maxLength)}...</span>`;
+        // }
+        return escapedText; // Return full escaped text
     }
 
     function debounce(func, wait) {
@@ -116,7 +114,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // --- Data Fetching for Filters (Bank/Type) ---
-
+    // ... (keep existing filter fetching functions: fetchFilterData, initializeFilters)
     async function fetchFilterData(type) {
         const url = `${API_BASE_URL}?table=${type}`;
         try {
@@ -152,6 +150,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // --- Generic Modal Creation (For Selection Grid) ---
+    // ... (keep existing modal functions: createFilterModal, openBankFilterModal, etc.)
     function createFilterModal({ modalId, title, dataMap, currentFilterValue, filterKey, filterAttribute, iconClass, allOptionText, onSelect }) {
         const existingModal = document.getElementById(modalId);
         if (existingModal) existingModal.remove();
@@ -272,7 +271,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // --- Date Range Filter ---
-
     function openDateRangeModal() {
         const modalId = 'dateRangeFilterModal';
         const existingModal = document.getElementById(modalId);
@@ -382,7 +380,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // --- Amount Range Filter ---
-
     function openAmountRangeModal() {
         const modalId = 'amountRangeFilterModal';
         const existingModal = document.getElementById(modalId);
@@ -497,8 +494,8 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-
     // --- Core Data Fetching and Display ---
+    // ... (keep existing fetchDonations function)
     async function fetchDonations(query = "") {
         loader.style.display = "flex";
         donationTableBody.innerHTML = ""; // Clear previous results
@@ -619,6 +616,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return mapping[columnName] || columnName;
     }
 
+    // ... (keep existing displayDonations function, but note the change in truncateText)
     function displayDonations(donations) {
         donationTableBody.innerHTML = "";
 
@@ -669,7 +667,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // --- Pagination ---
-
+    // ... (keep existing pagination functions: updatePagination, createPageButton, etc.)
     function updatePagination() {
         if (!paginationContainer) return;
         paginationContainer.innerHTML = ''; // Clear previous buttons
@@ -794,7 +792,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // --- Sorting ---
-
+    // ... (keep existing sorting functions: handleSortClick, updateSortIcons)
     function handleSortClick(columnName) {
         if (!columnName) return; // Ignore clicks on non-sortable headers (like '操作')
         if (currentSortColumn === columnName) {
@@ -828,7 +826,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // --- Column Resizing ---
-
+    // ... (keep existing resizing functions: initializeResizableColumns, saveColumnWidths, loadColumnWidths)
     function initializeResizableColumns() {
         let currentResizer = null, startX, startWidth, thBeingResized;
 
@@ -950,7 +948,17 @@ document.addEventListener("DOMContentLoaded", function () {
     if (dateRangeFilterBtn) dateRangeFilterBtn.addEventListener('click', openDateRangeModal);
     if (amountRangeFilterBtn) amountRangeFilterBtn.addEventListener('click', openAmountRangeModal);
 
+    // Print button listener
+    if (printTableBtn) {
+        printTableBtn.addEventListener('click', () => {
+            console.log("Print button clicked. Triggering window.print().");
+            // The @media print CSS rules will handle the layout automatically
+            window.print();
+        });
+    }
+
     // --- Global Functions for Edit/Delete ---
+    // ... (keep existing edit/delete functions: editDonation, deleteDonation, performDelete)
     window.editDonation = function (id) {
         console.log("Navigating to edit page for ID:", id);
         window.location.href = `editDonate.html?id=${id}`;

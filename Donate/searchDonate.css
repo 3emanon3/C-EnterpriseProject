@@ -772,3 +772,99 @@ tr:hover {
         justify-content: center;
      }
 }
+
+@media print {
+    /* --- Print Specific Styles --- */
+
+    /* Hide everything by default */
+    body * {
+        visibility: hidden;
+        background: transparent !important; /* Ensure no background colors print */
+        color: #000 !important; /* Ensure black text */
+        box-shadow: none !important; /* Remove shadows */
+        text-shadow: none !important;
+    }
+
+    /* Make the table container and its contents visible */
+    .table-container, .table-container * {
+        visibility: visible;
+    }
+
+    /* Position the table container at the top-left for printing */
+    .table-container {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%; /* Use full width */
+        margin: 0;
+        padding: 10px; /* Add minimal padding */
+        border: none; /* Remove container border for print */
+        box-shadow: none; /* Remove container shadow */
+        background: none; /* Remove background */
+    }
+
+    /* Style the table for printing */
+    #donationTable {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 10pt; /* Adjust font size for A4 readability */
+        margin: 0; /* Remove margin */
+        table-layout: auto; /* Allow browser to adjust column widths based on content */
+    }
+
+    /* Repeat table header on each printed page */
+    #donationTable thead {
+        display: table-header-group;
+        background-color: #eee !important; /* Optional: light grey header background */
+        -webkit-print-color-adjust: exact; /* Try to force background color printing */
+        print-color-adjust: exact;
+    }
+
+    /* Style table cells for printing */
+    #donationTable th, #donationTable td {
+        border: 1px solid #ccc !important; /* Simple border for clarity */
+        padding: 5px 8px; /* Reduce padding for print */
+        visibility: visible; /* Ensure cells are visible */
+        white-space: normal; /* Allow text wrapping in all cells */
+        word-wrap: break-word; /* Break long words */
+        color: #000 !important; /* Ensure black text */
+        background: none !important; /* Ensure no background */
+    }
+
+    #donationTable th {
+        font-weight: bold;
+        text-align: left;
+    }
+
+    /* Hide elements not needed for printing */
+    header,
+    .search-container,
+    .pagination-container,
+    .loader,
+    #donationTable th:last-child, /* Hide '操作' header */
+    #donationTable td:last-child, /* Hide '操作' cells (edit/delete buttons) */
+    #donationTable .resizer,      /* Hide column resizers */
+    #donationTable th i.fas,      /* Hide sort icons */
+    .btn, /* Hide all buttons (including filter/add/etc.) */
+    .modal-overlay /* Hide any open modals */
+    {
+        display: none !important; /* Use display: none for complete removal */
+        visibility: hidden !important; /* Double ensure */
+    }
+
+    /* Prevent table rows from breaking across pages */
+    tr {
+        page-break-inside: avoid;
+    }
+
+    /* Remove hyperlink underlines for cleaner print */
+    a, a:visited {
+        text-decoration: none;
+        color: #000 !important;
+    }
+
+    a[href]:after {
+        content: " (" attr(href) ")";
+    }
+    
+}
