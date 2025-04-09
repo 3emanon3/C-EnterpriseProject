@@ -96,6 +96,12 @@ class DatabaseAPI {
                 'param' => ['startDate', 'endDate'],
                 // Data types for the parameters (both dates are treated as strings)
                 'paramTypes' => 'ss'
+            ],
+            'priceRange' => [
+                // Condition to check if 'price' is between start and end prices
+                'conditions' => ['`amount` BETWEEN ? AND ?'],
+                'param' => ['startPrice','endPrice'],
+                'paramTypes' => 'dd'
             ]
         ]
         // --- END MODIFICATION ---

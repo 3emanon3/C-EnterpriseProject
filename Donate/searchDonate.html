@@ -19,14 +19,18 @@
                     <button class="btn btn-success" onclick="location.href='donate.html'">
                         <i class="fas fa-hand-holding-heart"></i> 添加新乐捐
                     </button>
+                    <!-- Button for Bank Filter -->
                     <button class="btn btn-info" type="button" id="bankSearchBtn">
-                        <i class="fas fa-search"></i> 银行搜索
+                        <i class="fas fa-university"></i> 银行筛选
                     </button>
-                    
+                    <!-- New Button for Donation Type Filter -->
+                    <button class="btn btn-info" type="button" id="donationTypeFilterBtn">
+                        <i class="fas fa-tags"></i> 类型筛选
+                    </button>
                 </div>
             </div>
         </header>
-        
+
         <section class="search-container">
             <div class="search-wrapper">
                 <div class="search-input-group">
@@ -34,9 +38,9 @@
                     <input
                         type="text"
                         id="searchInput"
-                        placeholder="搜索乐捐..."
+                        placeholder="搜索乐捐 (姓名, 收据号, 金额)..."
                         aria-label="搜索乐捐">
-                    
+
                 </div>
             </div>
             <div class="search-stats">
@@ -44,13 +48,13 @@
                 <span id="totalDonations" class="stats-value">0</span>
             </div>
         </section>
-        
+
         <section class="table-container">
             <div class="loader">
                 <div class="spinner"></div>
                 <span>正在加载乐捐...</span>
             </div>
-            
+
             <div class="table-responsive">
                 <table id="donationTable" aria-label="乐捐列表">
                     <thead>
@@ -72,7 +76,7 @@
                     </tbody>
                 </table>
             </div>
-            
+
             <div class="pagination-container">
                 <!-- 分页将在此处添加 -->
                 <button id="prevPage" class="btn btn-primary">←</button>
