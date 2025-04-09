@@ -104,7 +104,7 @@ h1 {
 
 .btn-primary { background-color: var(--primary-color); }
 .btn-success { background-color: var(--success-color); }
-.btn-info { background-color: var(--info-color); } /* Use info color for filters */
+.btn-info { background-color: var(--secondary-color); } /* Use info color for filters */
 .btn-secondary { background-color: var(--secondary-color); } /* For Edit */
 .btn-danger { background-color: var(--danger-color); } /* For Delete */
 .btn-warning { background-color: var(--warning-color); color: white; } /* For Clear/Reset */
