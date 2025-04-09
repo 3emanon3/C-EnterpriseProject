@@ -11,23 +11,32 @@ document.addEventListener("DOMContentLoaded", function () {
     const itemsPerPageSelect = document.getElementById("itemsPerPage");
     const prevPageButton = document.getElementById("prevPage");
     const nextPageButton = document.getElementById("nextPage");
-    const birthdayButton = document.getElementById("searchBirthday");
-    // We keep the reference to the button, but the onclick is in HTML
-    const expiredButton = document.getElementById("searchExpiry"); 
+    const birthdayButton = document.getElementById("searchBirthday"); // Button now opens modal
+    const expiredButton = document.getElementById("searchExpiry");
     const listAllMembersButton = document.getElementById("listAllMembers");
     const memberFilter = document.getElementById("memberFilter");
     const table = document.getElementById('memberTable');
     const tableHeaders = table.querySelectorAll('th');
     const paginationContainer = document.querySelector('.pagination');
 
-    // --- NEW: Modal Elements ---
+    // --- Expiry Modal Elements ---
     const expiryModal = document.getElementById('expiryModal');
-    const modalOverlay = document.getElementById('modalOverlay');
     const expiryYearInput = document.getElementById('expiryYearInput');
     const expiryMonthInput = document.getElementById('expiryMonthInput');
     const confirmExpirySearchButton = document.getElementById('confirmExpirySearch');
-    const closeButton = expiryModal?.querySelector('.close-button'); // Use optional chaining
-    const cancelModalButton = expiryModal?.querySelector('.btn-secondary[onclick="closeExpiryModal()"]'); // Find cancel button by its action
+    const closeExpiryButton = expiryModal?.querySelector('.close-button');
+    const cancelExpiryModalButton = expiryModal?.querySelector('.btn-secondary[onclick="closeExpiryModal()"]');
+
+    // --- Birthday Modal Elements ---
+    const birthdayModal = document.getElementById('birthdayModal');
+    const birthdayMonthInput = document.getElementById('birthdayMonthInput');
+    const confirmBirthdaySearchButton = document.getElementById('confirmBirthdaySearch');
+    const closeBirthdayButton = birthdayModal?.querySelector('.close-button');
+    const cancelBirthdayModalButton = birthdayModal?.querySelector('.btn-secondary[onclick="closeBirthdayModal()"]');
+
+    // --- Shared Modal Overlay ---
+    const modalOverlay = document.getElementById('modalOverlay');
+
 
     // ===== STATE VARIABLES =====
     let currentPage = 1;
@@ -38,9 +47,12 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentSearchType = 'all'; // 'all', 'search', 'Birthday', 'expired'
     let currentFilterValue = '';
     let membersData = [];
-    // --- NEW: State for Expiry Search ---
+    // --- State for Expiry Search ---
     let targetExpiryYear = null;
     let targetExpiryMonth = null;
+    // --- State for Birthday Search ---
+    let targetBirthdayMonth = null; // Stores the month selected in the birthday modal
+
 
     // ===== INITIALIZATION =====
     function initializePage() {
@@ -58,28 +70,28 @@ document.addEventListener("DOMContentLoaded", function () {
             console.log("memberFilter element not found in the DOM");
             return;
         }
-        
+
         // Clear existing options except the first one
         while (memberFilter.options.length > 1) {
             memberFilter.remove(1);
         }
-        
+
         // Add default option
         const defaultOption = document.createElement("option");
         defaultOption.value = "";
         defaultOption.textContent = "选择种类";
         memberFilter.appendChild(defaultOption);
-        
+
         try {
             // Fetch applicant types from API
             const response = await fetch(`${API_BASE_URL}?table=applicants_types`);
             if (!response.ok) {
                 throw new Error(`Failed to fetch applicant types: ${response.status}`);
             }
-            
+
             const data = await response.json();
             const applicantTypes = data.data || [];
-            
+
             // Add options for each applicant type
             applicantTypes.forEach(item => {
                 const option = document.createElement("option");
@@ -104,16 +116,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // --- MODIFIED: Parameter logic based on search type ---
         if (currentSearchType === 'Birthday') {
-            const currentMonth = new Date().getMonth() + 1; // JavaScript 月份从 0 开始，+1 后为 1-12
-            params.append("Birthday", "true");
-            params.append("month", currentMonth.toString());
-            params.append("search", "true");
-            console.log(`Searching for birthdays in month ${currentMonth}`);
+            // Birthday search is now triggered ONLY after confirming from the modal
+            if (targetBirthdayMonth) {
+                params.append("Birthday", "true"); // Parameter name from requirement
+                params.append("search", "true"); // Parameter name from requirement
+                params.append("targetMonth", targetBirthdayMonth.toString()); // Use the stored target month
+                console.log(`Searching for birthdays in month ${targetBirthdayMonth}`);
+            } else {
+                // This case should ideally not happen if the flow is correct,
+                // but as a fallback, maybe fetch all members or show an error.
+                console.warn("Birthday search triggered without target month. Reverting to 'all'.");
+                currentSearchType = 'all'; // Revert to avoid confusion
+                targetBirthdayMonth = null; // Ensure reset
+            }
             // Reset expiry targets if switching search type
             targetExpiryYear = null;
             targetExpiryMonth = null;
         } else if (currentSearchType === 'expired') {
-            // This type is now set ONLY when confirming from the modal
+            // Expiry search triggered ONLY after confirming from the modal
             if (targetExpiryYear && targetExpiryMonth) {
                 params.append("expired", "true");
                 params.append("search", "true");
@@ -121,24 +141,26 @@ document.addEventListener("DOMContentLoaded", function () {
                 params.append("targetMonth", targetExpiryMonth);
                 console.log(`Fetching members expiring on or before ${targetExpiryYear}-${targetExpiryMonth}`);
             } else {
-                // This case should ideally not happen if the flow is correct,
-                // but as a fallback, maybe fetch all members or show an error.
                 console.warn("Expired search triggered without target year/month. Reverting to 'all'.");
-                currentSearchType = 'all'; // Revert to avoid confusion
+                currentSearchType = 'all';
                 targetExpiryYear = null;
                 targetExpiryMonth = null;
             }
+             // Reset birthday target if switching search type
+            targetBirthdayMonth = null;
         } else if (query.trim() !== "") {
             params.append("search", query); // General text search
             currentSearchType = 'search';
-             // Reset expiry targets if switching search type
+             // Reset expiry and birthday targets if switching search type
             targetExpiryYear = null;
             targetExpiryMonth = null;
+            targetBirthdayMonth = null;
         } else { // 'all' members (default or List All button)
             currentSearchType = 'all';
-             // Reset expiry targets if switching search type
+             // Reset expiry and birthday targets if switching search type
             targetExpiryYear = null;
             targetExpiryMonth = null;
+            targetBirthdayMonth = null;
         }
         // --- END MODIFICATION ---
 
@@ -155,17 +177,17 @@ document.addEventListener("DOMContentLoaded", function () {
         // Add sorting parameters
         if (sortColumn) {
             let dbSortColumn = sortColumn;
-            // ... (existing column name mapping logic) ...
+            // ... (existing column name mapping logic - remains the same) ...
             if (sortColumn === 'componyName') {
-                dbSortColumn = 'componyName'; // Ensure correct case if needed
+                dbSortColumn = 'componyName';
             } else if (sortColumn === 'expired_date' || sortColumn === 'expiredDate') {
                 dbSortColumn = 'expired_date';
-            } else if (sortColumn === 'place_of_birth' || sortColumn === 'placeOfBirth') { // Corrected field name
+            } else if (sortColumn === 'place_of_birth' || sortColumn === 'placeOfBirth') {
                 dbSortColumn = 'place_of_birth';
-            } else if (sortColumn === 'Designation_of_Applicant') { // Corrected field name
+            } else if (sortColumn === 'Designation_of_Applicant') {
                 dbSortColumn = 'Designation_of_Applicant';
             }
-            
+
             params.append("sort", dbSortColumn);
             params.append("order", sortDirection);
         }
@@ -215,7 +237,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // ===== DISPLAY FUNCTIONS =====
     function displayMembers(members) {
-        // ... (existing code - check colspan if columns changed) ...
         memberTableBody.innerHTML = ""; // Clear previous results
 
         if (!Array.isArray(members)) {
@@ -226,7 +247,8 @@ document.addEventListener("DOMContentLoaded", function () {
         if (members.length === 0) {
             let message = '暂无记录';
             if (currentSearchType === 'search' && searchInput.value) message = '没有找到匹配的记录';
-            else if (currentSearchType === 'Birthday') message = '本月没有塾员生日';
+            // --- MODIFIED: Birthday message uses targetBirthdayMonth ---
+            else if (currentSearchType === 'Birthday') message = `没有在 ${targetBirthdayMonth} 月份生日的塾员`;
             else if (currentSearchType === 'expired') message = `没有在 ${targetExpiryYear}-${targetExpiryMonth} 或之前到期的塾员`;
             else if (currentFilterValue) message = `没有符合 "${currentFilterValue}" 条件的记录`;
             // Adjust colspan based on the actual number of columns in your table header
@@ -284,9 +306,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     const date = new Date(dateString);
                     // Check if the date is valid
                     if (isNaN(date.getTime())) {
-                        // Try parsing common non-standard formats if necessary
-                        // Example: DD/MM/YYYY (less common in JS Date constructor)
-                        // If still invalid, return original or empty
                         return dateString; // Or return '' if invalid dates should be hidden
                     }
                     const year = date.getFullYear();
@@ -337,7 +356,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function updatePagination() {
-        // ... (existing code - check pagination logic if needed) ...
+        // ... (existing code - no changes needed here) ...
          if (!paginationContainer) return;
 
         paginationContainer.innerHTML = ''; // Clear existing buttons/info
@@ -611,7 +630,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function setDefaultColumnWidth(header) {
-        // ... (existing code - adjust widths as needed) ...
+        // ... (existing code - no changes needed here) ...
         if (!header || !header.dataset || !header.dataset.column) return; // Basic check
 
         const column = header.dataset.column;
@@ -681,7 +700,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function resetColumnWidths() {
-        // ... (existing code - use specific key) ...
+        // ... (existing code - no changes needed here) ...
         try {
             localStorage.removeItem('memberTableColumnWidths'); // Use the specific key
             // Re-apply default widths
@@ -747,25 +766,17 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
 
-        // Filter buttons
-        birthdayButton?.addEventListener("click", function() {
-            currentPage = 1;
-            currentSearchType = 'Birthday';
-            targetExpiryYear = null; // Reset expiry dates
-            targetExpiryMonth = null;
-            currentFilterValue = ''; // Reset other filters
-            if (memberFilter) memberFilter.value = '';
-            if (searchInput) searchInput.value = '';
-            fetchMembers();
-        });
+        // --- MODIFIED: Birthday button now opens modal (listener removed, handled by onclick in HTML) ---
+        // birthdayButton?.addEventListener("click", function() { ... }); // REMOVED
 
-        // Expiry button's onclick is in HTML, pointing to openExpiryModal (defined globally below)
+        // Expiry button's onclick is in HTML, pointing to openExpiryModal
 
         listAllMembersButton?.addEventListener("click", function() {
             currentPage = 1;
             currentSearchType = 'all';
             targetExpiryYear = null; // Reset expiry dates
             targetExpiryMonth = null;
+            targetBirthdayMonth = null; // Reset birthday month
             currentFilterValue = ''; // Reset other filters
             if (memberFilter) memberFilter.value = '';
             if (searchInput) searchInput.value = '';
@@ -787,14 +798,26 @@ document.addEventListener("DOMContentLoaded", function () {
             fetchMembers(searchInput?.value || '');
         });
 
-        // --- NEW: Modal Event Listeners ---
+        // --- Expiry Modal Event Listeners ---
         confirmExpirySearchButton?.addEventListener('click', handleConfirmExpirySearch);
-        closeButton?.addEventListener('click', closeExpiryModal); // Close via X button
+        closeExpiryButton?.addEventListener('click', closeExpiryModal); // Close via X button
         // The cancel button in HTML already calls closeExpiryModal via onclick
-        modalOverlay?.addEventListener('click', closeExpiryModal); // Close by clicking overlay
+        // modalOverlay?.addEventListener('click', closeExpiryModal); // Overlay click handled below
+
+        // --- Birthday Modal Event Listeners ---
+        confirmBirthdaySearchButton?.addEventListener('click', handleConfirmBirthdaySearch);
+        closeBirthdayButton?.addEventListener('click', closeBirthdayModal); // Close via X button
+        // The cancel button in HTML already calls closeBirthdayModal via onclick
+
+        // --- Shared Modal Overlay Listener ---
+        // Close *either* modal if the overlay is clicked
+        modalOverlay?.addEventListener('click', () => {
+            closeExpiryModal();
+            closeBirthdayModal();
+        });
     }
 
-    // --- NEW: Function to handle modal confirmation ---
+    // --- Function to handle Expiry modal confirmation ---
     function handleConfirmExpirySearch() {
         const year = expiryYearInput.value.trim();
         const month = expiryMonthInput.value; // Value is 1-12 from select
@@ -815,6 +838,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Store selected values
         targetExpiryYear = yearNum;
         targetExpiryMonth = parseInt(month, 10);
+        targetBirthdayMonth = null; // Reset birthday month
 
         // Set search type and trigger fetch
         currentPage = 1;
@@ -829,74 +853,84 @@ document.addEventListener("DOMContentLoaded", function () {
         closeExpiryModal(); // Close the modal after confirmation
     }
 
+    // --- NEW: Function to handle Birthday modal confirmation ---
+    function handleConfirmBirthdaySearch() {
+        const month = birthdayMonthInput.value; // Value is 1-12 from select
+
+        // Validation
+        if (!month) {
+            alert("请选择一个月份。");
+            birthdayMonthInput.focus();
+            return;
+        }
+
+        // Store selected value
+        targetBirthdayMonth = parseInt(month, 10);
+        targetExpiryYear = null; // Reset expiry dates
+        targetExpiryMonth = null;
+
+        // Set search type and trigger fetch
+        currentPage = 1;
+        currentSearchType = 'Birthday'; // Set the search type
+        currentFilterValue = ''; // Reset other filters
+        if (memberFilter) memberFilter.value = '';
+        if (searchInput) searchInput.value = '';
+
+        console.log(`Searching for members with birthday in month ${targetBirthdayMonth}`);
+        fetchMembers(); // fetchMembers will now use the target birthday month
+
+        closeBirthdayModal(); // Close the modal after confirmation
+    }
+
 
     // ===== GLOBAL FUNCTIONS =====
     // These need to be accessible from HTML onclick attributes or other scopes
 
     window.editMember = function(id) {
-        // ... (existing code) ...
+        // ... (existing code - remains the same) ...
         if (!id) {
             console.error("Cannot edit member: No ID provided");
             alert("无法编辑：ID未提供");
             return;
         }
-        // Construct the URL carefully
-        window.location.href = `member_management.html?action=edit&id=${id}`; // Assuming this is the edit page URL structure
-        // Or if it's a different page:
-        // window.location.href = `edit_member.html?id=${id}`;
+        window.location.href = `member_management.html?action=edit&id=${id}`;
     };
 
     window.deleteMember = async function(id) {
-        // ... (existing code - ensure API endpoint is correct) ...
+        // ... (existing code - remains the same) ...
          if (!id) {
             console.error("Cannot delete member: No ID provided");
             alert("无法删除：ID未提供");
             return;
         }
 
-        // Confirmation dialog
         if (confirm(`确定要删除塾员 ID ${id} 吗？此操作无法撤销。`)) {
             try {
-                // Construct the correct API endpoint for deletion
-                // Assuming your API uses DELETE method and ID in the query string
                 const deleteUrl = `${API_BASE_URL}?table=members&ID=${id}`;
-
                 const response = await fetch(deleteUrl, {
                     method: 'DELETE',
-                     headers: {
-                         // Add any required headers like Authorization if needed
-                         'Content-Type': 'application/json'
-                     }
+                     headers: { 'Content-Type': 'application/json' }
                 });
 
-                // Check if the response indicates success (e.g., status 200 or 204)
-                // The actual success condition depends on your API design
                 if (response.ok) {
-                    // Try parsing JSON only if there's content
                     let data = {};
                     const contentType = response.headers.get("content-type");
                     if (contentType && contentType.indexOf("application/json") !== -1) {
                         data = await response.json();
-                    } else if (response.status === 204) { // No Content success
+                    } else if (response.status === 204) {
                         data = { status: 'success', message: '删除成功！' };
                     } else {
-                        // Handle other success statuses if necessary
                          data = { status: 'success', message: `删除成功 (Status: ${response.status})` };
                     }
-
-
                     alert(data.message || '删除成功！');
-                    // Refresh the current page's data
                     fetchMembers(searchInput?.value || '');
 
                 } else {
-                    // Handle error response
                     let errorData = { message: `删除失败 (Status: ${response.status})` };
                     try {
                          const errorJson = await response.json();
                          errorData.message = errorJson.message || errorData.message;
                     } catch (e) {
-                        // If response is not JSON, use text
                         errorData.message = await response.text() || errorData.message;
                     }
                     console.error("Deletion failed:", errorData);
@@ -911,77 +945,94 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     window.checkMember = function(id) {
-        // ... (existing code) ...
+        // ... (existing code - remains the same) ...
         if (!id) {
             console.error("Cannot check member details: No ID provided");
             alert("无法查看：ID未提供");
             return;
         }
-        // Ensure the target URL is correct
         window.location.href = `check_details.html?id=${id}`;
     };
 
     window.changePage = function(page) {
-        // ... (existing code) ...
+        // ... (existing code - remains the same) ...
         const targetPage = parseInt(page, 10);
         if (!isNaN(targetPage) && targetPage >= 1 && targetPage <= totalPages && targetPage !== currentPage) {
             currentPage = targetPage;
             fetchMembers(searchInput?.value || '');
-            // Optionally scroll to top of table
-            // table?.scrollIntoView({ behavior: 'smooth' });
         }
     };
 
     window.jumpToPage = function() {
-        // ... (existing code) ...
+        // ... (existing code - remains the same) ...
         const pageInput = document.getElementById('pageInput');
         if (!pageInput) return;
-
         const targetPage = parseInt(pageInput.value, 10);
-
         if (isNaN(targetPage)) {
             alert('请输入有效的页码数字。');
-            pageInput.value = ''; // Clear invalid input
+            pageInput.value = '';
             pageInput.focus();
             return;
         }
-
-        // Clamp the page number to valid range
         const clampedPage = Math.max(1, Math.min(targetPage, totalPages));
-
         if (clampedPage !== currentPage) {
-            changePage(clampedPage); // Use changePage to fetch data
-        } else {
-            // If already on the target page, just clear input
-             pageInput.value = '';
+            changePage(clampedPage);
         }
-         // Optionally clear input even if page didn't change, or keep it
-         pageInput.value = ''; // Clear input after jump attempt
+        pageInput.value = '';
     };
 
-    // --- NEW: Global Modal Control Functions ---
+    // --- Expiry Modal Control Functions ---
     window.openExpiryModal = function() {
         if (expiryModal && modalOverlay) {
-            // Set default values for year/month (e.g., current year/month)
             const now = new Date();
             expiryYearInput.value = now.getFullYear();
-            // Set month, ensuring it's a string matching the <option> value
             expiryMonthInput.value = String(now.getMonth() + 1);
-
             expiryModal.style.display = 'block';
             modalOverlay.style.display = 'block';
-            // Focus the first input field in the modal
             expiryYearInput.focus();
         } else {
-            console.error("Expiry modal or overlay element not found in the DOM.");
-            alert("无法打开到期查询窗口，请检查页面元素。");
+            console.error("Expiry modal or overlay element not found.");
+            alert("无法打开到期查询窗口。");
         }
     };
 
     window.closeExpiryModal = function() {
         if (expiryModal && modalOverlay) {
             expiryModal.style.display = 'none';
-            modalOverlay.style.display = 'none';
+            // Only hide overlay if the *other* modal isn't also open
+            if (birthdayModal && birthdayModal.style.display !== 'block') {
+                modalOverlay.style.display = 'none';
+            }
+        }
+    };
+
+    // --- NEW: Birthday Modal Control Functions ---
+    window.openBirthdayModal = function() {
+        if (birthdayModal && modalOverlay) {
+            // Set default month (e.g., current month or empty)
+            const now = new Date();
+            // Set month, ensuring it's a string matching the <option> value
+            birthdayMonthInput.value = String(now.getMonth() + 1); // Default to current month
+            // Or set to empty if you prefer user must select:
+            // birthdayMonthInput.value = "";
+
+            birthdayModal.style.display = 'block';
+            modalOverlay.style.display = 'block';
+            // Focus the month input field
+            birthdayMonthInput.focus();
+        } else {
+            console.error("Birthday modal or overlay element not found.");
+            alert("无法打生日开查询窗口。");
+        }
+    };
+
+    window.closeBirthdayModal = function() {
+        if (birthdayModal && modalOverlay) {
+            birthdayModal.style.display = 'none';
+             // Only hide overlay if the *other* modal isn't also open
+            if (expiryModal && expiryModal.style.display !== 'block') {
+                modalOverlay.style.display = 'none';
+            }
         }
     };
 

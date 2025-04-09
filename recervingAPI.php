@@ -73,7 +73,10 @@ class DatabaseAPI {
         ],
         'members_with_applicant_designation' => [
             'Birthday' =>[
-                'conditions'=>['Birthday = MONTH(CURDATE()) '], 
+                'conditions'=>['Birthday = ? '],
+                'param' => ['targetMonth'],
+                'paramTypes' => 'i'
+
             ],
             'expired' => [
                 'conditions'=>['(YEAR(`expired_date`) < ?) OR (YEAR(`expired_date`) = ? AND MONTH(`expired_date`) <= ?) '],
@@ -902,6 +905,11 @@ class DatabaseAPI {
 
         // Get the columns for the actual table/view we are querying
         $viewColumns = $this->getTableColumns($queryTable);
+
+        error_log("buildSearchConditions: Query Table = $queryTable");
+        error_log("buildSearchConditions: Search Term = $searchTerm");
+        error_log("buildSearchConditions: Columns from getTableColumns = " . print_r($viewColumns, true));
+
         if (empty($viewColumns)) {
              error_log("Could not retrieve columns for query target '$queryTable'. General search may fail.");
              return ['sql' => '1=1', 'params' => [], 'types' => '']; // Prevent query errors
@@ -927,6 +935,9 @@ class DatabaseAPI {
             // No searchable columns found or applicable for the search term
             return ['sql' => '1=1', 'params' => [], 'types' => ''];
         }
+        
+        error_log("buildSearchConditions: Final SQL Conditions = " . ($conditions['sql'] ?? 'NONE'));
+        error_log("buildSearchConditions: Final Params = " . print_r($conditions['params'] ?? [], true));
 
         return [
             'sql' => '(' . implode(' OR ', $conditions) . ')', // Wrap OR conditions in parentheses
@@ -940,14 +951,29 @@ class DatabaseAPI {
     */
     private function getTableColumns($tableName) {
         if (!isset($this->tableColumnCache[$tableName])) {
-             if (!$this->columnExistsInTable($tableName, 'any_column_name_just_to_populate_cache')) {
-                 // columnExistsInTable populates the cache on first call
-                 // If it returns false (e.g., table doesn't exist), the cache will be empty or marked invalid
-                 return []; // Return empty if table/view likely doesn't exist or columns couldn't be fetched
-             }
+            try {
+                $query = "SHOW COLUMNS FROM `$tableName`";
+                $result = $this->dsn->query($query);
+                if (!$result) {
+                    error_log("Failed to get columns for table '$tableName': " . $this->dsn->error);
+                    $this->tableColumnCache[$tableName] = []; // Cache as empty on error
+                    return [];
+                }
+                $columns = [];
+                while ($row = $result->fetch_assoc()) {
+                    $columns[$row['Field']] = true;
+                }
+                $this->tableColumnCache[$tableName] = $columns;
+                $result->free();
+            } catch (Exception $e) {
+                error_log("Exception getting columns for table '$tableName': " . $e->getMessage());
+                $this->tableColumnCache[$tableName] = []; // Cache empty on exception
+                return [];
+            }
         }
         return $this->tableColumnCache[$tableName] ?? [];
     }
+    
 
 
     private function recordExists($table, $id) {
