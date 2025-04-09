@@ -13,105 +13,136 @@ document.addEventListener("DOMContentLoaded", function () {
     const prevPageButton = document.getElementById("prevPage");
     const nextPageButton = document.getElementById("nextPage");
     const bankSearchBtn = document.getElementById("bankSearchBtn");
-    
+
     // State variables
     let currentSortColumn = null;
     let currentSortOrder = null;
-    let donationData = []; 
+    let donationData = [];
     let itemsPerPage = parseInt(itemsPerPageSelect.value);
     let currentPage = 1;
     let totalPages = 0;
     let currentSearchType = 'all'; // Flag to indicate listing all data
     let currentBankFilter = null;
-    
+
     const DONATION_TYPES = {
-1: 'Donation',
-2: '蒲公英乐捐',
-3: '哲商',
-4: 'KK老师外出公益讲堂所收到的红包',
-5: '模范班乐捐',
-6: '外籍人士享有塾员福利乐捐',
+        1: 'Donation',
+        2: '蒲公英乐捐',
+        3: '哲商',
+        4: 'KK老师外出公益讲堂所收到的红包',
+        5: '模范班乐捐',
+        6: '外籍人士享有塾员福利乐捐',
 
     };
 
-    const BANKS = {
-       1:'Public Bank', 
-       2:'Hong Leong Bank',
-       3:'Alliance Bank',
-    };
+    // Bank data cache for display purposes only
+    let BANKS = {};
+    
+    // Fetch bank data for display purposes
+    async function fetchBankData() {
+        try {
+            const response = await fetch(`${API_BASE_URL}?table=bank`);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch bank data: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            if (data && data.data && Array.isArray(data.data)) {
+                // Reset the BANKS object
+                BANKS = {};
+                
+                // Populate BANKS object with data from API
+                data.data.forEach(bank => {
+                    BANKS[bank.ID] = bank.Bank;
+                });
+                
+                console.log('Bank data loaded for display:', BANKS);
+            } else {
+                console.error('Invalid bank data format received');
+            }
+        } catch (error) {
+            console.error('Error fetching bank data:', error);
+        }
+    }
+    
+    // Initial fetch of bank data for display purposes
+    fetchBankData();
 
     function mapDonationType(typeNumber) {
         return DONATION_TYPES[typeNumber] || typeNumber;
     }
 
-    function mapBankName(bankNumber) {
-        return BANKS[bankNumber] || bankNumber;
+    function mapBankName(bankValue) {
+        // If the value is a number (ID), try to map it using the BANKS object for backward compatibility
+        // Otherwise, return the bank name directly
+        return !isNaN(bankValue) && BANKS[bankValue] ? BANKS[bankValue] : bankValue;
     }
 
-        // Bank filter modal creation function
-// Bank filter modal creation function - Updated implementation
-function createBankFilterModal() {
-    // Remove existing modals if any
-    const existingModal = document.getElementById('bankFilterModal');
-    if (existingModal) {
-        existingModal.remove();
-    }
+    // Bank filter modal creation function - Direct API implementation
+    async function createBankFilterModal() {
+        // Show loader while fetching data
+        loader.style.display = "block";
+        
+        // Remove existing modals if any
+        const existingModal = document.getElementById('bankFilterModal');
+        if (existingModal) {
+            existingModal.remove();
+        }
 
-    // Create modal elements with improved styling
-    const modalOverlay = document.createElement('div');
-    modalOverlay.className = 'modal-overlay';
-    modalOverlay.id = 'bankFilterModal';
-    
-    const modalContent = document.createElement('div');
-    modalContent.className = 'modal-content bank-filter-screen';
-    
-    const modalHeader = document.createElement('div');
-    modalHeader.className = 'modal-header';
-    modalHeader.innerHTML = `
+        // Create modal elements with improved styling
+        const modalOverlay = document.createElement('div');
+        modalOverlay.className = 'modal-overlay';
+        modalOverlay.id = 'bankFilterModal';
+
+        const modalContent = document.createElement('div');
+        modalContent.className = 'modal-content bank-filter-screen';
+
+        const modalHeader = document.createElement('div');
+        modalHeader.className = 'modal-header';
+        modalHeader.innerHTML = `
         <h3>选择银行</h3>
         <button class="close-btn" aria-label="关闭">&times;</button>
     `;
-    
-    const modalBody = document.createElement('div');
-    modalBody.className = 'modal-body bank-selection-grid';
 
-    // Add "All Banks" option
-    const allBanksDiv = document.createElement('div');
-    allBanksDiv.className = 'bank-option-card' + (!currentBankFilter ? ' selected' : '');
-    allBanksDiv.setAttribute('data-bank-id', '');
-    allBanksDiv.innerHTML = `
+        const modalBody = document.createElement('div');
+        modalBody.className = 'modal-body bank-selection-grid';
+
+        // Add "All Banks" option
+        const allBanksDiv = document.createElement('div');
+        allBanksDiv.className = 'bank-option-card' + (!currentBankFilter ? ' selected' : '');
+        allBanksDiv.setAttribute('data-bank-id', '');
+        allBanksDiv.innerHTML = `
         <div class="bank-icon">
             <i class="fas fa-university"></i>
         </div>
         <div class="bank-name">所有银行</div>
     `;
-    modalBody.appendChild(allBanksDiv);
-    
-    // Add options for each bank
-    Object.entries(BANKS).forEach(([id, name]) => {
-        const bankDiv = document.createElement('div');
-        bankDiv.className = 'bank-option-card' + (currentBankFilter === id ? ' selected' : '');
-        bankDiv.setAttribute('data-bank-id', id);
-        bankDiv.innerHTML = `
+        modalBody.appendChild(allBanksDiv);
+
+        // Add options for each bank
+        Object.entries(BANKS).forEach(([id, name]) => {
+            const bankDiv = document.createElement('div');
+            bankDiv.className = 'bank-option-card' + (currentBankFilter === name ? ' selected' : '');
+            bankDiv.setAttribute('data-bank-id', name);
+            bankDiv.innerHTML = `
             <div class="bank-icon">
                 <i class="fas fa-landmark"></i>
             </div>
             <div class="bank-name">${name}</div>
         `;
-        modalBody.appendChild(bankDiv);
-    });
-    
-    // Assemble modal
-    modalContent.appendChild(modalHeader);
-    modalContent.appendChild(modalBody);
-    modalOverlay.appendChild(modalContent);
-    
-    // Add modal to DOM
-    document.body.appendChild(modalOverlay);
-    
-    // Add CSS for the bank filter screen
-    const styleElement = document.createElement('style');
-    styleElement.textContent = `
+            modalBody.appendChild(bankDiv);
+        });
+
+        // Assemble modal
+        modalContent.appendChild(modalHeader);
+        modalContent.appendChild(modalBody);
+        modalOverlay.appendChild(modalContent);
+
+        // Add modal to DOM
+        document.body.appendChild(modalOverlay);
+
+        // Add CSS for the bank filter screen
+        const styleElement = document.createElement('style');
+        styleElement.textContent = `
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -194,66 +225,65 @@ function createBankFilterModal() {
             font-weight: 500;
         }
     `;
-    document.head.appendChild(styleElement);
-    
-    // Event listeners for modal
-    document.querySelector('#bankFilterModal .close-btn').addEventListener('click', () => {
-        modalOverlay.remove();
-        styleElement.remove();
-    });
-    
-    // Close on click outside
-    modalOverlay.addEventListener('click', (e) => {
-        if (e.target === modalOverlay) {
-            modalOverlay.remove();
-            styleElement.remove();
-        }
-    });
-    
-    // Handle bank selection
-    const bankOptions = document.querySelectorAll('.bank-option-card');
-    bankOptions.forEach(option => {
-        option.addEventListener('click', () => {
-            // Update selection visually
-            bankOptions.forEach(opt => opt.classList.remove('selected'));
-            option.classList.add('selected');
-            
-            // Apply filter immediately
-            const bankId = option.getAttribute('data-bank-id');
-            currentBankFilter = bankId || null;
-            currentPage = 1; // Reset to first page when filtering
-            
-            // Close the modal after selection
-            modalOverlay.remove();
-            styleElement.remove();
-            
-            // Update filter button text and fetch data
-            updateBankFilterButtonText();
-            fetchDonations(searchInput.value);
-        });
-    });
-}
+        document.head.appendChild(styleElement);
 
-    
-        // Update bank filter button text to indicate active filter
-// Update bank filter button text to indicate active filter
-function updateBankFilterButtonText() {
-    if (bankSearchBtn) {
-        if (currentBankFilter) {
-            const bankName = BANKS[currentBankFilter] || currentBankFilter;
-            bankSearchBtn.innerHTML = `<i class="fas fa-filter"></i> ${bankName}`;
-            bankSearchBtn.classList.add('active-filter');
-        } else {
-            bankSearchBtn.innerHTML = `<i class="fas fa-university"></i> 银行筛选`;
-            bankSearchBtn.classList.remove('active-filter');
+        // Event listeners for modal
+        document.querySelector('#bankFilterModal .close-btn').addEventListener('click', () => {
+            modalOverlay.remove();
+            styleElement.remove();
+        });
+
+        // Close on click outside
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) {
+                modalOverlay.remove();
+                styleElement.remove();
+            }
+        });
+
+        // Handle bank selection
+        const bankOptions = document.querySelectorAll('.bank-option-card');
+        bankOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                // Update selection visually
+                bankOptions.forEach(opt => opt.classList.remove('selected'));
+                option.classList.add('selected');
+
+                // Apply filter immediately
+                const bankId = option.getAttribute('data-bank-id');
+                currentBankFilter = bankId || null;
+                currentPage = 1; // Reset to first page when filtering
+
+                // Close the modal after selection
+                modalOverlay.remove();
+                styleElement.remove();
+
+                // Update filter button text and fetch data
+                updateBankFilterButtonText();
+                fetchDonations(searchInput.value);
+            });
+        });
+    }
+
+
+    // Update bank filter button text to indicate active filter
+    function updateBankFilterButtonText() {
+        if (bankSearchBtn) {
+            if (currentBankFilter) {
+                const bankName = BANKS[currentBankFilter] || currentBankFilter;
+                bankSearchBtn.innerHTML = `<i class="fas fa-filter"></i> ${bankName}`;
+                bankSearchBtn.classList.add('active-filter');
+            } else {
+                bankSearchBtn.innerHTML = `<i class="fas fa-university"></i> 银行筛选`;
+                bankSearchBtn.classList.remove('active-filter');
+            }
         }
     }
-}
 
-// Add event listener for the bank search button
-if (bankSearchBtn) {
-    bankSearchBtn.addEventListener('click', createBankFilterModal);
-}
+    // Add event listener for the bank search button
+    if (bankSearchBtn) {
+        bankSearchBtn.addEventListener('click', createBankFilterModal);
+    }
 
     // Debounce function to limit API calls during rapid typing
     function debounce(func, wait) {
@@ -267,29 +297,29 @@ if (bankSearchBtn) {
             timeout = setTimeout(later, wait);
         };
     }
-    
+
     // Debounced search
     const debouncedSearch = debounce((searchText) => {
-        console.log("Searching for:", searchText); 
+        console.log("Searching for:", searchText);
         currentPage = 1; // Reset to first page when searching
         fetchDonations(searchText);
     }, 300); // 300ms delay
-    
-    searchInput.addEventListener("input", function() {
+
+    searchInput.addEventListener("input", function () {
         debouncedSearch(this.value);
     });
 
     async function fetchDonations(query = "") {
         loader.style.display = "block";
         donationTableBody.innerHTML = "";
-      
+
         // Create params object instead of using append
         const params = new URLSearchParams({
-            table: "donation",
+            table: "donation_details",
             page: currentPage,
             limit: itemsPerPage,
         });
-        
+
         if (query && query.trim() !== "") {
             params.append("search", query.trim());
             currentSearchType = 'search'; // Indicate not listing all when search query is present
@@ -297,35 +327,35 @@ if (bankSearchBtn) {
             currentSearchType = 'all'; // Back to listing all if query is empty
         }
 
-         // Add bank filter to API request
-    if (currentBankFilter) {
-        params.append("Bank", currentBankFilter);
-        params.append("search", "true");
-    }
-    
+        // Add bank filter to API request
+        if (currentBankFilter) {
+            params.append("Bank", currentBankFilter);
+            params.append("search", "true");
+        }
+
         if (currentSortColumn) {
             // Ensure the column names match what the API expects
             const apiColumnName = mapColumnNameToApi(currentSortColumn);
             params.append("sort", apiColumnName);
             params.append("order", currentSortOrder || 'ASC');
         }
-    
+
         const url = `${API_BASE_URL}?${params.toString()}`;
         console.log("API URL:", url);
-    
+
         try {
             const response = await fetch(url);
             console.log("Raw response status:", response.status);
-            
+
             if (!response.ok) {
                 const errorText = await response.text();
                 console.error(`Server error response: ${errorText}`);
                 throw new Error(`Server responded with status: ${response.status}`);
             }
-            
+
             const data = await response.json();
             console.log("API Response:", data); // Log the entire response
-            
+
             // Check for different response formats
             if (Array.isArray(data)) {
                 donationData = data;
@@ -336,7 +366,7 @@ if (bankSearchBtn) {
             } else {
                 throw new Error("Invalid data format received");
             }
-    
+
             totalPages = Math.ceil(parseInt(totalDonations.textContent) / itemsPerPage);
 
 
@@ -346,7 +376,7 @@ if (bankSearchBtn) {
         } catch (error) {
             console.error("Error fetching donations:", error);
             donationTableBody.innerHTML = `<tr><td colspan="10" class="error-message">Failed to load donations. Error: ${error.message}</td></tr>`;
-            
+
             // Reset data on error
             donationData = [];
             totalDonations.textContent = 0;
@@ -370,41 +400,41 @@ if (bankSearchBtn) {
             'amount': 'amount',
             'Remarks': 'Remarks'
         };
-        
+
         return mapping[columnName] || columnName;
     }
 
     function displayDonations(donations) {
         console.log("Displaying donations:", donations);
         donationTableBody.innerHTML = ""; // Reset the table body
-        
+
         if (!Array.isArray(donations) || donations.length === 0) {
             let message = '暂无记录';
             if (currentSearchType === 'search') message = '没有找到匹配的记录';
             if (currentBankFilter) message = '该银行没有匹配的记录';
-            
+
             donationTableBody.innerHTML = `<tr><td colspan="10" class="no-data">${message}</td></tr>`;
             return;
         }
-    
+
         console.log(`Processing ${donations.length} donations for display`);
-        
+
         // Calculate starting display ID based on pagination
         let startDisplayId = (currentPage - 1) * itemsPerPage + 1;
-        
+
         donations.forEach((donation, index) => {
             // Log the donation object to see its structure
             console.log("Processing donation:", donation);
-            
+
             // Get the actual database ID for edit/delete operations - fix the undefined id error
             const databaseId = donation.ID || donation.id || '';
-            
+
             // Use the calculated display ID for showing to users
             const displayId = startDisplayId + index;
-            
+
             const row = document.createElement("tr");
             row.setAttribute('id', `donation-row-${databaseId}`);
-            
+
             // Handle potential property name variations
             const donorName = donation['Name/Company_Name'] || donation.donor_name || '-';
             const donationType = mapDonationType(donation.donationTypes || donation.donation_type || '-');
@@ -414,7 +444,7 @@ if (bankSearchBtn) {
             const receiptNo = donation['official_receipt_no'] || donation.receipt_no || '-';
             const amount = formatPrice(donation.amount || 0);
             const remarks = truncateText(donation.Remarks || donation.remarks || '', 50);
-            
+
             row.innerHTML = `
             <td>${displayId}</td>
             <td>${escapeHTML(donorName)}</td>
@@ -442,7 +472,7 @@ if (bankSearchBtn) {
         }
         return escapeHTML(text);
     }
-    
+
     // Helper function to escape HTML
     function escapeHTML(str) {
         if (!str) return '';
@@ -475,9 +505,9 @@ if (bankSearchBtn) {
 
     function updatePagination() {
         if (!paginationContainer) return;
-        
+
         const paginationHTML = [];
-        
+
         // Page numbers
         for (let i = 1; i <= totalPages; i++) {
             if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
@@ -512,10 +542,10 @@ if (bankSearchBtn) {
         `);
 
         paginationContainer.innerHTML = paginationHTML.join('');
-        
+
         // Add event listeners to pagination buttons
         paginationContainer.querySelectorAll('.pagination-btn[data-page]').forEach(button => {
-            button.addEventListener('click', function() {
+            button.addEventListener('click', function () {
                 const page = parseInt(this.dataset.page);
                 if (!isNaN(page) && page >= 1 && page <= totalPages) {
                     changePage(page);
@@ -532,14 +562,14 @@ if (bankSearchBtn) {
                 }
             });
         }
-        
+
         // Re-attach event listeners for prev/next buttons
         if (prevPageButton) {
             prevPageButton.addEventListener('click', () => {
                 if (currentPage > 1) changePage(currentPage - 1);
             });
         }
-        
+
         if (nextPageButton) {
             nextPageButton.addEventListener('click', () => {
                 if (currentPage < totalPages) changePage(currentPage + 1);
@@ -557,26 +587,26 @@ if (bankSearchBtn) {
     function jumpToPage() {
         const pageInput = document.getElementById('pageInput');
         if (!pageInput) return;
-        
+
         let targetPage = parseInt(pageInput.value);
-        
+
         // Validate input
         if (isNaN(targetPage)) {
             alert('请输入有效的页码');
             return;
         }
-        
+
         if (targetPage < 1) {
             targetPage = 1;
         } else if (targetPage > totalPages) {
             targetPage = totalPages;
         }
-        
+
         // Only change page if it's different from current page
         if (targetPage !== currentPage) {
             changePage(targetPage);
         }
-        
+
         // Clear input after jumping
         pageInput.value = '';
     }
@@ -597,11 +627,11 @@ if (bankSearchBtn) {
         document.querySelectorAll('th[data-column]').forEach(th => {
             const icon = th.querySelector('i') || document.createElement('i');
             icon.className = 'sort-arrow fas';
-            
+
             if (th.dataset.column === currentSortColumn) {
                 icon.classList.remove('fa-sort');
                 icon.classList.add(currentSortOrder === 'ASC' ? 'fa-sort-up' : 'fa-sort-down');
-                
+
                 // Update aria-sort attribute for accessibility
                 th.setAttribute('aria-sort', currentSortOrder === 'ASC' ? 'ascending' : 'descending');
             } else {
@@ -609,7 +639,7 @@ if (bankSearchBtn) {
                 icon.classList.add('fa-sort');
                 th.removeAttribute('aria-sort');
             }
-            
+
             // Add icon if it doesn't exist
             if (!th.querySelector('i')) {
                 th.appendChild(icon);
@@ -626,17 +656,17 @@ if (bankSearchBtn) {
     // Event listeners
     tableHeaders.forEach(th => {
         if (th.dataset.column) {
-            th.addEventListener('click', function() {
+            th.addEventListener('click', function () {
                 handleSortClick(this.dataset.column);
             });
-            
+
             // Make sortable headers more accessible
             th.setAttribute('role', 'button');
             th.setAttribute('tabindex', '0');
             th.setAttribute('aria-label', `Sort by ${th.textContent.trim()}`);
-            
+
             // Allow keyboard sorting
-            th.addEventListener('keydown', function(e) {
+            th.addEventListener('keydown', function (e) {
                 if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
                     handleSortClick(this.dataset.column);
@@ -652,7 +682,7 @@ if (bankSearchBtn) {
 
     // 修复搜索输入框回车键事件监听器
     if (searchInput) {
-        searchInput.addEventListener("keypress", function(e) {
+        searchInput.addEventListener("keypress", function (e) {
             if (e.key === "Enter") {
                 e.preventDefault();
                 handleSearch();
@@ -660,21 +690,21 @@ if (bankSearchBtn) {
         });
     }
 
-    donationTableBody.addEventListener('click', function(e) {
+    donationTableBody.addEventListener('click', function (e) {
         const target = e.target;
         const id = target.dataset.id;
-        
+
         if (!id) return;
-        
+
         if (target.classList.contains('btn-edit')) {
             editDonation(id);
         } else if (target.classList.contains('btn-delete')) {
             deleteDonation(id);
         }
     });
-    
+
     if (itemsPerPageSelect) {
-        itemsPerPageSelect.addEventListener("change", function() {
+        itemsPerPageSelect.addEventListener("change", function () {
             itemsPerPage = parseInt(this.value);
             currentPage = 1;
             fetchDonations(searchInput.value);
@@ -691,44 +721,44 @@ if (bankSearchBtn) {
                 resizer.className = 'resizer';
                 th.appendChild(resizer);
             }
-            
+
             let startX, startWidth;
-            
-            resizer.addEventListener('mousedown', function(e) {
+
+            resizer.addEventListener('mousedown', function (e) {
                 startX = e.pageX;
                 startWidth = th.offsetWidth;
-                
+
                 const tableContainer = table.closest('.table-container');
                 if (tableContainer) {
                     tableContainer.classList.add('resizing');
                 }
-                
+
                 document.addEventListener('mousemove', resizeColumn);
                 document.addEventListener('mouseup', stopResize);
                 e.preventDefault();
             });
-            
+
             function resizeColumn(e) {
                 const width = startWidth + (e.pageX - startX);
                 if (width >= 50) { // Minimum width
                     th.style.width = `${width}px`;
                 }
             }
-            
+
             function stopResize() {
                 const tableContainer = table.closest('.table-container');
                 if (tableContainer) {
                     tableContainer.classList.remove('resizing');
                 }
-                
+
                 document.removeEventListener('mousemove', resizeColumn);
                 document.removeEventListener('mouseup', stopResize);
-                
+
                 // Save column widths
                 saveColumnWidths();
             }
         });
-        
+
         // Load saved column widths
         loadColumnWidths();
     }
@@ -736,23 +766,23 @@ if (bankSearchBtn) {
     // Save column widths to localStorage
     function saveColumnWidths() {
         const columnWidths = {};
-        
+
         tableHeaders.forEach(th => {
             if (th.dataset.column && th.style.width) {
                 columnWidths[th.dataset.column] = th.style.width;
             }
         });
-        
+
         localStorage.setItem('donationTableColumnWidths', JSON.stringify(columnWidths));
     }
-    
+
     // Load column widths from localStorage
     function loadColumnWidths() {
         const savedWidths = localStorage.getItem('donationTableColumnWidths');
         if (savedWidths) {
             try {
                 const columnWidths = JSON.parse(savedWidths);
-                
+
                 tableHeaders.forEach(th => {
                     if (th.dataset.column && columnWidths[th.dataset.column]) {
                         th.style.width = columnWidths[th.dataset.column];
@@ -765,18 +795,18 @@ if (bankSearchBtn) {
     }
 
     // Global functions
-    window.editDonation = function(id) {
+    window.editDonation = function (id) {
         window.location.href = `editDonate.html?id=${id}`;
     };
 
-    window.deleteDonation = async function(id) {
+    window.deleteDonation = async function (id) {
         if (confirm("确定要删除这个捐赠记录吗？")) {
             try {
                 const response = await fetch(`${API_BASE_URL}?table=donation&action=checkRelations&ID=${id}`, {
                     method: "DELETE",
-                    headers: { 
+                    headers: {
                         "Content-Type": "application/json"
-                     },
+                    },
                     body: JSON.stringify({ table: "donation", id: id }),
                 });
 
