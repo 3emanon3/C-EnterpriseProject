@@ -5,6 +5,7 @@
     --info-color: #5bc0de;      /* Lighter blue for filter buttons */
     --success-color: #27ae60;
     --danger-color: #e74c3c;
+    --warning-color: #f39c12; /* Orange for clear/reset */
     --background-color: #800000; /* Maroon */
     --border-color: #dcdde1;
     --text-color: #2d3436;
@@ -22,6 +23,8 @@
     --filter-option-selected-bg: #f0f7ff;
     --filter-option-selected-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
     --filter-option-icon-color: #4a90e2;
+    --input-border-color: #ccc;
+    --input-focus-border-color: var(--secondary-color);
 }
 
 * {
@@ -58,7 +61,7 @@ header {
     left: 0;
     right: 0;
     z-index: 100;
-    height: 80px;
+    min-height: 80px; /* Use min-height for flexibility */
 }
 
 .header-container {
@@ -66,17 +69,22 @@ header {
     justify-content: space-between;
     align-items: center;
     width: 100%;
+    flex-wrap: wrap; /* Allow wrapping if needed */
+    gap: 10px; /* Add gap between title and buttons */
 }
 
 h1 {
     color: var(--light-text-color);
     font-size: 2rem;
     margin: 0; /* Reset default margin */
+    white-space: nowrap; /* Prevent title wrapping */
 }
 
 .button-container {
     display: flex;
     gap: 10px;
+    flex-wrap: wrap; /* Allow buttons to wrap */
+    justify-content: flex-end; /* Align buttons to the right */
 }
 
 /* Button Styles */
@@ -91,6 +99,7 @@ h1 {
     gap: 8px;
     transition: all 0.3s ease;
     color: white; /* Default text color for buttons */
+    white-space: nowrap; /* Prevent button text wrapping */
 }
 
 .btn-primary { background-color: var(--primary-color); }
@@ -98,6 +107,8 @@ h1 {
 .btn-info { background-color: var(--info-color); } /* Use info color for filters */
 .btn-secondary { background-color: var(--secondary-color); } /* For Edit */
 .btn-danger { background-color: var(--danger-color); } /* For Delete */
+.btn-warning { background-color: var(--warning-color); color: white; } /* For Clear/Reset */
+
 
 /* Specific button styles */
 .btn-edit {
@@ -121,6 +132,7 @@ h1 {
 .btn.active-filter {
     background-color: var(--secondary-color); /* Darker blue when active */
     font-weight: bold;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
 }
 
 /* Search Container Styles */
@@ -307,19 +319,40 @@ tr:hover {
     gap: 15px; /* Add gap between elements */
 }
 
-.pagination-controls {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
 .pagination {
     display: flex;
     gap: 5px;
     flex-wrap: wrap; /* Allow page numbers to wrap */
     justify-content: center; /* Center page numbers */
     flex-grow: 1; /* Allow pagination to take available space */
+    order: 2; /* Default order */
 }
+
+#prevPage, #nextPage {
+    order: 1; /* Prev/Next buttons first */
+}
+
+.pagination-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--text-color);
+    order: 3; /* Jump section after pagination numbers */
+    flex-basis: 100%; /* Take full width on wrap */
+    justify-content: center; /* Center jump section when wrapped */
+    margin-top: 10px; /* Add space when wrapped */
+}
+
+.items-per-page {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Adjust gap */
+    font-size: 14px;
+    color: var(--text-color);
+    order: 4; /* Items per page last */
+}
+
 
 .pagination-btn {
     padding: 6px 12px; /* Slightly larger buttons */
@@ -331,7 +364,9 @@ tr:hover {
     transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.pagination-btn:disabled {
+.pagination-btn:disabled,
+#prevPage:disabled,
+#nextPage:disabled {
     opacity: 0.5;
     cursor: not-allowed;
     background-color: #eee;
@@ -344,7 +379,9 @@ tr:hover {
     font-weight: bold;
 }
 
-.pagination-btn:not(:disabled):hover {
+.pagination-btn:not(:disabled):hover,
+#prevPage:not(:disabled):hover,
+#nextPage:not(:disabled):hover {
     background-color: #f0f0f0;
 }
 .pagination-btn.active:hover {
@@ -359,16 +396,10 @@ tr:hover {
     color: #999;
 }
 
-.pagination-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 14px;
-    color: var(--text-color);
-}
 
 .page-indicator {
     font-weight: bold;
+    white-space: nowrap; /* Prevent wrapping */
 }
 
 .page-jump {
@@ -410,13 +441,6 @@ tr:hover {
     background-color: var(--primary-color);
 }
 
-.items-per-page {
-    display: flex;
-    align-items: center;
-    gap: 8px; /* Adjust gap */
-    font-size: 14px;
-    color: var(--text-color);
-}
 
 #itemsPerPage {
     padding: 6px 8px; /* Adjust padding */
@@ -425,7 +449,7 @@ tr:hover {
     background-color: white; /* Ensure background */
 }
 
-/* Modal Styles (Generic for Bank and Donation Type) */
+/* Modal Styles (Generic for All Modals) */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -454,6 +478,8 @@ tr:hover {
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     overflow: hidden;
+    display: flex; /* Use flex for layout */
+    flex-direction: column; /* Stack header, body, footer */
     transform: scale(0.95); /* Start slightly smaller */
     transition: transform 0.3s ease;
 }
@@ -470,6 +496,7 @@ tr:hover {
     justify-content: space-between;
     align-items: center;
     background-color: #f7f7f7; /* Light header background */
+    flex-shrink: 0; /* Prevent header from shrinking */
 }
 
 .modal-header h3 {
@@ -493,11 +520,11 @@ tr:hover {
 
 .modal-body {
     padding: 20px;
-    max-height: 60vh; /* Limit height and allow scrolling */
-    overflow-y: auto;
+    overflow-y: auto; /* Allow body to scroll if content overflows */
+    flex-grow: 1; /* Allow body to take up available space */
 }
 
-/* Grid for filter options */
+/* Grid for filter options (Bank/Type) */
 .filter-selection-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -544,46 +571,100 @@ tr:hover {
     word-wrap: break-word; /* Wrap long names */
 }
 
+/* Styles for Range Filter Modals (Date/Amount) */
+.range-filter-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Space between input groups */
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column; /* Stack label and input */
+    gap: 5px;
+}
+
+.input-group label {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--modal-text-color);
+}
+
+.input-group input[type="date"],
+.input-group input[type="number"] {
+    padding: 8px 10px;
+    border: 1px solid var(--input-border-color);
+    border-radius: 4px;
+    font-size: 14px;
+    width: 100%; /* Make inputs fill container */
+}
+
+.input-group input[type="date"]:focus,
+.input-group input[type="number"]:focus {
+    outline: none;
+    border-color: var(--input-focus-border-color);
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2); /* Light blue focus ring */
+}
+
+/* Remove spinners from number input */
+.input-group input[type=number]::-webkit-outer-spin-button,
+.input-group input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.input-group input[type=number] {
+  -moz-appearance: textfield; /* Firefox */
+}
+
+.modal-footer {
+    padding: 15px 20px;
+    border-top: 1px solid var(--modal-header-border);
+    display: flex;
+    justify-content: flex-end; /* Align buttons to the right */
+    gap: 10px;
+    background-color: #f7f7f7; /* Light footer background */
+    flex-shrink: 0; /* Prevent footer from shrinking */
+}
+
 
 /* Responsive Design */
+@media (max-width: 1200px) {
+     .header-container {
+        /* Allow title and buttons to stack vertically if needed */
+     }
+     h1 {
+        font-size: 1.8rem;
+     }
+     .button-container {
+        justify-content: flex-start; /* Align buttons left when wrapped */
+     }
+}
+
+
 @media (max-width: 992px) {
      .container {
         padding-top: 90px; /* Adjust padding if header wraps */
     }
+    header {
+        min-height: auto; /* Allow header height to adjust */
+        padding-bottom: 15px; /* Add padding when wrapped */
+    }
     .header-container {
         flex-direction: column;
         align-items: flex-start;
-        height: auto; /* Allow header to grow */
-        padding-bottom: 10px;
-    }
-    header {
-        height: auto;
     }
     h1 {
-        margin-bottom: 10px; /* Space below title */
+        margin-bottom: 15px; /* Space below title */
     }
-    .button-container {
-        flex-wrap: wrap; /* Allow buttons to wrap */
-        justify-content: flex-start;
-    }
+
      .pagination-container {
         flex-direction: column;
-        align-items: stretch; /* Stretch items full width */
+        align-items: center; /* Center items when stacked */
     }
-     .pagination {
-        order: 1; /* Put page numbers first */
-        justify-content: center;
-        margin-bottom: 15px;
-    }
-     .pagination-controls {
-        order: 2; /* Prev/Next buttons second */
-        justify-content: center; /* Center prev/next */
-    }
-     .items-per-page, .pagination-info {
-        order: 3; /* Settings and jump last */
-        justify-content: center; /* Center these too */
-        width: 100%; /* Take full width */
-    }
+     .pagination { order: 2; margin-bottom: 15px; }
+     #prevPage, #nextPage { order: 1; margin-bottom: 10px; }
+     .pagination-info { order: 3; flex-basis: auto; margin-top: 0; }
+     .items-per-page { order: 4; margin-top: 10px; }
 }
 
 
@@ -616,6 +697,7 @@ tr:hover {
 
     .modal-content {
         width: 95%;
+        max-height: 85vh; /* Adjust max height for smaller screens */
     }
     .filter-selection-grid {
        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); /* Smaller cards */
@@ -647,20 +729,32 @@ tr:hover {
      .items-per-page label, .items-per-page select {
         font-size: 13px;
     }
+     .modal-footer {
+        padding: 10px 15px;
+        gap: 8px;
+     }
+     .modal-footer .btn {
+        padding: 6px 10px;
+        font-size: 13px;
+     }
 }
 
 @media (max-width: 480px) {
      .button-container {
         gap: 5px; /* Reduce gap between buttons */
+        width: 100%; /* Take full width */
+        justify-content: space-around; /* Distribute buttons */
     }
      .btn {
         padding: 6px 8px; /* Smaller padding */
         font-size: 12px;
         gap: 4px; /* Smaller gap */
-    }
+        flex-grow: 1; /* Allow buttons to grow */
+        justify-content: center;
+     }
      .btn i.fas {
         font-size: 11px; /* Smaller icons in buttons */
-    }
+     }
      th, td {
         padding: 8px 5px;
         font-size: 12px;
@@ -669,4 +763,12 @@ tr:hover {
         padding: 4px 6px;
         font-size: 11px;
     }
+     .pagination-info {
+        flex-direction: column;
+        gap: 8px;
+     }
+     .page-jump {
+        width: 100%;
+        justify-content: center;
+     }
 }

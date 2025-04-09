@@ -6,6 +6,8 @@
     <title>乐捐管理系统 - 搜索</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="searchDonate.css">
+    <!-- Optional: Add SweetAlert for nicer alerts/confirmations -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <div class="container">
@@ -23,9 +25,17 @@
                     <button class="btn btn-info" type="button" id="bankSearchBtn">
                         <i class="fas fa-university"></i> 银行筛选
                     </button>
-                    <!-- New Button for Donation Type Filter -->
+                    <!-- Button for Donation Type Filter -->
                     <button class="btn btn-info" type="button" id="donationTypeFilterBtn">
                         <i class="fas fa-tags"></i> 类型筛选
+                    </button>
+                    <!-- New Button for Date Range Filter -->
+                    <button class="btn btn-info" type="button" id="dateRangeFilterBtn">
+                        <i class="fas fa-calendar-alt"></i> 日期范围筛选
+                    </button>
+                    <!-- New Button for Amount Range Filter -->
+                    <button class="btn btn-info" type="button" id="amountRangeFilterBtn">
+                        <i class="fas fa-dollar-sign"></i> 金额范围筛选
                     </button>
                 </div>
             </div>
@@ -78,15 +88,16 @@
             </div>
 
             <div class="pagination-container">
-                <!-- 分页将在此处添加 -->
-                <button id="prevPage" class="btn btn-primary">←</button>
+                <!-- Pagination controls will be managed by JS -->
+                <button id="prevPage" class="btn btn-primary" disabled>←</button>
                 <div class="pagination"></div>
-                <button id="nextPage" class="btn btn-primary">→</button>
+                <button id="nextPage" class="btn btn-primary" disabled>→</button>
+                <!-- Pagination Info (Page X of Y, Jump) will be added here by JS -->
                 <div class="items-per-page">
                     <label for="itemsPerPage">每页显示项目:</label>
                     <select id="itemsPerPage">
                         <option value="10">10</option>
-                        <option value="25">25</option>
+                        <option value="25" selected>25</option> <!-- Default to 25 -->
                         <option value="50">50</option>
                     </select>
                 </div>

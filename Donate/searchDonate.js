@@ -1,189 +1,225 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // Element references
+    // --- Element References ---
     const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
     const searchInput = document.getElementById("searchInput");
-    // Removed searchButton reference as it seems unused/redundant with debounced input
     const totalDonations = document.getElementById("totalDonations");
     const loader = document.querySelector(".loader");
     const itemsPerPageSelect = document.getElementById("itemsPerPage");
     const table = document.getElementById('donationTable');
-    const tableHeaders = table.querySelectorAll('th[data-column]'); // More specific selector
+    const tableHeaders = table.querySelectorAll('th[data-column]');
     const donationTableBody = table.querySelector('tbody');
     const paginationContainer = document.querySelector(".pagination");
     const prevPageButton = document.getElementById("prevPage");
     const nextPageButton = document.getElementById("nextPage");
     const bankSearchBtn = document.getElementById("bankSearchBtn");
-    const donationTypeFilterBtn = document.getElementById("donationTypeFilterBtn"); // New button reference
+    const donationTypeFilterBtn = document.getElementById("donationTypeFilterBtn");
+    // New button references
+    const dateRangeFilterBtn = document.getElementById("dateRangeFilterBtn");
+    const amountRangeFilterBtn = document.getElementById("amountRangeFilterBtn");
 
-    // State variables
+    // --- State Variables ---
     let currentSortColumn = null;
-    let currentSortOrder = 'ASC'; // Default sort order
+    let currentSortOrder = 'ASC';
     let donationData = [];
     let itemsPerPage = parseInt(itemsPerPageSelect.value);
     let currentPage = 1;
     let totalPages = 0;
-    // let currentSearchType = 'all'; // This flag seems less necessary now, filters determine the state
-    let currentBankFilter = null; // Stores selected bank NAME or null
-    let currentDonationTypeFilter = null; // Stores selected donation type NAME or null
+    let currentBankFilter = null; // Stores selected bank NAME
+    let currentDonationTypeFilter = null; // Stores selected donation type NAME
+    // New state variables for range filters
+    let currentStartDate = null;
+    let currentEndDate = null;
+    let currentStartPrice = null;
+    let currentEndPrice = null;
 
-    // Data caches for display purposes only
+    // Data caches for display/filter modals
     let DONATION_TYPES = {}; // Stores { id: name }
     let BANKS = {};          // Stores { id: name }
 
-    // --- Data Fetching for Filters ---
+    // --- Utility Functions ---
+
+    function escapeHTML(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+    
+
+    function formatDateTime(dateTimeStr) {
+        if (!dateTimeStr) return null;
+        try {
+            const date = new Date(dateTimeStr);
+            if (isNaN(date.getTime())) {
+                 console.warn("Invalid date format received:", dateTimeStr);
+                 return dateTimeStr;
+            }
+            // Format to YYYY-MM-DD HH:MM
+            return date.toLocaleString('sv-SE', {
+                 year: 'numeric', month: '2-digit', day: '2-digit',
+                 hour: '2-digit', minute: '2-digit', hour12: false
+            });
+        } catch (e) {
+            console.error("Error formatting date:", dateTimeStr, e);
+            return dateTimeStr;
+        }
+    }
+
+    function formatDateForInput(dateStr) {
+        if (!dateStr) return '';
+        try {
+            const date = new Date(dateStr);
+            if (isNaN(date.getTime())) return '';
+            // Format as YYYY-MM-DD for <input type="date">
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        } catch (e) {
+            return '';
+        }
+    }
+
+
+    function formatPrice(price) {
+        const num = parseFloat(price);
+        if (isNaN(num)) return '-';
+        return `RM ${num.toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    }
+
+    function truncateText(text, maxLength) {
+        if (!text) return '';
+        const escapedText = escapeHTML(text);
+        if (text.length > maxLength) {
+            return `<span title="${escapedText}">${escapedText.substring(0, maxLength)}...</span>`;
+        }
+        return escapedText;
+    }
+
+    function debounce(func, wait) {
+        let timeout;
+        const debouncedFunc = function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+        // Add a way to clear the timeout if needed (e.g., for Enter key press)
+        debouncedFunc.clear = () => clearTimeout(timeout);
+        debouncedFunc._timeoutId = timeout; // Expose for potential external clearing (use carefully)
+        return debouncedFunc;
+    }
+
+    // --- Data Fetching for Filters (Bank/Type) ---
 
     async function fetchFilterData(type) {
         const url = `${API_BASE_URL}?table=${type}`;
         try {
             const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error(`Failed to fetch ${type} data: ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`Failed to fetch ${type} data: ${response.status}`);
             const data = await response.json();
-            if (data && data.data && Array.isArray(data.data)) {
+            if (data?.data && Array.isArray(data.data)) {
                 const map = {};
-                const keyField = (type === 'bank') ? 'Bank' : 'donationTypes'; // Field containing the name
-                data.data.forEach(item => {
-                    // Use the actual name field (Bank or donationTypes) as the value for filtering
-                    // The key remains the ID for potential internal use, though filtering uses names now
-                    map[item.ID] = item[keyField];
-                });
-                console.log(`${type} data loaded for display/filtering:`, map);
+                const keyField = (type === 'bank') ? 'Bank' : 'donationTypes';
+                data.data.forEach(item => { map[item.ID] = item[keyField]; });
+                console.log(`${type} data loaded:`, map);
                 return map;
             } else {
-                console.error(`Invalid ${type} data format received`);
-                return {};
+                console.error(`Invalid ${type} data format received`); return {};
             }
         } catch (error) {
-            console.error(`Error fetching ${type} data:`, error);
-            return {}; // Return empty object on error
+            console.error(`Error fetching ${type} data:`, error); return {};
         }
     }
 
     async function initializeFilters() {
-        // Fetch both sets of data concurrently
         [BANKS, DONATION_TYPES] = await Promise.all([
             fetchFilterData('bank'),
-            fetchFilterData('donationtypes') // Ensure endpoint matches API
+            fetchFilterData('donationtypes')
         ]);
-        // Update buttons initially
+        // Update all filter buttons initially
         updateBankFilterButtonText();
         updateDonationTypeFilterButtonText();
+        updateDateRangeFilterButton();
+        updateAmountRangeFilterButton();
         // Initial data load
         fetchDonations();
     }
 
-
-    // --- Mapping Functions ---
-    // These are less critical now if filtering/display uses names directly, but kept for potential compatibility
-    function mapDonationTypeIdToName(typeId) {
-        return DONATION_TYPES[typeId] || typeId; // Fallback to ID if not found
-    }
-
-    function mapBankIdToName(bankId) {
-        return BANKS[bankId] || bankId; // Fallback to ID if not found
-    }
-
-    // --- Generic Modal Creation ---
+    // --- Generic Modal Creation (For Selection Grid) ---
     function createFilterModal({ modalId, title, dataMap, currentFilterValue, filterKey, filterAttribute, iconClass, allOptionText, onSelect }) {
-        // Remove existing modals of this type
         const existingModal = document.getElementById(modalId);
-        if (existingModal) {
-            existingModal.remove();
-        }
+        if (existingModal) existingModal.remove();
 
-        // Create modal elements
         const modalOverlay = document.createElement('div');
         modalOverlay.className = 'modal-overlay';
         modalOverlay.id = modalId;
 
         const modalContent = document.createElement('div');
-        modalContent.className = 'modal-content'; // Generic class
+        modalContent.className = 'modal-content';
 
         const modalHeader = document.createElement('div');
         modalHeader.className = 'modal-header';
-        modalHeader.innerHTML = `
-            <h3>${title}</h3>
-            <button class="close-btn" aria-label="关闭">×</button>
-        `;
+        modalHeader.innerHTML = `<h3>${title}</h3><button class="close-btn" aria-label="关闭">×</button>`;
 
         const modalBody = document.createElement('div');
-        modalBody.className = 'modal-body filter-selection-grid'; // Generic class
+        modalBody.className = 'modal-body filter-selection-grid';
 
         // Add "All" option
         const allOptionDiv = document.createElement('div');
-        // Check if currentFilterValue is null or empty string for 'All' selection
         allOptionDiv.className = `filter-option-card ${!currentFilterValue ? 'selected' : ''}`;
-        allOptionDiv.setAttribute(filterAttribute, ''); // Empty value signifies 'All'
-        allOptionDiv.innerHTML = `
-            <div class="filter-option-icon"><i class="fas fa-list"></i></div>
-            <div class="filter-option-name">${allOptionText}</div>
-        `;
+        allOptionDiv.setAttribute(filterAttribute, '');
+        allOptionDiv.innerHTML = `<div class="filter-option-icon"><i class="fas fa-list"></i></div><div class="filter-option-name">${allOptionText}</div>`;
         modalBody.appendChild(allOptionDiv);
 
-        // Add options for each item in the dataMap (using the NAME as the value)
+        // Add specific options
         Object.entries(dataMap).forEach(([id, name]) => {
             const optionDiv = document.createElement('div');
             optionDiv.className = `filter-option-card ${currentFilterValue === name ? 'selected' : ''}`;
-            optionDiv.setAttribute(filterAttribute, name); // Use the NAME as the value
-            optionDiv.innerHTML = `
-                <div class="filter-option-icon"><i class="fas ${iconClass}"></i></div>
-                <div class="filter-option-name">${name}</div>
-            `;
+            optionDiv.setAttribute(filterAttribute, name);
+            optionDiv.innerHTML = `<div class="filter-option-icon"><i class="fas ${iconClass}"></i></div><div class="filter-option-name">${escapeHTML(name)}</div>`;
             modalBody.appendChild(optionDiv);
         });
 
-        // Assemble modal
         modalContent.appendChild(modalHeader);
         modalContent.appendChild(modalBody);
         modalOverlay.appendChild(modalContent);
-
-        // Add modal to DOM
         document.body.appendChild(modalOverlay);
-        // Force reflow to enable transition
-        modalOverlay.offsetHeight;
-        modalOverlay.classList.add('visible'); // Add class to trigger transition
 
-        // Event listeners for modal
+        // Show modal with transition
+        requestAnimationFrame(() => { // Ensures transition occurs
+            modalOverlay.classList.add('visible');
+        });
+
+
         const closeModal = () => {
             modalOverlay.classList.remove('visible');
-            // Remove after transition ends
-            modalOverlay.addEventListener('transitionend', () => {
-                 if (document.body.contains(modalOverlay)) {
-                    modalOverlay.remove();
-                 }
-            }, { once: true });
+            modalOverlay.addEventListener('transitionend', () => modalOverlay.remove(), { once: true });
         };
 
         modalContent.querySelector('.close-btn').addEventListener('click', closeModal);
+        modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(); });
 
-        modalOverlay.addEventListener('click', (e) => {
-            if (e.target === modalOverlay) {
-                closeModal();
-            }
-        });
-
-        // Handle option selection
         modalBody.querySelectorAll('.filter-option-card').forEach(option => {
             option.addEventListener('click', () => {
                 const selectedValue = option.getAttribute(filterAttribute);
-                onSelect(selectedValue || null); // Pass null if 'All' (empty string) was selected
+                onSelect(selectedValue || null);
                 closeModal();
             });
         });
     }
 
-    // --- Bank Filter Specific Functions ---
+    // --- Bank Filter ---
     function openBankFilterModal() {
         createFilterModal({
-            modalId: 'bankFilterModal',
-            title: '选择银行',
-            dataMap: BANKS,
-            currentFilterValue: currentBankFilter,
-            filterKey: 'Bank',
-            filterAttribute: 'data-bank-name',
-            iconClass: 'fa-landmark',
-            allOptionText: '所有银行',
+            modalId: 'bankFilterModal', title: '选择银行', dataMap: BANKS,
+            currentFilterValue: currentBankFilter, filterKey: 'Bank', filterAttribute: 'data-bank-name',
+            iconClass: 'fa-landmark', allOptionText: '所有银行',
             onSelect: (selectedBankName) => {
                 currentBankFilter = selectedBankName;
                 currentPage = 1;
@@ -194,28 +230,24 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function updateBankFilterButtonText() {
-        if (bankSearchBtn) {
-            if (currentBankFilter) {
-                bankSearchBtn.innerHTML = `<i class="fas fa-filter"></i> ${escapeHTML(currentBankFilter)}`;
-                bankSearchBtn.classList.add('active-filter');
-            } else {
-                bankSearchBtn.innerHTML = `<i class="fas fa-university"></i> 银行筛选`;
-                bankSearchBtn.classList.remove('active-filter');
-            }
+        if (!bankSearchBtn) return;
+        if (currentBankFilter) {
+            bankSearchBtn.innerHTML = `<i class="fas fa-filter"></i> ${escapeHTML(currentBankFilter)}`;
+            bankSearchBtn.classList.add('active-filter');
+            bankSearchBtn.title = `筛选银行: ${escapeHTML(currentBankFilter)}`;
+        } else {
+            bankSearchBtn.innerHTML = `<i class="fas fa-university"></i> 银行筛选`;
+            bankSearchBtn.classList.remove('active-filter');
+            bankSearchBtn.title = '';
         }
     }
 
-    // --- Donation Type Filter Specific Functions ---
+    // --- Donation Type Filter ---
     function openDonationTypeFilterModal() {
         createFilterModal({
-            modalId: 'donationTypeFilterModal',
-            title: '选择乐捐类型',
-            dataMap: DONATION_TYPES,
-            currentFilterValue: currentDonationTypeFilter,
-            filterKey: 'donationTypes',
-            filterAttribute: 'data-donation-type-name',
-            iconClass: 'fa-tag', // Single tag icon
-            allOptionText: '所有类型',
+            modalId: 'donationTypeFilterModal', title: '选择乐捐类型', dataMap: DONATION_TYPES,
+            currentFilterValue: currentDonationTypeFilter, filterKey: 'donationTypes', filterAttribute: 'data-donation-type-name',
+            iconClass: 'fa-tag', allOptionText: '所有类型',
             onSelect: (selectedTypeName) => {
                 currentDonationTypeFilter = selectedTypeName;
                 currentPage = 1;
@@ -226,39 +258,249 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function updateDonationTypeFilterButtonText() {
-        if (donationTypeFilterBtn) {
-            if (currentDonationTypeFilter) {
-                // Truncate long type names on the button for display
-                const displayName = currentDonationTypeFilter.length > 15
-                    ? currentDonationTypeFilter.substring(0, 12) + '...'
-                    : currentDonationTypeFilter;
-                donationTypeFilterBtn.innerHTML = `<i class="fas fa-filter"></i> ${escapeHTML(displayName)}`;
-                donationTypeFilterBtn.title = `筛选: ${escapeHTML(currentDonationTypeFilter)}`; // Full name on hover
-                donationTypeFilterBtn.classList.add('active-filter');
-            } else {
-                donationTypeFilterBtn.innerHTML = `<i class="fas fa-tags"></i> 类型筛选`;
-                donationTypeFilterBtn.title = ''; // Clear title
-                donationTypeFilterBtn.classList.remove('active-filter');
-            }
+        if (!donationTypeFilterBtn) return;
+        if (currentDonationTypeFilter) {
+            const displayName = currentDonationTypeFilter.length > 15 ? currentDonationTypeFilter.substring(0, 12) + '...' : currentDonationTypeFilter;
+            donationTypeFilterBtn.innerHTML = `<i class="fas fa-filter"></i> ${escapeHTML(displayName)}`;
+            donationTypeFilterBtn.title = `筛选类型: ${escapeHTML(currentDonationTypeFilter)}`;
+            donationTypeFilterBtn.classList.add('active-filter');
+        } else {
+            donationTypeFilterBtn.innerHTML = `<i class="fas fa-tags"></i> 类型筛选`;
+            donationTypeFilterBtn.title = '';
+            donationTypeFilterBtn.classList.remove('active-filter');
         }
     }
 
-    // --- Debounce Function ---
-    function debounce(func, wait) {
-        let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
+    // --- Date Range Filter ---
+
+    function openDateRangeModal() {
+        const modalId = 'dateRangeFilterModal';
+        const existingModal = document.getElementById(modalId);
+        if (existingModal) existingModal.remove();
+
+        const modalOverlay = document.createElement('div');
+        modalOverlay.className = 'modal-overlay';
+        modalOverlay.id = modalId;
+
+        const modalContent = document.createElement('div');
+        modalContent.className = 'modal-content';
+
+        modalContent.innerHTML = `
+            <div class="modal-header">
+                <h3>按日期范围筛选</h3>
+                <button class="close-btn" aria-label="关闭">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="range-filter-inputs">
+                    <div class="input-group">
+                        <label for="startDateInput">开始日期:</label>
+                        <input type="date" id="startDateInput" value="${formatDateForInput(currentStartDate)}">
+                    </div>
+                    <div class="input-group">
+                        <label for="endDateInput">结束日期:</label>
+                        <input type="date" id="endDateInput" value="${formatDateForInput(currentEndDate)}">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-warning clear-filter-btn">
+                    <i class="fas fa-times"></i> 清除筛选
+                </button>
+                <button class="btn btn-success apply-filter-btn">
+                    <i class="fas fa-check"></i> 应用筛选
+                </button>
+            </div>
+        `;
+
+        document.body.appendChild(modalOverlay);
+        modalOverlay.appendChild(modalContent);
+
+        // Show modal with transition
+        requestAnimationFrame(() => {
+             modalOverlay.classList.add('visible');
+        });
+
+
+        const closeModal = () => {
+            modalOverlay.classList.remove('visible');
+            modalOverlay.addEventListener('transitionend', () => modalOverlay.remove(), { once: true });
         };
+
+        // Event Listeners within the modal
+        modalContent.querySelector('.close-btn').addEventListener('click', closeModal);
+        modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(); });
+
+        const startDateInput = modalContent.querySelector('#startDateInput');
+        const endDateInput = modalContent.querySelector('#endDateInput');
+
+        modalContent.querySelector('.apply-filter-btn').addEventListener('click', () => {
+            const startDate = startDateInput.value;
+            const endDate = endDateInput.value;
+
+            // Basic Validation
+            if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
+                alert('开始日期不能晚于结束日期。');
+                return;
+            }
+
+            currentStartDate = startDate || null; // Store as YYYY-MM-DD or null
+            currentEndDate = endDate || null;   // Store as YYYY-MM-DD or null
+            currentPage = 1;
+            updateDateRangeFilterButton();
+            fetchDonations(searchInput.value);
+            closeModal();
+        });
+
+        modalContent.querySelector('.clear-filter-btn').addEventListener('click', () => {
+            currentStartDate = null;
+            currentEndDate = null;
+            currentPage = 1;
+            updateDateRangeFilterButton();
+            fetchDonations(searchInput.value);
+            closeModal();
+        });
     }
+
+    function updateDateRangeFilterButton() {
+        if (!dateRangeFilterBtn) return;
+        if (currentStartDate || currentEndDate) {
+            let text = '日期: ';
+            if (currentStartDate && currentEndDate) text += `${currentStartDate} 至 ${currentEndDate}`;
+            else if (currentStartDate) text += `从 ${currentStartDate}`;
+            else if (currentEndDate) text += `至 ${currentEndDate}`;
+
+            // Truncate if too long for button display
+            const shortText = text.length > 25 ? text.substring(0, 22) + '...' : text;
+            dateRangeFilterBtn.innerHTML = `<i class="fas fa-filter"></i> ${escapeHTML(shortText)}`;
+            dateRangeFilterBtn.title = escapeHTML(text); // Full range on hover
+            dateRangeFilterBtn.classList.add('active-filter');
+        } else {
+            dateRangeFilterBtn.innerHTML = `<i class="fas fa-calendar-alt"></i> 日期范围筛选`;
+            dateRangeFilterBtn.title = '';
+            dateRangeFilterBtn.classList.remove('active-filter');
+        }
+    }
+
+    // --- Amount Range Filter ---
+
+    function openAmountRangeModal() {
+        const modalId = 'amountRangeFilterModal';
+        const existingModal = document.getElementById(modalId);
+        if (existingModal) existingModal.remove();
+
+        const modalOverlay = document.createElement('div');
+        modalOverlay.className = 'modal-overlay';
+        modalOverlay.id = modalId;
+
+        const modalContent = document.createElement('div');
+        modalContent.className = 'modal-content';
+
+        modalContent.innerHTML = `
+            <div class="modal-header">
+                <h3>按金额范围筛选</h3>
+                <button class="close-btn" aria-label="关闭">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="range-filter-inputs">
+                    <div class="input-group">
+                        <label for="startPriceInput">最低金额 (RM):</label>
+                        <input type="number" id="startPriceInput" min="0" step="0.01" placeholder="例如 50.00" value="${currentStartPrice !== null ? escapeHTML(currentStartPrice) : ''}">
+                    </div>
+                    <div class="input-group">
+                        <label for="endPriceInput">最高金额 (RM):</label>
+                        <input type="number" id="endPriceInput" min="0" step="0.01" placeholder="例如 500.00" value="${currentEndPrice !== null ? escapeHTML(currentEndPrice) : ''}">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                 <button class="btn btn-warning clear-filter-btn">
+                    <i class="fas fa-times"></i> 清除筛选
+                </button>
+                <button class="btn btn-success apply-filter-btn">
+                    <i class="fas fa-check"></i> 应用筛选
+                </button>
+            </div>
+        `;
+
+        document.body.appendChild(modalOverlay);
+        modalOverlay.appendChild(modalContent);
+
+        // Show modal with transition
+        requestAnimationFrame(() => {
+            modalOverlay.classList.add('visible');
+        });
+
+        const closeModal = () => {
+            modalOverlay.classList.remove('visible');
+            modalOverlay.addEventListener('transitionend', () => modalOverlay.remove(), { once: true });
+        };
+
+        // Event Listeners within the modal
+        modalContent.querySelector('.close-btn').addEventListener('click', closeModal);
+        modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(); });
+
+        const startPriceInput = modalContent.querySelector('#startPriceInput');
+        const endPriceInput = modalContent.querySelector('#endPriceInput');
+
+        modalContent.querySelector('.apply-filter-btn').addEventListener('click', () => {
+            const startPriceStr = startPriceInput.value.trim();
+            const endPriceStr = endPriceInput.value.trim();
+
+            const startPrice = startPriceStr ? parseFloat(startPriceStr) : null;
+            const endPrice = endPriceStr ? parseFloat(endPriceStr) : null;
+
+            // Basic Validation
+            if (startPrice !== null && isNaN(startPrice)) { alert('最低金额无效。'); return; }
+            if (endPrice !== null && isNaN(endPrice)) { alert('最高金额无效。'); return; }
+            if (startPrice !== null && startPrice < 0) { alert('金额不能为负数。'); return; }
+            if (endPrice !== null && endPrice < 0) { alert('金额不能为负数。'); return; }
+            if (startPrice !== null && endPrice !== null && startPrice > endPrice) {
+                alert('最低金额不能高于最高金额。');
+                return;
+            }
+
+            currentStartPrice = startPrice;
+            currentEndPrice = endPrice;
+            currentPage = 1;
+            updateAmountRangeFilterButton();
+            fetchDonations(searchInput.value);
+            closeModal();
+        });
+
+        modalContent.querySelector('.clear-filter-btn').addEventListener('click', () => {
+            currentStartPrice = null;
+            currentEndPrice = null;
+            currentPage = 1;
+            updateAmountRangeFilterButton();
+            fetchDonations(searchInput.value);
+            closeModal();
+        });
+    }
+
+    function updateAmountRangeFilterButton() {
+        if (!amountRangeFilterBtn) return;
+        if (currentStartPrice !== null || currentEndPrice !== null) {
+            let text = '金额: ';
+            if (currentStartPrice !== null && currentEndPrice !== null) text += `RM ${currentStartPrice} - ${currentEndPrice}`;
+            else if (currentStartPrice !== null) text += `最低 RM ${currentStartPrice}`;
+            else if (currentEndPrice !== null) text += `最高 RM ${currentEndPrice}`;
+
+            // Truncate if too long
+            const shortText = text.length > 25 ? text.substring(0, 22) + '...' : text;
+            amountRangeFilterBtn.innerHTML = `<i class="fas fa-filter"></i> ${escapeHTML(shortText)}`;
+            amountRangeFilterBtn.title = escapeHTML(text); // Full range on hover
+            amountRangeFilterBtn.classList.add('active-filter');
+        } else {
+            amountRangeFilterBtn.innerHTML = `<i class="fas fa-dollar-sign"></i> 金额范围筛选`;
+            amountRangeFilterBtn.title = '';
+            amountRangeFilterBtn.classList.remove('active-filter');
+        }
+    }
+
 
     // --- Core Data Fetching and Display ---
     async function fetchDonations(query = "") {
-        loader.style.display = "flex"; // Use flex to center content
+        loader.style.display = "flex";
         donationTableBody.innerHTML = ""; // Clear previous results
 
         const params = new URLSearchParams({
@@ -268,38 +510,56 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         const searchTerm = query.trim();
-        let isSearching = false;
+        let isSearching = false; // Flag to indicate if *any* filter/search is active
 
-        // Add search term if present
+        // Add text search term
         if (searchTerm) {
             params.append("search", searchTerm);
             isSearching = true;
         }
 
-        // Add bank filter if active (using NAME)
+        // Add bank filter (using NAME)
         if (currentBankFilter) {
             params.append("Bank", currentBankFilter);
-            params.append("search", "true");
             isSearching = true;
         }
 
-        // Add donation type filter if active (using NAME)
+        // Add donation type filter (using NAME)
         if (currentDonationTypeFilter) {
             params.append("donationTypes", currentDonationTypeFilter);
-            params.append("search", "true");
             isSearching = true;
         }
 
-        // The backend API needs to know when to apply filters vs just listing all.
-        // Add a flag if any search/filter criteria are active.
-        // The original code added search=true only for bank filter or text search.
-        // Let's add it if *any* filter/search is active.
+        // Add date range filter
+        if (currentStartDate || currentEndDate) {
+            params.append("dateRange", "true");
+            if (currentStartDate) params.append("startDate", currentStartDate); // YYYY-MM-DD
+            if (currentEndDate) params.append("endDate", currentEndDate);     // YYYY-MM-DD
+            isSearching = true;
+        }
+
+        // Add amount range filter
+        if (currentStartPrice !== null || currentEndPrice !== null) {
+            params.append("priceRange", "true");
+            if (currentStartPrice !== null) params.append("startPrice", currentStartPrice.toString());
+            if (currentEndPrice !== null) params.append("endPrice", currentEndPrice.toString());
+            isSearching = true;
+        }
+
+        // IMPORTANT: Add search=true if *any* filter is active, as requested
         if (isSearching) {
-             // Check if the API actually needs this 'search=true' parameter
-             // If the API filters whenever Bank or donationTypes params are present,
-             // this might be redundant. Adjust based on API behavior.
-             // For now, assuming it might be needed:
-             // params.append("search", "true"); // Or whatever flag the API expects
+            // Only add 'search=true' if it's not already added by the text search itself
+            if (!params.has('search') || !searchTerm) {
+                 params.append("search", "true");
+            } else if (searchTerm && !params.get('search').includes(searchTerm)){
+                 // If text search exists, ensure the 'true' flag doesn't overwrite it.
+                 // This logic might need adjustment depending on how the API handles
+                 // multiple 'search' parameters or expects the flag.
+                 // A safer approach might be a dedicated 'filter_active=true' parameter if the API supports it.
+                 // For now, assuming the API handles 'search=term' and 'search=true' coexistently or 'search=true' is sufficient alongside other filters.
+                 // Let's stick to adding it if isSearching is true and no text term is present.
+                 if (!searchTerm) params.append("search", "true");
+            }
         }
 
 
@@ -311,45 +571,28 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         const url = `${API_BASE_URL}?${params.toString()}`;
-        console.log("API Request URL:", url);
+        console.log("API Request URL:", url); // Log the final URL for debugging
 
         try {
             const response = await fetch(url);
-            console.log("Raw response status:", response.status);
-
             if (!response.ok) {
                 const errorText = await response.text();
-                console.error(`Server error response: ${errorText}`);
-                throw new Error(`Server responded with status: ${response.status} ${response.statusText}`);
+                throw new Error(`Server responded with status: ${response.status}. ${errorText}`);
             }
 
             const data = await response.json();
             console.log("API Response Data:", data);
 
-            // Standardize data access (assuming API returns { data: [], total: N } or similar)
             if (data && typeof data === 'object') {
                 donationData = Array.isArray(data.data) ? data.data : [];
-                // Look for total in common places
-                const totalRecords = data.total || data.pagination?.total_records || donationData.length;
-                 totalDonations.textContent = totalRecords;
-                 totalPages = Math.ceil(parseInt(totalRecords) / itemsPerPage);
-                 // Ensure totalPages is at least 1 if there are records, or 0 if none
-                 if (totalRecords > 0 && totalPages === 0) totalPages = 1;
-                 if (totalRecords === 0) totalPages = 0;
-
+                const totalRecords = data.total || data.pagination?.total_records || (Array.isArray(data.data) ? data.data.length : 0); // Be careful with length if server paginates without total
+                totalDonations.textContent = totalRecords;
+                totalPages = itemsPerPage > 0 ? Math.ceil(parseInt(totalRecords) / itemsPerPage) : 0;
+                if (totalRecords > 0 && totalPages === 0) totalPages = 1; // Ensure at least one page if records exist
+                if (totalRecords === 0) totalPages = 0;
             } else {
-                 // Handle cases where the response might be just an array (less ideal)
-                 if (Array.isArray(data)) {
-                     donationData = data;
-                     totalDonations.textContent = data.length; // Might be inaccurate if paginated server-side without total
-                     // Estimate total pages if not provided - less reliable
-                     totalPages = (currentPage === 1 && data.length < itemsPerPage) ? 1 : Math.max(currentPage, 1);
-                     console.warn("API did not provide total records count; pagination might be limited.");
-                 } else {
-                    throw new Error("Invalid data format received from API.");
-                 }
+                throw new Error("Invalid data format received from API.");
             }
-
 
             displayDonations(donationData);
             updatePagination();
@@ -358,7 +601,6 @@ document.addEventListener("DOMContentLoaded", function () {
         } catch (error) {
             console.error("Error fetching or processing donations:", error);
             donationTableBody.innerHTML = `<tr><td colspan="10" class="error-message">加载乐捐记录失败. 错误: ${escapeHTML(error.message)}</td></tr>`;
-            // Reset state on error
             donationData = [];
             totalDonations.textContent = 0;
             totalPages = 0;
@@ -369,61 +611,44 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function mapColumnNameToApi(columnName) {
-        // Mapping from HTML data-column to API field names
         const mapping = {
-            'id': 'ID',
-            'donor_name': 'Name/Company_Name',
-            'donationTypes': 'donationTypes', // Assumes API uses this name
-            'Bank': 'Bank',                 // Assumes API uses this name
-            'membership': 'membership',
-            'payment_date': 'paymentDate',
-            'receipt_no': 'official_receipt_no',
-            'amount': 'amount',
-            'Remarks': 'Remarks'
+            'id': 'ID', 'donor_name': 'Name/Company_Name', 'donationTypes': 'donationTypes',
+            'Bank': 'Bank', 'membership': 'membership', 'payment_date': 'paymentDate',
+            'receipt_no': 'official_receipt_no', 'amount': 'amount', 'Remarks': 'Remarks'
         };
-        return mapping[columnName] || columnName; // Fallback to original name
+        return mapping[columnName] || columnName;
     }
 
     function displayDonations(donations) {
-        console.log("Attempting to display donations:", donations);
-        donationTableBody.innerHTML = ""; // Clear previous content
+        donationTableBody.innerHTML = "";
 
         if (!Array.isArray(donations) || donations.length === 0) {
             let message = '暂无乐捐记录';
-            if (searchInput.value.trim() || currentBankFilter || currentDonationTypeFilter) {
+            if (searchInput.value.trim() || currentBankFilter || currentDonationTypeFilter || currentStartDate || currentEndDate || currentStartPrice !== null || currentEndPrice !== null) {
                 message = '没有找到匹配的记录';
             }
             donationTableBody.innerHTML = `<tr><td colspan="10" class="no-data">${message}</td></tr>`;
             return;
         }
 
-        console.log(`Rendering ${donations.length} donation rows.`);
-
-        // Calculate starting display ID for the current page
         const startDisplayId = (currentPage - 1) * itemsPerPage + 1;
 
         donations.forEach((donation, index) => {
-            const databaseId = donation.ID || donation.id; // Get the actual ID
-            if (!databaseId) {
-                console.warn("Skipping donation row due to missing ID:", donation);
-                return; // Skip rendering if no ID
-            }
-            const displayId = startDisplayId + index; // Sequential ID for display
+            const databaseId = donation.ID || donation.id;
+            if (!databaseId) { console.warn("Skipping row, missing ID:", donation); return; }
+            const displayId = startDisplayId + index;
+
+            const donorName = donation['Name/Company_Name'] || '-';
+            const donationType = donation.donationTypes || '-';
+            const bank = donation.Bank || '-';
+            const membership = donation.membership || '非会员';
+            const paymentDate = formatDateTime(donation.paymentDate);
+            const receiptNo = donation['official_receipt_no'] || '-';
+            const amount = formatPrice(donation.amount);
+            const remarks = donation.Remarks || '';
 
             const row = document.createElement("tr");
-            row.setAttribute('id', `donation-row-${databaseId}`); // Use actual ID for the row ID
-
-            // Extract data, using fallbacks and mapping where needed
-            const donorName = donation['Name/Company_Name'] || donation.donor_name || '-';
-            // Directly use the name from the data if available, otherwise map ID (less likely needed now)
-            const donationType = donation.donationTypes || mapDonationTypeIdToName(donation.donation_type) || '-';
-            const bank = donation.Bank || mapBankIdToName(donation.bank) || '-';
-            const membership = donation.membership || '非会员'; // Localized text
-            const paymentDate = formatDateTime(donation.paymentDate || donation.payment_date);
-            const receiptNo = donation['official_receipt_no'] || donation.receipt_no || '-';
-            const amount = formatPrice(donation.amount);
-            const remarks = donation.Remarks || donation.remarks || ''; // Get full remarks
-
+            row.setAttribute('id', `donation-row-${databaseId}`);
             row.innerHTML = `
                 <td>${displayId}</td>
                 <td>${escapeHTML(donorName)}</td>
@@ -443,166 +668,89 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // --- Utility Functions ---
-
-    function truncateText(text, maxLength) {
-        if (!text) return '';
-        const escapedText = escapeHTML(text);
-        if (text.length > maxLength) {
-            // Add a title attribute for the full text tooltip
-            return `<span title="${escapedText}">${escapedText.substring(0, maxLength)}...</span>`;
-        }
-        return escapedText;
-    }
-
-    function escapeHTML(str) {
-        if (!str) return '';
-        return String(str)
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#039;');
-    }
-    
-
-    function formatDateTime(dateTimeStr) {
-        if (!dateTimeStr) return null; // Return null instead of empty string
-        try {
-            const date = new Date(dateTimeStr);
-            // Check if the date is valid
-            if (isNaN(date.getTime())) {
-                 console.warn("Invalid date format received:", dateTimeStr);
-                 return dateTimeStr; // Return original string if invalid
-            }
-            // Format to YYYY-MM-DD HH:MM (more standard)
-            return date.toLocaleString('sv-SE', { // Swedish locale gives YYYY-MM-DD HH:MM
-                 year: 'numeric',
-                 month: '2-digit',
-                 day: '2-digit',
-                 hour: '2-digit',
-                 minute: '2-digit',
-                 hour12: false // Use 24-hour format
-            });
-        } catch (e) {
-            console.error("Error formatting date:", dateTimeStr, e);
-            return dateTimeStr; // Return original on error
-        }
-    }
-
-
-    function formatPrice(price) {
-        const num = parseFloat(price);
-        if (isNaN(num)) return '-'; // Return dash if not a valid number
-        // Format as Malaysian Ringgit
-        return `RM ${num.toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-    }
-
-
     // --- Pagination ---
 
     function updatePagination() {
         if (!paginationContainer) return;
+        paginationContainer.innerHTML = ''; // Clear previous buttons
 
-        // Clear previous pagination buttons
-        paginationContainer.innerHTML = '';
+        const paginationControlsContainer = paginationContainer.closest('.pagination-container');
+        let paginationInfo = paginationControlsContainer.querySelector('.pagination-info');
 
-        // Handle case of no pages
+        // Remove existing jump section if it exists
+        if (paginationInfo) paginationInfo.remove();
+
         if (totalPages <= 0) {
-             prevPageButton.disabled = true;
-             nextPageButton.disabled = true;
-             document.querySelector('.pagination-container .items-per-page').style.display = 'none'; // Hide controls if no data
-             document.querySelector('.pagination-container .pagination-info')?.remove(); // Remove jump section
-             return;
+            prevPageButton.disabled = true;
+            nextPageButton.disabled = true;
+            paginationControlsContainer.querySelector('.items-per-page').style.display = 'none';
+            return;
         } else {
-             document.querySelector('.pagination-container .items-per-page').style.display = 'flex'; // Show controls
+             paginationControlsContainer.querySelector('.items-per-page').style.display = 'flex';
         }
 
-
-        // Enable/disable Prev/Next buttons
         prevPageButton.disabled = (currentPage <= 1);
         nextPageButton.disabled = (currentPage >= totalPages);
 
-        // Generate page number buttons
-        const MAX_VISIBLE_PAGES = 5; // Max number of page buttons to show (excluding first/last)
+        const MAX_VISIBLE_PAGES = 5;
         const buttons = [];
 
-        // Always show first page
-        buttons.push(createPageButton(1));
+        if (totalPages <= MAX_VISIBLE_PAGES + 2) { // Show all pages if total is small
+            for (let i = 1; i <= totalPages; i++) {
+                buttons.push(createPageButton(i));
+            }
+        } else { // Handle ellipsis logic
+            buttons.push(createPageButton(1)); // Always show first page
 
-        // Ellipsis after first page if needed
-        if (currentPage > MAX_VISIBLE_PAGES / 2 + 2) {
-            buttons.push(createEllipsis());
+            let start = Math.max(2, currentPage - Math.floor((MAX_VISIBLE_PAGES - 2) / 2));
+            let end = Math.min(totalPages - 1, currentPage + Math.ceil((MAX_VISIBLE_PAGES - 2) / 2));
+
+             // Adjust start/end if close to beginning/end
+             if (currentPage < MAX_VISIBLE_PAGES -1) {
+                 end = MAX_VISIBLE_PAGES -1;
+             }
+             if (currentPage > totalPages - (MAX_VISIBLE_PAGES - 2)) {
+                 start = totalPages - (MAX_VISIBLE_PAGES - 2);
+             }
+
+
+            if (start > 2) buttons.push(createEllipsis()); // Ellipsis after first
+
+            for (let i = start; i <= end; i++) {
+                buttons.push(createPageButton(i));
+            }
+
+            if (end < totalPages - 1) buttons.push(createEllipsis()); // Ellipsis before last
+
+            buttons.push(createPageButton(totalPages)); // Always show last page
         }
 
-        // Calculate start and end for middle pages
-        let startPage = Math.max(2, currentPage - Math.floor(MAX_VISIBLE_PAGES / 2));
-        let endPage = Math.min(totalPages - 1, currentPage + Math.floor(MAX_VISIBLE_PAGES / 2));
 
-        // Adjust start/end if near the beginning or end
-         if (currentPage <= MAX_VISIBLE_PAGES / 2 + 1) {
-            endPage = Math.min(totalPages - 1, MAX_VISIBLE_PAGES);
-        }
-         if (currentPage >= totalPages - MAX_VISIBLE_PAGES / 2) {
-            startPage = Math.max(2, totalPages - MAX_VISIBLE_PAGES + 1);
-        }
-
-
-        // Add middle page numbers
-        for (let i = startPage; i <= endPage; i++) {
-            buttons.push(createPageButton(i));
-        }
-
-        // Ellipsis before last page if needed
-        if (currentPage < totalPages - MAX_VISIBLE_PAGES / 2 - 1) {
-             buttons.push(createEllipsis());
-        }
-
-        // Always show last page (if more than 1 page)
-        if (totalPages > 1) {
-            buttons.push(createPageButton(totalPages));
-        }
-
-        // Add generated buttons to the DOM
         buttons.forEach(btn => paginationContainer.appendChild(btn));
 
+        // Add Page Jump section dynamically
+        paginationInfo = document.createElement('div');
+        paginationInfo.className = 'pagination-info';
+        paginationInfo.innerHTML = `
+           <span class="page-indicator" aria-live="polite">第 ${currentPage} / ${totalPages} 页</span>
+           ${totalPages > 1 ? `
+           <div class="page-jump">
+               <input type="number" id="pageInput" min="1" max="${totalPages}" placeholder="页码" aria-label="跳转到页码" class="page-input">
+               <button onclick="jumpToPage()" class="jump-btn" aria-label="跳转">跳转</button>
+           </div>` : ''}
+       `;
+        // Insert the jump section before the items-per-page selector
+        const itemsPerPageDiv = paginationControlsContainer.querySelector('.items-per-page');
+        paginationControlsContainer.insertBefore(paginationInfo, itemsPerPageDiv);
 
-         // Add Page Jump section (if it doesn't exist)
-         let paginationInfo = document.querySelector('.pagination-container .pagination-info');
-         if (!paginationInfo) {
-             paginationInfo = document.createElement('div');
-             paginationInfo.className = 'pagination-info';
-             // Insert it after the next page button (or adjust layout as needed)
-             nextPageButton.parentNode.insertBefore(paginationInfo, itemsPerPageSelect.parentNode);
-         }
 
-         paginationInfo.innerHTML = `
-            <span class="page-indicator" aria-live="polite">第 ${currentPage} / ${totalPages} 页</span>
-            ${totalPages > 1 ? `
-            <div class="page-jump">
-                <input type="number"
-                       id="pageInput"
-                       min="1"
-                       max="${totalPages}"
-                       placeholder="页码"
-                       aria-label="跳转到页码"
-                       class="page-input">
-                <button onclick="jumpToPage()" class="jump-btn" aria-label="跳转">跳转</button>
-            </div>` : ''}
-        `;
-
-         // Re-attach event listener for Enter key on page input
-         const pageInput = document.getElementById('pageInput');
-         if (pageInput) {
-             pageInput.addEventListener('keypress', (e) => {
-                 if (e.key === 'Enter') {
-                     e.preventDefault(); // Prevent potential form submission
-                     jumpToPage();
-                 }
-             });
-         }
+        const pageInput = document.getElementById('pageInput');
+        if (pageInput) {
+            pageInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') { e.preventDefault(); jumpToPage(); }
+            });
+        }
     }
-
 
     function createPageButton(page) {
         const button = document.createElement('button');
@@ -610,12 +758,8 @@ document.addEventListener("DOMContentLoaded", function () {
         button.dataset.page = page;
         button.textContent = page;
         button.setAttribute('aria-label', `第 ${page} 页`);
-        if (page === currentPage) {
-            button.setAttribute('aria-current', 'page');
-        }
-        button.addEventListener('click', function () {
-            changePage(parseInt(this.dataset.page));
-        });
+        if (page === currentPage) button.setAttribute('aria-current', 'page');
+        button.addEventListener('click', function () { changePage(parseInt(this.dataset.page)); });
         return button;
     }
 
@@ -627,90 +771,69 @@ document.addEventListener("DOMContentLoaded", function () {
         return span;
     }
 
-
     function changePage(page) {
         if (page >= 1 && page <= totalPages && page !== currentPage) {
             currentPage = page;
             fetchDonations(searchInput.value);
+            // Optional: Scroll to top of table after page change
+            // table.scrollIntoView({ behavior: 'smooth' });
         }
     }
 
-    // Make jumpToPage globally accessible if called via onclick
-    window.jumpToPage = function() {
+    window.jumpToPage = function() { // Make globally accessible
         const pageInput = document.getElementById('pageInput');
         if (!pageInput) return;
-
         const targetPage = parseInt(pageInput.value);
-
-        if (isNaN(targetPage) || targetPage < 1 || targetPage > totalPages) {
-            alert(`请输入 1 到 ${totalPages} 之间的有效页码`);
-            pageInput.focus(); // Keep focus on input for correction
-            pageInput.select(); // Select current input
-            return;
-        }
-
-        if (targetPage !== currentPage) {
+        if (!isNaN(targetPage) && targetPage >= 1 && targetPage <= totalPages) {
             changePage(targetPage);
+        } else {
+            alert(`请输入 1 到 ${totalPages} 之间的有效页码`);
+            pageInput.focus(); pageInput.select();
         }
-
-        pageInput.value = ''; // Clear input after jump
+        pageInput.value = ''; // Clear input
     }
 
     // --- Sorting ---
 
     function handleSortClick(columnName) {
+        if (!columnName) return; // Ignore clicks on non-sortable headers (like '操作')
         if (currentSortColumn === columnName) {
-            // Cycle through ASC -> DESC -> None
-            if (currentSortOrder === 'ASC') {
-                currentSortOrder = 'DESC';
-            } else if (currentSortOrder === 'DESC') {
-                 currentSortColumn = null; // Remove sorting
-                 currentSortOrder = 'ASC'; // Reset default order
-            }
+            currentSortOrder = (currentSortOrder === 'ASC') ? 'DESC' : 'ASC'; // Toggle order
+            // Optional: third click removes sort
+            // if (currentSortOrder === 'ASC') currentSortOrder = 'DESC';
+            // else if (currentSortOrder === 'DESC') { currentSortColumn = null; currentSortOrder = 'ASC'; }
         } else {
-            // New column selected, start with ASC
             currentSortColumn = columnName;
             currentSortOrder = 'ASC';
         }
-        currentPage = 1; // Reset to first page when sorting changes
-        // fetchDonations will handle updating icons via updateSortIcons
+        currentPage = 1;
         fetchDonations(searchInput.value);
     }
 
-
     function updateSortIcons() {
         tableHeaders.forEach(th => {
-            const icon = th.querySelector('i.fas'); // Target only Font Awesome icons
-            if (!icon) return; // Skip if no icon element found
-
-            // Reset classes first
+            const icon = th.querySelector('i.fas');
+            if (!icon) return;
             icon.classList.remove('fa-sort', 'fa-sort-up', 'fa-sort-down');
             th.removeAttribute('aria-sort');
-
-            if (th.dataset.column === currentSortColumn) {
-                // Add specific sort icon and ARIA attribute
-                if (currentSortOrder === 'ASC') {
-                    icon.classList.add('fa-sort-up');
-                    th.setAttribute('aria-sort', 'ascending');
+            if (th.dataset.column) { // Only add icons to sortable columns
+                if (th.dataset.column === currentSortColumn) {
+                    icon.classList.add(currentSortOrder === 'ASC' ? 'fa-sort-up' : 'fa-sort-down');
+                    th.setAttribute('aria-sort', currentSortOrder === 'ASC' ? 'ascending' : 'descending');
                 } else {
-                    icon.classList.add('fa-sort-down');
-                    th.setAttribute('aria-sort', 'descending');
+                    icon.classList.add('fa-sort'); // Default icon for other sortable columns
                 }
-            } else {
-                // Add default sort icon for non-active columns
-                icon.classList.add('fa-sort');
             }
         });
     }
 
-
     // --- Column Resizing ---
 
     function initializeResizableColumns() {
-        let currentResizer = null;
-        let startX, startWidth, thBeingResized;
+        let currentResizer = null, startX, startWidth, thBeingResized;
 
         tableHeaders.forEach(th => {
+            if (!th.dataset.column) return; // Don't add resizer to non-data columns like '操作'
             let resizer = th.querySelector('.resizer');
             if (!resizer) {
                 resizer = document.createElement('div');
@@ -719,18 +842,12 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             resizer.addEventListener('mousedown', (e) => {
-                // Prevent sorting when starting resize
-                e.stopPropagation();
-
+                e.stopPropagation(); // Prevent sorting
                 currentResizer = e.target;
                 thBeingResized = currentResizer.parentElement;
                 startX = e.pageX;
                 startWidth = thBeingResized.offsetWidth;
-
-                // Add resizing class to table container for cursor style
                 table.closest('.table-container')?.classList.add('resizing');
-
-                // Attach listeners to document for wider drag area
                 document.addEventListener('mousemove', handleMouseMove);
                 document.addEventListener('mouseup', handleMouseUp);
             });
@@ -739,37 +856,21 @@ document.addEventListener("DOMContentLoaded", function () {
         function handleMouseMove(e) {
             if (!currentResizer) return;
             const width = startWidth + (e.pageX - startX);
-            // Set a minimum width (e.g., 50px)
-            if (width >= 50) {
+            if (width >= 50) { // Min width
                 thBeingResized.style.width = `${width}px`;
-                // Adjust table layout dynamically if needed (might impact performance)
-                // table.style.tableLayout = 'auto'; // Temporarily allow auto layout
-                // table.style.tableLayout = 'fixed'; // Revert to fixed layout
             }
         }
 
         function handleMouseUp() {
             if (!currentResizer) return;
-
-            // Remove resizing class
             table.closest('.table-container')?.classList.remove('resizing');
-
-            // Remove document listeners
             document.removeEventListener('mousemove', handleMouseMove);
             document.removeEventListener('mouseup', handleMouseUp);
-
-            // Save the new widths
             saveColumnWidths();
-
-            // Reset state
-            currentResizer = null;
-            thBeingResized = null;
+            currentResizer = null; thBeingResized = null;
         }
-
-        // Load saved widths on initialization
-        loadColumnWidths();
+        loadColumnWidths(); // Load saved widths on init
     }
-
 
     function saveColumnWidths() {
         const columnWidths = {};
@@ -778,11 +879,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 columnWidths[th.dataset.column] = th.style.width;
             }
         });
-        try {
-            localStorage.setItem('donationTableColumnWidths', JSON.stringify(columnWidths));
-        } catch (e) {
-            console.error("Failed to save column widths to localStorage:", e);
-        }
+        try { localStorage.setItem('donationTableColumnWidths', JSON.stringify(columnWidths)); }
+        catch (e) { console.error("Failed to save column widths:", e); }
     }
 
     function loadColumnWidths() {
@@ -796,50 +894,39 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 });
             }
-        } catch (e) {
-            console.error('Failed to load or parse saved column widths:', e);
-            // Optionally clear invalid data: localStorage.removeItem('donationTableColumnWidths');
-        }
+        } catch (e) { console.error('Failed to load column widths:', e); }
     }
-
 
     // --- Event Listeners Setup ---
 
     // Debounced search input
     const debouncedSearch = debounce((value) => {
-        currentPage = 1; // Reset page on new search
+        currentPage = 1;
         fetchDonations(value);
-    }, 350); // 350ms delay
+    }, 350);
 
     if (searchInput) {
-        searchInput.addEventListener("input", function () {
-            debouncedSearch(this.value);
-        });
-        // Optional: Trigger search on Enter key immediately if needed
+        searchInput.addEventListener("input", function () { debouncedSearch(this.value); });
         searchInput.addEventListener("keypress", function (e) {
             if (e.key === "Enter") {
                 e.preventDefault();
-                // Clear any pending debounce timeout and search immediately
-                clearTimeout(debouncedSearch._timeoutId); // Access internal timeout if debounce function exposes it, or manage differently
+                debouncedSearch.clear(); // Clear pending debounce
                 currentPage = 1;
-                fetchDonations(this.value);
+                fetchDonations(this.value); // Search immediately
             }
         });
     }
 
     // Sorting listeners
     tableHeaders.forEach(th => {
-        th.addEventListener('click', function (e) {
-             // Only sort if the click is not on the resizer
+        th.addEventListener('click', (e) => {
              if (!e.target.classList.contains('resizer')) {
-                handleSortClick(this.dataset.column);
+                handleSortClick(th.dataset.column);
              }
         });
-        // Accessibility: Allow keyboard sorting
-        th.addEventListener('keydown', function (e) {
+        th.addEventListener('keydown', (e) => {
             if ((e.key === 'Enter' || e.key === ' ') && !e.target.classList.contains('resizer')) {
-                e.preventDefault();
-                handleSortClick(this.dataset.column);
+                e.preventDefault(); handleSortClick(th.dataset.column);
             }
         });
     });
@@ -848,152 +935,83 @@ document.addEventListener("DOMContentLoaded", function () {
     if (itemsPerPageSelect) {
         itemsPerPageSelect.addEventListener("change", function () {
             itemsPerPage = parseInt(this.value);
-            currentPage = 1; // Reset to page 1
+            currentPage = 1;
             fetchDonations(searchInput.value);
         });
     }
 
-     // Pagination: Prev/Next buttons (ensure listeners are attached once)
-     if (prevPageButton) {
-        prevPageButton.addEventListener('click', () => {
-            if (currentPage > 1) changePage(currentPage - 1);
-        });
-    }
-    if (nextPageButton) {
-        nextPageButton.addEventListener('click', () => {
-            if (currentPage < totalPages) changePage(currentPage + 1);
-        });
-    }
-
+     // Pagination: Prev/Next buttons
+     if (prevPageButton) prevPageButton.addEventListener('click', () => changePage(currentPage - 1));
+     if (nextPageButton) nextPageButton.addEventListener('click', () => changePage(currentPage + 1));
 
     // Filter buttons
-    if (bankSearchBtn) {
-        bankSearchBtn.addEventListener('click', openBankFilterModal);
-    }
-    if (donationTypeFilterBtn) {
-        donationTypeFilterBtn.addEventListener('click', openDonationTypeFilterModal);
-    }
+    if (bankSearchBtn) bankSearchBtn.addEventListener('click', openBankFilterModal);
+    if (donationTypeFilterBtn) donationTypeFilterBtn.addEventListener('click', openDonationTypeFilterModal);
+    if (dateRangeFilterBtn) dateRangeFilterBtn.addEventListener('click', openDateRangeModal);
+    if (amountRangeFilterBtn) amountRangeFilterBtn.addEventListener('click', openAmountRangeModal);
 
-    // --- Global Functions for Edit/Delete (called via onclick) ---
+    // --- Global Functions for Edit/Delete ---
     window.editDonation = function (id) {
         console.log("Navigating to edit page for ID:", id);
         window.location.href = `editDonate.html?id=${id}`;
     };
 
     window.deleteDonation = async function (id) {
-        if (!id) {
-            console.error("Delete failed: No ID provided.");
-            alert("删除失败：未提供记录ID。");
-            return;
-        }
+        if (!id) { console.error("Delete failed: No ID."); alert("删除失败：未提供记录ID。"); return; }
 
-        // Use SweetAlert for a nicer confirmation dialog, if available
-        const confirmationText = "确定要删除这个捐赠记录吗？此操作无法撤销。";
-        if (typeof Swal !== 'undefined') {
-             Swal.fire({
-                title: '请确认',
-                text: confirmationText,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: '是的，删除！',
-                cancelButtonText: '取消'
-             }).then(async (result) => {
-                if (result.isConfirmed) {
-                    await performDelete(id);
-                }
-             });
-        } else {
-             // Fallback to standard confirm
-             if (confirm(confirmationText)) {
-                await performDelete(id);
-             }
+        const result = await Swal.fire({
+            title: '请确认',
+            text: "确定要删除这个捐赠记录吗？此操作无法撤销。",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33', // Red for delete
+            cancelButtonColor: '#3085d6', // Blue for cancel
+            confirmButtonText: '是的，删除！',
+            cancelButtonText: '取消'
+        });
+
+        if (result.isConfirmed) {
+            await performDelete(id);
         }
     };
 
     async function performDelete(id) {
          console.log("Attempting to delete donation with ID:", id);
-         // Show some loading indicator if possible
+         // Optional: Show loading state on the delete button or overlay
          try {
-             const response = await fetch(`${API_BASE_URL}`, { // Send ID in body for DELETE
+             const response = await fetch(`${API_BASE_URL}`, {
                  method: "DELETE",
-                 headers: {
-                     "Content-Type": "application/json"
-                 },
-                 // Ensure body matches what the API expects for deletion
-                 body: JSON.stringify({ table: "donation_details", ID: id }),
+                 headers: { "Content-Type": "application/json" },
+                 body: JSON.stringify({ table: "donation_details", ID: id }), // Send ID in body
              });
 
-             console.log("Delete response status:", response.status);
-
-             // Try parsing JSON regardless of status code for potential error messages
              let data;
-             try {
-                 data = await response.json();
-                 console.log("Delete response data:", data);
-             } catch (jsonError) {
-                 console.error("Failed to parse delete response JSON:", jsonError);
-                 // If JSON parsing fails, use status text or default message
-                 if (!response.ok) {
-                    throw new Error(`删除失败，服务器响应: ${response.status} ${response.statusText}`);
-                 }
-                 // If response was OK but JSON failed, assume success but log warning
-                 data = { success: true, message: "删除成功，但响应格式无效。" };
-                 console.warn(data.message);
+             try { data = await response.json(); }
+             catch (jsonError) { data = { success: false, message: "响应格式无效" }; } // Handle non-JSON response
+
+             if (!response.ok || !data.success) {
+                 throw new Error(data.message || `删除失败，服务器响应: ${response.status}`);
              }
 
+             Swal.fire('已删除!', '捐赠记录已成功删除。', 'success');
 
-             if (!response.ok) {
-                 // Use message from API response if available, otherwise use status text
-                 const errorMessage = data?.message || data?.error || `服务器错误 ${response.status}`;
-                 throw new Error(errorMessage);
+             // Refresh data: Check if removing the last item on a page requires going back
+             const remainingRows = donationTableBody.querySelectorAll('tr').length - 1; // -1 because row isn't removed yet
+             if (currentPage > 1 && remainingRows <= 0) {
+                 currentPage--;
              }
-
-             // Check for success flag in the response body
-             if (data.success || data.status === 'success') {
-                 console.log("Deletion successful for ID:", id);
-                 // Optional: Show success message (e.g., using Toastr or SweetAlert)
-                 if (typeof Swal !== 'undefined') {
-                    Swal.fire('已删除!', '捐赠记录已成功删除。', 'success');
-                 } else {
-                    alert("捐赠记录已成功删除！");
-                 }
-
-                 // Remove the row directly from the table for immediate feedback
-                 const rowToRemove = document.getElementById(`donation-row-${id}`);
-                 if (rowToRemove) {
-                     rowToRemove.remove();
-                 }
-                 // Refresh data to ensure pagination and totals are correct
-                 // Check if removing the last item on a page requires going back a page
-                 const remainingRows = donationTableBody.querySelectorAll('tr').length;
-                 if (currentPage > 1 && remainingRows === 0) {
-                    currentPage--;
-                 }
-                 fetchDonations(searchInput.value);
-
-             } else {
-                 // API indicated failure even with a 2xx status
-                 throw new Error(data.message || "删除失败，未知错误。");
-             }
+             fetchDonations(searchInput.value); // Refresh the current (or previous) page
 
          } catch (error) {
              console.error("Error during delete operation:", error);
-              // Show error message (e.g., using Toastr or SweetAlert)
-              if (typeof Swal !== 'undefined') {
-                 Swal.fire('错误', `删除捐赠记录时出错: ${error.message}`, 'error');
-              } else {
-                 alert(`删除捐赠记录时出错: ${error.message}`);
-              }
+             Swal.fire('错误', `删除捐赠记录时出错: ${error.message}`, 'error');
          } finally {
-             // Hide loading indicator if shown
+             // Optional: Hide loading state
          }
      }
 
-
     // --- Initializations ---
-    initializeResizableColumns(); // Initialize column resizing
-    initializeFilters();          // Fetch filter data and then the initial donation list
+    initializeResizableColumns(); // Setup column resizing
+    initializeFilters();          // Fetch Bank/Type data and then the initial donation list
 
 }); // End DOMContentLoaded
