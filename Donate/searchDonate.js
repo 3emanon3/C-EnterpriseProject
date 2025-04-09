@@ -979,7 +979,7 @@ document.addEventListener("DOMContentLoaded", function () {
          console.log("Attempting to delete donation with ID:", id);
          // Optional: Show loading state on the delete button or overlay
          try {
-             const response = await fetch(`${API_BASE_URL}`, {
+             const response = await fetch(`${API_BASE_URL}?table=donation&ID=${id}`, {
                  method: "DELETE",
                  headers: { "Content-Type": "application/json" },
                  body: JSON.stringify({ table: "donation_details", ID: id }), // Send ID in body
@@ -989,7 +989,7 @@ document.addEventListener("DOMContentLoaded", function () {
              try { data = await response.json(); }
              catch (jsonError) { data = { success: false, message: "响应格式无效" }; } // Handle non-JSON response
 
-             if (!response.ok || !data.success) {
+             if (!response.ok || data.status !== "success") {
                  throw new Error(data.message || `删除失败，服务器响应: ${response.status}`);
              }
 

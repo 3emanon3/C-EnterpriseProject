@@ -172,7 +172,7 @@ h1 {
 .search-stats {
     font-size: 14px;
     color: var(--light-text-color);
-    background: rgba(0,0,0,0.2);
+    background: var(--background-color);
     padding: 8px 15px;
     border-radius: 4px;
     display: inline-block;
