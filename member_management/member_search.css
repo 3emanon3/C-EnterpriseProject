@@ -240,6 +240,32 @@ th, td {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    position: relative;
+}
+
+th::after, td::after {
+    content: "";
+    position: absolute;
+    top: 10px; /* 顶部留出空间 */
+    right: 0;
+    width: 1px;
+    height: calc(100% - 20px); /* 高度减少，使分隔线不连贯 */
+    background-image: linear-gradient(
+        to bottom,
+        transparent,
+        var(--border-color) 15%,
+        var(--border-color) 50%,
+        var(--border-color) 85%,
+        transparent
+    );
+    background-size: 4px 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.8; /* 稍微降低不透明度，使效果更柔和 */
+}
+
+th:last-child::after, td:last-child::after {
+    display: none; /* 最后一列不显示分隔线 */
 }
 
 
@@ -694,6 +720,23 @@ tr:hover {
         word-break: break-word;
         /* Remove fixed width overrides for mobile, let them wrap */
         width: auto !important;
+        position: relative; /* 确保伪元素定位正确 */
+    }
+    
+    /* 调整移动设备上的分隔线样式 */
+    th::after, td::after {
+        top: 3px; /* 顶部留出更少空间 */
+        height: calc(100% - 6px); /* 高度减少，使分隔线在移动设备上更短 */
+        background-image: linear-gradient(
+            to bottom,
+            transparent,
+            var(--border-color) 15%,
+            var(--border-color) 50%,
+            var(--border-color) 85%,
+            transparent
+        );
+        background-size: 3px 100%; /* 移动设备上稍微窄一点 */
+        opacity: 0.7; /* 移动设备上稍微更透明 */
     }
     th.Action {
         width: auto !important; /* Let action column resize too */
@@ -782,7 +825,7 @@ tr:hover {
     }
 
     #memberTable th {
-        border-right: 1px solid var(--border-color); /* Thinner border */
+        /* 移除右侧边框，使用伪元素实现不连贯分隔线 */
         position: relative;
     }
 
