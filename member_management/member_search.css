@@ -444,7 +444,7 @@ tr:hover {
     padding: 8px;
     position: absolute;
     z-index: 1000;
-    bottom: 125%; /* Position above the button */
+    top: 125%; /* Position above the button */
     left: 50%;
     margin-left: -200px; /* Center tooltip (width/2) */
     opacity: 0;
