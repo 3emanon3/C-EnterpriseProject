@@ -210,7 +210,8 @@ document.addEventListener('DOMContentLoaded', function() {
             let parsedData;
             try { parsedData = JSON.parse(rawResponse); } catch (e) { throw new Error('API返回格式错误: ' + rawResponse); }
 
-            if (parsedData.status === 'success' && parsedData.memberId) {
+            if (parsedData.status === 'success' && parsedData.ids && parsedData.ids.length > 0) {
+                const memberId = parsedData.ids[0];
                 alert('塾员添加成功！');
                 // Handle redirection
                 const designationType = parseInt(data['Designation_of_Applicant'], 10);
@@ -223,7 +224,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                     window.location.href = redirectUrl.toString();
                 } else {
-                    window.location.href = `member_search.html?add=success&id=${parsedData.memberId}`;
+                    window.location.href = `member_search.html?add=success&id=${memberId}`;
                 }
             } else {
                 throw new Error(parsedData.message || parsedData.error || '添加塾员失败，未知错误');
