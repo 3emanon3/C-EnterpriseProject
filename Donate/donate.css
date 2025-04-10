@@ -108,6 +108,10 @@ legend {
 
 .form-group {
     margin-bottom: 1rem;
+    position: relative; /* Add position relative to container */
+    display: flex; /* Use flexbox to align items horizontally */
+    align-items: flex-start; /* Align items to the top */
+    gap: 8px; 
 }
 
 .form-group:last-child {
@@ -369,3 +373,35 @@ textarea {
     cursor: pointer;
 }
 
+/* Make inputs and selects take up available space but allow room for buttons */
+.form-group input,
+.form-group select {
+    flex: 1; /* Take available space */
+}
+
+/* Style for the add button */
+.btn-add-type {
+    flex-shrink: 0; /* Prevent button from shrinking */
+    height: 38px; /* Match input/select height */
+    width: 38px; /* Fixed width */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0; /* Remove any top margin */
+}
+
+/* For responsive design, adjust at smaller screen sizes */
+@media (max-width: 768px) {
+    .form-group {
+        flex-wrap: wrap; /* Allow wrapping on small screens */
+    }
+    
+    .form-group input,
+    .form-group select {
+        width: calc(100% - 46px); /* Adjust width to leave room for button */
+    }
+    
+    .btn-add-type {
+        margin-top: 0;
+    }
+}

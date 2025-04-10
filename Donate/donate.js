@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const donationId = new URLSearchParams(window.location.search).get('id');
     const membershipSelect = document.getElementById('membership');
     const newMemberId = new URLSearchParams(window.location.search).get('memberId');
-   
+
     // 模态框元素
     const memberSearchModal = document.getElementById('memberSearchModal');
     const modalClose = document.querySelector('.close');
@@ -24,36 +24,216 @@ document.addEventListener('DOMContentLoaded', function() {
     let totalItems = 0;
     let currentSearchTerm = '';
 
-    const bankSelect = document.getElementById('bank');
-    const donationTypeSelect  = document.getElementById('donationTypes');
+    const addBankBtn = document.getElementById('addBankBtn');
+    const addDonationTypeBtn = document.getElementById('addDonationTypeBtn');
 
-    // Get selected option
-const selectedDonationType = donationTypeSelect.options[donationTypeSelect.selectedIndex];
-const selectedBank = bankSelect.options[bankSelect.selectedIndex];
+ if (addBankBtn) {
+        addBankBtn.addEventListener('click', () => showAddOptionModal('bank', '添加新银行'));
+    }
+    
+    if (addDonationTypeBtn) {
+        addDonationTypeBtn.addEventListener('click', () => showAddOptionModal('donationTypes', '添加新乐捐类型'));
+    }
 
-if (selectedDonationType && selectedDonationType.value) {
-    data.donationTypes = selectedDonationType.value;
-}
+    createAddOptionModal();
 
-if (selectedBank && selectedBank.value) {
-    data.Bank = selectedBank.value;
-}
+    function setupAddOptionButtons() {
+        const addBankBtn = document.querySelector('.btn-add-type[data-target="bank"]') || 
+                           document.querySelector('.form-group:has(#bank) .btn-add-type');
+        
+        const addDonationTypeBtn = document.querySelector('.btn-add-type[data-target="donationTypes"]') || 
+                                  document.querySelector('.form-group:has(#donationTypes) .btn-add-type');
+    
+        if (addBankBtn) {
+            addBankBtn.addEventListener('click', () => showAddOptionModal('bank', '添加新银行'));
+        }
+        
+        if (addDonationTypeBtn) {
+            addDonationTypeBtn.addEventListener('click', () => showAddOptionModal('donationTypes', '添加新乐捐类型'));
+        }
+    }
+    
+    function createAddOptionModal() {
+        // Check if modal already exists
+        if (document.getElementById('addOptionModal')) return;
+        
+        const modal = document.createElement('div');
+        modal.id = 'addOptionModal';
+        modal.className = 'modal';
+        modal.style.display = 'none';
+        
+        modal.innerHTML = `
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="addOptionModalTitle">添加新选项</h2>
+                    <span class="close">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="newOptionValue">选项名称</label>
+                        <input type="text" id="newOptionValue" placeholder="输入新选项名称" required>
+                    </div>
+                    <input type="hidden" id="targetSelectId">
+                    <div class="form-actions">
+                        <button id="saveNewOptionBtn" class="btn btn-primary">保存</button>
+                        <button id="cancelNewOptionBtn" class="btn btn-secondary">取消</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // Add event listeners for the modal
+        const closeBtn = modal.querySelector('.close');
+        const saveBtn = modal.querySelector('#saveNewOptionBtn');
+        const cancelBtn = modal.querySelector('#cancelNewOptionBtn');
+        
+        closeBtn.addEventListener('click', hideAddOptionModal);
+        cancelBtn.addEventListener('click', hideAddOptionModal);
+        
+        // When click outside modal, close it
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                hideAddOptionModal();
+            }
+        });
+        
+        // Save button handler
+        saveBtn.addEventListener('click', saveNewOption);
+    }
+   
+    function showAddOptionModal(targetId, title) {
+        const modal = document.getElementById('addOptionModal');
+        if (!modal) return;
+        
+        // Set the target select element ID
+        document.getElementById('targetSelectId').value = targetId;
+        
+        // Set the modal title
+        document.getElementById('addOptionModalTitle').textContent = title;
+        
+        // Clear the input field
+        document.getElementById('newOptionValue').value = '';
+        
+        // Show the modal
+        modal.style.display = 'block';
+        
+        // Focus the input field
+        document.getElementById('newOptionValue').focus();
+    }
 
-    addButtonNextToDropdown(bankSelect, 'addBankBtn', '添加新银行');
-addButtonNextToDropdown(donationTypeSelect , 'addDonationTypeBtn', '添加新乐捐类型');
+    function hideAddOptionModal() {
+        const modal = document.getElementById('addOptionModal');
+        if (modal) {
+            modal.style.display = 'none';
+        }
+    }
 
-// Remove the custom options from the dropdowns since we'll use buttons instead
-removeCustomOptions(bankSelect);
-removeCustomOptions(donationTypeSelect );
+    async function saveNewOption() {
+        const newValue = document.getElementById('newOptionValue').value.trim();
+        const targetId = document.getElementById('targetSelectId').value;
+        
+        if (!newValue) {
+            alert('请输入选项名称');
+            return;
+        }
+        
+        // Determine which type of option we're adding
+        let optionType;
+        if (targetId === 'bank') {
+            optionType = 'bank';
+        } else if (targetId === 'donationTypes') {
+            optionType = 'donation_type';
+        } else {
+            alert('不支持的选项类型');
+            hideAddOptionModal();
+            return;
+        }
+        
+        // Show loading indicator
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        if (loadingIndicator) {
+            loadingIndicator.style.display = 'block';
+        }
 
-// Add event listeners for the buttons
-document.getElementById('addBankBtn').addEventListener('click', function() {
-    showAddItemModal('银行', 'bank');
-});
+        const payload = {
+            action: 'add_option',
+            table: 'donationtypes',
+            type: optionType,
+            value: newValue,
+            name: newValue,
+            description: `New ${optionType} option` // Additional field
+        };
+        console.log('Sending request payload:', payload);
+        
+        console.log('Sending request to add option:', {
+            endpoint: `${API_BASE_URL}?table=donationtypes`,
+            data: {
+                type: optionType,
+                value: newValue
+            }
+        });
 
-document.getElementById('addDonationTypeBtn').addEventListener('click', function() {
-    showAddItemModal('乐捐类型', 'donationtypes');
-});
+        console.log('Server response:', data);
+
+        try {
+            // Make API call to save the new option
+            const response = await fetch(`${API_BASE_URL}?table=donationtypes`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({payload})
+            });
+            
+            const rawResponse = await response.text();
+            console.log('Raw API Response:', rawResponse);
+            
+            let data;
+            try {
+                data = JSON.parse(rawResponse);
+            } catch (e) {
+                console.error('Error parsing API response:', e);
+                alert('API返回格式错误: ' + rawResponse);
+                return;
+            }
+            
+            console.log('Parsed response data:', data);
+            
+            if (data.status === 'success') {
+                // Add the new option to the select element
+                const newOption = document.createElement('option');
+                newOption.value = data.id || newValue; 
+                newOption.textContent = newValue;
+                targetSelect.appendChild(newOption);
+                
+                // Select the new option
+                targetSelect.value = newValue;
+                
+                // Hide the modal
+                hideAddOptionModal();
+                
+                // Show success message
+                alert(`成功添加新${optionType === 'bank' ? '银行' : '乐捐类型'}: ${newValue}`);
+                setTimeout(() => {
+                    initializeDropdowns();
+                }, 1000);
+            } else {
+                const errorMsg = data.message || '未知错误';
+                console.error('API returned error:', errorMsg);
+                alert(`添加失败: ${data.message || '未知错误'}`);
+            }
+        } catch (error) {
+            console.error('添加新选项出错:', error);
+            alert('添加新选项时出错: ' + error.message);
+        } finally {
+            // Hide loading indicator
+            if (loadingIndicator) {
+                loadingIndicator.style.display = 'none';
+            }
+        }
+    }
 
     // Initialize
     if (donationId) {
@@ -518,12 +698,6 @@ document.getElementById('addDonationTypeBtn').addEventListener('click', function
                 // Handle special conversions
                 if (mappedKey === 'amount' && value) {
                     data[mappedKey] = parseFloat(parseFloat(value).toFixed(2));
-                } else if (mappedKey === 'payment_date' && value) {
-                    const date = new Date(value);
-                    const year = date.getFullYear();
-                    const month = String(date.getMonth() + 1).padStart(2, '0');
-                    const day = String(date.getDate()).padStart(2, '0');
-                    data[mappedKey] = `${year}-${month}-${day}`;
                 } else {
                     data[mappedKey] = value;
                 }
@@ -532,7 +706,6 @@ document.getElementById('addDonationTypeBtn').addEventListener('click', function
                 // For unmapped fields (except special handling ones)
                 data[key] = value;
             }
-
         });
 
         // Handle membership value from select
@@ -581,6 +754,14 @@ document.getElementById('addDonationTypeBtn').addEventListener('click', function
         if (data.membership !== null && data.membership.trim() === '') {
             data.membership = null;
             console.log('Final check: Empty membership ID, setting to null');
+        }
+
+        if (data.paymentDate) {
+            const date = new Date(data.paymentDate);
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            data.paymentDate = `${year}-${month}-${day}`;
         }
         
         console.log('Final data being sent:', JSON.stringify(data));
@@ -667,31 +848,9 @@ document.getElementById('addDonationTypeBtn').addEventListener('click', function
     // Populate form with donation data - UPDATED to handle membership IDs correctly
     function populateForm(donation) {
         document.getElementById('nameCompany').value = donation.donor_name || '';
-        document.getElementById('donationTypes').value = donation.donationTypes || '';
-        document.getElementById('bank').value = donation.Bank || '';
+        document.getElementById('donationTypes').value = donation.donation_type || '';
+        document.getElementById('bank').value = donation.bank || '';
         
-          // For donation type, need to select by ID
-    if (donation.donationTypes) {
-        const donationTypeSelect = document.getElementById('donationTypes');
-        // Loop through options to find matching ID
-        for (let i = 0; i < donationTypeSelect.options.length; i++) {
-            if (donationTypeSelect.options[i].value == donation.donationTypes) {
-                donationTypeSelect.selectedIndex = i;
-                break;
-            }
-        }
-    }
-    
-    // Same for bank selection
-    if (donation.Bank) {
-        const bankSelect = document.getElementById('bank');
-        for (let i = 0; i < bankSelect.options.length; i++) {
-            if (bankSelect.options[i].value == donation.Bank) {
-                bankSelect.selectedIndex = i;
-                break;
-            }
-        }
-    }
         // Handle membership field with proper display
         if (donation.membership) {
             // 保持membership的原始格式，不再使用parseInt
@@ -774,22 +933,10 @@ document.getElementById('addDonationTypeBtn').addEventListener('click', function
         loadingIndicator.style.display = 'none';
     }
 
+    // Find the existing select elements
+    const bankSelect = document.getElementById('bank');
+    const donationTypesSelect = document.getElementById('donationTypes');
 
-
-    
-
-
-    function resetSelectToDefault(selectElement) {
-        // Reset to first non-disabled option
-        for (let i = 0; i < selectElement.options.length; i++) {
-            if (!selectElement.options[i].disabled && selectElement.options[i].value !== 'custom') {
-                selectElement.selectedIndex = i;
-                break;
-            }
-        }
-    }
-
-   
     
     // Function to save form data to session storage
     function saveFormDataToSession() {
@@ -806,263 +953,10 @@ document.getElementById('addDonationTypeBtn').addEventListener('click', function
         sessionStorage.setItem('donationFormData', JSON.stringify(formData));
     }
     
-    // Function to add a button next to each dropdown
-function addButtonNextToDropdown(selectElement, buttonId, buttonText) {
-    // Create a container div if it doesn't exist
-    let container = selectElement.parentElement;
-    
-    // Check if the parent is already a flex container
-    if (!container.classList.contains('input-group')) {
-        // Create a new container
-        container = document.createElement('div');
-        container.classList.add('input-group');
-        
-        // Replace the select with the container
-        selectElement.parentElement.insertBefore(container, selectElement);
-        container.appendChild(selectElement);
+    // Initialize form data from session storage if available
+    if (!donationId) {
+        restoreFormDataFromSession();
     }
-    
-    // Create add button
-    const addButton = document.createElement('button');
-    addButton.type = 'button';
-    addButton.id = buttonId;
-    addButton.className = 'btn btn-outline-secondary';
-    addButton.textContent = buttonText;
-    
-    // Add button to container
-    container.appendChild(addButton);
-}
-
-// Function to remove custom options from dropdown
-function removeCustomOptions(selectElement) {
-    // Remove separator and custom option
-    for (let i = selectElement.options.length - 1; i >= 0; i--) {
-        if (selectElement.options[i].disabled || selectElement.options[i].value === 'custom') {
-            selectElement.remove(i);
-        }
-    }
-}
-
-// Function to show a modal for adding a new item
-function showAddItemModal(itemType, apiField) {
-    // Create modal container if it doesn't exist
-    let modalContainer = document.getElementById('addItemModal');
-    if (!modalContainer) {
-        modalContainer = document.createElement('div');
-        modalContainer.id = 'addItemModal';
-        modalContainer.className = 'modal';
-        modalContainer.innerHTML = `
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 id="modalTitle">添加新项目</h2>
-                    <span class="close">&times;</span>
-                </div>
-                <div class="modal-body">
-                    <label for="newItemInput" id="modalLabel">项目名称:</label>
-                    <input type="text" id="newItemInput" class="form-control">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" id="saveNewItem" class="btn btn-primary">保存</button>
-                    <button type="button" id="cancelNewItem" class="btn btn-secondary">取消</button>
-                </div>
-            </div>
-        `;
-        document.body.appendChild(modalContainer);
-        
-        // Add CSS for the modal
-        const modalStyle = document.createElement('style');
-        modalStyle.textContent = `
-            .modal {
-                display: none;
-                position: fixed;
-                z-index: 1000;
-                left: 0;
-                top: 0;
-                width: 100%;
-                height: 100%;
-                background-color: rgba(0,0,0,0.5);
-            }
-            .modal-content {
-                background-color: #fefefe;
-                margin: 15% auto;
-                padding: 20px;
-                border: 1px solid #888;
-                width: 400px;
-                border-radius: 5px;
-            }
-            .modal-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                border-bottom: 1px solid #eee;
-                padding-bottom: 10px;
-                margin-bottom: 15px;
-            }
-            .modal-body {
-                margin-bottom: 15px;
-            }
-            .modal-footer {
-                border-top: 1px solid #eee;
-                padding-top: 15px;
-                text-align: right;
-            }
-            .close {
-                color: #aaa;
-                font-size: 28px;
-                font-weight: bold;
-                cursor: pointer;
-            }
-            .close:hover {
-                color: black;
-            }
-            .btn {
-                margin-left: 10px;
-            }
-        `;
-        document.head.appendChild(modalStyle);
-        
-        // Close modal events
-        document.querySelector('.close').addEventListener('click', closeModal);
-        document.getElementById('cancelNewItem').addEventListener('click', closeModal);
-        window.addEventListener('click', function(event) {
-            if (event.target === modalContainer) {
-                closeModal();
-            }
-        });
-    }
-    
-    // Set modal content
-    document.getElementById('modalTitle').textContent = `添加新${itemType}`;
-    document.getElementById('modalLabel').textContent = `${itemType}名称:`;
-    document.getElementById('newItemInput').value = '';
-    document.getElementById('newItemInput').focus();
-    
-    // Show modal
-    modalContainer.style.display = 'block';
-    
-    // Save button event
-    const saveButton = document.getElementById('saveNewItem');
-    
-    // Remove any existing event listeners
-    const newSaveButton = saveButton.cloneNode(true);
-    saveButton.parentNode.replaceChild(newSaveButton, saveButton);
-    
-    // Add new event listener
-    newSaveButton.addEventListener('click', function() {
-        const newValue = document.getElementById('newItemInput').value.trim();
-        if (newValue) {
-            addNewItem(newValue, itemType, apiField);
-        } else {
-            alert(`请输入${itemType}名称`);
-        }
-    });
-    
-    // Add Enter key support
-    document.getElementById('newItemInput').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            const newValue = this.value.trim();
-            if (newValue) {
-                addNewItem(newValue, itemType, apiField);
-            } else {
-                alert(`请输入${itemType}名称`);
-            }
-        }
-    });
-}
-
-// Function to close the modal
-function closeModal() {
-    document.getElementById('addItemModal').style.display = 'none';
-}
-
-// Function to add a new item via API
-function addNewItem(newValue, itemType, apiField) {
-    
-    // Show loading indicator
-    showLoading();
-    
-    // Save current form data to session storage
-    saveFormDataToSession();
-    
-    // Create request data based on API field
-    let requestData = {};
-    let tableEndpoint = '';
-
-    if (apiField === 'bank') {
-        tableEndpoint = 'bank';
-        requestData = {
-            action: 'add_bank',
-            Bank: newValue
-        };
-    } else if (apiField === 'donationtypes') {
-        tableEndpoint = 'donationtypes';
-        requestData = {
-            action: 'add_donation_type',
-            donationTypes: newValue
-        };
-    }
-
-    console.log('Sending request to add new item:', tableEndpoint, requestData);
-
-    // Send API request to add new option
-    fetch(`${API_BASE_URL}?table=${tableEndpoint}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(requestData)
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.text();
-    })
-    .then(rawResponse => {
-        console.log('Raw API Response:', rawResponse);
-        
-        let data;
-        try {
-            data = JSON.parse(rawResponse);
-        } catch (e) {
-            throw new Error('API returned invalid JSON: ' + rawResponse);
-        }
-        hideLoading();
-        
-        if (data.status === 'success') {
-            // Close the modal
-            closeModal();
-            
-            // Get the appropriate select element
-            let selectElement;
-            if (apiField === 'bank') {
-                selectElement = document.getElementById('bank');
-            } else if (apiField === 'donationtypes') {
-                selectElement = document.getElementById('donationTypes');
-            }
-            
-            // Create new option
-            const newOption = document.createElement('option');
-            newOption.value = newValue;
-            newOption.textContent = newValue;
-            
-            // Add to the dropdown
-            selectElement.appendChild(newOption);
-            
-            // Select the new option
-            selectElement.value = newValue;
-            
-            alert(`${itemType}添加成功！`);
-        } else {
-            alert(`添加新${itemType}失败: ${data.message || '未知错误'}`);
-        }
-    })
-    .catch(error => {
-        hideLoading();
-        console.error(`添加${itemType}错误:`, error);
-        alert(`添加新${itemType}时出错: ${error.message}`);
-    });
-}
    
     
     
@@ -1070,42 +964,27 @@ function addNewItem(newValue, itemType, apiField) {
     // Initialize dropdowns with options from API
     async function initializeDropdowns() {
         try {
-            const response = await fetch(`${API_BASE_URL}?table=bank&action=get_banks`);
-            const bankData  = await response.json();
-            console.log('Bank data:', bankData);
+            const response = await fetch(`${API_BASE_URL}?table=donationtypes`);
+            const data = await response.json();
             
-            if (bankData.data && Array.isArray(bankData.data)) {
-                // New API format
-                populateDropdownWithIds(bankSelect, bankData.data, 'id', 'Bank');
-            } else if (bankData.status === 'success' && bankData.banks) {
-                // Original expected format
-                populateDropdownWithIds(bankSelect, bankData.banks, 'id', 'Bank');
-            } else {
-                console.error('Failed to get bank data or invalid data structure:', bankData);
+           if (data.status === 'success' && data.options) {
+            // Populate bank dropdown
+            if (data.options.bank && Array.isArray(data.options.bank)) {
+                populateDropdown(bankSelect, data.options.bank);
             }
-                
-                const donationTypesResponse = await fetch(`${API_BASE_URL}?table=donationtypes&action=get_donation_types`);
-                const donationTypesData = await donationTypesResponse.json();
-                console.log('Donation types data:', donationTypesData);
-
-                // Populate donation types dropdown
-                if (donationTypesData.data && Array.isArray(donationTypesData.data)) {
-                    // The API is returning data in a different format
-                    populateDropdownWithIds(donationTypeSelect, donationTypesData.data, 'id', 'donationTypes');
-                } else if (donationTypesData.status === 'success' && donationTypesData.types) {
-                    // Original expected format
-                    populateDropdownWithIds(donationTypeSelect, donationTypesData.types, 'id', 'donationTypes');
-                } else {
-                    console.error('Failed to get donation types or invalid data structure:', donationTypesData);
-                }
             
+            // Populate donation types dropdown
+            if (data.options.donation_type && Array.isArray(data.options.donation_type)) {
+                populateDropdown(donationTypesSelect, data.options.donation_type);
+            }
+        }
         } catch (error) {
             console.error('加载下拉选项错误:', error);
         }
     }
     
     // Function to populate dropdown with options
-    function populateDropdownWithIds(selectElement, options, idField, valueField) {
+    function populateDropdown(selectElement, options) {
         // Save current value
         const currentValue = selectElement.value;
         
@@ -1117,10 +996,11 @@ function addNewItem(newValue, itemType, apiField) {
         // Add new options
         options.forEach(option => {
             const optionElement = document.createElement('option');
-            optionElement.value = option[idField];    
-            optionElement.textContent = option[valueField];
+            optionElement.value = option;
+            optionElement.textContent = option;
             selectElement.appendChild(optionElement);
-        });    
+        });
+        
         // Restore previous value if exists
         if (currentValue && currentValue !== 'custom') {
             // Check if the value still exists in options
@@ -1132,13 +1012,11 @@ function addNewItem(newValue, itemType, apiField) {
             }
         }
     }
+      // Create the add option modal
+      createAddOptionModal();
     
-
-
-
-
-    
-
+      // Set up the add option buttons
+    setupAddOptionButtons();
     // Call dropdown initialization on page load
     initializeDropdowns();
 });
