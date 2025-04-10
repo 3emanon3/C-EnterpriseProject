@@ -11,28 +11,32 @@ document.addEventListener("DOMContentLoaded", function () {
     const itemsPerPageSelect = document.getElementById("itemsPerPage");
     const prevPageButton = document.getElementById("prevPage");
     const nextPageButton = document.getElementById("nextPage");
-    const birthdayButton = document.getElementById("searchBirthday"); // Button now opens modal
-    const expiredButton = document.getElementById("searchExpiry");
+    const birthdayButton = document.getElementById("searchBirthday");
+    const expiredButton = document.getElementById("searchExpiry"); // Button now opens modified modal
     const listAllMembersButton = document.getElementById("listAllMembers");
     const memberFilter = document.getElementById("memberFilter");
     const table = document.getElementById('memberTable');
-    const tableHeaders = table.querySelectorAll('th');
+    const thead = table?.querySelector('thead'); // Get thead for delegation
     const paginationContainer = document.querySelector('.pagination');
 
-    // --- Expiry Modal Elements ---
+    // --- Expiry Modal Elements (MODIFIED) ---
     const expiryModal = document.getElementById('expiryModal');
-    const expiryYearInput = document.getElementById('expiryYearInput');
-    const expiryMonthInput = document.getElementById('expiryMonthInput');
+    const expiryStartYearInput = document.getElementById('expiryStartYearInput');
+    const expiryStartMonthInput = document.getElementById('expiryStartMonthInput');
+    const expiryStartDayInput = document.getElementById('expiryStartDayInput');
+    const expiryEndYearInput = document.getElementById('expiryEndYearInput');
+    const expiryEndMonthInput = document.getElementById('expiryEndMonthInput');
+    const expiryEndDayInput = document.getElementById('expiryEndDayInput');
     const confirmExpirySearchButton = document.getElementById('confirmExpirySearch');
     const closeExpiryButton = expiryModal?.querySelector('.close-button');
-    const cancelExpiryModalButton = expiryModal?.querySelector('.btn-secondary[onclick="closeExpiryModal()"]');
+    // Cancel button uses onclick in HTML
 
-    // --- Birthday Modal Elements ---
+    // --- Birthday Modal Elements (Unchanged) ---
     const birthdayModal = document.getElementById('birthdayModal');
     const birthdayMonthInput = document.getElementById('birthdayMonthInput');
     const confirmBirthdaySearchButton = document.getElementById('confirmBirthdaySearch');
     const closeBirthdayButton = birthdayModal?.querySelector('.close-button');
-    const cancelBirthdayModalButton = birthdayModal?.querySelector('.btn-secondary[onclick="closeBirthdayModal()"]');
+    // Cancel button uses onclick in HTML
 
     // --- Shared Modal Overlay ---
     const modalOverlay = document.getElementById('modalOverlay');
@@ -47,12 +51,48 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentSearchType = 'all'; // 'all', 'search', 'Birthday', 'expired'
     let currentFilterValue = '';
     let membersData = [];
-    // --- State for Expiry Search ---
-    let targetExpiryYear = null;
-    let targetExpiryMonth = null;
-    // --- State for Birthday Search ---
-    let targetBirthdayMonth = null; // Stores the month selected in the birthday modal
+    // --- State for Expiry Search (MODIFIED) ---
+    let targetStartDate = null; // Stores YYYY-MM-DD
+    let targetEndDate = null;   // Stores YYYY-MM-DD
+    // --- State for Birthday Search (Unchanged) ---
+    let targetBirthdayMonth = null;
 
+
+    // ===== HELPER FUNCTIONS =====
+
+    // Utility to pad numbers with leading zeros (for date formatting)
+    function padStart(num, length = 2) {
+        return String(num).padStart(length, '0');
+    }
+
+    // Utility to check if a string represents a valid date (YYYY-MM-DD)
+    function isValidDateString(dateString) {
+        // Basic format check
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+            return false;
+        }
+        const date = new Date(dateString);
+        // Check if the date object is valid and if the components match
+        // (prevents dates like 2023-02-30 from being valid)
+        const [year, month, day] = dateString.split('-').map(Number);
+        return date instanceof Date && !isNaN(date) &&
+               date.getFullYear() === year &&
+               date.getMonth() + 1 === month &&
+               date.getDate() === day;
+    }
+
+    // Debounce function (remains the same)
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
 
     // ===== INITIALIZATION =====
     function initializePage() {
@@ -70,44 +110,28 @@ document.addEventListener("DOMContentLoaded", function () {
             console.log("memberFilter element not found in the DOM");
             return;
         }
-
-        // Clear existing options except the first one
-        while (memberFilter.options.length > 1) {
-            memberFilter.remove(1);
-        }
-
-        // Add default option
+        while (memberFilter.options.length > 1) memberFilter.remove(1);
         const defaultOption = document.createElement("option");
-        defaultOption.value = "";
-        defaultOption.textContent = "选择种类";
+        defaultOption.value = ""; defaultOption.textContent = "选择种类";
         memberFilter.appendChild(defaultOption);
-
         try {
-            // Fetch applicant types from API
             const response = await fetch(`${API_BASE_URL}?table=applicants_types`);
-            if (!response.ok) {
-                throw new Error(`Failed to fetch applicant types: ${response.status}`);
-            }
-
+            if (!response.ok) throw new Error(`Failed to fetch applicant types: ${response.status}`);
             const data = await response.json();
             const applicantTypes = data.data || [];
-
-            // Add options for each applicant type
             applicantTypes.forEach(item => {
                 const option = document.createElement("option");
                 option.value = item["designation_of_applicant"];
                 option.textContent = item["designation_of_applicant"];
                 memberFilter.appendChild(option);
             });
-        } catch (error) {
-            console.error("Error fetching applicant types:", error);
-        }
+        } catch (error) { console.error("Error fetching applicant types:", error); }
     }
 
     // Fetch members data from API
     async function fetchMembers(query = "") {
-        loader.style.display = "block";
-        memberTableBody.innerHTML = ""; // Clear previous results
+        if (loader) loader.style.display = 'flex'; // Use flex for center alignment
+        if (memberTableBody) memberTableBody.innerHTML = ""; // Clear previous results
 
         const params = new URLSearchParams();
         params.append("table", "members_with_applicant_designation");
@@ -116,59 +140,55 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // --- MODIFIED: Parameter logic based on search type ---
         if (currentSearchType === 'Birthday') {
-            // Birthday search is now triggered ONLY after confirming from the modal
             if (targetBirthdayMonth) {
-                params.append("Birthday", "true"); // Parameter name from requirement
-                params.append("search", "true"); // Parameter name from requirement
-                params.append("targetMonth", targetBirthdayMonth.toString()); // Use the stored target month
+                params.append("Birthday", "true");
+                params.append("search", "true"); // Keep search=true for consistency? Check API req.
+                params.append("targetMonth", targetBirthdayMonth.toString());
                 console.log(`Searching for birthdays in month ${targetBirthdayMonth}`);
             } else {
-                // This case should ideally not happen if the flow is correct,
-                // but as a fallback, maybe fetch all members or show an error.
                 console.warn("Birthday search triggered without target month. Reverting to 'all'.");
-                currentSearchType = 'all'; // Revert to avoid confusion
-                targetBirthdayMonth = null; // Ensure reset
+                currentSearchType = 'all';
+                targetBirthdayMonth = null;
             }
-            // Reset expiry targets if switching search type
-            targetExpiryYear = null;
-            targetExpiryMonth = null;
+            // Reset expiry targets
+            targetStartDate = null;
+            targetEndDate = null;
         } else if (currentSearchType === 'expired') {
             // Expiry search triggered ONLY after confirming from the modal
-            if (targetExpiryYear && targetExpiryMonth) {
-                params.append("expired", "true");
-                params.append("search", "true");
-                params.append("targetYear", targetExpiryYear);
-                params.append("targetMonth", targetExpiryMonth);
-                console.log(`Fetching members expiring on or before ${targetExpiryYear}-${targetExpiryMonth}`);
+            if (targetStartDate && targetEndDate) {
+                params.append("expired", "true"); // As requested
+                params.append("search", "true");  // As requested
+                params.append("startDate", targetStartDate); // New param
+                params.append("endDate", targetEndDate);     // New param
+                console.log(`Fetching members expiring between ${targetStartDate} and ${targetEndDate}`);
             } else {
-                console.warn("Expired search triggered without target year/month. Reverting to 'all'.");
+                console.warn("Expired search triggered without target dates. Reverting to 'all'.");
                 currentSearchType = 'all';
-                targetExpiryYear = null;
-                targetExpiryMonth = null;
+                targetStartDate = null;
+                targetEndDate = null;
             }
-             // Reset birthday target if switching search type
+             // Reset birthday target
             targetBirthdayMonth = null;
         } else if (query.trim() !== "") {
             params.append("search", query); // General text search
             currentSearchType = 'search';
-             // Reset expiry and birthday targets if switching search type
-            targetExpiryYear = null;
-            targetExpiryMonth = null;
+             // Reset expiry and birthday targets
+            targetStartDate = null;
+            targetEndDate = null;
             targetBirthdayMonth = null;
         } else { // 'all' members (default or List All button)
             currentSearchType = 'all';
-             // Reset expiry and birthday targets if switching search type
-            targetExpiryYear = null;
-            targetExpiryMonth = null;
+             // Reset expiry and birthday targets
+            targetStartDate = null;
+            targetEndDate = null;
             targetBirthdayMonth = null;
         }
         // --- END MODIFICATION ---
 
         // Add applicant filter if selected (applies to all search types)
-        if (memberFilter.value) {
-            // Ensure search=true is set if filtering, even for 'all' list
+        if (memberFilter && memberFilter.value) {
             if (!params.has('search')) {
-                 params.append("search", "true");
+                 params.append("search", "true"); // Ensure search=true if filtering
             }
             params.append("designation_of_applicant", memberFilter.value);
             console.log("Filtering by applicant:", memberFilter.value);
@@ -177,16 +197,28 @@ document.addEventListener("DOMContentLoaded", function () {
         // Add sorting parameters
         if (sortColumn) {
             let dbSortColumn = sortColumn;
-            // ... (existing column name mapping logic - remains the same) ...
-            if (sortColumn === 'componyName') {
-                dbSortColumn = 'componyName';
-            } else if (sortColumn === 'expired_date' || sortColumn === 'expiredDate') {
-                dbSortColumn = 'expired_date';
-            } else if (sortColumn === 'place_of_birth' || sortColumn === 'placeOfBirth') {
-                dbSortColumn = 'place_of_birth';
-            } else if (sortColumn === 'Designation_of_Applicant') {
-                dbSortColumn = 'Designation_of_Applicant';
-            }
+            // --- Column name mapping (ensure it's correct) ---
+            const columnMap = {
+                'membersID': 'membersID',
+                'Name': 'Name',
+                'CName': 'CName',
+                'Designation_of_Applicant': 'Designation_of_Applicant',
+                'Address': 'Address',
+                'phone_number': 'phone_number',
+                'email': 'email',
+                'IC': 'IC',
+                'oldIC': 'oldIC',
+                'gender': 'gender',
+                'componyName': 'componyName', // Corrected potential typo if needed
+                'Birthday': 'Birthday',
+                'expired_date': 'expired_date',
+                'place_of_birth': 'place_of_birth',
+                'position': 'position',
+                'others': 'others',
+                'remarks': 'remarks'
+            };
+            dbSortColumn = columnMap[sortColumn] || sortColumn; // Use mapped name or original if not found
+            // --- End Column name mapping ---
 
             params.append("sort", dbSortColumn);
             params.append("order", sortDirection);
@@ -194,7 +226,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const url = `${API_BASE_URL}?${params.toString()}`;
         console.log("API URL:", url);
-        // console.log("All params:", Object.fromEntries(params.entries())); // Useful for debugging
 
         try {
             const response = await fetch(url);
@@ -205,16 +236,15 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             const data = await response.json();
-            // console.log("API Response:", data);
 
             if (data && typeof data === 'object') {
                 membersData = Array.isArray(data.data) ? data.data : [];
-                const total = data.pagination?.total_records ?? membersData.length; // Use nullish coalescing
-                totalMembers.textContent = total;
+                const total = data.pagination?.total_records ?? membersData.length;
+                if (totalMembers) totalMembers.textContent = total;
                 totalPages = Math.ceil(total / itemsPerPage) || 1;
             } else {
                 membersData = [];
-                totalMembers.textContent = 0;
+                if (totalMembers) totalMembers.textContent = 0;
                 totalPages = 1;
                 console.error("Unexpected API response format:", data);
             }
@@ -225,34 +255,43 @@ document.addEventListener("DOMContentLoaded", function () {
 
         } catch (error) {
             console.error("Error fetching members:", error);
-            memberTableBody.innerHTML = `<tr><td colspan="18" class="no-results">加载失败: ${error.message}</td></tr>`; // Adjusted colspan
+            if (memberTableBody) {
+                const colspan = table?.querySelector('thead tr')?.cells.length || 18; // Dynamic colspan
+                memberTableBody.innerHTML = `<tr><td colspan="${colspan}" class="no-results">加载失败: ${error.message}</td></tr>`;
+            }
             membersData = [];
-            totalMembers.textContent = 0;
+            if (totalMembers) totalMembers.textContent = 0;
             totalPages = 1;
             updatePagination();
         } finally {
-            loader.style.display = "none";
+            if (loader) loader.style.display = "none";
         }
     }
 
     // ===== DISPLAY FUNCTIONS =====
     function displayMembers(members) {
+        if (!memberTableBody) return;
         memberTableBody.innerHTML = ""; // Clear previous results
 
         if (!Array.isArray(members)) {
             console.error("Expected members to be an array, got:", members);
-            members = []; // Default to empty array to prevent errors
+            members = [];
         }
 
         if (members.length === 0) {
             let message = '暂无记录';
-            if (currentSearchType === 'search' && searchInput.value) message = '没有找到匹配的记录';
-            // --- MODIFIED: Birthday message uses targetBirthdayMonth ---
-            else if (currentSearchType === 'Birthday') message = `没有在 ${targetBirthdayMonth} 月份生日的塾员`;
-            else if (currentSearchType === 'expired') message = `没有在 ${targetExpiryYear}-${targetExpiryMonth} 或之前到期的塾员`;
-            else if (currentFilterValue) message = `没有符合 "${currentFilterValue}" 条件的记录`;
-            // Adjust colspan based on the actual number of columns in your table header
-            memberTableBody.innerHTML = `<tr><td colspan="18" class="no-results">${message}</td></tr>`;
+            if (currentSearchType === 'search' && searchInput?.value) {
+                 message = '没有找到匹配的记录';
+            } else if (currentSearchType === 'Birthday' && targetBirthdayMonth) {
+                 message = `没有在 ${targetBirthdayMonth} 月份生日的塾员`;
+            // --- MODIFIED: Message for expiry range ---
+            } else if (currentSearchType === 'expired' && targetStartDate && targetEndDate) {
+                 message = `没有在 ${targetStartDate} 到 ${targetEndDate} 之间到期的塾员`;
+            } else if (currentFilterValue) {
+                 message = `没有符合 "${currentFilterValue}" 条件的记录`;
+            }
+            const colspan = table?.querySelector('thead tr')?.cells.length || 18;
+            memberTableBody.innerHTML = `<tr><td colspan="${colspan}" class="no-results">${message}</td></tr>`;
             return;
         }
 
@@ -262,91 +301,107 @@ document.addEventListener("DOMContentLoaded", function () {
                 return; // Skip this iteration
             }
 
+            // Helper to format data safely
             const formatData = (value) => {
-                // Handle null, undefined, or specific placeholder values
                 if (value === null || value === undefined || value === '' || value === 'For...') {
-                    return ''; // Return empty string for display
+                    return '';
                 }
-                // Convert to string and escape HTML characters
-                return String(value).replace(/[&<>"']/g, (m) => ({
-                    '&': '&', '<': '<', '>': '>', '"': '"', "'": "'"
-                }[m]));
+                // Basic HTML escaping
+                return String(value).replace(/[&<>"']/g, m => ({ '&': '&', '<': '<', '>': '>', '"': '"', "'": "'" }[m]));
             };
 
-            // Use correct field names based on your API response and handle potential variations
-            const designation = member['Designation_of_Applicant'] || member['designation_of_applicant'] || '';
-            const expiredDate = member['expired_date'] || member['expiredDate'] || '';
-            const placeOfBirth = member['place_of_birth'] || member['placeOfBirth'] || ''; // Corrected field name
-            const gender = member['gender'] || '';
-            const position = member['position'] || '';
-            const companyName = member['componyName'] || member['companyName'] || ''; // Handle potential typo
-
+            // Phone formatting (remains the same)
             const formatPhone = (phone) => {
                 const phoneStr = String(phone || '');
-                // Basic formatting, adjust regex if needed for different formats
-                if (phoneStr.length === 10) {
-                     return phoneStr.replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3");
-                } else if (phoneStr.length === 11 && phoneStr.startsWith('0')) { // e.g., 012-3456789
-                    return phoneStr.replace(/(\d{3})(\d{7,8})/, "$1-$2");
+                if (/^\d{10}$/.test(phoneStr)) { // 10 digits
+                    return phoneStr.replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3");
+                } else if (/^\d{11}$/.test(phoneStr) && phoneStr.startsWith('0')) { // 11 digits starting with 0
+                    return phoneStr.replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3"); // Or adjust format as needed
+                } else if (/^\d{11}$/.test(phoneStr) && phoneStr.startsWith('6')) { // Example: 601...
+                     return phoneStr.replace(/(\d{1})(\d{3})(\d{3})(\d{4})/, "$1-$2-$3-$4"); // Adjust format
                 }
-                return phoneStr; // Return original if format doesn't match
+                return phoneStr; // Return original if format doesn't match well
             };
 
+            // IC formatting (remains the same)
             const formatIC = (ic) => {
                 const icStr = String(ic || '');
-                 if (icStr.length === 12) {
+                 if (/^\d{12}$/.test(icStr)) {
                     return icStr.replace(/(\d{6})(\d{2})(\d{4})/, "$1-$2-$3");
                  }
-                 return icStr; // Return original if format doesn't match
+                 return icStr;
             };
 
+            // Date formatting (remains the same)
             const formatDate = (dateString) => {
-                if (!dateString) return '';
+                if (!dateString || dateString === '0000-00-00') return ''; // Handle invalid zero date
                 try {
-                    const date = new Date(dateString);
-                    // Check if the date is valid
-                    if (isNaN(date.getTime())) {
-                        return dateString; // Or return '' if invalid dates should be hidden
+                    // Check if it's already in YYYY-MM-DD format
+                    if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+                         // Further check if it's a *valid* date in that format
+                         if (isValidDateString(dateString)) {
+                             return dateString;
+                         } else {
+                             // It's in the format but invalid (e.g., 2023-02-30)
+                             console.warn(`Invalid date string received: ${dateString}`);
+                             return ''; // Or return original string if preferred
+                         }
                     }
+                    // If not in the correct format, try parsing
+                    const date = new Date(dateString);
+                    if (isNaN(date.getTime())) {
+                         console.warn(`Could not parse date: ${dateString}`);
+                        return dateString; // Return original if parsing fails completely
+                    }
+                    // Format valid parsed date
                     const year = date.getFullYear();
-                    // Ensure month/day are two digits
-                    const month = String(date.getMonth() + 1).padStart(2, '0');
-                    const day = String(date.getDate()).padStart(2, '0');
+                    const month = padStart(date.getMonth() + 1);
+                    const day = padStart(date.getDate());
                     return `${year}-${month}-${day}`;
                 } catch (e) {
-                    console.warn(`Could not parse date: ${dateString}`, e);
-                    return dateString; // Return original string if parsing fails
+                    console.warn(`Error formatting date: ${dateString}`, e);
+                    return dateString; // Return original on error
                 }
             };
 
+            // Get data using safe access and formatting
+            const designation = formatData(member['Designation_of_Applicant'] || member['designation_of_applicant']);
+            const expiredDate = formatDate(member['expired_date'] || member['expiredDate']);
+            const placeOfBirth = formatData(member['place_of_birth'] || member['placeOfBirth']);
+            const gender = formatData(member['gender']);
+            const position = formatData(member['position']);
+            const companyName = formatData(member['componyName'] || member['companyName']); // Handle potential typo
+            const memberId = formatData(member['membersID']); // Use formatted ID for display
+            const rawId = member.ID || member.id || ''; // Use raw ID for actions
+
             const row = document.createElement("tr");
-            // Ensure the order matches your <th> elements and use the formatted data
+            // Ensure the order matches your <th> elements
             row.innerHTML = `
-                <td>${formatData(member.membersID)}</td>
+                <td>${memberId}</td>
                 <td>${formatData(member.Name)}</td>
                 <td>${formatData(member.CName)}</td>
-                <td>${formatData(designation)}</td>
+                <td>${designation}</td>
                 <td>${formatData(member.Address)}</td>
                 <td>${formatPhone(member.phone_number)}</td>
                 <td>${formatData(member.email)}</td>
                 <td>${formatIC(member.IC)}</td>
                 <td>${formatIC(member.oldIC)}</td>
-                <td>${formatData(gender)}</td>
-                <td>${formatData(companyName)}</td>
+                <td>${gender}</td>
+                <td>${companyName}</td>
                 <td>${formatData(member.Birthday)}</td>
-                <td>${formatDate(expiredDate)}</td>
-                <td>${formatData(placeOfBirth)}</td>
-                <td>${formatData(position)}</td>
+                <td>${expiredDate}</td>
+                <td>${placeOfBirth}</td>
+                <td>${position}</td>
                 <td>${formatData(member.others)}</td>
                 <td>${formatData(member.remarks)}</td>
-                <td>
-                    <button class="btn btn-edit" onclick="editMember('${member.ID || member.id || ''}')" title="编辑">
+                <td class="action-cell"> 
+                    <button class="btn btn-edit" onclick="editMember('${rawId}')" title="编辑">
                         <i class="fas fa-edit"></i>
                     </button>
-                    <button class="btn btn-delete" onclick="deleteMember('${member.ID || member.id || ''}')" title="删除">
+                    <button class="btn btn-delete" onclick="deleteMember('${rawId}')" title="删除">
                         <i class="fas fa-trash"></i>
                     </button>
-                    <button class="btn btn-check" onclick="checkMember('${member.ID || member.id || ''}')" title="查看详情">
+                    <button class="btn btn-check" onclick="checkMember('${rawId}')" title="查看详情">
                         <i class="fas fa-check"></i>
                     </button>
                 </td>
@@ -356,8 +411,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function updatePagination() {
-        // ... (existing code - no changes needed here) ...
-         if (!paginationContainer) return;
+        // ... (existing code - no changes needed here, uses totalPages and currentPage) ...
+        if (!paginationContainer || !prevPageButton || !nextPageButton) return;
 
         paginationContainer.innerHTML = ''; // Clear existing buttons/info
 
@@ -365,80 +420,76 @@ document.addEventListener("DOMContentLoaded", function () {
         let startPage, endPage;
 
         if (totalPages <= maxPagesToShow) {
-            // Less than max pages, show all
-            startPage = 1;
-            endPage = totalPages;
+            startPage = 1; endPage = totalPages;
         } else {
-            // More than max pages, calculate range
             const maxPagesBeforeCurrent = Math.floor(maxPagesToShow / 2);
             const maxPagesAfterCurrent = Math.ceil(maxPagesToShow / 2) - 1;
             if (currentPage <= maxPagesBeforeCurrent) {
-                // Near the start
-                startPage = 1;
-                endPage = maxPagesToShow;
+                startPage = 1; endPage = maxPagesToShow;
             } else if (currentPage + maxPagesAfterCurrent >= totalPages) {
-                // Near the end
-                startPage = totalPages - maxPagesToShow + 1;
-                endPage = totalPages;
+                startPage = totalPages - maxPagesToShow + 1; endPage = totalPages;
             } else {
-                // In the middle
-                startPage = currentPage - maxPagesBeforeCurrent;
-                endPage = currentPage + maxPagesAfterCurrent;
+                startPage = currentPage - maxPagesBeforeCurrent; endPage = currentPage + maxPagesAfterCurrent;
             }
         }
 
-        // Always show first page button if needed
+        // First page and ellipsis
         if (startPage > 1) {
             paginationContainer.appendChild(createPaginationButton(1));
-            if (startPage > 2) {
-                paginationContainer.appendChild(createPaginationEllipsis());
-            }
+            if (startPage > 2) paginationContainer.appendChild(createPaginationEllipsis());
         }
 
-        // Show page numbers in calculated range
+        // Page numbers in range
         for (let i = startPage; i <= endPage; i++) {
             paginationContainer.appendChild(createPaginationButton(i, i === currentPage));
         }
 
-        // Always show last page button if needed
+        // Last page and ellipsis
         if (endPage < totalPages) {
-            if (endPage < totalPages - 1) {
-                paginationContainer.appendChild(createPaginationEllipsis());
-            }
+            if (endPage < totalPages - 1) paginationContainer.appendChild(createPaginationEllipsis());
             paginationContainer.appendChild(createPaginationButton(totalPages));
-        }
-
-        // Add page info and jump input
-        const pageInfoDiv = document.createElement('div');
-        pageInfoDiv.className = 'pagination-info';
-        pageInfoDiv.innerHTML = `
-            <span class="page-indicator">${currentPage} / ${totalPages}</span>
-            <div class="page-jump">
-                <input type="number"
-                       id="pageInput"
-                       min="1"
-                       max="${totalPages}"
-                       placeholder="页码"
-                       class="page-input"
-                       aria-label="Jump to page number">
-                <button onclick="jumpToPage()" class="jump-btn btn btn-secondary">跳转</button>
-            </div>
-        `;
-        paginationContainer.appendChild(pageInfoDiv);
-
-        // Re-attach event listener for the new page input's Enter key press
-        const pageInput = document.getElementById('pageInput');
-        if (pageInput) {
-            pageInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    jumpToPage(); // Ensure jumpToPage is globally accessible or called correctly
-                }
-            });
         }
 
         // Update Prev/Next button states
         prevPageButton.disabled = currentPage === 1;
-        nextPageButton.disabled = currentPage === totalPages;
+        nextPageButton.disabled = currentPage >= totalPages; // Use >= for safety
+
+        // Add page info and jump input dynamically if needed (assuming it's not always present)
+        if (!document.getElementById('pageInput')) {
+             const pageInfoContainer = document.querySelector('.pagination-container'); // Or specific div
+             if(pageInfoContainer) {
+                 const pageInfoDiv = document.createElement('div');
+                 pageInfoDiv.className = 'pagination-info'; // Add class for styling
+                 pageInfoDiv.innerHTML = `
+                    <span class="page-indicator">${currentPage} / ${totalPages}</span>
+                    <div class="page-jump">
+                        <input type="number" id="pageInput" min="1" max="${totalPages}" placeholder="页码" class="page-input" aria-label="Jump to page number">
+                        <button onclick="jumpToPage()" class="jump-btn btn btn-secondary">跳转</button>
+                    </div>
+                 `;
+                 // Append page info logically, e.g., after pagination buttons but before items-per-page
+                 const itemsPerPageDiv = document.querySelector('.items-per-page');
+                 if (itemsPerPageDiv) {
+                     pageInfoContainer.insertBefore(pageInfoDiv, itemsPerPageDiv);
+                 } else {
+                     pageInfoContainer.appendChild(pageInfoDiv); // Fallback append
+                 }
+
+                 // Add Enter key listener for the new input
+                 const pageInput = document.getElementById('pageInput');
+                 pageInput?.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        jumpToPage();
+                    }
+                 });
+             }
+        } else {
+             // Update existing elements if they are already there
+             const pageIndicator = document.querySelector('.page-indicator');
+             if (pageIndicator) pageIndicator.textContent = `${currentPage} / ${totalPages}`;
+             const pageInput = document.getElementById('pageInput');
+             if (pageInput) pageInput.max = totalPages;
+        }
     }
 
     // Helper function for creating pagination buttons
@@ -446,7 +497,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const button = document.createElement('button');
         button.textContent = pageNumber;
         button.className = `pagination-btn ${isActive ? 'active' : ''}`;
-        button.onclick = () => changePage(pageNumber); // Ensure changePage is globally accessible
+        button.onclick = () => changePage(pageNumber);
         return button;
     }
 
@@ -462,22 +513,29 @@ document.addEventListener("DOMContentLoaded", function () {
         // ... (existing code - no changes needed here) ...
          document.querySelectorAll('th[data-column]').forEach(th => {
             const column = th.dataset.column;
-            const icon = th.querySelector('i.sort-arrow') || document.createElement('i');
-            icon.className = 'sort-arrow fas'; // Base classes
-
-            if (column === sortColumn) {
-                icon.classList.remove('fa-sort', 'fa-sort-up', 'fa-sort-down'); // Clear previous sort icons
-                icon.classList.add(sortDirection === 'ASC' ? 'fa-sort-up' : 'fa-sort-down');
+            let icon = th.querySelector('i.sort-arrow');
+            if (!icon) { // Create icon if it doesn't exist
+                icon = document.createElement('i');
+                icon.className = 'sort-arrow fas fa-sort'; // Default state
+                // Add a space before appending if no text node exists or last child is not text
+                 if (!th.lastChild || th.lastChild.nodeType !== Node.TEXT_NODE) {
+                    th.appendChild(document.createTextNode(' '));
+                 }
+                th.appendChild(icon);
             } else {
-                 icon.classList.remove('fa-sort-up', 'fa-sort-down'); // Clear specific direction
-                 icon.classList.add('fa-sort'); // Add the default sort icon
+                 // Clear existing sort direction classes
+                 icon.classList.remove('fa-sort-up', 'fa-sort-down');
+                 // Add default sort icon class (fa-sort) if not the sorted column
+                 if (column !== sortColumn) {
+                     icon.classList.add('fa-sort');
+                 } else {
+                      icon.classList.remove('fa-sort'); // Remove default if it's the sorted column
+                 }
             }
 
-            // Ensure the icon is appended if it wasn't there
-            if (!th.querySelector('i.sort-arrow')) {
-                // Add some spacing if needed
-                th.appendChild(document.createTextNode(' ')); // Add a space before the icon
-                th.appendChild(icon);
+            // Add specific direction class if this is the sorted column
+            if (column === sortColumn) {
+                icon.classList.add(sortDirection === 'ASC' ? 'fa-sort-up' : 'fa-sort-down');
             }
         });
     }
@@ -485,17 +543,15 @@ document.addEventListener("DOMContentLoaded", function () {
     // ===== SORTING FUNCTIONS =====
     function handleSortClick(columnName) {
         // ... (existing code - no changes needed here) ...
+        if (!columnName) return; // Don't sort if column name is invalid
         if (sortColumn === columnName) {
-            // Toggle direction
             sortDirection = sortDirection === 'ASC' ? 'DESC' : 'ASC';
         } else {
-            // New column, default to ASC
             sortColumn = columnName;
             sortDirection = 'ASC';
         }
-        currentPage = 1; // Reset to first page when sorting
-        // updateSortIcons(); // Update icons immediately for feedback
-        fetchMembers(searchInput.value); // Fetch sorted data (fetchMembers calls updateSortIcons)
+        currentPage = 1;
+        fetchMembers(searchInput?.value || ''); // Pass current search query
     }
 
     // ===== COLUMN RESIZING FUNCTIONS =====
@@ -503,94 +559,83 @@ document.addEventListener("DOMContentLoaded", function () {
         // ... (existing code - no changes needed here) ...
         const table = document.getElementById('memberTable');
         if (!table) return;
-        // Select only headers that are meant to be resizable (have data-column or a resizer div)
-        const resizableHeaders = table.querySelectorAll('thead th[data-column], thead th:has(.resizer)');
+        const resizableHeaders = table.querySelectorAll('thead th[data-column]'); // Target only data columns
 
         resizableHeaders.forEach(th => {
-            // Ensure a resizer element exists or create one
             let resizer = th.querySelector('.resizer');
             if (!resizer) {
                 resizer = document.createElement('div');
                 resizer.className = 'resizer';
                 th.appendChild(resizer);
             }
-
-            // Prevent text selection during resize
-            resizer.addEventListener('selectstart', (e) => e.preventDefault());
-
-            // Attach mousedown listener to the resizer itself
             resizer.addEventListener('mousedown', initResize);
+            // Prevent text selection on the resizer itself
+            resizer.addEventListener('selectstart', (e) => e.preventDefault());
         });
 
         function initResize(e) {
-            // Get the header element (parent of the resizer)
-            const currentTh = e.target.parentElement;
+            const resizer = e.target;
+            const currentTh = resizer.parentElement;
             if (!currentTh || currentTh.tagName !== 'TH') return;
 
-            e.preventDefault(); // Prevent default drag behavior
+            e.preventDefault(); // Prevent default text selection/drag
             e.stopPropagation(); // Stop event bubbling
 
             const startX = e.pageX;
             const startWidth = currentTh.offsetWidth;
-            // Find the closest scrollable container if needed for cursor styling
-            const tableContainer = currentTh.closest('.table-responsive') || currentTh.closest('.table-container');
+            const tableContainer = currentTh.closest('.table-responsive') || document.body; // Find scroll container or body
 
-            // Add classes for visual feedback during resize
+            // Add classes for visual feedback
             currentTh.classList.add('resizing');
-            if (tableContainer) tableContainer.classList.add('resizing-active'); // Use a different class for the container
+            tableContainer.classList.add('table-resizing'); // Class on container for cursor
 
-
-            // Attach listeners to the document to capture mouse movements anywhere on the page
             document.addEventListener('mousemove', performResize);
-            document.addEventListener('mouseup', stopResize);
+            document.addEventListener('mouseup', stopResize, { once: true }); // Use { once: true } for cleanup
 
             function performResize(moveEvent) {
-                // Calculate the difference in X position
                 const widthChange = moveEvent.pageX - startX;
                 let newWidth = startWidth + widthChange;
-
-                // Enforce minimum width (e.g., 50px)
-                const minWidth = parseInt(currentTh.style.minWidth || '50', 10);
+                const minWidth = parseInt(currentTh.style.minWidth || '50', 10); // Use min-width from style or default
                 newWidth = Math.max(minWidth, newWidth);
-
-                // Apply the new width directly to the header
                 currentTh.style.width = `${newWidth}px`;
-
-                // Optional: Adjust table layout if not using fixed
-                // table.style.tableLayout = 'fixed'; // Ensure fixed layout for consistent resizing
+                 // Ensure table layout is fixed during resize for predictability
+                 if (table.style.tableLayout !== 'fixed') {
+                     table.style.tableLayout = 'fixed';
+                 }
             }
 
             function stopResize() {
-                // Remove document-level listeners
                 document.removeEventListener('mousemove', performResize);
-                document.removeEventListener('mouseup', stopResize);
+                // mouseup listener removed by { once: true }
 
-                // Remove resizing classes
                 currentTh.classList.remove('resizing');
-                 if (tableContainer) tableContainer.classList.remove('resizing-active');
+                tableContainer.classList.remove('table-resizing');
 
+                // Optional: Revert table layout if you want it auto sometimes
+                // table.style.tableLayout = ''; // Or keep fixed
 
-                // Optional: Revert table layout if changed
-                // table.style.tableLayout = ''; // Or back to 'auto' if preferred
-
-                // Save the final widths
-                saveColumnWidths();
+                saveColumnWidths(); // Save the final widths
             }
         }
     }
 
     function saveColumnWidths() {
         // ... (existing code - no changes needed here) ...
-        try {
+         try {
             const widths = {};
-            // Select only headers with data-column attribute to save
             table.querySelectorAll('thead th[data-column]').forEach(header => {
                 const column = header.dataset.column;
-                if (column && header.style.width) { // Only save if width is explicitly set
+                // Only save if width is explicitly set and seems valid (e.g., contains 'px')
+                if (column && header.style.width && header.style.width.includes('px')) {
                     widths[column] = header.style.width;
                 }
             });
-            localStorage.setItem('memberTableColumnWidths', JSON.stringify(widths)); // Use a specific key
+            // Only save if there are widths to save
+            if (Object.keys(widths).length > 0) {
+                 localStorage.setItem('memberTableColumnWidths', JSON.stringify(widths));
+            } else {
+                 localStorage.removeItem('memberTableColumnWidths'); // Clear if no widths set
+            }
         } catch (error) {
             console.error('Error saving column widths:', error);
         }
@@ -598,186 +643,148 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function loadColumnWidths() {
         // ... (existing code - no changes needed here) ...
-         try {
+        try {
             const savedWidths = JSON.parse(localStorage.getItem('memberTableColumnWidths') || '{}');
             let widthsApplied = false;
+            let requiresFixedLayout = false;
 
             table.querySelectorAll('thead th[data-column]').forEach(header => {
                 const column = header.dataset.column;
                 if (savedWidths[column]) {
                     header.style.width = savedWidths[column];
                     widthsApplied = true;
+                    requiresFixedLayout = true; // If any width is loaded, use fixed layout
                 } else {
-                    // Optionally set default widths if no saved width exists
-                    // setDefaultColumnWidth(header); // Consider calling this if needed
+                    // Apply default width if no saved width exists for this column
+                    setDefaultColumnWidth(header);
                 }
             });
 
-             // If any widths were loaded, ensure table layout is fixed
-             if (widthsApplied) {
-                 // table.style.tableLayout = 'fixed'; // Apply fixed layout if using saved widths
+             // Apply fixed layout if custom widths were loaded OR if defaults necessitate it
+             if (requiresFixedLayout || tableRequiresFixedLayoutByDefault()) {
+                  if (table.style.tableLayout !== 'fixed') {
+                     table.style.tableLayout = 'fixed';
+                  }
              } else {
-                 // If no widths loaded, apply default widths to all relevant headers
-                 table.querySelectorAll('thead th[data-column]').forEach(setDefaultColumnWidth);
+                  // Optionally revert to auto layout if no custom widths and defaults don't need fixed
+                  // table.style.tableLayout = '';
              }
-
 
         } catch (error) {
             console.error('Error loading column widths:', error);
             // Apply default widths in case of error
             table.querySelectorAll('thead th[data-column]').forEach(setDefaultColumnWidth);
+             if (tableRequiresFixedLayoutByDefault()) { // Check again after applying defaults
+                  if (table.style.tableLayout !== 'fixed') {
+                     table.style.tableLayout = 'fixed';
+                  }
+             }
         }
     }
 
+    // Helper to determine if table should have fixed layout based on default widths
+    function tableRequiresFixedLayoutByDefault() {
+         // If any default width setting implies wrapping or specific sizing, return true
+         // Example: If Address or Remarks columns exist and have default widths set
+         return !!(table.querySelector('th[data-column="Address"]') || table.querySelector('th[data-column="remarks"]'));
+    }
+
+
     function setDefaultColumnWidth(header) {
         // ... (existing code - no changes needed here) ...
-        if (!header || !header.dataset || !header.dataset.column) return; // Basic check
+        if (!header || !header.dataset || !header.dataset.column) return;
 
         const column = header.dataset.column;
-        let defaultWidth = '150px'; // Default width
+        let defaultWidth = '150px'; // Fallback default
+        let minWidth = '60px';     // Default min-width
+        let needsNormalWhitespace = false;
 
-        // Set specific widths based on column name
         switch (column) {
-            case 'membersID':
-                defaultWidth = '90px';
-                break;
-            case 'Name':
-            case 'CName':
-                 defaultWidth = '160px';
-                 break;
-            case 'Designation_of_Applicant':
-                 defaultWidth = '100px';
-                 break;
-            case 'Address':
-                defaultWidth = '250px';
-                header.style.whiteSpace = 'normal'; // Allow wrapping for address
-                break;
-            case 'phone_number':
-                defaultWidth = '130px';
-                break;
-            case 'email':
-                defaultWidth = '180px';
-                break;
-            case 'IC':
-            case 'oldIC':
-                defaultWidth = '140px';
-                break;
-            case 'gender':
-                defaultWidth = '70px';
-                break;
-            case 'componyName': // Match the data-column value
-                 defaultWidth = '180px';
-                 break;
-            case 'Birthday':
-                 defaultWidth = '100px';
-                 break;
-            case 'expired_date':
-                 defaultWidth = '120px';
-                 break;
-             case 'place_of_birth': // Corrected field name
-                 defaultWidth = '130px';
-                 break;
-            case 'position':
-                 defaultWidth = '120px';
-                 break;
-            case 'others':
-                 defaultWidth = '150px';
-                 break;
-            case 'remarks':
-                defaultWidth = '250px';
-                header.style.whiteSpace = 'normal'; // Allow wrapping for remarks
-                break;
-            // Add cases for any other specific columns
-            default:
-                defaultWidth = '150px'; // Fallback width
+            case 'membersID': defaultWidth = '90px'; break;
+            case 'Name': case 'CName': defaultWidth = '160px'; break;
+            case 'Designation_of_Applicant': defaultWidth = '100px'; break;
+            case 'Address': defaultWidth = '250px'; needsNormalWhitespace = true; minWidth = '150px'; break;
+            case 'phone_number': defaultWidth = '130px'; break;
+            case 'email': defaultWidth = '180px'; break;
+            case 'IC': case 'oldIC': defaultWidth = '140px'; break;
+            case 'gender': defaultWidth = '70px'; break;
+            case 'componyName': defaultWidth = '180px'; break;
+            case 'Birthday': defaultWidth = '100px'; break;
+            case 'expired_date': defaultWidth = '120px'; break;
+            case 'place_of_birth': defaultWidth = '130px'; break;
+            case 'position': defaultWidth = '120px'; break;
+            case 'others': defaultWidth = '150px'; break;
+            case 'remarks': defaultWidth = '250px'; needsNormalWhitespace = true; minWidth = '150px'; break;
+            // Action column is handled by CSS class .Action, not data-column usually
         }
 
         header.style.width = defaultWidth;
-        // Set min-width for all resizable columns
-        header.style.minWidth = '60px';
-        // Optional: Set max-width if desired
-        // header.style.maxWidth = '500px';
+        header.style.minWidth = minWidth; // Apply min-width
+        // Apply white-space based on flag
+        header.style.whiteSpace = needsNormalWhitespace ? 'normal' : 'nowrap';
     }
 
     function resetColumnWidths() {
         // ... (existing code - no changes needed here) ...
         try {
-            localStorage.removeItem('memberTableColumnWidths'); // Use the specific key
-            // Re-apply default widths
-            table.querySelectorAll('thead th[data-column]').forEach(setDefaultColumnWidth);
-            // Reset table layout if it was set to fixed
-            // table.style.tableLayout = ''; // Or 'auto'
-
+            localStorage.removeItem('memberTableColumnWidths');
+            // Clear inline width styles and re-apply defaults
+            table.querySelectorAll('thead th[data-column]').forEach(header => {
+                 header.style.width = ''; // Clear inline style first
+                 setDefaultColumnWidth(header); // Reapply default
+            });
+            // Re-evaluate table layout after resetting
+            if (tableRequiresFixedLayoutByDefault()) {
+                 if (table.style.tableLayout !== 'fixed') {
+                    table.style.tableLayout = 'fixed';
+                 }
+            } else {
+                 table.style.tableLayout = ''; // Revert to auto if defaults allow
+            }
             console.log('Column widths reset to default values');
-            // Optional: Rerender or reflow table if needed, but applying widths should suffice
         } catch (error) {
             console.error('Error resetting column widths:', error);
         }
     }
 
-    // ===== UTILITY FUNCTIONS =====
-    function debounce(func, wait) {
-        // ... (existing code - no changes needed here) ...
-        let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
-    }
 
     // ===== EVENT LISTENERS =====
     function initializeEventListeners() {
-        // Search input
+        // Search input (debounced)
         const debouncedSearch = debounce((searchText) => {
             currentPage = 1;
-            fetchMembers(searchText.trim()); // Pass trimmed search text
-        }, 350); // Slightly longer delay might be better
+            // fetchMembers will determine search type based on input value
+            fetchMembers(searchText.trim());
+        }, 350);
 
         searchInput?.addEventListener("input", function() {
-            // No need to set currentSearchType here, fetchMembers handles it
             debouncedSearch(this.value);
         });
 
-        // Table header sorting (delegated listener on thead)
-        const thead = table?.querySelector('thead');
+        // Table header sorting (event delegation)
         thead?.addEventListener('click', function(event) {
-            // Find the closest TH element from the click target
             const header = event.target.closest('th[data-column]');
-            if (header && !event.target.classList.contains('resizer')) { // Ensure click wasn't on the resizer
+            // Ensure click is on the header itself or its content, not the resizer
+            if (header && !event.target.classList.contains('resizer')) {
                 handleSortClick(header.dataset.column);
             }
         });
 
+        // Pagination controls
+        prevPageButton?.addEventListener("click", () => changePage(currentPage - 1));
+        nextPageButton?.addEventListener("click", () => changePage(currentPage + 1));
 
-        // Pagination controls (Prev/Next)
-        prevPageButton?.addEventListener("click", function () {
-            if (currentPage > 1) {
-                changePage(currentPage - 1); // Use changePage function
-            }
-        });
+        // Birthday button opens modal (onclick in HTML)
+        // Expiry button opens modal (onclick in HTML)
 
-        nextPageButton?.addEventListener("click", function () {
-            if (currentPage < totalPages) {
-                changePage(currentPage + 1); // Use changePage function
-            }
-        });
-
-        // --- MODIFIED: Birthday button now opens modal (listener removed, handled by onclick in HTML) ---
-        // birthdayButton?.addEventListener("click", function() { ... }); // REMOVED
-
-        // Expiry button's onclick is in HTML, pointing to openExpiryModal
-
+        // List All Members button
         listAllMembersButton?.addEventListener("click", function() {
             currentPage = 1;
             currentSearchType = 'all';
-            targetExpiryYear = null; // Reset expiry dates
-            targetExpiryMonth = null;
+            targetStartDate = null; // Reset expiry dates
+            targetEndDate = null;
             targetBirthdayMonth = null; // Reset birthday month
-            currentFilterValue = ''; // Reset other filters
+            currentFilterValue = '';
             if (memberFilter) memberFilter.value = '';
             if (searchInput) searchInput.value = '';
             fetchMembers();
@@ -787,7 +794,7 @@ document.addEventListener("DOMContentLoaded", function () {
         memberFilter?.addEventListener('change', function() {
             currentFilterValue = this.value;
             currentPage = 1;
-            // Fetch members with the current search type/query *and* this filter
+            // Fetch using the current search text/type *and* this filter
             fetchMembers(searchInput?.value || '');
         });
 
@@ -800,143 +807,148 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // --- Expiry Modal Event Listeners ---
         confirmExpirySearchButton?.addEventListener('click', handleConfirmExpirySearch);
-        closeExpiryButton?.addEventListener('click', closeExpiryModal); // Close via X button
-        // The cancel button in HTML already calls closeExpiryModal via onclick
-        // modalOverlay?.addEventListener('click', closeExpiryModal); // Overlay click handled below
+        closeExpiryButton?.addEventListener('click', closeExpiryModal); // Close via X
 
         // --- Birthday Modal Event Listeners ---
         confirmBirthdaySearchButton?.addEventListener('click', handleConfirmBirthdaySearch);
-        closeBirthdayButton?.addEventListener('click', closeBirthdayModal); // Close via X button
-        // The cancel button in HTML already calls closeBirthdayModal via onclick
+        closeBirthdayButton?.addEventListener('click', closeBirthdayModal); // Close via X
 
         // --- Shared Modal Overlay Listener ---
-        // Close *either* modal if the overlay is clicked
         modalOverlay?.addEventListener('click', () => {
             closeExpiryModal();
             closeBirthdayModal();
         });
+
+        // --- Jump to Page Button Listener (if button exists outside pagination update) ---
+        // This is better handled inside updatePagination where the button is created/updated
+        // const jumpButton = document.querySelector('.jump-btn');
+        // jumpButton?.addEventListener('click', jumpToPage);
+        // const pageInput = document.getElementById('pageInput');
+        // pageInput?.addEventListener('keypress', (e) => { if (e.key === 'Enter') jumpToPage(); });
     }
 
-    // --- Function to handle Expiry modal confirmation ---
+    // --- MODIFIED: Function to handle Expiry modal confirmation ---
     function handleConfirmExpirySearch() {
-        const year = expiryYearInput.value.trim();
-        const month = expiryMonthInput.value; // Value is 1-12 from select
+        const startYear = expiryStartYearInput?.value.trim();
+        const startMonth = expiryStartMonthInput?.value;
+        const startDay = expiryStartDayInput?.value.trim();
+        const endYear = expiryEndYearInput?.value.trim();
+        const endMonth = expiryEndMonthInput?.value;
+        const endDay = expiryEndDayInput?.value.trim();
 
-        // Validation
-        if (!year || !month) {
-            alert("请选择年份和月份。");
-            expiryMonthInput.focus(); // Focus on month if empty
+        // Basic presence validation
+        if (!startYear || !startMonth || !startDay || !endYear || !endMonth || !endDay) {
+            alert("请完整填写开始日期和结束日期的年、月、日。");
             return;
         }
-        const yearNum = parseInt(year, 10);
-        if (isNaN(yearNum) || yearNum < 1900 || yearNum > 2100) { // Example range
-             alert("请输入有效的年份 (例如 1900-2100)。");
-             expiryYearInput.focus();
-             return;
+
+        // Construct date strings (YYYY-MM-DD)
+        const startDateStr = `${startYear}-${padStart(startMonth)}-${padStart(startDay)}`;
+        const endDateStr = `${endYear}-${padStart(endMonth)}-${padStart(endDay)}`;
+
+        // Validate date strings
+        if (!isValidDateString(startDateStr)) {
+            alert(`开始日期无效: ${startDateStr}。请检查年月日是否正确。`);
+            expiryStartDayInput?.focus();
+            return;
+        }
+        if (!isValidDateString(endDateStr)) {
+            alert(`结束日期无效: ${endDateStr}。请检查年月日是否正确。`);
+            expiryEndDayInput?.focus();
+            return;
         }
 
-        // Store selected values
-        targetExpiryYear = yearNum;
-        targetExpiryMonth = parseInt(month, 10);
+        // Optional: Validate that start date is not after end date
+        const startDate = new Date(startDateStr);
+        const endDate = new Date(endDateStr);
+        if (startDate > endDate) {
+            alert("开始日期不能晚于结束日期。");
+            return;
+        }
+
+        // Store validated dates
+        targetStartDate = startDateStr;
+        targetEndDate = endDateStr;
         targetBirthdayMonth = null; // Reset birthday month
 
         // Set search type and trigger fetch
         currentPage = 1;
-        currentSearchType = 'expired'; // This is the key change
+        currentSearchType = 'expired'; // Set the search type
         currentFilterValue = ''; // Reset other filters
         if (memberFilter) memberFilter.value = '';
         if (searchInput) searchInput.value = '';
 
-        console.log(`Searching for members expiring on or before ${targetExpiryYear}-${targetExpiryMonth}`);
-        fetchMembers(); // fetchMembers will now use the target year/month
+        console.log(`Searching for members expiring between ${targetStartDate} and ${targetEndDate}`);
+        fetchMembers(); // fetchMembers will now use the target dates
 
         closeExpiryModal(); // Close the modal after confirmation
     }
 
-    // --- NEW: Function to handle Birthday modal confirmation ---
+    // --- Function to handle Birthday modal confirmation (Unchanged) ---
     function handleConfirmBirthdaySearch() {
-        const month = birthdayMonthInput.value; // Value is 1-12 from select
-
-        // Validation
+        const month = birthdayMonthInput?.value;
         if (!month) {
             alert("请选择一个月份。");
-            birthdayMonthInput.focus();
+            birthdayMonthInput?.focus();
             return;
         }
-
-        // Store selected value
         targetBirthdayMonth = parseInt(month, 10);
-        targetExpiryYear = null; // Reset expiry dates
-        targetExpiryMonth = null;
-
-        // Set search type and trigger fetch
+        targetStartDate = null; // Reset expiry dates
+        targetEndDate = null;
         currentPage = 1;
-        currentSearchType = 'Birthday'; // Set the search type
-        currentFilterValue = ''; // Reset other filters
+        currentSearchType = 'Birthday';
+        currentFilterValue = '';
         if (memberFilter) memberFilter.value = '';
         if (searchInput) searchInput.value = '';
-
         console.log(`Searching for members with birthday in month ${targetBirthdayMonth}`);
-        fetchMembers(); // fetchMembers will now use the target birthday month
-
-        closeBirthdayModal(); // Close the modal after confirmation
+        fetchMembers();
+        closeBirthdayModal();
     }
 
 
-    // ===== GLOBAL FUNCTIONS =====
-    // These need to be accessible from HTML onclick attributes or other scopes
+    // ===== GLOBAL FUNCTIONS (accessible from HTML onclick) =====
 
     window.editMember = function(id) {
         // ... (existing code - remains the same) ...
-        if (!id) {
-            console.error("Cannot edit member: No ID provided");
-            alert("无法编辑：ID未提供");
-            return;
-        }
+        if (!id) { console.error("Edit Error: No ID"); alert("无法编辑：ID未提供"); return; }
+        console.log(`Redirecting to edit member with ID: ${id}`);
         window.location.href = `member_management.html?action=edit&id=${id}`;
     };
 
     window.deleteMember = async function(id) {
         // ... (existing code - remains the same) ...
-         if (!id) {
-            console.error("Cannot delete member: No ID provided");
-            alert("无法删除：ID未提供");
-            return;
-        }
-
+        if (!id) { console.error("Delete Error: No ID"); alert("无法删除：ID未提供"); return; }
         if (confirm(`确定要删除塾员 ID ${id} 吗？此操作无法撤销。`)) {
+            console.log(`Attempting to delete member with ID: ${id}`);
+            const deleteUrl = `${API_BASE_URL}?table=members&ID=${id}`; // Ensure correct table name
             try {
-                const deleteUrl = `${API_BASE_URL}?table=members&ID=${id}`;
-                const response = await fetch(deleteUrl, {
-                    method: 'DELETE',
-                     headers: { 'Content-Type': 'application/json' }
-                });
-
+                const response = await fetch(deleteUrl, { method: 'DELETE' });
+                let message = `删除失败 (Status: ${response.status})`;
+                let success = false;
                 if (response.ok) {
-                    let data = {};
-                    const contentType = response.headers.get("content-type");
-                    if (contentType && contentType.indexOf("application/json") !== -1) {
-                        data = await response.json();
-                    } else if (response.status === 204) {
-                        data = { status: 'success', message: '删除成功！' };
-                    } else {
-                         data = { status: 'success', message: `删除成功 (Status: ${response.status})` };
-                    }
-                    alert(data.message || '删除成功！');
-                    fetchMembers(searchInput?.value || '');
-
+                     message = '删除成功！';
+                     success = true;
+                     // Try parsing JSON only if content type suggests it or status is not 204
+                     if (response.status !== 204 && response.headers.get("content-type")?.includes("application/json")) {
+                        try {
+                            const data = await response.json();
+                            message = data.message || message;
+                        } catch (e) { console.warn("Could not parse JSON response on delete success:", e); }
+                     }
                 } else {
-                    let errorData = { message: `删除失败 (Status: ${response.status})` };
-                    try {
-                         const errorJson = await response.json();
-                         errorData.message = errorJson.message || errorData.message;
-                    } catch (e) {
-                        errorData.message = await response.text() || errorData.message;
-                    }
-                    console.error("Deletion failed:", errorData);
-                    alert(`删除失败: ${errorData.message}`);
+                     // Try to get more specific error message
+                     try {
+                         const errorData = await response.json();
+                         message = errorData.message || message;
+                     } catch (e) {
+                         try { message = await response.text() || message; } catch (e2) {}
+                     }
                 }
-
+                alert(message);
+                if (success) {
+                    // Refresh the current page view
+                    fetchMembers(searchInput?.value || '');
+                }
             } catch (error) {
                 console.error("Error deleting member:", error);
                 alert(`删除时发生网络或脚本错误: ${error.message}`);
@@ -946,20 +958,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
     window.checkMember = function(id) {
         // ... (existing code - remains the same) ...
-        if (!id) {
-            console.error("Cannot check member details: No ID provided");
-            alert("无法查看：ID未提供");
-            return;
-        }
-        window.location.href = `check_details.html?id=${id}`;
+        if (!id) { console.error("Check Error: No ID"); alert("无法查看：ID未提供"); return; }
+        console.log(`Redirecting to check details for member ID: ${id}`);
+        window.location.href = `check_details.html?id=${id}`; // Ensure this page exists
     };
 
     window.changePage = function(page) {
         // ... (existing code - remains the same) ...
         const targetPage = parseInt(page, 10);
+        // Check bounds and if page actually changed
         if (!isNaN(targetPage) && targetPage >= 1 && targetPage <= totalPages && targetPage !== currentPage) {
+            console.log(`Changing page from ${currentPage} to ${targetPage}`);
             currentPage = targetPage;
-            fetchMembers(searchInput?.value || '');
+            fetchMembers(searchInput?.value || ''); // Fetch data for the new page
+        } else {
+             console.log(`Page change to ${page} ignored (invalid or same page). Current: ${currentPage}, Total: ${totalPages}`);
         }
     };
 
@@ -968,28 +981,33 @@ document.addEventListener("DOMContentLoaded", function () {
         const pageInput = document.getElementById('pageInput');
         if (!pageInput) return;
         const targetPage = parseInt(pageInput.value, 10);
-        if (isNaN(targetPage)) {
-            alert('请输入有效的页码数字。');
+        if (isNaN(targetPage) || targetPage < 1 || targetPage > totalPages) {
+            alert(`请输入有效的页码 (1 到 ${totalPages})。`);
             pageInput.value = '';
             pageInput.focus();
-            return;
+        } else {
+            pageInput.value = ''; // Clear input after successful jump
+            changePage(targetPage);
         }
-        const clampedPage = Math.max(1, Math.min(targetPage, totalPages));
-        if (clampedPage !== currentPage) {
-            changePage(clampedPage);
-        }
-        pageInput.value = '';
     };
 
     // --- Expiry Modal Control Functions ---
     window.openExpiryModal = function() {
         if (expiryModal && modalOverlay) {
+            // Optionally set default dates (e.g., start/end of current month) or clear fields
             const now = new Date();
-            expiryYearInput.value = now.getFullYear();
-            expiryMonthInput.value = String(now.getMonth() + 1);
+            if(expiryStartYearInput) expiryStartYearInput.value = now.getFullYear();
+            if(expiryStartMonthInput) expiryStartMonthInput.value = now.getMonth() + 1;
+            if(expiryStartDayInput) expiryStartDayInput.value = '1'; // Default to 1st
+            if(expiryEndYearInput) expiryEndYearInput.value = now.getFullYear();
+            if(expiryEndMonthInput) expiryEndMonthInput.value = now.getMonth() + 1;
+             // Default to last day of current month (approximation)
+            const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+            if(expiryEndDayInput) expiryEndDayInput.value = lastDay;
+
             expiryModal.style.display = 'block';
             modalOverlay.style.display = 'block';
-            expiryYearInput.focus();
+            expiryStartYearInput?.focus(); // Focus the first field
         } else {
             console.error("Expiry modal or overlay element not found.");
             alert("无法打开到期查询窗口。");
@@ -999,46 +1017,40 @@ document.addEventListener("DOMContentLoaded", function () {
     window.closeExpiryModal = function() {
         if (expiryModal && modalOverlay) {
             expiryModal.style.display = 'none';
-            // Only hide overlay if the *other* modal isn't also open
-            if (birthdayModal && birthdayModal.style.display !== 'block') {
+            // Only hide overlay if the birthday modal isn't also open
+            if (!birthdayModal || birthdayModal.style.display !== 'block') {
                 modalOverlay.style.display = 'none';
             }
         }
     };
 
-    // --- NEW: Birthday Modal Control Functions ---
+    // --- Birthday Modal Control Functions (Unchanged) ---
     window.openBirthdayModal = function() {
         if (birthdayModal && modalOverlay) {
-            // Set default month (e.g., current month or empty)
             const now = new Date();
-            // Set month, ensuring it's a string matching the <option> value
-            birthdayMonthInput.value = String(now.getMonth() + 1); // Default to current month
-            // Or set to empty if you prefer user must select:
-            // birthdayMonthInput.value = "";
-
+            if(birthdayMonthInput) birthdayMonthInput.value = String(now.getMonth() + 1);
             birthdayModal.style.display = 'block';
             modalOverlay.style.display = 'block';
-            // Focus the month input field
-            birthdayMonthInput.focus();
+            birthdayMonthInput?.focus();
         } else {
             console.error("Birthday modal or overlay element not found.");
-            alert("无法打生日开查询窗口。");
+            alert("无法打开生日查询窗口。");
         }
     };
 
     window.closeBirthdayModal = function() {
         if (birthdayModal && modalOverlay) {
             birthdayModal.style.display = 'none';
-             // Only hide overlay if the *other* modal isn't also open
-            if (expiryModal && expiryModal.style.display !== 'block') {
+             // Only hide overlay if the expiry modal isn't also open
+            if (!expiryModal || expiryModal.style.display !== 'block') {
                 modalOverlay.style.display = 'none';
             }
         }
     };
 
-    // Make resetColumnWidths globally available for the button's onclick
+    // Make resetColumnWidths globally available
     window.resetColumnWidths = resetColumnWidths;
 
-    // Initialize the page once the DOM is fully loaded
+    // Initialize the page
     initializePage();
 });

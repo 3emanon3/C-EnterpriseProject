@@ -25,7 +25,7 @@
                     <span class="tooltip-text">添加新塾员到系统中，录入塾员的详细信息</span>
                 </button>
 
-                <!-- Modified Birthday Button: Opens Modal -->
+                <!-- Birthday Button remains the same -->
                 <button id="searchBirthday" class="btn btn-info tooltip" onclick="openBirthdayModal()">
                     <i class="fas fa-birthday-cake"></i> 生日查询 (选择月份)
                     <span class="tooltip-text">
@@ -46,20 +46,24 @@
                         <strong>指定月份：</strong> 指您在弹出的窗口中选择的月份。系统会使用这个月份值进行匹配查找。
                     </span>
                 </button>
+
+                <!-- Modified Expiry Button Tooltip -->
                 <button id="searchExpiry" class="btn btn-warning tooltip" onclick="openExpiryModal()">
-                    <i class="fas fa-calendar-times"></i> 到期塾员 (选择年月)
+                    <i class="fas fa-calendar-times"></i> 到期塾员 (选择日期范围)
                     <span class="tooltip-text">
-                        <strong>核心功能：</strong> 查找并显示在指定年月或之前到期的塾员。
+                        <strong>核心功能：</strong> 查找并显示在指定日期范围（开始日期 到 结束日期）内到期的塾员。
                         <br>
                         <strong>使用须知：</strong><br>
-                        1.  <strong>选择年月：</strong> 点击此按钮后，您需要输入或选择一个目标年份和月份。
+                        1.  <strong>选择日期范围：</strong> 点击此按钮后，您需要输入或选择一个开始日期（年月日）和一个结束日期（年月日）。
                         <br>
-                        2.  <strong>筛选逻辑：</strong> 系统将查找所有“到期日期”早于或等于您所选年月最后一天的塾员。例如，选择 2024 年 6 月，将显示到期日在 2024-06-30 及之前的所有塾员。
+                        2.  <strong>筛选逻辑：</strong> 系统将查找所有“到期日期”大于或等于开始日期，并且小于或等于结束日期的塾员。例如，选择开始日期 2024-06-01 和结束日期 2024-06-30，将显示到期日在 2024-06-01 至 2024-06-30 之间的所有塾员（包括这两天）。
                         <br>
                         3.  <strong>数据依赖：</strong> 依赖于塾员信息中准确的“到期日期”记录（格式应为 YYYY-MM-DD）。若该字段为空或格式错误，对应塾员可能无法被正确筛选。
                         <br>
                         <strong>补充：词语解释</strong><br>
                         <strong>到期日期：</strong> 记录塾员会籍有效期的最后日期。
+                        <br>
+                        <strong>开始日期 / 结束日期：</strong> 您在弹出的窗口中指定的日期范围的起始和终止点。
                     </span>
                 </button>
                 <button id="listAllMembers" class="btn btn-secondary tooltip">
@@ -133,7 +137,6 @@
                             <th data-column="others">其他<div class="resizer"></div></th>
                             <th data-column="remarks">备注<div class="resizer"></div></th>
                             <th class="Action">操作</th>
-
                         </tr>
                     </thead>
                     <tbody>
@@ -158,32 +161,56 @@
         </section>
     </div>
 
-    <!-- Expiry Search Modal -->
+    <!-- Modified Expiry Search Modal -->
     <div id="expiryModal" class="modal">
         <div class="modal-content">
             <span class="close-button" onclick="closeExpiryModal()">×</span>
-            <h2>选择查询的到期年月</h2>
-            <p>查找在指定年月或之前到期的塾员。</p>
-            <div class="modal-form">
-                <label for="expiryYearInput">年份 (YYYY):</label>
-                <input type="number" id="expiryYearInput" placeholder="例如: 2024" min="1900" max="2100">
+            <h2>选择查询的到期日期范围</h2>
+            <p>查找在指定日期范围（包括开始和结束日期）内到期的塾员。</p>
+            <div class="modal-form modal-form-grid"> <!-- Added class for potential styling -->
 
-                <label for="expiryMonthInput">月份 (1-12):</label>
-                <select id="expiryMonthInput">
-                    <option value="">--选择月份--</option>
-                    <option value="1">1 (一月)</option>
-                    <option value="2">2 (二月)</option>
-                    <option value="3">3 (三月)</option>
-                    <option value="4">4 (四月)</option>
-                    <option value="5">5 (五月)</option>
-                    <option value="6">6 (六月)</option>
-                    <option value="7">7 (七月)</option>
-                    <option value="8">8 (八月)</option>
-                    <option value="9">9 (九月)</option>
-                    <option value="10">10 (十月)</option>
-                    <option value="11">11 (十一月)</option>
-                    <option value="12">12 (十二月)</option>
-                </select>
+                <!-- Start Date Inputs -->
+                <fieldset class="date-range-group">
+                    <legend>开始日期</legend>
+                    <div class="date-inputs">
+                        <label for="expiryStartYearInput">年:</label>
+                        <input type="number" id="expiryStartYearInput" placeholder="YYYY" min="1900" max="2100">
+
+                        <label for="expiryStartMonthInput">月:</label>
+                        <select id="expiryStartMonthInput">
+                            <option value="">--月--</option>
+                            <option value="1">1</option> <option value="2">2</option> <option value="3">3</option>
+                            <option value="4">4</option> <option value="5">5</option> <option value="6">6</option>
+                            <option value="7">7</option> <option value="8">8</option> <option value="9">9</option>
+                            <option value="10">10</option> <option value="11">11</option> <option value="12">12</option>
+                        </select>
+
+                        <label for="expiryStartDayInput">日:</label>
+                        <input type="number" id="expiryStartDayInput" placeholder="DD" min="1" max="31">
+                    </div>
+                </fieldset>
+
+                <!-- End Date Inputs -->
+                 <fieldset class="date-range-group">
+                    <legend>结束日期</legend>
+                     <div class="date-inputs">
+                        <label for="expiryEndYearInput">年:</label>
+                        <input type="number" id="expiryEndYearInput" placeholder="YYYY" min="1900" max="2100">
+
+                        <label for="expiryEndMonthInput">月:</label>
+                        <select id="expiryEndMonthInput">
+                            <option value="">--月--</option>
+                            <option value="1">1</option> <option value="2">2</option> <option value="3">3</option>
+                            <option value="4">4</option> <option value="5">5</option> <option value="6">6</option>
+                            <option value="7">7</option> <option value="8">8</option> <option value="9">9</option>
+                            <option value="10">10</option> <option value="11">11</option> <option value="12">12</option>
+                        </select>
+
+                        <label for="expiryEndDayInput">日:</label>
+                        <input type="number" id="expiryEndDayInput" placeholder="DD" min="1" max="31">
+                    </div>
+                </fieldset>
+
             </div>
             <div class="modal-actions">
                 <button id="confirmExpirySearch" class="btn btn-success">查询</button>
@@ -192,7 +219,7 @@
         </div>
     </div>
 
-    <!-- Birthday Search Modal -->
+    <!-- Birthday Search Modal remains the same -->
     <div id="birthdayModal" class="modal">
         <div class="modal-content">
             <span class="close-button" onclick="closeBirthdayModal()">×</span>

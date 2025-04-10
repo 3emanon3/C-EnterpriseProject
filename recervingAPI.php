@@ -79,9 +79,9 @@ class DatabaseAPI {
 
             ],
             'expired' => [
-                'conditions'=>['(YEAR(`expired_date`) < ?) OR (YEAR(`expired_date`) = ? AND MONTH(`expired_date`) <= ?) '],
-                'param' => ['targetYear', 'targetYear', 'targetMonth'],
-                'paramTypes' => 'iii'
+                'conditions'=>['`expired_date` BETWEEN ? AND ?'],
+                'param' => ['startDate', 'endDate'],
+                'paramTypes' => 'ss'
             ],
         ],
         'soldrecord' => [

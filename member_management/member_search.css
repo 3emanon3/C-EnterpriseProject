@@ -51,8 +51,8 @@ header {
     left: 0;
     right: 0;
     z-index: 100;
-    height: 80px; 
-    width: 100%; 
+    height: 80px;
+    width: 100%;
     box-sizing: border-box;
 }
 
@@ -86,6 +86,44 @@ h1 {
     background-color: var(--success-color);
     color: white;
 }
+
+/* Added btn-warning style if not already present */
+.btn-warning {
+    background-color: #ffc107; /* Example warning color */
+    color: #212529; /* Dark text for light background */
+}
+.btn-warning:hover {
+    background-color: #e0a800;
+}
+
+/* Added btn-info style if not already present */
+.btn-info {
+    background-color: #17a2b8; /* Example info color */
+    color: white;
+}
+.btn-info:hover {
+    background-color: #138496;
+}
+
+/* Added btn-secondary style if not already present */
+.btn-secondary {
+    background-color: #6c757d; /* Example secondary color */
+    color: white;
+}
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+/* Added btn-light style if not already present */
+.btn-light {
+    background-color: #f8f9fa; /* Example light color */
+    color: #212529;
+    border: 1px solid #ced4da;
+}
+.btn-light:hover {
+    background-color: #e2e6ea;
+}
+
 
 .btn-search {
     background-color: var(--secondary-color);
@@ -164,8 +202,8 @@ h1 {
 }
 
 .search-stats {
-    font-size: 1rem;         
-    color: #ffffff;          
+    font-size: 1rem;
+    color: #ffffff;
 }
 
 /* Table Styles */
@@ -206,12 +244,12 @@ th, td {
 
 
 th[data-column="Address"],
-td:nth-child(5), 
+td:nth-child(5),
 th[data-column="remarks"],
-td:nth-child(16) { 
-    width: 150px;
-    white-space: normal; 
-    word-break: break-word; 
+td:nth-child(17) { /* Adjusted index for remarks if needed */
+    width: 150px; /* Default width, can be overridden by resizer */
+    white-space: normal;
+    word-break: break-word;
 }
 
 th {
@@ -223,7 +261,7 @@ th {
 }
 
 th.Action {
-    width: 200px;
+    width: 200px; /* Fixed width for action column */
 }
 
 .resizer {
@@ -238,11 +276,11 @@ th.Action {
 }
 
 .resizer:hover,
-.rezising .resizer{
+.resizing .resizer{ /* Changed class name */
     background-color: rgba(0, 0, 255, 0.2);
 }
 
-th i {
+th i.sort-arrow { /* Target sort icons specifically */
     margin-left: 5px;
     font-size: 12px;
 }
@@ -277,40 +315,103 @@ tr:hover {
 /* Pagination Styles */
 .pagination-container {
     display: flex;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
     align-items: center;
     padding-top: 20px;
     border-top: 1px solid var(--border-color);
-    justify-content:  flex-start;
+    justify-content: space-between; /* Space out elements */
+    gap: 10px; /* Add gap between elements */
 }
 
 .pagination {
     display: flex;
     gap: 5px;
+    flex-wrap: wrap; /* Allow page numbers to wrap */
+    justify-content: center; /* Center page numbers if they wrap */
+    flex-grow: 1; /* Allow pagination to take available space */
 }
 
 .pagination-container .btn-primary {
     padding: 5px 10px;
-    margin: 0 5px;
+    /* margin: 0 5px; Removed fixed margin, use gap */
 }
 
-.pagination button {
+/* Style pagination buttons */
+.pagination button.pagination-btn,
+.pagination span.pagination-ellipsis {
     padding: 5px 10px;
     border: 1px solid var(--border-color);
     background: white;
     cursor: pointer;
     border-radius: 4px;
+    color: var(--primary-color);
+    font-size: 14px;
 }
 
-.pagination button.active {
+.pagination button.pagination-btn.active {
     background-color: var(--secondary-color);
     color: white;
     border-color: var(--secondary-color);
+    cursor: default;
 }
+.pagination span.pagination-ellipsis {
+    border: none;
+    background: none;
+    cursor: default;
+    padding: 5px 3px; /* Adjust padding */
+}
+
+.pagination button.pagination-btn:not(.active):hover {
+    background-color: #e9ecef;
+}
+
+.pagination-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 14px;
+    flex-wrap: wrap; /* Allow wrapping */
+    justify-content: center; /* Center if wrapping */
+}
+
+.page-indicator {
+    white-space: nowrap; /* Prevent breaking */
+}
+
+.page-jump {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.page-input {
+    width: 60px; /* Adjust width */
+    padding: 5px 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    text-align: center;
+}
+/* Remove spinner buttons for number input */
+.page-input::-webkit-outer-spin-button,
+.page-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.page-input[type=number] {
+  -moz-appearance: textfield; /* Firefox */
+}
+
+.jump-btn {
+    padding: 5px 10px; /* Match other buttons */
+}
+
 
 .items-per-page {
     display: flex;
     align-items: center;
     gap: 10px;
+    font-size: 14px;
+    margin-left: auto; /* Push to the right */
 }
 
 #itemsPerPage {
@@ -320,10 +421,10 @@ tr:hover {
 }
 
 .system-nav {
-    position: fixed;
-top: 20px;    
-right: 20px; 
-z-index: 101;
+    display: flex; /* Use flexbox for alignment */
+    gap: 10px; /* Space between buttons */
+    flex-wrap: wrap; /* Allow buttons to wrap */
+    justify-content: flex-end; /* Align buttons to the right */
 }
 
 
@@ -343,24 +444,30 @@ z-index: 101;
     padding: 8px;
     position: absolute;
     z-index: 1000;
-    top: 125%;
+    bottom: 125%; /* Position above the button */
     left: 50%;
-    margin-left: -100px;
+    margin-left: -200px; /* Center tooltip (width/2) */
     opacity: 0;
     transition: opacity 0.3s;
-    font-size: 15px;
+    font-size: 14px; /* Slightly smaller tooltip text */
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    line-height: 1.4; /* Adjust line height in tooltip */
 }
 
+.tooltip .tooltip-text strong {
+    color: #5dade2; /* Highlight key terms */
+}
+
+/* Tooltip Arrow */
 .tooltip .tooltip-text::after {
     content: "";
     position: absolute;
-    bottom: 100%;
+    top: 100%; /* Arrow at the bottom */
     left: 50%;
     margin-left: -5px;
     border-width: 5px;
     border-style: solid;
-    border-color: transparent transparent #333 transparent;
+    border-color: #333 transparent transparent transparent; /* Pointing down */
 }
 
 .tooltip:hover .tooltip-text {
@@ -368,6 +475,7 @@ z-index: 101;
     opacity: 1;
 }
 
+/* Modal Styles */
 .modal-overlay {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
@@ -388,7 +496,7 @@ z-index: 101;
     top: 50%;
     transform: translate(-50%, -50%);
     width: 90%; /* Could be more or less, depending on screen size */
-    max-width: 500px; /* Maximum width */
+    max-width: 600px; /* Increase max-width for date range */
     background-color: #fefefe;
     border-radius: 8px;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
@@ -424,6 +532,7 @@ z-index: 101;
 }
 
 .modal h2 {
+    margin-top: 0; /* Remove potential default margin */
     margin-bottom: 15px;
     color: var(--primary-color);
     text-align: center;
@@ -434,6 +543,7 @@ z-index: 101;
     margin-bottom: 20px;
     font-size: 0.95rem;
     color: #555;
+    text-align: center; /* Center description */
 }
 
 .modal-form {
@@ -443,19 +553,63 @@ z-index: 101;
     margin-bottom: 25px;
 }
 
-.modal-form label {
+/* Styles for the new Expiry Modal Form */
+.modal-form-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* Single column layout */
+    gap: 20px; /* Space between start/end date groups */
+}
+
+.date-range-group {
+    border: 1px solid var(--border-color);
+    padding: 15px;
+    border-radius: 6px;
+}
+
+.date-range-group legend {
     font-weight: bold;
-    margin-bottom: -10px; /* Adjust spacing */
+    padding: 0 10px;
+    margin-left: 10px; /* Indent legend slightly */
+    color: var(--primary-color);
+}
+
+.date-inputs {
+    display: grid;
+    grid-template-columns: auto 1fr; /* Label and Input */
+    gap: 10px 15px; /* Row gap, Column gap */
+    align-items: center; /* Vertically align items in each row */
+}
+
+.date-inputs label {
+    font-weight: normal; /* Labels are less prominent than legend */
+    text-align: right; /* Align labels to the right */
     color: var(--text-color);
+    font-size: 0.9rem;
 }
 
 .modal-form input[type="number"],
 .modal-form select {
-    padding: 10px;
+    padding: 8px 10px; /* Slightly smaller padding */
     border: 1px solid var(--border-color);
     border-radius: 4px;
-    font-size: 1rem;
-    width: 100%;
+    font-size: 0.95rem; /* Slightly smaller font */
+    width: 100%; /* Make inputs fill grid column */
+}
+
+/* Specific widths for date inputs if needed */
+#expiryStartYearInput, #expiryEndYearInput {
+   /* width: 80px; */ /* Example fixed width if needed */
+}
+#expiryStartMonthInput, #expiryEndMonthInput {
+   /* width: 80px; */
+}
+#expiryStartDayInput, #expiryEndDayInput {
+   /* width: 70px; */
+}
+
+/* Adjust Month Select appearance */
+.modal-form select {
+    cursor: pointer;
 }
 
 .modal-actions {
@@ -466,100 +620,218 @@ z-index: 101;
     border-top: 1px solid var(--border-color);
 }
 
+/* No Results Row Style */
+.no-results {
+    text-align: center;
+    color: #777;
+    font-style: italic;
+    padding: 20px;
+}
+
+
 /* Responsive Design */
 @media (max-width: 768px) {
     header {
         flex-direction: column;
-        gap: 15px;
-        text-align: center;
+        align-items: flex-start; /* Align items to start */
+        height: auto; /* Allow header to grow */
+        padding: 10px 15px;
+        position: relative; /* Change from fixed for simplicity */
+    }
+
+    h1 {
+        font-size: 1.5rem; /* Smaller heading */
+        margin-bottom: 10px;
     }
 
     .system-nav {
-        position: fixed;
-    top: 20px;    
-    right: 20px; 
-    z-index: 100;
+        width: 100%; /* Nav takes full width */
+        justify-content: flex-start; /* Align buttons to start */
+        gap: 5px; /* Reduce gap */
+    }
+    .system-nav .btn {
+        padding: 6px 10px; /* Smaller buttons */
+        font-size: 12px;
+    }
+     .system-nav .tooltip .tooltip-text {
+        width: 250px; /* Narrower tooltips */
+        margin-left: -125px;
+        font-size: 12px;
+        bottom: 115%; /* Adjust position */
+    }
+
+
+    .container {
+        margin-top: 10px; /* Adjust margin since header is not fixed */
+        padding: 15px;
+        padding-top: 20px; /* Reduce top padding */
     }
 
     .search-input-group {
-        flex-direction: column;
+        flex-direction: column; /* Stack search elements */
+        padding: 8px;
+    }
+    #searchInput {
+        font-size: 13px;
+    }
+    .search-icon {
+        margin-left: 0; /* Remove left margin */
+        margin-bottom: 5px; /* Add space below icon */
+    }
+    .search-stats {
+        font-size: 0.9rem;
+        margin-top: 10px; /* Add space above stats */
+    }
+
+    .table-container {
+        padding: 10px;
+    }
+
+    th, td {
+        padding: 8px 10px; /* Reduce padding */
+        font-size: 13px; /* Smaller font in table */
+        white-space: normal; /* Allow wrapping by default on mobile */
+        word-break: break-word;
+        /* Remove fixed width overrides for mobile, let them wrap */
+        width: auto !important;
+    }
+    th.Action {
+        width: auto !important; /* Let action column resize too */
+        white-space: nowrap; /* Keep action buttons together */
+    }
+    .resizer {
+        display: none; /* Hide resizers on mobile */
+    }
+    th {
+        white-space: nowrap; /* Keep headers from wrapping */
     }
 
     .pagination-container {
         flex-direction: column;
+        align-items: stretch; /* Stretch items full width */
         gap: 15px;
     }
+    .pagination {
+        justify-content: center; /* Center page numbers */
+        order: 2; /* Change order */
+    }
+    .pagination-container .btn-primary {
+        width: 48%; /* Make prev/next buttons roughly half width */
+        text-align: center;
+        justify-content: center; /* Center icon/text */
+    }
+    #prevPage { order: 1; }
+    #nextPage { order: 1; }
 
-    .th td {
-        white-space: normal;
-        word-break: break-word;
+    .pagination-info {
+        order: 3; /* Change order */
+        justify-content: center;
+        width: 100%;
+    }
+    .items-per-page {
+        order: 4; /* Change order */
+        margin-left: 0; /* Remove auto margin */
+        justify-content: center; /* Center items per page */
+        width: 100%;
+    }
+
+    .modal {
+        max-width: 95%; /* Allow modal to be wider on small screens */
+    }
+    .modal-content {
+        padding: 15px 20px;
+    }
+    .modal h2 {
+        font-size: 1.3rem;
+    }
+    .modal p {
+        font-size: 0.9rem;
+    }
+    /* Adjust expiry modal grid for smaller screens */
+    .date-inputs {
+        grid-template-columns: auto 1fr; /* Keep label/input structure */
+        gap: 8px 10px; /* Reduce gaps */
+    }
+     .modal-form input[type="number"],
+    .modal-form select {
+        font-size: 0.9rem;
+        padding: 6px 8px;
+    }
+
+    /* Ensure action buttons are visible */
+    .btn-edit, .btn-delete, .btn-check {
+        padding: 5px 8px; /* Smaller action buttons */
+    }
+    .btn i {
+        margin-right: 4px; /* Adjust icon spacing */
     }
 
     /* Add to your CSS */
-#memberTable tbody tr:hover {
-    background-color: rgba(0, 0, 0, 0.1);
-    transition: background-color 0.2s ease;
-  }
+    #memberTable tbody tr:hover {
+        background-color: rgba(0, 0, 0, 0.05); /* Lighter hover */
+        transition: background-color 0.2s ease;
+    }
 
-  /* Add a solid horizontal line to separate rows */
-#memberTable tbody tr {
-    border-bottom: 3px solid rgb(255, 0, 0); /* Change color and thickness as needed */
-}
+    /* Add a solid horizontal line to separate rows */
+    #memberTable tbody tr {
+        border-bottom: 1px solid #dee2e6; /* Standard bootstrap-like border */
+    }
 
-#memberTable tbody tr:last-child {
-    border-bottom: 2px solid #d80000; /* Remove border for the last row to keep it clean */
-}
+    #memberTable tbody tr:last-child {
+        border-bottom: none; /* Remove border for the last row */
+    }
 
-#memberTable th {
-    border-right: 2px solid var(--border-color);
-    position: relative;
-}
+    #memberTable th {
+        border-right: 1px solid var(--border-color); /* Thinner border */
+        position: relative;
+    }
 
-#memberTable th:last-child {
-    border-right: none;
-}
+    #memberTable th:last-child {
+        border-right: none;
+    }
 
-.form-select {
-    padding: 8px 12px;
-    border-radius: 4px;
-    border: 1px solid #ddd;
-    background-color: #fff;
-    min-width: 150px;
-    cursor: pointer;
-    font-size: 14px;
-    margin-left: 10px;
-}
+    .form-select { /* Style for memberFilter select */
+        padding: 8px 12px;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+        background-color: #fff;
+        min-width: 150px;
+        cursor: pointer;
+        font-size: 14px;
+        margin-left: 10px; /* Spacing */
+    }
 
-.action-select {
-    padding: 6px;
-    border-radius: 4px;
-    border: 1px solid #ddd;
-    background-color: #fff;
-    width: 100%;
-    cursor: pointer;
-}
+    /* Style for potential future action selects within rows */
+    .action-select {
+        padding: 6px;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+        background-color: #fff;
+        width: 100%;
+        cursor: pointer;
+    }
 
-#blacklist {
-    background-color: #dc3545; /* Bootstrap danger red */
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 16px;
-    font-weight: bold;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.3s, transform 0.2s;
-}
+    /* Style for potential future blacklist button */
+    #blacklist {
+        background-color: #dc3545; /* Bootstrap danger red */
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        font-weight: bold;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.3s, transform 0.2s;
+    }
 
-#blacklist:hover {
-    background-color: #c82333; /* Darker red on hover */
-    transform: scale(1.05);
-}
+    #blacklist:hover {
+        background-color: #c82333; /* Darker red on hover */
+        transform: scale(1.05);
+    }
 
-#blacklist:active {
-    background-color: #a71d2a;
-    transform: scale(0.95);
-}
+    #blacklist:active {
+        background-color: #a71d2a;
+        transform: scale(0.95);
+    }
 
-
-}
+} /* End of @media (max-width: 768px) */
