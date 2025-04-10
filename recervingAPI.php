@@ -50,7 +50,7 @@ class DatabaseAPI {
         'participants' => ['ID', 'eventID', 'memberID', 'joined_at'],
         'vparticipants' => ['ID', 'memberID', 'Name', 'CName', 'phone_number', 'email', 'IC', 'eventID', 'joined_at'],
         'bank'=>['ID','Bank'],
-        'donationtypes'=>['ID','donation_Types'],
+        'donationtypes'=>['ID','donationTypes'],
     ];
 
     // Table mappings
