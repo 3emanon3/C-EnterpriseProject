@@ -912,7 +912,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // ... (existing code - remains the same) ...
         if (!id) { console.error("Edit Error: No ID"); alert("无法编辑：ID未提供"); return; }
         console.log(`Redirecting to edit member with ID: ${id}`);
-        window.location.href = `member_management.html?action=edit&id=${id}`;
+        window.location.href = `edit_member.html?action=edit&id=${id}`;
     };
 
     window.deleteMember = async function(id) {
