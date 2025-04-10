@@ -108,6 +108,8 @@ h1 {
 .btn-secondary { background-color: var(--secondary-color); } /* For Edit */
 .btn-danger { background-color: var(--danger-color); } /* For Delete */
 .btn-warning { background-color: var(--warning-color); color: white; } /* For Clear/Reset */
+.btn-purple { background-color: #8e44ad; color: white; } /* New purple color for Amount Range Filter */
+.btn-dark { background-color: #34495e; color: white; } /* Dark color for Print button */
 
 
 /* Specific button styles */
