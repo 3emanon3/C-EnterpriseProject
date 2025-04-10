@@ -33,9 +33,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const eventId = urlParams.get('id');
     
     // Store return navigation parameters
-let returnPage = urlParams.get('returnPage') || '';
-let returnQuery = urlParams.get('returnQuery') || '';
-let returnStatus = urlParams.get('returnStatus') || '';
+    let returnPage = urlParams.get('returnPage') || '';
+    let returnQuery = urlParams.get('returnQuery') || '';
+    let returnStatus = urlParams.get('returnStatus') || '';
 
     // 模态框事件监听
     if (modalClose) {
@@ -78,22 +78,18 @@ let returnStatus = urlParams.get('returnStatus') || '';
             openMemberSearchModal();
         });
     }
-
-
     
     function updateReturnButtonUrl() {
         const returnButtons = document.querySelectorAll('.header-actions a.btn-secondary, .back-btn, a[href="searchEvent.html"]');
         
         if (returnButtons.length > 0) {
-          
-            
             // Then construct the return URL
             let returnUrl = 'searchEvent.html';
             const params = [];
             
             if (returnPage) params.push(`page=${returnPage}`);
             if (returnQuery) params.push(`query=${encodeURIComponent(returnQuery)}`);
-            if (returnStatus) params.push(`status=${statusParam}`);
+            if (returnStatus) params.push(`status=${returnStatus}`);
             
             if (params.length > 0) {
                 returnUrl += '?' + params.join('&');
@@ -102,8 +98,6 @@ let returnStatus = urlParams.get('returnStatus') || '';
             // Apply to all return buttons
             returnButtons.forEach(button => {
                 button.href = returnUrl;
-                
-               
             });
             
             // Also handle browser back button when possible
@@ -111,7 +105,7 @@ let returnStatus = urlParams.get('returnStatus') || '';
         }
     }
 
-        updateReturnButtonUrl();
+    updateReturnButtonUrl();
     
     // Initialize - If there's an ID parameter, load event details
     if (eventId) {
@@ -258,103 +252,6 @@ let returnStatus = urlParams.get('returnStatus') || '';
             </div>
         `;
         
-        // Add custom CSS for event details
-        const styleTag = document.createElement('style');
-        styleTag.textContent = `
-            .event-details {
-                margin-bottom: 30px;
-                background-color: #f9f9f9;
-                padding: 20px;
-                border-radius: 5px;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            }
-            .event-details h2 {
-                margin-top: 0;
-                color: #800000;
-                border-bottom: 1px solid #ddd;
-                padding-bottom: 10px;
-                margin-bottom: 15px;
-            }
-            .event-info {
-                display: flex;
-                flex-direction: column;
-                gap: 15px;
-            }
-            .info-row {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 20px;
-            }
-            .info-item {
-                flex: 1;
-                min-width: 200px;
-            }
-            .full-width {
-                width: 100%;
-            }
-            .label {
-                font-weight: bold;
-                color: #555;
-                display: block;
-                margin-bottom: 5px;
-            }
-            .value {
-                color: #333;
-            }
-            .description {
-                white-space: pre-line;
-                line-height: 1.5;
-                margin-top: 5px;
-                padding: 10px;
-                background-color: #fff;
-                border-radius: 3px;
-                border: 1px solid #eee;
-            }
-            .status-not\\ started {
-                color: #0066cc;
-                font-weight: bold;
-            }
-            .status-started {
-                color: #009900;
-                font-weight: bold;
-            }
-            .status-cancelled {
-                color: #cc0000;
-                font-weight: bold;
-            }
-            .status-ended {
-                color: #666666;
-                font-weight: bold;
-            }
-            h1 {
-                margin-bottom: 20px;
-                color: #800000;
-            }
-            .loading-spinner {
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background-color: rgba(255, 255, 255, 0.8);
-                padding: 20px;
-                border-radius: 5px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-                z-index: 1000;
-            }
-            .alert {
-                padding: 15px;
-                margin-bottom: 20px;
-                border: 1px solid transparent;
-                border-radius: 4px;
-            }
-            .alert-danger {
-                color: #721c24;
-                background-color: #f8d7da;
-                border-color: #f5c6cb;
-            }
-        `;
-        document.head.appendChild(styleTag);
-        
         // Insert event details before the members table
         const container = document.querySelector('.container');
         container.insertBefore(eventDetailsSection, document.querySelector('h1').nextSibling);
@@ -367,6 +264,9 @@ let returnStatus = urlParams.get('returnStatus') || '';
     // Fetch participants
     async function fetchParticipants(eventId) {
         showLoading();
+
+        console.log("Fetching participants for event ID:", eventId);
+        
         try {
             console.log(`Fetching participants for event ID: ${eventId}`);
             const response = await fetch(`${API_BASE_URL}?table=vparticipants&search=true&eventID=${eventId}`);
@@ -377,39 +277,44 @@ let returnStatus = urlParams.get('returnStatus') || '';
             const data = await response.json();
             console.log('Loaded participants data:', data);
             
-            let validParticipants = [];
+          
             if (data.data && data.data.length > 0) {
-                // Only keep participants whose eventID matches the current eventId
-                validParticipants = data.data.filter(participant => participant.eventID == eventId);
-            // If we have participants, fetch detailed member information for each
-            if (validParticipants.length > 0) {
-                const participantsWithMemberInfo = await Promise.all(
-                    data.data.map(async (participant) => {
-                        if (participant.memberID) {
-                            try {
-                                const memberResponse = await fetch(`${API_BASE_URL}?table=members&search=true&ID=${participant.memberID}`);
-                                if (memberResponse.ok) {
-                                    const memberData = await memberResponse.json();
-                                    if (memberData.data && memberData.data.length > 0) {
-                                        // Combine participant data with member data
-                                        return { ...participant, memberInfo: memberData.data[0] };
+                // Filter participants for this event
+                const validParticipants = data.data.filter(participant => participant.eventID == eventId);
+                populateParticipantsTable(validParticipants);
+            } else {
+                // If no data in vparticipants, try the original participants table as fallback
+                const fallbackResponse = await fetch(`${API_BASE_URL}?table=participants&search=true&eventID=${eventId}`);
+                if (fallbackResponse.ok) {
+                    const fallbackData = await fallbackResponse.json();
+                    if (fallbackData.data && fallbackData.data.length > 0) {
+                        // Need to fetch member info for each participant
+                        const participantsWithMemberInfo = await Promise.all(
+                            fallbackData.data.map(async (participant) => {
+                                if (participant.memberID) {
+                                    try {
+                                        const memberResponse = await fetch(`${API_BASE_URL}?table=members&search=true&ID=${participant.memberID}`);
+                                        if (memberResponse.ok) {
+                                            const memberData = await memberResponse.json();
+                                            if (memberData.data && memberData.data.length > 0) {
+                                                return { ...participant, ...memberData.data[0] };
+                                            }
+                                        }
+                                    } catch (error) {
+                                        console.error(`Error fetching member data:`, error);
                                     }
                                 }
-                            } catch (memberError) {
-                                console.error(`Error fetching member data for ID ${participant.memberID}:`, memberError);
-                            }
-                        }
-                        return participant;
-                    })
-                );
-                
-                populateParticipantsTable(participantsWithMemberInfo);
-            } else {
-                populateParticipantsTable([]);
+                                return participant;
+                            })
+                        );
+                        populateParticipantsTable(participantsWithMemberInfo);
+                    } else {
+                        populateParticipantsTable([]);
+                    }
+                } else {
+                    populateParticipantsTable([]);
+                }
             }
-        } else {
-            populateParticipantsTable([]);
-        }
         } catch (error) {
             console.error('Error loading participants:', error);
             showError(`Failed to load participants: ${error.message}`);
@@ -427,43 +332,21 @@ let returnStatus = urlParams.get('returnStatus') || '';
         if (!Array.isArray(participants) || participants.length === 0) {
             const noDataRow = `
                 <tr>
-                    <td colspan="4" class="no-data">该活动暂无参与者</td>
+                    <td colspan="10" class="no-data">该活动暂无参与者</td>
                 </tr>
             `;
             tableBody.innerHTML = noDataRow;
             return;
         }
-        
-        // Enhanced CSS for improved table design
-        const styleTag = document.createElement('style');
-      
-        document.head.appendChild(styleTag);
-        
-        // Add table class for new styling
-        const table = document.querySelector('table');
-        table.classList.add('participants-table');
-        
-        // Update table headers with more descriptive text
-        const tableHeaders = document.querySelector('thead tr');
-        tableHeaders.innerHTML = `
-            <th>序号</th>
-            <th>会员ID</th>
-            <th>会员英文姓名</th>
-            <th>会员华文姓名</th>   
-            <th>会员电话</th>
-            <th>会员邮箱</th>
-            <th>会员IC</th>
-            <th>事件ID</th>
-            <th>加入活动日期</th>
-            <th>操作</th>
-        `;
 
+        console.log("Sample participant data:", participants[0]);
+    
         // Populate table with enhanced participant data
-        participants.forEach((participant ) => {
+        participants.forEach((participant) => {
             // Get member info if available   
             const row = document.createElement('tr');
-            const sequentialNumber =participant.ID;
-            displayMemberId = participant.memberID || 'N/A';
+            const sequentialNumber = participant.ID;
+            const displayMemberId = participant.membersID || participant.memberID || 'N/A';
             const englishName = participant.Name || 'N/A';
             const chineseName = participant.CName || 'N/A';
             const phoneNumber = participant.phone_number || 'N/A';
@@ -471,67 +354,116 @@ let returnStatus = urlParams.get('returnStatus') || '';
             const ic = participant.IC || 'N/A';
 
             row.innerHTML = `
-                 <td>${sequentialNumber}</td>
-            <td class="member-id">${escapeHTML(displayMemberId)}</td>
-            <td class="member-name">${escapeHTML(englishName)}</td>
-            <td class="member-cname">${escapeHTML(chineseName)}</td>
-            <td class="member-phone">${escapeHTML(phoneNumber)}</td>
-            <td class="member-email">${escapeHTML(email)}</td>
-            <td class="member-ic">${escapeHTML(ic)}</td>
-            <td class="event-id">${escapeHTML(participant.eventID || 'N/A')}</td>
-            <td class="join-date">${formatDate(participant.joined_at)}</td>
-            <td>
+                <td>${sequentialNumber}</td>
+                <td class="member-id">${escapeHTML(displayMemberId)}</td>
+                <td class="member-name">${escapeHTML(englishName)}</td>
+                <td class="member-cname">${escapeHTML(chineseName)}</td>
+                <td class="member-phone">${escapeHTML(phoneNumber)}</td>
+                <td class="member-email">${escapeHTML(email)}</td>
+                <td class="member-ic">${escapeHTML(ic)}</td>
+                <td class="event-id">${escapeHTML(participant.eventID || 'N/A')}</td>
+                <td class="join-date">${formatDate(participant.joined_at)}</td>
+                <td>
                     <button class="delete-btn" 
                             data-participant-id="${participant.ID}" 
-                            data-member-id="${participant.memberID}" 
+                            data-member-id="${participant.membersID || participant.memberID}"
                             data-event-id="${participant.eventID}">
                         删除
                     </button>
                 </td>
             `;
 
-              // Add event listener for delete button
-              const deleteBtn = row.querySelector('.delete-btn');
-              deleteBtn.addEventListener('click', () => deleteParticipant(participant));
-
-              tableBody.appendChild(row);
+            // Add event listener for delete button
+            const deleteBtn = row.querySelector('.delete-btn');
+            deleteBtn.addEventListener('click', () => deleteParticipant(participant));
+            console.log('Delete button clicked for participant:', participant);
+            tableBody.appendChild(row);
         });
     }
     
     async function deleteParticipant(participant) {
-        const memberIdToDisplay = participant.membersID || participant.memberID || 'N/A';
-        // Confirm deletion
-        const confirmDelete = confirm(`确定要删除该参与者吗？\n会员ID: ${memberIdToDisplay}\n事件ID: ${participant.eventID}`);
+        // Extract necessary IDs for deletion
+        const eventId = participant.eventID;
+        
+        // For display purposes only
+        const displayMemberId = participant.membersID || participant.memberID || 'N/A';
+        const memberName = participant.Name || participant.CName || 'N/A';
+        
+        // We need to extract the actual numeric ID that the database uses
+        // This could be stored in different properties depending on your API response
+        const numericParticipantId = participant.ID;
+        
+        console.log('Deletion attempt for participant:', participant);
+    
+        if (!numericParticipantId) {
+            showError('无法找到参与者记录ID');
+            return;
+        }
+    
+        // Confirm deletion with user
+        const confirmDelete = confirm(`确定要删除该参与者吗？\n会员ID: ${displayMemberId}\n会员姓名: ${memberName}`);
         
         if (!confirmDelete) return;
         
         showLoading();
         
         try {
-            const response = await fetch(`${API_BASE_URL}?table=participants&action=delete&ID=${participant.ID}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-               
-            });
+            // First, get the actual record from participants table to ensure we have the correct IDs
+            const getParticipantResponse = await fetch(`${API_BASE_URL}?table=participants&search=true&ID=${numericParticipantId}`);
+            const participantData = await getParticipantResponse.json();
             
-            if (!response.ok) {
-                throw new Error(`删除失败: ${response.status}`);
-            }
-            
-            const result = await response.json();
-            
-            if (result.status === 'success') {
+            // Check if we found the participant record
+            if (!participantData.data || participantData.data.length === 0) {
+                // Try searching by event and member
+                const altSearchResponse = await fetch(`${API_BASE_URL}?table=participants&search=true&eventID=${eventId}`);
+                const altParticipantData = await altSearchResponse.json();
                 
-                // Show success message
-                showError('参与者删除成功');
+                // Filter to find the correct participant
+                const matchingParticipants = altParticipantData.data?.filter(p => 
+                    (p.memberID == participant.memberID || p.memberID == participant.ID_members)
+                );
                 
-                // Optionally, reload participants to ensure accurate count
-                fetchParticipants(eventId);
+                if (matchingParticipants && matchingParticipants.length > 0) {
+                    // Use the first matching participant
+                    const actualParticipant = matchingParticipants[0];
+                    console.log('Found participant record:', actualParticipant);
+                    
+                    // Now delete using the actual ID from participants table
+                    const deleteResponse = await fetch(`${API_BASE_URL}?table=participants&action=delete&ID=${actualParticipant.ID}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    const deleteResult = await deleteResponse.json();
+                    
+                    if (deleteResponse.ok && deleteResult.status === 'success') {
+                        showError('参与者删除成功');
+                        fetchParticipants(eventId);
+                        return;
+                    } else {
+                        throw new Error(deleteResult.message || '删除参与者失败');
+                    }
+                } else {
+                    throw new Error('找不到对应的参与者记录');
+                }
             } else {
-                // Handle unsuccessful deletion
-                showError(result.message || '删除参与者失败');
+                // We found the participant record directly
+                const actualParticipant = participantData.data[0];
+                console.log('Found participant record:', actualParticipant);
+                
+                // Delete using the actual ID
+                const deleteResponse = await fetch(`${API_BASE_URL}?table=participants&action=delete&ID=${actualParticipant.ID}`, {
+                    method: 'DELETE'
+                });
+                
+                const deleteResult = await deleteResponse.json();
+                
+                if (deleteResponse.ok && deleteResult.status === 'success') {
+                    showError('参与者删除成功');
+                    fetchParticipants(eventId);
+                    return;
+                } else {
+                    throw new Error(deleteResult.message || '删除参与者失败');
+                }
             }
         } catch (error) {
             console.error('删除参与者时出错:', error);
@@ -540,7 +472,6 @@ let returnStatus = urlParams.get('returnStatus') || '';
             hideLoading();
         }
     }
-
     // 打开会员搜索模态框
     function openMemberSearchModal() {
         memberSearchModal.style.display = 'block';
@@ -574,7 +505,7 @@ let returnStatus = urlParams.get('returnStatus') || '';
             // 如果有搜索词，添加搜索参数
             if (searchTerm) {
                 apiUrl += `&search=${encodeURIComponent(searchTerm)}`;
-                 //apiUrl += '&searchFields=ID,Name,CName,phone_number';
+                //apiUrl += '&searchFields=ID,Name,CName,phone_number';
             }
             
             const response = await fetch(apiUrl);
@@ -634,7 +565,9 @@ let returnStatus = urlParams.get('returnStatus') || '';
             const selectBtn = row.querySelector('.select-btn');
             selectBtn.addEventListener('click', () => selectMember({
                 displayId: fullMemberId,
-                actualId: actualMemberId
+                actualId: actualMemberId,
+                Name: member.Name,
+                CName: member.CName
             }));
             
             modalResultsBody.appendChild(row);
@@ -686,6 +619,7 @@ let returnStatus = urlParams.get('returnStatus') || '';
         }
     }
     
+
     // 选择会员并添加到活动
     // Function to select a member and add them to the event
 async function selectMember(member) {
