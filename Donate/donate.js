@@ -24,217 +24,6 @@ document.addEventListener('DOMContentLoaded', function() {
     let totalItems = 0;
     let currentSearchTerm = '';
 
-    const addBankBtn = document.getElementById('addBankBtn');
-    const addDonationTypeBtn = document.getElementById('addDonationTypeBtn');
-
- if (addBankBtn) {
-        addBankBtn.addEventListener('click', () => showAddOptionModal('bank', '添加新银行'));
-    }
-    
-    if (addDonationTypeBtn) {
-        addDonationTypeBtn.addEventListener('click', () => showAddOptionModal('donationTypes', '添加新乐捐类型'));
-    }
-
-    createAddOptionModal();
-
-    function setupAddOptionButtons() {
-        const addBankBtn = document.querySelector('.btn-add-type[data-target="bank"]') || 
-                           document.querySelector('.form-group:has(#bank) .btn-add-type');
-        
-        const addDonationTypeBtn = document.querySelector('.btn-add-type[data-target="donationTypes"]') || 
-                                  document.querySelector('.form-group:has(#donationTypes) .btn-add-type');
-    
-        if (addBankBtn) {
-            addBankBtn.addEventListener('click', () => showAddOptionModal('bank', '添加新银行'));
-        }
-        
-        if (addDonationTypeBtn) {
-            addDonationTypeBtn.addEventListener('click', () => showAddOptionModal('donationTypes', '添加新乐捐类型'));
-        }
-    }
-    
-    function createAddOptionModal() {
-        // Check if modal already exists
-        if (document.getElementById('addOptionModal')) return;
-        
-        const modal = document.createElement('div');
-        modal.id = 'addOptionModal';
-        modal.className = 'modal';
-        modal.style.display = 'none';
-        
-        modal.innerHTML = `
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 id="addOptionModalTitle">添加新选项</h2>
-                    <span class="close">&times;</span>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="newOptionValue">选项名称</label>
-                        <input type="text" id="newOptionValue" placeholder="输入新选项名称" required>
-                    </div>
-                    <input type="hidden" id="targetSelectId">
-                    <div class="form-actions">
-                        <button id="saveNewOptionBtn" class="btn btn-primary">保存</button>
-                        <button id="cancelNewOptionBtn" class="btn btn-secondary">取消</button>
-                    </div>
-                </div>
-            </div>
-        `;
-        
-        document.body.appendChild(modal);
-        
-        // Add event listeners for the modal
-        const closeBtn = modal.querySelector('.close');
-        const saveBtn = modal.querySelector('#saveNewOptionBtn');
-        const cancelBtn = modal.querySelector('#cancelNewOptionBtn');
-        
-        closeBtn.addEventListener('click', hideAddOptionModal);
-        cancelBtn.addEventListener('click', hideAddOptionModal);
-        
-        // When click outside modal, close it
-        window.addEventListener('click', function(event) {
-            if (event.target === modal) {
-                hideAddOptionModal();
-            }
-        });
-        
-        // Save button handler
-        saveBtn.addEventListener('click', saveNewOption);
-    }
-   
-    function showAddOptionModal(targetId, title) {
-        const modal = document.getElementById('addOptionModal');
-        if (!modal) return;
-        
-        // Set the target select element ID
-        document.getElementById('targetSelectId').value = targetId;
-        
-        // Set the modal title
-        document.getElementById('addOptionModalTitle').textContent = title;
-        
-        // Clear the input field
-        document.getElementById('newOptionValue').value = '';
-        
-        // Show the modal
-        modal.style.display = 'block';
-        
-        // Focus the input field
-        document.getElementById('newOptionValue').focus();
-    }
-
-    function hideAddOptionModal() {
-        const modal = document.getElementById('addOptionModal');
-        if (modal) {
-            modal.style.display = 'none';
-        }
-    }
-
-    async function saveNewOption() {
-        const newValue = document.getElementById('newOptionValue').value.trim();
-        const targetId = document.getElementById('targetSelectId').value;
-        
-        if (!newValue) {
-            alert('请输入选项名称');
-            return;
-        }
-        
-        // Determine which type of option we're adding
-        let optionType;
-        if (targetId === 'bank') {
-            optionType = 'bank';
-        } else if (targetId === 'donationTypes') {
-            optionType = 'donation_type';
-        } else {
-            alert('不支持的选项类型');
-            hideAddOptionModal();
-            return;
-        }
-        
-        // Show loading indicator
-        const loadingIndicator = document.getElementById('loadingIndicator');
-        if (loadingIndicator) {
-            loadingIndicator.style.display = 'block';
-        }
-
-        const payload = {
-            action: 'add_option',
-            table: 'donationtypes',
-            type: optionType,
-            value: newValue,
-            name: newValue,
-            description: `New ${optionType} option` // Additional field
-        };
-        console.log('Sending request payload:', payload);
-        
-        console.log('Sending request to add option:', {
-            endpoint: `${API_BASE_URL}?table=donationtypes`,
-            data: {
-                type: optionType,
-                value: newValue
-            }
-        });
-
-        console.log('Server response:', data);
-
-        try {
-            // Make API call to save the new option
-            const response = await fetch(`${API_BASE_URL}?table=donationtypes`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({payload})
-            });
-            
-            const rawResponse = await response.text();
-            console.log('Raw API Response:', rawResponse);
-            
-            let data;
-            try {
-                data = JSON.parse(rawResponse);
-            } catch (e) {
-                console.error('Error parsing API response:', e);
-                alert('API返回格式错误: ' + rawResponse);
-                return;
-            }
-            
-            console.log('Parsed response data:', data);
-            
-            if (data.status === 'success') {
-                // Add the new option to the select element
-                const newOption = document.createElement('option');
-                newOption.value = data.id || newValue; 
-                newOption.textContent = newValue;
-                targetSelect.appendChild(newOption);
-                
-                // Select the new option
-                targetSelect.value = newValue;
-                
-                // Hide the modal
-                hideAddOptionModal();
-                
-                // Show success message
-                alert(`成功添加新${optionType === 'bank' ? '银行' : '乐捐类型'}: ${newValue}`);
-                setTimeout(() => {
-                    initializeDropdowns();
-                }, 1000);
-            } else {
-                const errorMsg = data.message || '未知错误';
-                console.error('API returned error:', errorMsg);
-                alert(`添加失败: ${data.message || '未知错误'}`);
-            }
-        } catch (error) {
-            console.error('添加新选项出错:', error);
-            alert('添加新选项时出错: ' + error.message);
-        } finally {
-            // Hide loading indicator
-            if (loadingIndicator) {
-                loadingIndicator.style.display = 'none';
-            }
-        }
-    }
-
     // Initialize
     if (donationId) {
         document.getElementById('donationId').value = donationId;
@@ -255,8 +44,6 @@ document.addEventListener('DOMContentLoaded', function() {
             submitForm();
         }
     });
-
-  
 
     // 模态框事件监听器
     modalClose.addEventListener('click', function() {
@@ -690,21 +477,22 @@ document.addEventListener('DOMContentLoaded', function() {
         data.action = donationId ? 'update_donation' : 'add_donation';
 
         formData.forEach((value, key) => {
-            console.log(`Processing key: ${key}, Value: ${value}`);
             if (fieldMap[key]) {
-                // Use the mapped field name
                 const mappedKey = fieldMap[key];
                 
-                // Handle special conversions
-                if (mappedKey === 'amount' && value) {
+                // Handle numeric fields including both donationTypes and Bank
+                if ((mappedKey === 'donationTypes' || mappedKey === 'Bank') && value) {
+                    data[mappedKey] = parseInt(value);
+                    if (isNaN(data[mappedKey])) {
+                        throw new Error(`Invalid ${mappedKey} ID`);
+                    }
+                    console.log(`Converted ${mappedKey} to number:`, data[mappedKey]);
+                }
+                else if (mappedKey === 'amount' && value) {
                     data[mappedKey] = parseFloat(parseFloat(value).toFixed(2));
                 } else {
                     data[mappedKey] = value;
                 }
-                console.log(`Mapped ${key} to ${mappedKey}: ${data[mappedKey]}`);
-            } else if (key !== 'membership' && key !== 'csrf_token' && key !== 'memberId') {
-                // For unmapped fields (except special handling ones)
-                data[key] = value;
             }
         });
 
@@ -754,14 +542,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (data.membership !== null && data.membership.trim() === '') {
             data.membership = null;
             console.log('Final check: Empty membership ID, setting to null');
-        }
-
-        if (data.paymentDate) {
-            const date = new Date(data.paymentDate);
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            data.paymentDate = `${year}-${month}-${day}`;
         }
         
         console.log('Final data being sent:', JSON.stringify(data));
@@ -846,9 +626,61 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Populate form with donation data - UPDATED to handle membership IDs correctly
+    // Initialize dropdowns with options from API
+   /* async function initializeDropdowns() {
+        try {
+            console.log('Fetching dropdown options...');
+            const response = await fetch(`${API_BASE_URL}?table=donationtypes&limit=999`);
+            const data = await response.json();
+            console.log('API Response:', data);
+            
+            if (data.data && Array.isArray(data.data)) {
+                // Populate donation types dropdown with ID and name
+                if (data.data.length > 0) {
+                    console.log('Donation type options:', data.data);
+                    // Clear existing options, keeping only the first default option
+                    while (donationTypesSelect.options.length > 1) {
+                        donationTypesSelect.remove(1);
+                    }
+                    
+                    // Add options with ID as value and name as text
+                    data.data.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item.ID; // Use ID as value
+                        option.textContent = item.donationTypes; // Use name as display text
+                        donationTypesSelect.appendChild(option);
+                    });
+                }
+
+                // Make a separate call for bank options
+                try {
+                    const bankResponse = await fetch(`${API_BASE_URL}?table=bank&limit=999`);
+                    const bankData = await bankResponse.json();
+                    if (bankData.data && Array.isArray(bankData.data)) {
+                        const bankOptions = bankData.data.map(item => item.Bank);
+                        if (bankOptions.length > 0) {
+                            console.log('Bank options:', bankOptions);
+                            populateDropdown(bankSelect, bankOptions);
+                        }
+                    }
+                } catch (bankError) {
+                    console.error('Error loading bank options:', bankError);
+                }
+            }
+        } catch (error) {
+            console.error('加载下拉选项错误:', error);
+            showError('加载选项失败: ' + error.message);
+        }
+    }*/
+
+    // Update the populateForm function to handle donation type IDs
     function populateForm(donation) {
         document.getElementById('nameCompany').value = donation.donor_name || '';
-        document.getElementById('donationTypes').value = donation.donation_type || '';
+        // Set donation type by ID
+        if (donation.donationTypes) {
+            document.getElementById('donationTypes').value = donation.donationTypes;
+        }
+        
         document.getElementById('bank').value = donation.bank || '';
         
         // Handle membership field with proper display
@@ -936,55 +768,89 @@ document.addEventListener('DOMContentLoaded', function() {
     // Find the existing select elements
     const bankSelect = document.getElementById('bank');
     const donationTypesSelect = document.getElementById('donationTypes');
+    
+    // Add custom type modal elements
+    const customDonationTypeModal = document.getElementById('customDonationTypeModal');
+    const customBankModal = document.getElementById('customBankModal');
+    const addDonationTypeBtn = document.getElementById('addDonationTypeBtn');
+    const addBankBtn = document.getElementById('addBankBtn');
+    const saveDonationTypeBtn = document.getElementById('saveDonationTypeBtn');
+    const saveBankBtn = document.getElementById('saveBankBtn');
+    const newDonationType = document.getElementById('newDonationType');
+    const newBank = document.getElementById('newBank');
 
-    
-    // Function to save form data to session storage
-    function saveFormDataToSession() {
-        const formData = {};
-        const formElements = donationForm.elements;
-        
-        for (let i = 0; i < formElements.length; i++) {
-            const element = formElements[i];
-            if (element.name && element.value) {
-                formData[element.name || element.id] = element.value;
+    // Add event listeners only if elements exist
+    if (addDonationTypeBtn) {
+        addDonationTypeBtn.addEventListener('click', () => {
+            if (customDonationTypeModal && newDonationType) {
+                customDonationTypeModal.style.display = 'block';
+                newDonationType.value = '';
+                newDonationType.focus();
             }
-        }
-        
-        sessionStorage.setItem('donationFormData', JSON.stringify(formData));
+        });
     }
-    
+
+    if (addBankBtn) {
+        addBankBtn.addEventListener('click', () => {
+            if (customBankModal && newBank) {
+                customBankModal.style.display = 'block';
+                newBank.value = '';
+                newBank.focus();
+            }
+        });
+    }
+
     // Initialize form data from session storage if available
     if (!donationId) {
         restoreFormDataFromSession();
     }
-   
-    
-    
     
     // Initialize dropdowns with options from API
     async function initializeDropdowns() {
         try {
-            const response = await fetch(`${API_BASE_URL}?table=donationtypes`);
+            console.log('Fetching dropdown options...');
+            const response = await fetch(`${API_BASE_URL}?table=donationtypes&limit=999`);
             const data = await response.json();
+            console.log('API Response:', data);
             
-           if (data.status === 'success' && data.options) {
-            // Populate bank dropdown
-            if (data.options.bank && Array.isArray(data.options.bank)) {
-                populateDropdown(bankSelect, data.options.bank);
+            if (data.data && Array.isArray(data.data)) {
+                // Create donation types options with ID as value and name as text
+                if (data.data.length > 0) {
+                    console.log('Donation type options:', data.data);
+                    const donationTypeOptions = data.data.map(item => ({
+                        value: item.ID,
+                        text: item.donationTypes
+                    }));
+                    populateDropdown(donationTypesSelect, donationTypeOptions, true);
+                }
+
+                // Make a separate call for bank options with high limit
+                try {
+                    const bankResponse = await fetch(`${API_BASE_URL}?table=bank&limit=999`);
+                    const bankData = await bankResponse.json();
+                    if (bankData.data && Array.isArray(bankData.data)) {
+                        // Map bank data to include both ID and name
+                        const bankOptions = bankData.data.map(item => ({
+                            value: item.ID,  // Use ID as value
+                            text: item.Bank  // Use Bank name as display text
+                        }));
+                        if (bankOptions.length > 0) {
+                            console.log('Bank options:', bankOptions);
+                            populateDropdown(bankSelect, bankOptions, true);
+                        }
+                    }
+                } catch (bankError) {
+                    console.error('Error loading bank options:', bankError);
+                }
             }
-            
-            // Populate donation types dropdown
-            if (data.options.donation_type && Array.isArray(data.options.donation_type)) {
-                populateDropdown(donationTypesSelect, data.options.donation_type);
-            }
-        }
         } catch (error) {
             console.error('加载下拉选项错误:', error);
+            showError('加载选项失败: ' + error.message);
         }
     }
-    
+
     // Function to populate dropdown with options
-    function populateDropdown(selectElement, options) {
+    function populateDropdown(selectElement, options,useObjectFormat = false) {
         // Save current value
         const currentValue = selectElement.value;
         
@@ -996,13 +862,22 @@ document.addEventListener('DOMContentLoaded', function() {
         // Add new options
         options.forEach(option => {
             const optionElement = document.createElement('option');
-            optionElement.value = option;
-            optionElement.textContent = option;
+        
+            if (useObjectFormat && typeof option === 'object') {
+                // For object format where we have separate value and text
+                optionElement.value = option.value;
+                optionElement.textContent = option.text;
+            } else {
+                // For simple string format where value equals text
+                optionElement.value = option;
+                optionElement.textContent = option;
+            }
+            
             selectElement.appendChild(optionElement);
         });
         
         // Restore previous value if exists
-        if (currentValue && currentValue !== 'custom') {
+        if (currentValue) {
             // Check if the value still exists in options
             for (let i = 0; i < selectElement.options.length; i++) {
                 if (selectElement.options[i].value === currentValue) {
@@ -1012,11 +887,130 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     }
-      // Create the add option modal
-      createAddOptionModal();
-    
-      // Set up the add option buttons
-    setupAddOptionButtons();
+
     // Call dropdown initialization on page load
     initializeDropdowns();
+});
+
+// Delete everything after this line
+document.addEventListener('DOMContentLoaded', function() {
+    // 添加模态框关闭按钮事件监听器
+    document.querySelectorAll('.modal .close').forEach(closeBtn => {
+        closeBtn.addEventListener('click', function() {
+            this.closest('.modal').style.display = 'none';
+        });
+    });
+
+    // 点击模态框外部关闭
+    window.addEventListener('click', function(event) {
+        if (event.target.classList.contains('modal')) {
+            event.target.style.display = 'none';
+        }
+    });
+
+    // 保存乐捐类型按钮事件
+    if (saveDonationTypeBtn) {
+        saveDonationTypeBtn.addEventListener('click', async function() {
+            const newType = document.getElementById('newDonationType').value.trim();
+            if (!newType) {
+                alert('请输入乐捐类型名称');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}?table=donationtypes&action=add_type`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        donationTypes: newType,
+                        type: 'donation_type'
+                    })
+                });
+
+                const data = await response.json();
+                if (data.status === 'success') {
+                     // Important: After adding, get the new type's ID
+            const newId = data.id; // Assuming API returns the new ID
+            
+            // Add option with correct ID value
+            const option = document.createElement('option');
+            option.value = newId;
+            option.textContent = newType;
+            donationTypesSelect.appendChild(option);
+            
+                    donationTypesSelect.appendChild(option);
+                    
+                    // 选择新添加的选项
+                    donationTypesSelect.value = newType;
+                    
+                    // 关闭模态框
+                    document.getElementById('customDonationTypeModal').style.display = 'none';
+                    
+                    // 显示成功消息
+                    alert('添加乐捐类型成功！');
+                    
+                    // 重新初始化下拉列表
+                    await initializeDropdowns();
+                } else {
+                    throw new Error(data.message || '添加失败');
+                }
+            } catch (error) {
+                alert('添加乐捐类型失败: ' + error.message);
+            }
+        });
+    }
+
+    // 保存银行按钮事件
+    if (saveBankBtn) {
+        saveBankBtn.addEventListener('click', async function() {
+            const newBank = document.getElementById('newBank').value.trim();
+            if (!newBank) {
+                alert('请输入银行名称');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}?table=bank&action=add_type`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        Bank: newBank,
+                        type: 'bank'
+                    })
+                });
+
+                const data = await response.json();
+                if (data.status === 'success') {
+                    // 获取银行下拉列表元素
+                    const bankSelect = document.getElementById('bank');
+                    
+                    // 添加新选项到下拉列表
+                    const option = document.createElement('option');
+                    option.value = newBank;
+                    option.textContent = newBank;
+                    bankSelect.appendChild(option);
+                    
+                    // 选择新添加的选项
+                    bankSelect.value = newBank;
+                    
+                    // 关闭模态框
+                    document.getElementById('customBankModal').style.display = 'none';
+                    
+                    // 刷新页面以重新加载所有选项
+                    location.reload();
+                    
+                    // 显示成功消息
+                    alert('添加银行成功！');
+                } else {
+                    throw new Error(data.message || '添加失败');
+                }
+            } catch (error) {
+                alert('添加银行失败: ' + error.message);
+            }
+        });
+    }
 });
