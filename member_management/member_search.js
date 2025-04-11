@@ -670,46 +670,9 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         itemsPerPageSelect?.addEventListener("change", function () {
-            if (this.value === 'custom') {
-                // Show custom input field when 'Custom' is selected
-                const customInput = document.getElementById('customItemsPerPage');
-                if (customInput) {
-                    customInput.style.display = 'inline-block';
-                    customInput.focus();
-                }
-            } else {
-                // Hide custom input field and update items per page
-                const customInput = document.getElementById('customItemsPerPage');
-                if (customInput) {
-                    customInput.style.display = 'none';
-                }
-                itemsPerPage = parseInt(this.value);
-                currentPage = 1;
-                fetchMembers(searchInput?.value || '');
-            }
-        });
-
-        // Add event listener for custom items per page input
-        const customItemsPerPageInput = document.getElementById('customItemsPerPage');
-        customItemsPerPageInput?.addEventListener("change", function() {
-            const value = parseInt(this.value);
-            if (!isNaN(value) && value > 0) {
-                itemsPerPage = value;
-                currentPage = 1;
-                fetchMembers(searchInput?.value || '');
-            }
-        });
-
-        // Also handle Enter key press on custom input
-        customItemsPerPageInput?.addEventListener("keypress", function(e) {
-            if (e.key === 'Enter') {
-                const value = parseInt(this.value);
-                if (!isNaN(value) && value > 0) {
-                    itemsPerPage = value;
-                    currentPage = 1;
-                    fetchMembers(searchInput?.value || '');
-                }
-            }
+            itemsPerPage = parseInt(this.value);
+            currentPage = 1;
+            fetchMembers(searchInput?.value || '');
         });
 
         confirmExpirySearchButton?.addEventListener('click', handleConfirmExpirySearch);
@@ -976,47 +939,77 @@ document.addEventListener("DOMContentLoaded", function () {
         modalOverlay.style.display = 'none';
     }
     
-    function exportDataToTxt() {
+    function exportData() {
         const selectedColumns = Array.from(document.querySelectorAll('input[name="export-columns"]:checked'))
             .map(checkbox => checkbox.value);
         if (selectedColumns.length === 0) {
             alert('请至少选择一列数据进行导出');
             return;
         }
+        
+        // 获取选择的导出格式
+        const exportFormat = document.querySelector('input[name="export-format"]:checked').value;
+        const delimiter = exportFormat === 'csv' ? ',' : ';';
+        
         let exportContent = '';
         const headers = selectedColumns.map(column => {
             const headerElement = document.querySelector(`#memberTable thead th[data-column="${column}"]`);
-            return headerElement ? headerElement.textContent.trim().replace(/[▲▼]/, '') : column;
+            const headerText = headerElement ? headerElement.textContent.trim().replace(/[▲▼]/, '') : column;
+            // 如果是CSV格式，需要处理包含逗号的字段
+            return exportFormat === 'csv' ? `"${headerText.replace(/"/g, '""')}"` : headerText;
         });
-        exportContent += headers.join(';') + '\n';
+        
+        exportContent += headers.join(delimiter) + '\n';
+        
         membersData.forEach(member => {
             const rowData = selectedColumns.map(column => {
+                let value = '';
+                
                 if (column === 'phone_number') {
-                    return formatPhone(member[column] || '');
+                    value = formatPhone(member[column] || '');
                 } else if (column === 'IC' || column === 'oldIC') {
-                    return formatIC(member[column] || '');
+                    value = formatIC(member[column] || '');
                 } else if (column === 'expired_date') {
-                    return formatDate(member[column] || member['expiredDate'] || '');
+                    value = formatDate(member[column] || member['expiredDate'] || '');
+                } else if (column === 'Designation_of_Applicant') {
+                    value = member[column] || member['designation_of_applicant'] || '';
+                } else if (column === 'place_of_birth') {
+                    value = member[column] || member['placeOfBirth'] || '';
+                } else if (column === 'componyName') {
+                    value = member[column] || member['companyName'] || '';
                 } else {
-                    let value = '';
-                    if (column === 'Designation_of_Applicant') {
-                        value = member[column] || member['designation_of_applicant'] || '';
-                    } else if (column === 'place_of_birth') {
-                        value = member[column] || member['placeOfBirth'] || '';
-                    } else if (column === 'componyName') {
-                        value = member[column] || member['companyName'] || '';
-                    } else {
-                        value = member[column] || '';
-                    }
+                    value = member[column] || '';
+                }
+                
+                // 处理分隔符和引号
+                if (exportFormat === 'csv') {
+                    // CSV格式：将字段用双引号包围，内部的双引号用两个双引号表示
+                    return `"${String(value).replace(/"/g, '""')}"`;  
+                } else {
+                    // TXT格式：将分号替换为逗号
                     return String(value).replace(/;/g, ',');
                 }
             });
-            exportContent += rowData.join(';') + '\n';
+            
+            exportContent += rowData.join(delimiter) + '\n';
         });
-        const blob = new Blob([exportContent], { type: 'text/plain;charset=utf-8' });
+        
+        // 设置正确的MIME类型
+        const mimeType = exportFormat === 'csv' 
+            ? 'text/csv;charset=utf-8;' 
+            : 'text/plain;charset=utf-8';
+            
+        // 为CSV添加BOM标记，以便Excel正确识别UTF-8编码
+        const BOM = exportFormat === 'csv' ? new Uint8Array([0xEF, 0xBB, 0xBF]) : '';
+        const blob = BOM 
+            ? new Blob([BOM, exportContent], { type: mimeType })
+            : new Blob([exportContent], { type: mimeType });
+            
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
+        
+        // 设置文件名
         let filename = '塾员数据';
         if (currentSearchType === 'Birthday' && targetBirthdayMonth) {
             filename = `${targetBirthdayMonth}月生日塾员`;
@@ -1025,7 +1018,11 @@ document.addEventListener("DOMContentLoaded", function () {
         } else if (currentFilterValue) {
             filename = `${currentFilterValue}塾员`;
         }
-        a.download = `${filename}_${new Date().toISOString().slice(0, 10)}.txt`;
+        
+        // 设置文件扩展名
+        const extension = exportFormat === 'csv' ? '.csv' : '.txt';
+        a.download = `${filename}_${new Date().toISOString().slice(0, 10)}${extension}`;
+        
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -1033,7 +1030,7 @@ document.addEventListener("DOMContentLoaded", function () {
         closeExportModal();
     }
     
-    confirmExportButton?.addEventListener('click', exportDataToTxt);
+    confirmExportButton?.addEventListener('click', exportData);
     
     window.addEventListener('click', function(event) {
         if (event.target === modalOverlay) {
