@@ -565,7 +565,7 @@ class DatabaseAPI {
 
             // Handle pagination and sorting
             $page = max(1, intval($_GET['page'] ?? 1));
-            $limit = max(1, min(100, intval($_GET['limit'] ?? 10))); // Limit page size
+            $limit = max(1, min(10000, intval($_GET['limit'] ?? 10))); // Limit page size
             $offset = ($page - 1) * $limit;
 
             // Validate sort column against allowed columns for the *original* table definition
