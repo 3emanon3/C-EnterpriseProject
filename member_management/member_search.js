@@ -1,4 +1,74 @@
-// member_search.js
+// -----------------------
+// Global Helper Functions
+// -----------------------
+function padStart(num, length = 2) {
+    return String(num).padStart(length, '0');
+}
+
+function isValidDateString(dateString) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+        return false;
+    }
+    const date = new Date(dateString);
+    const [year, month, day] = dateString.split('-').map(Number);
+    return date instanceof Date &&
+           !isNaN(date.getTime()) &&
+           date.getFullYear() === year &&
+           (date.getMonth() + 1) === month &&
+           date.getDate() === day;
+}
+
+function formatPhone(phone) {
+    const phoneStr = String(phone || '');
+    if (/^\d{10}$/.test(phoneStr)) { // 10 digits
+        return phoneStr.replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3");
+    } else if (/^\d{11}$/.test(phoneStr) && phoneStr.startsWith('0')) { // 11 digits starting with 0
+        return phoneStr.replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3");
+    } else if (/^\d{11}$/.test(phoneStr) && phoneStr.startsWith('6')) { // Example: 601...
+         return phoneStr.replace(/(\d{1})(\d{3})(\d{3})(\d{4})/, "$1-$2-$3-$4");
+    }
+    return phoneStr;
+}
+
+function formatIC(ic) {
+    const icStr = String(ic || '');
+    if (/^\d{12}$/.test(icStr)) {
+        return icStr.replace(/(\d{6})(\d{2})(\d{4})/, "$1-$2-$3");
+    }
+    return icStr;
+}
+
+function formatDate(dateString) {
+    if (!dateString || dateString === '0000-00-00') return '';
+    try {
+        // Check if already in proper format
+        if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+            if (isValidDateString(dateString)) {
+                return dateString;
+            } else {
+                console.warn(`Invalid date string received: ${dateString}`);
+                return '';
+            }
+        }
+        // Otherwise, parse and reformat
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) {
+            console.warn(`Could not parse date: ${dateString}`);
+            return dateString;
+        }
+        const year = date.getFullYear();
+        const month = padStart(date.getMonth() + 1);
+        const day = padStart(date.getDate());
+        return `${year}-${month}-${day}`;
+    } catch (e) {
+        console.warn(`Error formatting date: ${dateString}`, e);
+        return dateString;
+    }
+}
+
+// ---------------------------
+// Main Application Code
+// ---------------------------
 document.addEventListener("DOMContentLoaded", function () {
     // ===== CONFIGURATION =====
     const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
@@ -12,14 +82,14 @@ document.addEventListener("DOMContentLoaded", function () {
     const prevPageButton = document.getElementById("prevPage");
     const nextPageButton = document.getElementById("nextPage");
     const birthdayButton = document.getElementById("searchBirthday");
-    const expiredButton = document.getElementById("searchExpiry"); // Button now opens modified modal
+    const expiredButton = document.getElementById("searchExpiry");
     const listAllMembersButton = document.getElementById("listAllMembers");
     const memberFilter = document.getElementById("memberFilter");
     const table = document.getElementById('memberTable');
-    const thead = table?.querySelector('thead'); // Get thead for delegation
+    const thead = table?.querySelector('thead');
     const paginationContainer = document.querySelector('.pagination');
 
-    // --- Expiry Modal Elements (MODIFIED) ---
+    // --- Expiry Modal Elements ---
     const expiryModal = document.getElementById('expiryModal');
     const expiryStartYearInput = document.getElementById('expiryStartYearInput');
     const expiryStartMonthInput = document.getElementById('expiryStartMonthInput');
@@ -29,18 +99,15 @@ document.addEventListener("DOMContentLoaded", function () {
     const expiryEndDayInput = document.getElementById('expiryEndDayInput');
     const confirmExpirySearchButton = document.getElementById('confirmExpirySearch');
     const closeExpiryButton = expiryModal?.querySelector('.close-button');
-    // Cancel button uses onclick in HTML
 
-    // --- Birthday Modal Elements (Unchanged) ---
+    // --- Birthday Modal Elements ---
     const birthdayModal = document.getElementById('birthdayModal');
     const birthdayMonthInput = document.getElementById('birthdayMonthInput');
     const confirmBirthdaySearchButton = document.getElementById('confirmBirthdaySearch');
     const closeBirthdayButton = birthdayModal?.querySelector('.close-button');
-    // Cancel button uses onclick in HTML
 
     // --- Shared Modal Overlay ---
     const modalOverlay = document.getElementById('modalOverlay');
-
 
     // ===== STATE VARIABLES =====
     let currentPage = 1;
@@ -51,68 +118,29 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentSearchType = 'all'; // 'all', 'search', 'Birthday', 'expired'
     let currentFilterValue = '';
     let membersData = [];
-    // --- State for Expiry Search (MODIFIED) ---
-    let targetStartDate = null; // Stores YYYY-MM-DD
-    let targetEndDate = null;   // Stores YYYY-MM-DD
-    // --- State for Birthday Search (Unchanged) ---
+    let targetStartDate = null; // For expiry search (YYYY-MM-DD)
+    let targetEndDate = null;
     let targetBirthdayMonth = null;
-
-
-    // ===== HELPER FUNCTIONS =====
-
-    // Utility to pad numbers with leading zeros (for date formatting)
-    function padStart(num, length = 2) {
-        return String(num).padStart(length, '0');
-    }
-
-    // Utility to check if a string represents a valid date (YYYY-MM-DD)
-    function isValidDateString(dateString) {
-        // Basic format check
-        if (!/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
-            return false;
-        }
-        const date = new Date(dateString);
-        // Check if the date object is valid and if the components match
-        // (prevents dates like 2023-02-30 from being valid)
-        const [year, month, day] = dateString.split('-').map(Number);
-        return date instanceof Date && !isNaN(date) &&
-               date.getFullYear() === year &&
-               date.getMonth() + 1 === month &&
-               date.getDate() === day;
-    }
-
-    // Debounce function (remains the same)
-    function debounce(func, wait) {
-        let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
-    }
 
     // ===== INITIALIZATION =====
     function initializePage() {
         fetchApplicantType();
         initializeEventListeners();
         initializeResizableColumns();
-        loadColumnWidths(); // Load widths after initializing resizers
-        fetchMembers(); // Initial data fetch
+        loadColumnWidths();
+        fetchMembers();
     }
 
     // ===== DATA FETCHING FUNCTIONS =====
     async function fetchApplicantType() {
-        // ... (existing code - no changes needed here) ...
         if (!memberFilter) {
             console.log("memberFilter element not found in the DOM");
             return;
         }
         while (memberFilter.options.length > 1) memberFilter.remove(1);
         const defaultOption = document.createElement("option");
-        defaultOption.value = ""; defaultOption.textContent = "选择种类";
+        defaultOption.value = "";
+        defaultOption.textContent = "选择种类";
         memberFilter.appendChild(defaultOption);
         try {
             const response = await fetch(`${API_BASE_URL}?table=applicants_types`);
@@ -125,24 +153,23 @@ document.addEventListener("DOMContentLoaded", function () {
                 option.textContent = item["designation_of_applicant"];
                 memberFilter.appendChild(option);
             });
-        } catch (error) { console.error("Error fetching applicant types:", error); }
+        } catch (error) {
+            console.error("Error fetching applicant types:", error);
+        }
     }
 
-    // Fetch members data from API
     async function fetchMembers(query = "") {
-        if (loader) loader.style.display = 'flex'; // Use flex for center alignment
-        if (memberTableBody) memberTableBody.innerHTML = ""; // Clear previous results
-
+        if (loader) loader.style.display = 'flex';
+        if (memberTableBody) memberTableBody.innerHTML = "";
         const params = new URLSearchParams();
         params.append("table", "members_with_applicant_designation");
         params.append("limit", itemsPerPage);
         params.append("page", currentPage);
 
-        // --- MODIFIED: Parameter logic based on search type ---
         if (currentSearchType === 'Birthday') {
             if (targetBirthdayMonth) {
                 params.append("Birthday", "true");
-                params.append("search", "true"); // Keep search=true for consistency? Check API req.
+                params.append("search", "true");
                 params.append("targetMonth", targetBirthdayMonth.toString());
                 console.log(`Searching for birthdays in month ${targetBirthdayMonth}`);
             } else {
@@ -150,16 +177,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 currentSearchType = 'all';
                 targetBirthdayMonth = null;
             }
-            // Reset expiry targets
             targetStartDate = null;
             targetEndDate = null;
         } else if (currentSearchType === 'expired') {
-            // Expiry search triggered ONLY after confirming from the modal
             if (targetStartDate && targetEndDate) {
-                params.append("expired", "true"); // As requested
-                params.append("search", "true");  // As requested
-                params.append("startDate", targetStartDate); // New param
-                params.append("endDate", targetEndDate);     // New param
+                params.append("expired", "true");
+                params.append("search", "true");
+                params.append("startDate", targetStartDate);
+                params.append("endDate", targetEndDate);
                 console.log(`Fetching members expiring between ${targetStartDate} and ${targetEndDate}`);
             } else {
                 console.warn("Expired search triggered without target dates. Reverting to 'all'.");
@@ -167,37 +192,30 @@ document.addEventListener("DOMContentLoaded", function () {
                 targetStartDate = null;
                 targetEndDate = null;
             }
-             // Reset birthday target
             targetBirthdayMonth = null;
         } else if (query.trim() !== "") {
-            params.append("search", query); // General text search
+            params.append("search", query);
             currentSearchType = 'search';
-             // Reset expiry and birthday targets
             targetStartDate = null;
             targetEndDate = null;
             targetBirthdayMonth = null;
-        } else { // 'all' members (default or List All button)
+        } else {
             currentSearchType = 'all';
-             // Reset expiry and birthday targets
             targetStartDate = null;
             targetEndDate = null;
             targetBirthdayMonth = null;
         }
-        // --- END MODIFICATION ---
 
-        // Add applicant filter if selected (applies to all search types)
         if (memberFilter && memberFilter.value) {
             if (!params.has('search')) {
-                 params.append("search", "true"); // Ensure search=true if filtering
+                params.append("search", "true");
             }
             params.append("designation_of_applicant", memberFilter.value);
             console.log("Filtering by applicant:", memberFilter.value);
         }
 
-        // Add sorting parameters
         if (sortColumn) {
             let dbSortColumn = sortColumn;
-            // --- Column name mapping (ensure it's correct) ---
             const columnMap = {
                 'membersID': 'membersID',
                 'Name': 'Name',
@@ -209,7 +227,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 'IC': 'IC',
                 'oldIC': 'oldIC',
                 'gender': 'gender',
-                'componyName': 'componyName', // Corrected potential typo if needed
+                'componyName': 'componyName',
                 'Birthday': 'Birthday',
                 'expired_date': 'expired_date',
                 'place_of_birth': 'place_of_birth',
@@ -217,9 +235,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 'others': 'others',
                 'remarks': 'remarks'
             };
-            dbSortColumn = columnMap[sortColumn] || sortColumn; // Use mapped name or original if not found
-            // --- End Column name mapping ---
-
+            dbSortColumn = columnMap[sortColumn] || sortColumn;
             params.append("sort", dbSortColumn);
             params.append("order", sortDirection);
         }
@@ -234,9 +250,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.error(`Server error response: ${errorText}`);
                 throw new Error(`Server returned ${response.status}: ${response.statusText}`);
             }
-
             const data = await response.json();
-
             if (data && typeof data === 'object') {
                 membersData = Array.isArray(data.data) ? data.data : [];
                 const total = data.pagination?.total_records ?? membersData.length;
@@ -248,15 +262,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 totalPages = 1;
                 console.error("Unexpected API response format:", data);
             }
-
             displayMembers(membersData);
             updatePagination();
             updateSortIcons();
-
         } catch (error) {
             console.error("Error fetching members:", error);
             if (memberTableBody) {
-                const colspan = table?.querySelector('thead tr')?.cells.length || 18; // Dynamic colspan
+                const colspan = table?.querySelector('thead tr')?.cells.length || 18;
                 memberTableBody.innerHTML = `<tr><td colspan="${colspan}" class="no-results">加载失败: ${error.message}</td></tr>`;
             }
             membersData = [];
@@ -271,24 +283,21 @@ document.addEventListener("DOMContentLoaded", function () {
     // ===== DISPLAY FUNCTIONS =====
     function displayMembers(members) {
         if (!memberTableBody) return;
-        memberTableBody.innerHTML = ""; // Clear previous results
-
+        memberTableBody.innerHTML = "";
         if (!Array.isArray(members)) {
             console.error("Expected members to be an array, got:", members);
             members = [];
         }
-
         if (members.length === 0) {
             let message = '暂无记录';
             if (currentSearchType === 'search' && searchInput?.value) {
-                 message = '没有找到匹配的记录';
+                message = '没有找到匹配的记录';
             } else if (currentSearchType === 'Birthday' && targetBirthdayMonth) {
-                 message = `没有在 ${targetBirthdayMonth} 月份生日的塾员`;
-            // --- MODIFIED: Message for expiry range ---
+                message = `没有在 ${targetBirthdayMonth} 月份生日的塾员`;
             } else if (currentSearchType === 'expired' && targetStartDate && targetEndDate) {
-                 message = `没有在 ${targetStartDate} 到 ${targetEndDate} 之间到期的塾员`;
+                message = `没有在 ${targetStartDate} 到 ${targetEndDate} 之间到期的塾员`;
             } else if (currentFilterValue) {
-                 message = `没有符合 "${currentFilterValue}" 条件的记录`;
+                message = `没有符合 "${currentFilterValue}" 条件的记录`;
             }
             const colspan = table?.querySelector('thead tr')?.cells.length || 18;
             memberTableBody.innerHTML = `<tr><td colspan="${colspan}" class="no-results">${message}</td></tr>`;
@@ -298,84 +307,26 @@ document.addEventListener("DOMContentLoaded", function () {
         members.forEach(member => {
             if (!member || typeof member !== 'object') {
                 console.warn("Skipping invalid member data:", member);
-                return; // Skip this iteration
+                return;
             }
-
-            // Helper to format data safely
+            // Helper to safely escape HTML
             const formatData = (value) => {
                 if (value === null || value === undefined || value === '' || value === 'For...') {
                     return '';
                 }
-                // Basic HTML escaping
-                return String(value).replace(/[&<>"']/g, m => ({ '&': '&', '<': '<', '>': '>', '"': '"', "'": "'" }[m]));
+                return String(value).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
             };
 
-            // Phone formatting (remains the same)
-            const formatPhone = (phone) => {
-                const phoneStr = String(phone || '');
-                if (/^\d{10}$/.test(phoneStr)) { // 10 digits
-                    return phoneStr.replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3");
-                } else if (/^\d{11}$/.test(phoneStr) && phoneStr.startsWith('0')) { // 11 digits starting with 0
-                    return phoneStr.replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3"); // Or adjust format as needed
-                } else if (/^\d{11}$/.test(phoneStr) && phoneStr.startsWith('6')) { // Example: 601...
-                     return phoneStr.replace(/(\d{1})(\d{3})(\d{3})(\d{4})/, "$1-$2-$3-$4"); // Adjust format
-                }
-                return phoneStr; // Return original if format doesn't match well
-            };
-
-            // IC formatting (remains the same)
-            const formatIC = (ic) => {
-                const icStr = String(ic || '');
-                 if (/^\d{12}$/.test(icStr)) {
-                    return icStr.replace(/(\d{6})(\d{2})(\d{4})/, "$1-$2-$3");
-                 }
-                 return icStr;
-            };
-
-            // Date formatting (remains the same)
-            const formatDate = (dateString) => {
-                if (!dateString || dateString === '0000-00-00') return ''; // Handle invalid zero date
-                try {
-                    // Check if it's already in YYYY-MM-DD format
-                    if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
-                         // Further check if it's a *valid* date in that format
-                         if (isValidDateString(dateString)) {
-                             return dateString;
-                         } else {
-                             // It's in the format but invalid (e.g., 2023-02-30)
-                             console.warn(`Invalid date string received: ${dateString}`);
-                             return ''; // Or return original string if preferred
-                         }
-                    }
-                    // If not in the correct format, try parsing
-                    const date = new Date(dateString);
-                    if (isNaN(date.getTime())) {
-                         console.warn(`Could not parse date: ${dateString}`);
-                        return dateString; // Return original if parsing fails completely
-                    }
-                    // Format valid parsed date
-                    const year = date.getFullYear();
-                    const month = padStart(date.getMonth() + 1);
-                    const day = padStart(date.getDate());
-                    return `${year}-${month}-${day}`;
-                } catch (e) {
-                    console.warn(`Error formatting date: ${dateString}`, e);
-                    return dateString; // Return original on error
-                }
-            };
-
-            // Get data using safe access and formatting
             const designation = formatData(member['Designation_of_Applicant'] || member['designation_of_applicant']);
             const expiredDate = formatDate(member['expired_date'] || member['expiredDate']);
             const placeOfBirth = formatData(member['place_of_birth'] || member['placeOfBirth']);
             const gender = formatData(member['gender']);
             const position = formatData(member['position']);
-            const companyName = formatData(member['componyName'] || member['companyName']); // Handle potential typo
-            const memberId = formatData(member['membersID']); // Use formatted ID for display
-            const rawId = member.ID || member.id || ''; // Use raw ID for actions
+            const companyName = formatData(member['componyName'] || member['companyName']);
+            const memberId = formatData(member['membersID']);
+            const rawId = member.ID || member.id || '';
 
             const row = document.createElement("tr");
-            // Ensure the order matches your <th> elements
             row.innerHTML = `
                 <td>${memberId}</td>
                 <td>${formatData(member.Name)}</td>
@@ -411,55 +362,45 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function updatePagination() {
-        // ... (existing code - no changes needed here, uses totalPages and currentPage) ...
         if (!paginationContainer || !prevPageButton || !nextPageButton) return;
-
-        paginationContainer.innerHTML = ''; // Clear existing buttons/info
-
-        const maxPagesToShow = 5; // Max number of specific page buttons to show
+        paginationContainer.innerHTML = '';
+        const maxPagesToShow = 5;
         let startPage, endPage;
-
         if (totalPages <= maxPagesToShow) {
-            startPage = 1; endPage = totalPages;
+            startPage = 1; 
+            endPage = totalPages;
         } else {
             const maxPagesBeforeCurrent = Math.floor(maxPagesToShow / 2);
             const maxPagesAfterCurrent = Math.ceil(maxPagesToShow / 2) - 1;
             if (currentPage <= maxPagesBeforeCurrent) {
-                startPage = 1; endPage = maxPagesToShow;
+                startPage = 1; 
+                endPage = maxPagesToShow;
             } else if (currentPage + maxPagesAfterCurrent >= totalPages) {
-                startPage = totalPages - maxPagesToShow + 1; endPage = totalPages;
+                startPage = totalPages - maxPagesToShow + 1; 
+                endPage = totalPages;
             } else {
-                startPage = currentPage - maxPagesBeforeCurrent; endPage = currentPage + maxPagesAfterCurrent;
+                startPage = currentPage - maxPagesBeforeCurrent; 
+                endPage = currentPage + maxPagesAfterCurrent;
             }
         }
-
-        // First page and ellipsis
         if (startPage > 1) {
             paginationContainer.appendChild(createPaginationButton(1));
             if (startPage > 2) paginationContainer.appendChild(createPaginationEllipsis());
         }
-
-        // Page numbers in range
         for (let i = startPage; i <= endPage; i++) {
             paginationContainer.appendChild(createPaginationButton(i, i === currentPage));
         }
-
-        // Last page and ellipsis
         if (endPage < totalPages) {
             if (endPage < totalPages - 1) paginationContainer.appendChild(createPaginationEllipsis());
             paginationContainer.appendChild(createPaginationButton(totalPages));
         }
-
-        // Update Prev/Next button states
         prevPageButton.disabled = currentPage === 1;
-        nextPageButton.disabled = currentPage >= totalPages; // Use >= for safety
-
-        // Add page info and jump input dynamically if needed (assuming it's not always present)
+        nextPageButton.disabled = currentPage >= totalPages;
         if (!document.getElementById('pageInput')) {
-             const pageInfoContainer = document.querySelector('.pagination-container'); // Or specific div
+             const pageInfoContainer = document.querySelector('.pagination-container');
              if(pageInfoContainer) {
                  const pageInfoDiv = document.createElement('div');
-                 pageInfoDiv.className = 'pagination-info'; // Add class for styling
+                 pageInfoDiv.className = 'pagination-info';
                  pageInfoDiv.innerHTML = `
                     <span class="page-indicator">${currentPage} / ${totalPages}</span>
                     <div class="page-jump">
@@ -467,15 +408,12 @@ document.addEventListener("DOMContentLoaded", function () {
                         <button onclick="jumpToPage()" class="jump-btn btn btn-secondary">跳转</button>
                     </div>
                  `;
-                 // Append page info logically, e.g., after pagination buttons but before items-per-page
                  const itemsPerPageDiv = document.querySelector('.items-per-page');
                  if (itemsPerPageDiv) {
                      pageInfoContainer.insertBefore(pageInfoDiv, itemsPerPageDiv);
                  } else {
-                     pageInfoContainer.appendChild(pageInfoDiv); // Fallback append
+                     pageInfoContainer.appendChild(pageInfoDiv);
                  }
-
-                 // Add Enter key listener for the new input
                  const pageInput = document.getElementById('pageInput');
                  pageInput?.addEventListener('keypress', (e) => {
                     if (e.key === 'Enter') {
@@ -484,7 +422,6 @@ document.addEventListener("DOMContentLoaded", function () {
                  });
              }
         } else {
-             // Update existing elements if they are already there
              const pageIndicator = document.querySelector('.page-indicator');
              if (pageIndicator) pageIndicator.textContent = `${currentPage} / ${totalPages}`;
              const pageInput = document.getElementById('pageInput');
@@ -492,7 +429,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Helper function for creating pagination buttons
     function createPaginationButton(pageNumber, isActive = false) {
         const button = document.createElement('button');
         button.textContent = pageNumber;
@@ -501,7 +437,6 @@ document.addEventListener("DOMContentLoaded", function () {
         return button;
     }
 
-    // Helper function for creating ellipsis
     function createPaginationEllipsis() {
         const span = document.createElement('span');
         span.className = 'pagination-ellipsis';
@@ -510,40 +445,32 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function updateSortIcons() {
-        // ... (existing code - no changes needed here) ...
-         document.querySelectorAll('th[data-column]').forEach(th => {
+        document.querySelectorAll('th[data-column]').forEach(th => {
             const column = th.dataset.column;
             let icon = th.querySelector('i.sort-arrow');
-            if (!icon) { // Create icon if it doesn't exist
+            if (!icon) {
                 icon = document.createElement('i');
-                icon.className = 'sort-arrow fas fa-sort'; // Default state
-                // Add a space before appending if no text node exists or last child is not text
-                 if (!th.lastChild || th.lastChild.nodeType !== Node.TEXT_NODE) {
+                icon.className = 'sort-arrow fas fa-sort';
+                if (!th.lastChild || th.lastChild.nodeType !== Node.TEXT_NODE) {
                     th.appendChild(document.createTextNode(' '));
-                 }
+                }
                 th.appendChild(icon);
             } else {
-                 // Clear existing sort direction classes
                  icon.classList.remove('fa-sort-up', 'fa-sort-down');
-                 // Add default sort icon class (fa-sort) if not the sorted column
                  if (column !== sortColumn) {
                      icon.classList.add('fa-sort');
                  } else {
-                      icon.classList.remove('fa-sort'); // Remove default if it's the sorted column
+                      icon.classList.remove('fa-sort');
                  }
             }
-
-            // Add specific direction class if this is the sorted column
             if (column === sortColumn) {
                 icon.classList.add(sortDirection === 'ASC' ? 'fa-sort-up' : 'fa-sort-down');
             }
         });
     }
 
-    // ===== SORTING FUNCTIONS =====
     function handleSortClick(columnName) {
-        // ... (existing code - no changes needed here) ...
-        if (!columnName) return; // Don't sort if column name is invalid
+        if (!columnName) return;
         if (sortColumn === columnName) {
             sortDirection = sortDirection === 'ASC' ? 'DESC' : 'ASC';
         } else {
@@ -551,16 +478,13 @@ document.addEventListener("DOMContentLoaded", function () {
             sortDirection = 'ASC';
         }
         currentPage = 1;
-        fetchMembers(searchInput?.value || ''); // Pass current search query
+        fetchMembers(searchInput?.value || '');
     }
 
-    // ===== COLUMN RESIZING FUNCTIONS =====
     function initializeResizableColumns() {
-        // ... (existing code - no changes needed here) ...
         const table = document.getElementById('memberTable');
         if (!table) return;
-        const resizableHeaders = table.querySelectorAll('thead th[data-column]'); // Target only data columns
-
+        const resizableHeaders = table.querySelectorAll('thead th[data-column]');
         resizableHeaders.forEach(th => {
             let resizer = th.querySelector('.resizer');
             if (!resizer) {
@@ -569,7 +493,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 th.appendChild(resizer);
             }
             resizer.addEventListener('mousedown', initResize);
-            // Prevent text selection on the resizer itself
             resizer.addEventListener('selectstart', (e) => e.preventDefault());
         });
 
@@ -577,64 +500,47 @@ document.addEventListener("DOMContentLoaded", function () {
             const resizer = e.target;
             const currentTh = resizer.parentElement;
             if (!currentTh || currentTh.tagName !== 'TH') return;
-
-            e.preventDefault(); // Prevent default text selection/drag
-            e.stopPropagation(); // Stop event bubbling
-
+            e.preventDefault();
+            e.stopPropagation();
             const startX = e.pageX;
             const startWidth = currentTh.offsetWidth;
-            const tableContainer = currentTh.closest('.table-responsive') || document.body; // Find scroll container or body
-
-            // Add classes for visual feedback
+            const tableContainer = currentTh.closest('.table-responsive') || document.body;
             currentTh.classList.add('resizing');
-            tableContainer.classList.add('table-resizing'); // Class on container for cursor
-
+            tableContainer.classList.add('table-resizing');
             document.addEventListener('mousemove', performResize);
-            document.addEventListener('mouseup', stopResize, { once: true }); // Use { once: true } for cleanup
-
+            document.addEventListener('mouseup', stopResize, { once: true });
             function performResize(moveEvent) {
                 const widthChange = moveEvent.pageX - startX;
                 let newWidth = startWidth + widthChange;
-                const minWidth = parseInt(currentTh.style.minWidth || '50', 10); // Use min-width from style or default
+                const minWidth = parseInt(currentTh.style.minWidth || '50', 10);
                 newWidth = Math.max(minWidth, newWidth);
                 currentTh.style.width = `${newWidth}px`;
-                 // Ensure table layout is fixed during resize for predictability
-                 if (table.style.tableLayout !== 'fixed') {
-                     table.style.tableLayout = 'fixed';
-                 }
+                if (table.style.tableLayout !== 'fixed') {
+                    table.style.tableLayout = 'fixed';
+                }
             }
-
             function stopResize() {
                 document.removeEventListener('mousemove', performResize);
-                // mouseup listener removed by { once: true }
-
                 currentTh.classList.remove('resizing');
                 tableContainer.classList.remove('table-resizing');
-
-                // Optional: Revert table layout if you want it auto sometimes
-                // table.style.tableLayout = ''; // Or keep fixed
-
-                saveColumnWidths(); // Save the final widths
+                saveColumnWidths();
             }
         }
     }
 
     function saveColumnWidths() {
-        // ... (existing code - no changes needed here) ...
-         try {
+        try {
             const widths = {};
             table.querySelectorAll('thead th[data-column]').forEach(header => {
                 const column = header.dataset.column;
-                // Only save if width is explicitly set and seems valid (e.g., contains 'px')
                 if (column && header.style.width && header.style.width.includes('px')) {
                     widths[column] = header.style.width;
                 }
             });
-            // Only save if there are widths to save
             if (Object.keys(widths).length > 0) {
                  localStorage.setItem('memberTableColumnWidths', JSON.stringify(widths));
             } else {
-                 localStorage.removeItem('memberTableColumnWidths'); // Clear if no widths set
+                 localStorage.removeItem('memberTableColumnWidths');
             }
         } catch (error) {
             console.error('Error saving column widths:', error);
@@ -642,39 +548,29 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function loadColumnWidths() {
-        // ... (existing code - no changes needed here) ...
         try {
             const savedWidths = JSON.parse(localStorage.getItem('memberTableColumnWidths') || '{}');
             let widthsApplied = false;
             let requiresFixedLayout = false;
-
             table.querySelectorAll('thead th[data-column]').forEach(header => {
                 const column = header.dataset.column;
                 if (savedWidths[column]) {
                     header.style.width = savedWidths[column];
                     widthsApplied = true;
-                    requiresFixedLayout = true; // If any width is loaded, use fixed layout
+                    requiresFixedLayout = true;
                 } else {
-                    // Apply default width if no saved width exists for this column
                     setDefaultColumnWidth(header);
                 }
             });
-
-             // Apply fixed layout if custom widths were loaded OR if defaults necessitate it
              if (requiresFixedLayout || tableRequiresFixedLayoutByDefault()) {
                   if (table.style.tableLayout !== 'fixed') {
                      table.style.tableLayout = 'fixed';
                   }
-             } else {
-                  // Optionally revert to auto layout if no custom widths and defaults don't need fixed
-                  // table.style.tableLayout = '';
              }
-
         } catch (error) {
             console.error('Error loading column widths:', error);
-            // Apply default widths in case of error
             table.querySelectorAll('thead th[data-column]').forEach(setDefaultColumnWidth);
-             if (tableRequiresFixedLayoutByDefault()) { // Check again after applying defaults
+             if (tableRequiresFixedLayoutByDefault()) {
                   if (table.style.tableLayout !== 'fixed') {
                      table.style.tableLayout = 'fixed';
                   }
@@ -682,23 +578,16 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Helper to determine if table should have fixed layout based on default widths
     function tableRequiresFixedLayoutByDefault() {
-         // If any default width setting implies wrapping or specific sizing, return true
-         // Example: If Address or Remarks columns exist and have default widths set
          return !!(table.querySelector('th[data-column="Address"]') || table.querySelector('th[data-column="remarks"]'));
     }
 
-
     function setDefaultColumnWidth(header) {
-        // ... (existing code - no changes needed here) ...
         if (!header || !header.dataset || !header.dataset.column) return;
-
         const column = header.dataset.column;
-        let defaultWidth = '150px'; // Fallback default
-        let minWidth = '60px';     // Default min-width
+        let defaultWidth = '150px';
+        let minWidth = '60px';
         let needsNormalWhitespace = false;
-
         switch (column) {
             case 'membersID': defaultWidth = '90px'; break;
             case 'Name': case 'CName': defaultWidth = '160px'; break;
@@ -715,31 +604,25 @@ document.addEventListener("DOMContentLoaded", function () {
             case 'position': defaultWidth = '120px'; break;
             case 'others': defaultWidth = '150px'; break;
             case 'remarks': defaultWidth = '250px'; needsNormalWhitespace = true; minWidth = '150px'; break;
-            // Action column is handled by CSS class .Action, not data-column usually
         }
-
         header.style.width = defaultWidth;
-        header.style.minWidth = minWidth; // Apply min-width
-        // Apply white-space based on flag
+        header.style.minWidth = minWidth;
         header.style.whiteSpace = needsNormalWhitespace ? 'normal' : 'nowrap';
     }
 
     function resetColumnWidths() {
-        // ... (existing code - no changes needed here) ...
         try {
             localStorage.removeItem('memberTableColumnWidths');
-            // Clear inline width styles and re-apply defaults
             table.querySelectorAll('thead th[data-column]').forEach(header => {
-                 header.style.width = ''; // Clear inline style first
-                 setDefaultColumnWidth(header); // Reapply default
+                 header.style.width = '';
+                 setDefaultColumnWidth(header);
             });
-            // Re-evaluate table layout after resetting
             if (tableRequiresFixedLayoutByDefault()) {
                  if (table.style.tableLayout !== 'fixed') {
                     table.style.tableLayout = 'fixed';
                  }
             } else {
-                 table.style.tableLayout = ''; // Revert to auto if defaults allow
+                 table.style.tableLayout = '';
             }
             console.log('Column widths reset to default values');
         } catch (error) {
@@ -747,13 +630,10 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-
     // ===== EVENT LISTENERS =====
     function initializeEventListeners() {
-        // Search input (debounced)
         const debouncedSearch = debounce((searchText) => {
             currentPage = 1;
-            // fetchMembers will determine search type based on input value
             fetchMembers(searchText.trim());
         }, 350);
 
@@ -761,73 +641,101 @@ document.addEventListener("DOMContentLoaded", function () {
             debouncedSearch(this.value);
         });
 
-        // Table header sorting (event delegation)
         thead?.addEventListener('click', function(event) {
             const header = event.target.closest('th[data-column]');
-            // Ensure click is on the header itself or its content, not the resizer
             if (header && !event.target.classList.contains('resizer')) {
                 handleSortClick(header.dataset.column);
             }
         });
 
-        // Pagination controls
         prevPageButton?.addEventListener("click", () => changePage(currentPage - 1));
         nextPageButton?.addEventListener("click", () => changePage(currentPage + 1));
 
-        // Birthday button opens modal (onclick in HTML)
-        // Expiry button opens modal (onclick in HTML)
-
-        // List All Members button
         listAllMembersButton?.addEventListener("click", function() {
             currentPage = 1;
             currentSearchType = 'all';
-            targetStartDate = null; // Reset expiry dates
+            targetStartDate = null;
             targetEndDate = null;
-            targetBirthdayMonth = null; // Reset birthday month
+            targetBirthdayMonth = null;
             currentFilterValue = '';
             if (memberFilter) memberFilter.value = '';
             if (searchInput) searchInput.value = '';
             fetchMembers();
         });
 
-        // Member filter dropdown
         memberFilter?.addEventListener('change', function() {
             currentFilterValue = this.value;
             currentPage = 1;
-            // Fetch using the current search text/type *and* this filter
             fetchMembers(searchInput?.value || '');
         });
 
-        // Items per page change
         itemsPerPageSelect?.addEventListener("change", function () {
-            itemsPerPage = parseInt(this.value);
-            currentPage = 1;
-            fetchMembers(searchInput?.value || '');
+            if (this.value === 'custom') {
+                // Show custom input field when 'Custom' is selected
+                const customInput = document.getElementById('customItemsPerPage');
+                if (customInput) {
+                    customInput.style.display = 'inline-block';
+                    customInput.focus();
+                }
+            } else {
+                // Hide custom input field and update items per page
+                const customInput = document.getElementById('customItemsPerPage');
+                if (customInput) {
+                    customInput.style.display = 'none';
+                }
+                itemsPerPage = parseInt(this.value);
+                currentPage = 1;
+                fetchMembers(searchInput?.value || '');
+            }
         });
 
-        // --- Expiry Modal Event Listeners ---
+        // Add event listener for custom items per page input
+        const customItemsPerPageInput = document.getElementById('customItemsPerPage');
+        customItemsPerPageInput?.addEventListener("change", function() {
+            const value = parseInt(this.value);
+            if (!isNaN(value) && value > 0) {
+                itemsPerPage = value;
+                currentPage = 1;
+                fetchMembers(searchInput?.value || '');
+            }
+        });
+
+        // Also handle Enter key press on custom input
+        customItemsPerPageInput?.addEventListener("keypress", function(e) {
+            if (e.key === 'Enter') {
+                const value = parseInt(this.value);
+                if (!isNaN(value) && value > 0) {
+                    itemsPerPage = value;
+                    currentPage = 1;
+                    fetchMembers(searchInput?.value || '');
+                }
+            }
+        });
+
         confirmExpirySearchButton?.addEventListener('click', handleConfirmExpirySearch);
-        closeExpiryButton?.addEventListener('click', closeExpiryModal); // Close via X
+        closeExpiryButton?.addEventListener('click', closeExpiryModal);
 
-        // --- Birthday Modal Event Listeners ---
         confirmBirthdaySearchButton?.addEventListener('click', handleConfirmBirthdaySearch);
-        closeBirthdayButton?.addEventListener('click', closeBirthdayModal); // Close via X
+        closeBirthdayButton?.addEventListener('click', closeBirthdayModal);
 
-        // --- Shared Modal Overlay Listener ---
         modalOverlay?.addEventListener('click', () => {
             closeExpiryModal();
             closeBirthdayModal();
         });
-
-        // --- Jump to Page Button Listener (if button exists outside pagination update) ---
-        // This is better handled inside updatePagination where the button is created/updated
-        // const jumpButton = document.querySelector('.jump-btn');
-        // jumpButton?.addEventListener('click', jumpToPage);
-        // const pageInput = document.getElementById('pageInput');
-        // pageInput?.addEventListener('keypress', (e) => { if (e.key === 'Enter') jumpToPage(); });
     }
 
-    // --- MODIFIED: Function to handle Expiry modal confirmation ---
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
     function handleConfirmExpirySearch() {
         const startYear = expiryStartYearInput?.value.trim();
         const startMonth = expiryStartMonthInput?.value;
@@ -836,17 +744,13 @@ document.addEventListener("DOMContentLoaded", function () {
         const endMonth = expiryEndMonthInput?.value;
         const endDay = expiryEndDayInput?.value.trim();
 
-        // Basic presence validation
         if (!startYear || !startMonth || !startDay || !endYear || !endMonth || !endDay) {
             alert("请完整填写开始日期和结束日期的年、月、日。");
             return;
         }
-
-        // Construct date strings (YYYY-MM-DD)
         const startDateStr = `${startYear}-${padStart(startMonth)}-${padStart(startDay)}`;
         const endDateStr = `${endYear}-${padStart(endMonth)}-${padStart(endDay)}`;
 
-        // Validate date strings
         if (!isValidDateString(startDateStr)) {
             alert(`开始日期无效: ${startDateStr}。请检查年月日是否正确。`);
             expiryStartDayInput?.focus();
@@ -857,34 +761,25 @@ document.addEventListener("DOMContentLoaded", function () {
             expiryEndDayInput?.focus();
             return;
         }
-
-        // Optional: Validate that start date is not after end date
         const startDate = new Date(startDateStr);
         const endDate = new Date(endDateStr);
         if (startDate > endDate) {
             alert("开始日期不能晚于结束日期。");
             return;
         }
-
-        // Store validated dates
         targetStartDate = startDateStr;
         targetEndDate = endDateStr;
-        targetBirthdayMonth = null; // Reset birthday month
-
-        // Set search type and trigger fetch
+        targetBirthdayMonth = null;
         currentPage = 1;
-        currentSearchType = 'expired'; // Set the search type
-        currentFilterValue = ''; // Reset other filters
+        currentSearchType = 'expired';
+        currentFilterValue = '';
         if (memberFilter) memberFilter.value = '';
         if (searchInput) searchInput.value = '';
-
         console.log(`Searching for members expiring between ${targetStartDate} and ${targetEndDate}`);
-        fetchMembers(); // fetchMembers will now use the target dates
-
-        closeExpiryModal(); // Close the modal after confirmation
+        fetchMembers();
+        closeExpiryModal();
     }
 
-    // --- Function to handle Birthday modal confirmation (Unchanged) ---
     function handleConfirmBirthdaySearch() {
         const month = birthdayMonthInput?.value;
         if (!month) {
@@ -893,7 +788,7 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
         targetBirthdayMonth = parseInt(month, 10);
-        targetStartDate = null; // Reset expiry dates
+        targetStartDate = null;
         targetEndDate = null;
         currentPage = 1;
         currentSearchType = 'Birthday';
@@ -905,22 +800,17 @@ document.addEventListener("DOMContentLoaded", function () {
         closeBirthdayModal();
     }
 
-
-    // ===== GLOBAL FUNCTIONS (accessible from HTML onclick) =====
-
     window.editMember = function(id) {
-        // ... (existing code - remains the same) ...
         if (!id) { console.error("Edit Error: No ID"); alert("无法编辑：ID未提供"); return; }
         console.log(`Redirecting to edit member with ID: ${id}`);
         window.location.href = `edit_member.html?action=edit&id=${id}`;
     };
 
     window.deleteMember = async function(id) {
-        // ... (existing code - remains the same) ...
         if (!id) { console.error("Delete Error: No ID"); alert("无法删除：ID未提供"); return; }
         if (confirm(`确定要删除塾员 ID ${id} 吗？此操作无法撤销。`)) {
             console.log(`Attempting to delete member with ID: ${id}`);
-            const deleteUrl = `${API_BASE_URL}?table=members&ID=${id}`; // Ensure correct table name
+            const deleteUrl = `${API_BASE_URL}?table=members&ID=${id}`;
             try {
                 const response = await fetch(deleteUrl, { method: 'DELETE' });
                 let message = `删除失败 (Status: ${response.status})`;
@@ -928,7 +818,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (response.ok) {
                      message = '删除成功！';
                      success = true;
-                     // Try parsing JSON only if content type suggests it or status is not 204
                      if (response.status !== 204 && response.headers.get("content-type")?.includes("application/json")) {
                         try {
                             const data = await response.json();
@@ -936,7 +825,6 @@ document.addEventListener("DOMContentLoaded", function () {
                         } catch (e) { console.warn("Could not parse JSON response on delete success:", e); }
                      }
                 } else {
-                     // Try to get more specific error message
                      try {
                          const errorData = await response.json();
                          message = errorData.message || message;
@@ -946,7 +834,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
                 alert(message);
                 if (success) {
-                    // Refresh the current page view
                     fetchMembers(searchInput?.value || '');
                 }
             } catch (error) {
@@ -957,27 +844,23 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     window.checkMember = function(id) {
-        // ... (existing code - remains the same) ...
         if (!id) { console.error("Check Error: No ID"); alert("无法查看：ID未提供"); return; }
         console.log(`Redirecting to check details for member ID: ${id}`);
-        window.location.href = `check_details.html?id=${id}`; // Ensure this page exists
+        window.location.href = `check_details.html?id=${id}`;
     };
 
     window.changePage = function(page) {
-        // ... (existing code - remains the same) ...
         const targetPage = parseInt(page, 10);
-        // Check bounds and if page actually changed
         if (!isNaN(targetPage) && targetPage >= 1 && targetPage <= totalPages && targetPage !== currentPage) {
             console.log(`Changing page from ${currentPage} to ${targetPage}`);
             currentPage = targetPage;
-            fetchMembers(searchInput?.value || ''); // Fetch data for the new page
+            fetchMembers(searchInput?.value || '');
         } else {
-             console.log(`Page change to ${page} ignored (invalid or same page). Current: ${currentPage}, Total: ${totalPages}`);
+             console.log(`Page change to ${page} ignored. Current: ${currentPage}, Total: ${totalPages}`);
         }
     };
 
     window.jumpToPage = function() {
-        // ... (existing code - remains the same) ...
         const pageInput = document.getElementById('pageInput');
         if (!pageInput) return;
         const targetPage = parseInt(pageInput.value, 10);
@@ -986,28 +869,24 @@ document.addEventListener("DOMContentLoaded", function () {
             pageInput.value = '';
             pageInput.focus();
         } else {
-            pageInput.value = ''; // Clear input after successful jump
+            pageInput.value = '';
             changePage(targetPage);
         }
     };
 
-    // --- Expiry Modal Control Functions ---
     window.openExpiryModal = function() {
         if (expiryModal && modalOverlay) {
-            // Optionally set default dates (e.g., start/end of current month) or clear fields
             const now = new Date();
             if(expiryStartYearInput) expiryStartYearInput.value = now.getFullYear();
             if(expiryStartMonthInput) expiryStartMonthInput.value = now.getMonth() + 1;
-            if(expiryStartDayInput) expiryStartDayInput.value = '1'; // Default to 1st
+            if(expiryStartDayInput) expiryStartDayInput.value = '1';
             if(expiryEndYearInput) expiryEndYearInput.value = now.getFullYear();
             if(expiryEndMonthInput) expiryEndMonthInput.value = now.getMonth() + 1;
-             // Default to last day of current month (approximation)
             const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
             if(expiryEndDayInput) expiryEndDayInput.value = lastDay;
-
             expiryModal.style.display = 'block';
             modalOverlay.style.display = 'block';
-            expiryStartYearInput?.focus(); // Focus the first field
+            expiryStartYearInput?.focus();
         } else {
             console.error("Expiry modal or overlay element not found.");
             alert("无法打开到期查询窗口。");
@@ -1017,14 +896,12 @@ document.addEventListener("DOMContentLoaded", function () {
     window.closeExpiryModal = function() {
         if (expiryModal && modalOverlay) {
             expiryModal.style.display = 'none';
-            // Only hide overlay if the birthday modal isn't also open
             if (!birthdayModal || birthdayModal.style.display !== 'block') {
                 modalOverlay.style.display = 'none';
             }
         }
     };
 
-    // --- Birthday Modal Control Functions (Unchanged) ---
     window.openBirthdayModal = function() {
         if (birthdayModal && modalOverlay) {
             const now = new Date();
@@ -1041,16 +918,135 @@ document.addEventListener("DOMContentLoaded", function () {
     window.closeBirthdayModal = function() {
         if (birthdayModal && modalOverlay) {
             birthdayModal.style.display = 'none';
-             // Only hide overlay if the expiry modal isn't also open
             if (!expiryModal || expiryModal.style.display !== 'block') {
                 modalOverlay.style.display = 'none';
             }
         }
     };
 
-    // Make resetColumnWidths globally available
     window.resetColumnWidths = resetColumnWidths;
 
-    // Initialize the page
+    // ===== INITIALIZE PAGE =====
     initializePage();
+
+    // ===== EXPORT FUNCTIONS =====
+    const exportModal = document.getElementById('exportModal');
+    const exportColumnsContainer = document.querySelector('.export-columns-container');
+    const confirmExportButton = document.getElementById('confirmExport');
+
+    function openExportModal() {
+        if (!exportModal || !exportColumnsContainer) return;
+        exportColumnsContainer.innerHTML = '';
+        const selectActions = document.createElement('div');
+        selectActions.className = 'select-actions';
+        selectActions.innerHTML = `
+            <button type="button" class="btn btn-secondary" id="selectAllColumns">全选</button>
+            <button type="button" class="btn btn-secondary" id="deselectAllColumns">取消全选</button>
+        `;
+        exportColumnsContainer.appendChild(selectActions);
+        const columnHeaders = Array.from(document.querySelectorAll('#memberTable thead th[data-column]'));
+        columnHeaders.forEach(header => {
+            const columnName = header.dataset.column;
+            const displayName = header.textContent.trim().replace(/[▲▼]/, '');
+            const columnItem = document.createElement('div');
+            columnItem.className = 'export-column-item';
+            columnItem.innerHTML = `
+                <input type="checkbox" id="export-${columnName}" name="export-columns" value="${columnName}" checked>
+                <label for="export-${columnName}">${displayName}</label>
+            `;
+            exportColumnsContainer.appendChild(columnItem);
+        });
+        document.getElementById('selectAllColumns')?.addEventListener('click', () => {
+            document.querySelectorAll('input[name="export-columns"]').forEach(checkbox => {
+                checkbox.checked = true;
+            });
+        });
+        document.getElementById('deselectAllColumns')?.addEventListener('click', () => {
+            document.querySelectorAll('input[name="export-columns"]').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+        });
+        exportModal.style.display = 'block';
+        modalOverlay.style.display = 'block';
+    }
+    
+    function closeExportModal() {
+        if (!exportModal) return;
+        exportModal.style.display = 'none';
+        modalOverlay.style.display = 'none';
+    }
+    
+    function exportDataToTxt() {
+        const selectedColumns = Array.from(document.querySelectorAll('input[name="export-columns"]:checked'))
+            .map(checkbox => checkbox.value);
+        if (selectedColumns.length === 0) {
+            alert('请至少选择一列数据进行导出');
+            return;
+        }
+        let exportContent = '';
+        const headers = selectedColumns.map(column => {
+            const headerElement = document.querySelector(`#memberTable thead th[data-column="${column}"]`);
+            return headerElement ? headerElement.textContent.trim().replace(/[▲▼]/, '') : column;
+        });
+        exportContent += headers.join(';') + '\n';
+        membersData.forEach(member => {
+            const rowData = selectedColumns.map(column => {
+                if (column === 'phone_number') {
+                    return formatPhone(member[column] || '');
+                } else if (column === 'IC' || column === 'oldIC') {
+                    return formatIC(member[column] || '');
+                } else if (column === 'expired_date') {
+                    return formatDate(member[column] || member['expiredDate'] || '');
+                } else {
+                    let value = '';
+                    if (column === 'Designation_of_Applicant') {
+                        value = member[column] || member['designation_of_applicant'] || '';
+                    } else if (column === 'place_of_birth') {
+                        value = member[column] || member['placeOfBirth'] || '';
+                    } else if (column === 'componyName') {
+                        value = member[column] || member['companyName'] || '';
+                    } else {
+                        value = member[column] || '';
+                    }
+                    return String(value).replace(/;/g, ',');
+                }
+            });
+            exportContent += rowData.join(';') + '\n';
+        });
+        const blob = new Blob([exportContent], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        let filename = '塾员数据';
+        if (currentSearchType === 'Birthday' && targetBirthdayMonth) {
+            filename = `${targetBirthdayMonth}月生日塾员`;
+        } else if (currentSearchType === 'expired' && targetStartDate && targetEndDate) {
+            filename = `${targetStartDate}至${targetEndDate}到期塾员`;
+        } else if (currentFilterValue) {
+            filename = `${currentFilterValue}塾员`;
+        }
+        a.download = `${filename}_${new Date().toISOString().slice(0, 10)}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        closeExportModal();
+    }
+    
+    confirmExportButton?.addEventListener('click', exportDataToTxt);
+    
+    window.addEventListener('click', function(event) {
+        if (event.target === modalOverlay) {
+            if (birthdayModal && birthdayModal.style.display === 'block') {
+                closeBirthdayModal();
+            } else if (expiryModal && expiryModal.style.display === 'block') {
+                closeExpiryModal();
+            } else if (exportModal && exportModal.style.display === 'block') {
+                closeExportModal();
+            }
+        }
+    });
+    
+    window.openExportModal = openExportModal;
+    window.closeExportModal = closeExportModal;
 });
