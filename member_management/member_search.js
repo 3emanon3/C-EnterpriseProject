@@ -939,6 +939,17 @@ document.addEventListener("DOMContentLoaded", function () {
         modalOverlay.style.display = 'none';
     }
     
+    // Helper function to split emails with multiple addresses
+    function splitEmails(emailStr) {
+        if (!emailStr) return [''];
+        // Split by comma or slash
+        if (emailStr.includes(',') || emailStr.includes('/')) {
+            // Replace slashes with commas first, then split by comma
+            return emailStr.replace(/\//g, ',').split(',').map(email => email.trim()).filter(email => email);
+        }
+        return [emailStr];
+    }
+
     function exportData() {
         const selectedColumns = Array.from(document.querySelectorAll('input[name="export-columns"]:checked'))
             .map(checkbox => checkbox.value);
@@ -961,12 +972,26 @@ document.addEventListener("DOMContentLoaded", function () {
         
         exportContent += headers.join(delimiter) + '\n';
         
+        // Check if email column is selected for export
+        const emailColumnIndex = selectedColumns.indexOf('email');
+        const hasEmailColumn = emailColumnIndex !== -1;
+        
         membersData.forEach(member => {
-            const rowData = selectedColumns.map(column => {
+            // Process each member data
+            let rowDataTemplate = [];
+            
+            // Prepare all column values except email (if present)
+            selectedColumns.forEach((column, index) => {
+                if (column === 'email' && hasEmailColumn) {
+                    // Skip email column here, we'll handle it separately
+                    rowDataTemplate.push('');
+                    return;
+                }
+                
                 let value = '';
                 
                 if (column === 'phone_number') {
-                    value = formatPhone(member[column] || '');
+                    value = member[column] || ''; // Don't format phone numbers for export
                 } else if (column === 'IC' || column === 'oldIC') {
                     value = formatIC(member[column] || '');
                 } else if (column === 'expired_date') {
@@ -984,14 +1009,36 @@ document.addEventListener("DOMContentLoaded", function () {
                 // 处理分隔符和引号
                 if (exportFormat === 'csv') {
                     // CSV格式：将字段用双引号包围，内部的双引号用两个双引号表示
-                    return `"${String(value).replace(/"/g, '""')}"`;  
+                    rowDataTemplate[index] = `"${String(value).replace(/"/g, '""')}"`;  
                 } else {
                     // TXT格式：将分号替换为逗号
-                    return String(value).replace(/;/g, ',');
+                    rowDataTemplate[index] = String(value).replace(/;/g, ',');
                 }
             });
             
-            exportContent += rowData.join(delimiter) + '\n';
+            // If no email column is selected, just add the row as is
+            if (!hasEmailColumn) {
+                exportContent += rowDataTemplate.join(delimiter) + '\n';
+                return;
+            }
+            
+            // Handle email column if present
+            const emailValue = member['email'] || '';
+            const emails = splitEmails(emailValue);
+            
+            // Create a row for each email address
+            emails.forEach(email => {
+                const rowData = [...rowDataTemplate]; // Clone the template
+                
+                // Format the email value
+                if (exportFormat === 'csv') {
+                    rowData[emailColumnIndex] = `"${email.replace(/"/g, '""')}"`;  
+                } else {
+                    rowData[emailColumnIndex] = email.replace(/;/g, ',');
+                }
+                
+                exportContent += rowData.join(delimiter) + '\n';
+            });
         });
         
         // 设置正确的MIME类型
