@@ -37,29 +37,20 @@
 
                         <div class="form-group">
                             <label for="donationTypes">乐捐类型</label>
-                            <select id="donationTypes" name="donationTypes"  aria-label="乐捐类型">
+                            <select id="donationTypes" name="donationTypes" aria-label="乐捐类型">
                                 <option value="" disabled selected>选择乐捐类型</option>
-                                <option value="1">乐捐</option>
-                                <option value="2">蒲公英乐捐</option>
-                                <option value="3">哲商乐捐</option>
-                                <option value="4">大众乐捐</option>
-                                <option value="5">模范班乐捐</option>
-                                <option value="6">外籍人士享有塾员福利乐捐</option>                  
                             </select>
-                            <button type="button" id="addDonationTypeBtn" class="btn btn-secondary btn-add-type" data-target="donationTypes">
+                            <button type="button" id="addDonationTypeBtn" class="btn btn-secondary btn-add-type">
                                 <i class="fas fa-plus"></i>
                             </button>
                         </div>
 
                         <div class="form-group">
                             <label for="bank">银行</label>
-                            <select id="bank" name="bank"  aria-label="银行">
+                            <select id="bank" name="bank" aria-label="银行">
                                 <option value="" disabled selected>选择银行</option>
-                                <option value="1">Public Bank</option>
-                                <option value="2">Hong Leong Bank</option>
-                                <option value="3">Alliance Bank</option>     
                             </select>
-                            <button type="button" id="addBankBtn" class="btn btn-secondary btn-add-type" data-target="bank">
+                            <button type="button" id="addBankBtn" class="btn btn-secondary btn-add-type tooltip">
                                 <i class="fas fa-plus"></i>
                             </button>
                         </div>
@@ -153,6 +144,41 @@
 
     <div id="loadingIndicator" class="loading-spinner" style="display: none;">
         加载中...
+    </div>
+    
+    <!-- 在 body 标签结束前添加 -->
+    <!-- 乐捐类型模态框 -->
+    <div id="customDonationTypeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>添加新乐捐类型</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="newDonationType">新乐捐类型名称</label>
+                    <input type="text" id="newDonationType" placeholder="输入新乐捐类型名称">
+                </div>
+                <button type="button" id="saveDonationTypeBtn" class="btn btn-primary">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 银行模态框 -->
+    <div id="customBankModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>添加新银行</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="newBank">新银行名称</label>
+                    <input type="text" id="newBank" placeholder="输入新银行名称">
+                </div>
+                <button type="button" id="saveBankBtn" class="btn btn-primary">保存</button>
+            </div>
+        </div>
     </div>
     
     <script src="donate.js"></script>
