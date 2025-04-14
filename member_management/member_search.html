@@ -29,8 +29,8 @@
                     <span class="tooltip-text">添加新塾员到系统中，录入塾员的详细信息</span>
                 </button>
 
-                <!-- Birthday Button remains the same -->
-                <button id="searchBirthday" class="btn btn-info tooltip" onclick="openBirthdayModal()">
+                <!-- Birthday Button with filter-button class -->
+                <button id="searchBirthday" class="btn btn-info tooltip filter-button" onclick="openBirthdayModal()">
                     <i class="fas fa-birthday-cake"></i> 生日查询 (选择月份)
                     <span class="tooltip-text">
                         <strong>核心功能：</strong> 查找并显示在指定月份过生日的塾员。
@@ -51,8 +51,8 @@
                     </span>
                 </button>
 
-                <!-- Modified Expiry Button Tooltip -->
-                <button id="searchExpiry" class="btn btn-warning tooltip" onclick="openExpiryModal()">
+                <!-- Modified Expiry Button Tooltip with filter-button class -->
+                <button id="searchExpiry" class="btn btn-warning tooltip filter-button" onclick="openExpiryModal()">
                     <i class="fas fa-calendar-times"></i> 到期塾员 (选择日期范围)
                     <span class="tooltip-text">
                         <strong>核心功能：</strong> 查找并显示在指定日期范围（开始日期 到 结束日期）内到期的塾员。
@@ -90,7 +90,7 @@
                     </span>
                 </button>
 
-                <select id="memberFilter" class="btn btn-light tooltip">
+                <select id="memberFilter" class="btn btn-light tooltip filter-button">
                     <!-- Options will be populated by JavaScript -->
                     <span class="tooltip-text">
                         <strong>核心功能：</strong> 按“种类”筛选名单。允许您选择一个特定的人员类别（例如：塾员、逾期、非塾员），列表将仅显示属于该类别的人员。

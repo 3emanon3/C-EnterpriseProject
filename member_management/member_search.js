@@ -129,6 +129,43 @@ document.addEventListener("DOMContentLoaded", function () {
         initializeResizableColumns();
         loadColumnWidths();
         fetchMembers();
+        setupFilterButtonsAnimation();
+    }
+    
+    // ===== FILTER BUTTON ANIMATION =====
+    function setupFilterButtonsAnimation() {
+        // Add filter-button class to the buttons we want to animate
+        if (birthdayButton) {
+            birthdayButton.classList.add('filter-button');
+            birthdayButton.innerHTML += '<span class="filter-badge">1</span>';
+        }
+        if (expiredButton) {
+            expiredButton.classList.add('filter-button');
+            expiredButton.innerHTML += '<span class="filter-badge">2</span>';
+        }
+        if (memberFilter) {
+            memberFilter.classList.add('filter-button');
+            memberFilter.innerHTML += '<span class="filter-badge">3</span>';
+        }
+    }
+    
+    // Function to update filter button states
+    function updateFilterButtonStates() {
+        // Reset all buttons first
+        document.querySelectorAll('.filter-button').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        // Activate buttons based on current filters
+        if (currentSearchType === 'Birthday' && targetBirthdayMonth) {
+            birthdayButton?.classList.add('active');
+        }
+        if (currentSearchType === 'expired' && targetStartDate && targetEndDate) {
+            expiredButton?.classList.add('active');
+        }
+        if (memberFilter && memberFilter.value) {
+            memberFilter.classList.add('active');
+        }
     }
 
     // ===== DATA FETCHING FUNCTIONS =====
@@ -661,12 +698,14 @@ document.addEventListener("DOMContentLoaded", function () {
             if (memberFilter) memberFilter.value = '';
             if (searchInput) searchInput.value = '';
             fetchMembers();
+            updateFilterButtonStates();
         });
 
         memberFilter?.addEventListener('change', function () {
             currentFilterValue = this.value;
             currentPage = 1;
             fetchMembers(searchInput?.value || '');
+            updateFilterButtonStates();
         });
 
         itemsPerPageSelect?.addEventListener("change", function () {
@@ -741,6 +780,7 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log(`Searching for members expiring between ${targetStartDate} and ${targetEndDate}`);
         fetchMembers();
         closeExpiryModal();
+        updateFilterButtonStates();
     }
 
     function handleConfirmBirthdaySearch() {
@@ -761,6 +801,7 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log(`Searching for members with birthday in month ${targetBirthdayMonth}`);
         fetchMembers();
         closeBirthdayModal();
+        updateFilterButtonStates();
     }
 
     window.editMember = function (id) {

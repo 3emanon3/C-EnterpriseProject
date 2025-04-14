@@ -454,6 +454,47 @@ tr:hover {
 }
 
 
+/* Filter Button Animation Styles */
+.filter-button {
+    transition: all 0.5s ease-in-out;
+}
+
+.filter-button.active {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transform: scale(0.85);
+}
+
+.filter-button.active:nth-of-type(2) {
+    bottom: 70px;
+}
+
+.filter-button.active:nth-of-type(3) {
+    bottom: 120px;
+}
+
+.filter-button .filter-badge {
+    display: none;
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: #dc3545;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    line-height: 20px;
+    text-align: center;
+}
+
+.filter-button.active .filter-badge {
+    display: block;
+}
+
 /* Tooltip Styles */
 .tooltip {
     position: relative;
