@@ -675,8 +675,32 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 350);
 
         searchInput?.addEventListener("input", function () {
+            if (this.value.trim() !== "") {
+                // Cancel any active filter settings when a search term is entered
+                currentSearchType = 'search';
+                targetBirthdayMonth = null;
+                targetStartDate = null;
+                targetEndDate = null;
+        
+                // Reset the member filter dropdown (if used)
+                if (memberFilter) {
+                    memberFilter.value = '';
+                }
+                
+                // Remove the active (animated) class from all filter buttons
+                document.querySelectorAll('.filter-button').forEach(btn => btn.classList.remove('active'));
+        
+                // Also close the Birthday or Expiry modals if they are open
+                if (birthdayModal && birthdayModal.style.display === 'block') {
+                    closeBirthdayModal();
+                }
+                if (expiryModal && expiryModal.style.display === 'block') {
+                    closeExpiryModal();
+                }
+            }
             debouncedSearch(this.value);
         });
+        
 
         thead?.addEventListener('click', function (event) {
             const header = event.target.closest('th[data-column]');
