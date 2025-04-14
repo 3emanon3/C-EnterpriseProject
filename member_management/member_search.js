@@ -12,10 +12,10 @@ function isValidDateString(dateString) {
     const date = new Date(dateString);
     const [year, month, day] = dateString.split('-').map(Number);
     return date instanceof Date &&
-           !isNaN(date.getTime()) &&
-           date.getFullYear() === year &&
-           (date.getMonth() + 1) === month &&
-           date.getDate() === day;
+        !isNaN(date.getTime()) &&
+        date.getFullYear() === year &&
+        (date.getMonth() + 1) === month &&
+        date.getDate() === day;
 }
 
 function formatPhone(phone) {
@@ -25,7 +25,7 @@ function formatPhone(phone) {
     } else if (/^\d{11}$/.test(phoneStr) && phoneStr.startsWith('0')) { // 11 digits starting with 0
         return phoneStr.replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3");
     } else if (/^\d{11}$/.test(phoneStr) && phoneStr.startsWith('6')) { // Example: 601...
-         return phoneStr.replace(/(\d{1})(\d{3})(\d{3})(\d{4})/, "$1-$2-$3-$4");
+        return phoneStr.replace(/(\d{1})(\d{3})(\d{3})(\d{4})/, "$1-$2-$3-$4");
     }
     return phoneStr;
 }
@@ -367,19 +367,19 @@ document.addEventListener("DOMContentLoaded", function () {
         const maxPagesToShow = 5;
         let startPage, endPage;
         if (totalPages <= maxPagesToShow) {
-            startPage = 1; 
+            startPage = 1;
             endPage = totalPages;
         } else {
             const maxPagesBeforeCurrent = Math.floor(maxPagesToShow / 2);
             const maxPagesAfterCurrent = Math.ceil(maxPagesToShow / 2) - 1;
             if (currentPage <= maxPagesBeforeCurrent) {
-                startPage = 1; 
+                startPage = 1;
                 endPage = maxPagesToShow;
             } else if (currentPage + maxPagesAfterCurrent >= totalPages) {
-                startPage = totalPages - maxPagesToShow + 1; 
+                startPage = totalPages - maxPagesToShow + 1;
                 endPage = totalPages;
             } else {
-                startPage = currentPage - maxPagesBeforeCurrent; 
+                startPage = currentPage - maxPagesBeforeCurrent;
                 endPage = currentPage + maxPagesAfterCurrent;
             }
         }
@@ -397,35 +397,35 @@ document.addEventListener("DOMContentLoaded", function () {
         prevPageButton.disabled = currentPage === 1;
         nextPageButton.disabled = currentPage >= totalPages;
         if (!document.getElementById('pageInput')) {
-             const pageInfoContainer = document.querySelector('.pagination-container');
-             if(pageInfoContainer) {
-                 const pageInfoDiv = document.createElement('div');
-                 pageInfoDiv.className = 'pagination-info';
-                 pageInfoDiv.innerHTML = `
+            const pageInfoContainer = document.querySelector('.pagination-container');
+            if (pageInfoContainer) {
+                const pageInfoDiv = document.createElement('div');
+                pageInfoDiv.className = 'pagination-info';
+                pageInfoDiv.innerHTML = `
                     <span class="page-indicator">${currentPage} / ${totalPages}</span>
                     <div class="page-jump">
                         <input type="number" id="pageInput" min="1" max="${totalPages}" placeholder="页码" class="page-input" aria-label="Jump to page number">
                         <button onclick="jumpToPage()" class="jump-btn btn btn-secondary">跳转</button>
                     </div>
                  `;
-                 const itemsPerPageDiv = document.querySelector('.items-per-page');
-                 if (itemsPerPageDiv) {
-                     pageInfoContainer.insertBefore(pageInfoDiv, itemsPerPageDiv);
-                 } else {
-                     pageInfoContainer.appendChild(pageInfoDiv);
-                 }
-                 const pageInput = document.getElementById('pageInput');
-                 pageInput?.addEventListener('keypress', (e) => {
+                const itemsPerPageDiv = document.querySelector('.items-per-page');
+                if (itemsPerPageDiv) {
+                    pageInfoContainer.insertBefore(pageInfoDiv, itemsPerPageDiv);
+                } else {
+                    pageInfoContainer.appendChild(pageInfoDiv);
+                }
+                const pageInput = document.getElementById('pageInput');
+                pageInput?.addEventListener('keypress', (e) => {
                     if (e.key === 'Enter') {
                         jumpToPage();
                     }
-                 });
-             }
+                });
+            }
         } else {
-             const pageIndicator = document.querySelector('.page-indicator');
-             if (pageIndicator) pageIndicator.textContent = `${currentPage} / ${totalPages}`;
-             const pageInput = document.getElementById('pageInput');
-             if (pageInput) pageInput.max = totalPages;
+            const pageIndicator = document.querySelector('.page-indicator');
+            if (pageIndicator) pageIndicator.textContent = `${currentPage} / ${totalPages}`;
+            const pageInput = document.getElementById('pageInput');
+            if (pageInput) pageInput.max = totalPages;
         }
     }
 
@@ -456,12 +456,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
                 th.appendChild(icon);
             } else {
-                 icon.classList.remove('fa-sort-up', 'fa-sort-down');
-                 if (column !== sortColumn) {
-                     icon.classList.add('fa-sort');
-                 } else {
-                      icon.classList.remove('fa-sort');
-                 }
+                icon.classList.remove('fa-sort-up', 'fa-sort-down');
+                if (column !== sortColumn) {
+                    icon.classList.add('fa-sort');
+                } else {
+                    icon.classList.remove('fa-sort');
+                }
             }
             if (column === sortColumn) {
                 icon.classList.add(sortDirection === 'ASC' ? 'fa-sort-up' : 'fa-sort-down');
@@ -538,9 +538,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             });
             if (Object.keys(widths).length > 0) {
-                 localStorage.setItem('memberTableColumnWidths', JSON.stringify(widths));
+                localStorage.setItem('memberTableColumnWidths', JSON.stringify(widths));
             } else {
-                 localStorage.removeItem('memberTableColumnWidths');
+                localStorage.removeItem('memberTableColumnWidths');
             }
         } catch (error) {
             console.error('Error saving column widths:', error);
@@ -562,24 +562,24 @@ document.addEventListener("DOMContentLoaded", function () {
                     setDefaultColumnWidth(header);
                 }
             });
-             if (requiresFixedLayout || tableRequiresFixedLayoutByDefault()) {
-                  if (table.style.tableLayout !== 'fixed') {
-                     table.style.tableLayout = 'fixed';
-                  }
-             }
+            if (requiresFixedLayout || tableRequiresFixedLayoutByDefault()) {
+                if (table.style.tableLayout !== 'fixed') {
+                    table.style.tableLayout = 'fixed';
+                }
+            }
         } catch (error) {
             console.error('Error loading column widths:', error);
             table.querySelectorAll('thead th[data-column]').forEach(setDefaultColumnWidth);
-             if (tableRequiresFixedLayoutByDefault()) {
-                  if (table.style.tableLayout !== 'fixed') {
-                     table.style.tableLayout = 'fixed';
-                  }
-             }
+            if (tableRequiresFixedLayoutByDefault()) {
+                if (table.style.tableLayout !== 'fixed') {
+                    table.style.tableLayout = 'fixed';
+                }
+            }
         }
     }
 
     function tableRequiresFixedLayoutByDefault() {
-         return !!(table.querySelector('th[data-column="Address"]') || table.querySelector('th[data-column="remarks"]'));
+        return !!(table.querySelector('th[data-column="Address"]') || table.querySelector('th[data-column="remarks"]'));
     }
 
     function setDefaultColumnWidth(header) {
@@ -614,15 +614,15 @@ document.addEventListener("DOMContentLoaded", function () {
         try {
             localStorage.removeItem('memberTableColumnWidths');
             table.querySelectorAll('thead th[data-column]').forEach(header => {
-                 header.style.width = '';
-                 setDefaultColumnWidth(header);
+                header.style.width = '';
+                setDefaultColumnWidth(header);
             });
             if (tableRequiresFixedLayoutByDefault()) {
-                 if (table.style.tableLayout !== 'fixed') {
+                if (table.style.tableLayout !== 'fixed') {
                     table.style.tableLayout = 'fixed';
-                 }
+                }
             } else {
-                 table.style.tableLayout = '';
+                table.style.tableLayout = '';
             }
             console.log('Column widths reset to default values');
         } catch (error) {
@@ -637,11 +637,11 @@ document.addEventListener("DOMContentLoaded", function () {
             fetchMembers(searchText.trim());
         }, 350);
 
-        searchInput?.addEventListener("input", function() {
+        searchInput?.addEventListener("input", function () {
             debouncedSearch(this.value);
         });
 
-        thead?.addEventListener('click', function(event) {
+        thead?.addEventListener('click', function (event) {
             const header = event.target.closest('th[data-column]');
             if (header && !event.target.classList.contains('resizer')) {
                 handleSortClick(header.dataset.column);
@@ -651,7 +651,7 @@ document.addEventListener("DOMContentLoaded", function () {
         prevPageButton?.addEventListener("click", () => changePage(currentPage - 1));
         nextPageButton?.addEventListener("click", () => changePage(currentPage + 1));
 
-        listAllMembersButton?.addEventListener("click", function() {
+        listAllMembersButton?.addEventListener("click", function () {
             currentPage = 1;
             currentSearchType = 'all';
             targetStartDate = null;
@@ -663,7 +663,7 @@ document.addEventListener("DOMContentLoaded", function () {
             fetchMembers();
         });
 
-        memberFilter?.addEventListener('change', function() {
+        memberFilter?.addEventListener('change', function () {
             currentFilterValue = this.value;
             currentPage = 1;
             fetchMembers(searchInput?.value || '');
@@ -763,13 +763,13 @@ document.addEventListener("DOMContentLoaded", function () {
         closeBirthdayModal();
     }
 
-    window.editMember = function(id) {
+    window.editMember = function (id) {
         if (!id) { console.error("Edit Error: No ID"); alert("无法编辑：ID未提供"); return; }
         console.log(`Redirecting to edit member with ID: ${id}`);
         window.location.href = `edit_member.html?action=edit&id=${id}`;
     };
 
-    window.deleteMember = async function(id) {
+    window.deleteMember = async function (id) {
         if (!id) { console.error("Delete Error: No ID"); alert("无法删除：ID未提供"); return; }
         if (confirm(`确定要删除塾员 ID ${id} 吗？此操作无法撤销。`)) {
             console.log(`Attempting to delete member with ID: ${id}`);
@@ -779,21 +779,21 @@ document.addEventListener("DOMContentLoaded", function () {
                 let message = `删除失败 (Status: ${response.status})`;
                 let success = false;
                 if (response.ok) {
-                     message = '删除成功！';
-                     success = true;
-                     if (response.status !== 204 && response.headers.get("content-type")?.includes("application/json")) {
+                    message = '删除成功！';
+                    success = true;
+                    if (response.status !== 204 && response.headers.get("content-type")?.includes("application/json")) {
                         try {
                             const data = await response.json();
                             message = data.message || message;
                         } catch (e) { console.warn("Could not parse JSON response on delete success:", e); }
-                     }
+                    }
                 } else {
-                     try {
-                         const errorData = await response.json();
-                         message = errorData.message || message;
-                     } catch (e) {
-                         try { message = await response.text() || message; } catch (e2) {}
-                     }
+                    try {
+                        const errorData = await response.json();
+                        message = errorData.message || message;
+                    } catch (e) {
+                        try { message = await response.text() || message; } catch (e2) { }
+                    }
                 }
                 alert(message);
                 if (success) {
@@ -806,24 +806,24 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
-    window.checkMember = function(id) {
+    window.checkMember = function (id) {
         if (!id) { console.error("Check Error: No ID"); alert("无法查看：ID未提供"); return; }
         console.log(`Redirecting to check details for member ID: ${id}`);
         window.location.href = `check_details.html?id=${id}`;
     };
 
-    window.changePage = function(page) {
+    window.changePage = function (page) {
         const targetPage = parseInt(page, 10);
         if (!isNaN(targetPage) && targetPage >= 1 && targetPage <= totalPages && targetPage !== currentPage) {
             console.log(`Changing page from ${currentPage} to ${targetPage}`);
             currentPage = targetPage;
             fetchMembers(searchInput?.value || '');
         } else {
-             console.log(`Page change to ${page} ignored. Current: ${currentPage}, Total: ${totalPages}`);
+            console.log(`Page change to ${page} ignored. Current: ${currentPage}, Total: ${totalPages}`);
         }
     };
 
-    window.jumpToPage = function() {
+    window.jumpToPage = function () {
         const pageInput = document.getElementById('pageInput');
         if (!pageInput) return;
         const targetPage = parseInt(pageInput.value, 10);
@@ -837,16 +837,16 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
-    window.openExpiryModal = function() {
+    window.openExpiryModal = function () {
         if (expiryModal && modalOverlay) {
             const now = new Date();
-            if(expiryStartYearInput) expiryStartYearInput.value = now.getFullYear();
-            if(expiryStartMonthInput) expiryStartMonthInput.value = now.getMonth() + 1;
-            if(expiryStartDayInput) expiryStartDayInput.value = '1';
-            if(expiryEndYearInput) expiryEndYearInput.value = now.getFullYear();
-            if(expiryEndMonthInput) expiryEndMonthInput.value = now.getMonth() + 1;
+            if (expiryStartYearInput) expiryStartYearInput.value = now.getFullYear();
+            if (expiryStartMonthInput) expiryStartMonthInput.value = now.getMonth() + 1;
+            if (expiryStartDayInput) expiryStartDayInput.value = '1';
+            if (expiryEndYearInput) expiryEndYearInput.value = now.getFullYear();
+            if (expiryEndMonthInput) expiryEndMonthInput.value = now.getMonth() + 1;
             const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-            if(expiryEndDayInput) expiryEndDayInput.value = lastDay;
+            if (expiryEndDayInput) expiryEndDayInput.value = lastDay;
             expiryModal.style.display = 'block';
             modalOverlay.style.display = 'block';
             expiryStartYearInput?.focus();
@@ -856,7 +856,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
-    window.closeExpiryModal = function() {
+    window.closeExpiryModal = function () {
         if (expiryModal && modalOverlay) {
             expiryModal.style.display = 'none';
             if (!birthdayModal || birthdayModal.style.display !== 'block') {
@@ -865,10 +865,10 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
-    window.openBirthdayModal = function() {
+    window.openBirthdayModal = function () {
         if (birthdayModal && modalOverlay) {
             const now = new Date();
-            if(birthdayMonthInput) birthdayMonthInput.value = String(now.getMonth() + 1);
+            if (birthdayMonthInput) birthdayMonthInput.value = String(now.getMonth() + 1);
             birthdayModal.style.display = 'block';
             modalOverlay.style.display = 'block';
             birthdayMonthInput?.focus();
@@ -878,7 +878,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
-    window.closeBirthdayModal = function() {
+    window.closeBirthdayModal = function () {
         if (birthdayModal && modalOverlay) {
             birthdayModal.style.display = 'none';
             if (!expiryModal || expiryModal.style.display !== 'block') {
@@ -932,13 +932,13 @@ document.addEventListener("DOMContentLoaded", function () {
         exportModal.style.display = 'block';
         modalOverlay.style.display = 'block';
     }
-    
+
     function closeExportModal() {
         if (!exportModal) return;
         exportModal.style.display = 'none';
         modalOverlay.style.display = 'none';
     }
-    
+
     // Helper function to split emails with multiple addresses
     function splitEmails(emailStr) {
         if (!emailStr) return [''];
@@ -957,11 +957,11 @@ document.addEventListener("DOMContentLoaded", function () {
             alert('请至少选择一列数据进行导出');
             return;
         }
-        
+
         // 获取选择的导出格式
         const exportFormat = document.querySelector('input[name="export-format"]:checked').value;
         const delimiter = exportFormat === 'csv' ? ',' : ';';
-        
+
         let exportContent = '';
         const headers = selectedColumns.map(column => {
             const headerElement = document.querySelector(`#memberTable thead th[data-column="${column}"]`);
@@ -969,17 +969,17 @@ document.addEventListener("DOMContentLoaded", function () {
             // 如果是CSV格式，需要处理包含逗号的字段
             return exportFormat === 'csv' ? `"${headerText.replace(/"/g, '""')}"` : headerText;
         });
-        
+
         exportContent += headers.join(delimiter) + '\n';
-        
+
         // Check if email column is selected for export
         const emailColumnIndex = selectedColumns.indexOf('email');
         const hasEmailColumn = emailColumnIndex !== -1;
-        
+
         membersData.forEach(member => {
             // Process each member data
             let rowDataTemplate = [];
-            
+
             // Prepare all column values except email (if present)
             selectedColumns.forEach((column, index) => {
                 if (column === 'email' && hasEmailColumn) {
@@ -987,9 +987,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     rowDataTemplate.push('');
                     return;
                 }
-                
+
                 let value = '';
-                
+
                 if (column === 'phone_number') {
                     value = member[column] || ''; // Don't format phone numbers for export
                 } else if (column === 'IC' || column === 'oldIC') {
@@ -1005,57 +1005,57 @@ document.addEventListener("DOMContentLoaded", function () {
                 } else {
                     value = member[column] || '';
                 }
-                
+
                 // 处理分隔符和引号
                 if (exportFormat === 'csv') {
                     // CSV格式：将字段用双引号包围，内部的双引号用两个双引号表示
-                    rowDataTemplate[index] = `"${String(value).replace(/"/g, '""')}"`;  
+                    rowDataTemplate[index] = `"${String(value).replace(/"/g, '""')}"`;
                 } else {
                     // TXT格式：将分号替换为逗号
                     rowDataTemplate[index] = String(value).replace(/;/g, ',');
                 }
             });
-            
+
             // If no email column is selected, just add the row as is
             if (!hasEmailColumn) {
                 exportContent += rowDataTemplate.join(delimiter) + '\n';
                 return;
             }
-            
+
             // Handle email column if present
             const emailValue = member['email'] || '';
             const emails = splitEmails(emailValue);
-            
+
             // Create a row for each email address
             emails.forEach(email => {
                 const rowData = [...rowDataTemplate]; // Clone the template
-                
+
                 // Format the email value
                 if (exportFormat === 'csv') {
-                    rowData[emailColumnIndex] = `"${email.replace(/"/g, '""')}"`;  
+                    rowData[emailColumnIndex] = `"${email.replace(/"/g, '""')}"`;
                 } else {
                     rowData[emailColumnIndex] = email.replace(/;/g, ',');
                 }
-                
+
                 exportContent += rowData.join(delimiter) + '\n';
             });
         });
-        
+
         // 设置正确的MIME类型
-        const mimeType = exportFormat === 'csv' 
-            ? 'text/csv;charset=utf-8;' 
+        const mimeType = exportFormat === 'csv'
+            ? 'text/csv;charset=utf-8;'
             : 'text/plain;charset=utf-8';
-            
+
         // 为CSV添加BOM标记，以便Excel正确识别UTF-8编码
         const BOM = exportFormat === 'csv' ? new Uint8Array([0xEF, 0xBB, 0xBF]) : '';
-        const blob = BOM 
+        const blob = BOM
             ? new Blob([BOM, exportContent], { type: mimeType })
             : new Blob([exportContent], { type: mimeType });
-            
+
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        
+
         // 设置文件名
         let filename = '塾员数据';
         if (currentSearchType === 'Birthday' && targetBirthdayMonth) {
@@ -1065,21 +1065,21 @@ document.addEventListener("DOMContentLoaded", function () {
         } else if (currentFilterValue) {
             filename = `${currentFilterValue}塾员`;
         }
-        
+
         // 设置文件扩展名
         const extension = exportFormat === 'csv' ? '.csv' : '.txt';
         a.download = `${filename}_${new Date().toISOString().slice(0, 10)}${extension}`;
-        
+
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
         closeExportModal();
     }
-    
+
     confirmExportButton?.addEventListener('click', exportData);
-    
-    window.addEventListener('click', function(event) {
+
+    window.addEventListener('click', function (event) {
         if (event.target === modalOverlay) {
             if (birthdayModal && birthdayModal.style.display === 'block') {
                 closeBirthdayModal();
@@ -1090,7 +1090,131 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
     });
-    
+
+    // ===============================
+    // Applicant Types Management Functions
+    // ===============================
+
+    // Opens the Applicant Types Management Modal and loads the data.
+    window.openApplicantTypesModal = function () {
+        const modal = document.getElementById('applicantTypesModal');
+        const modalOverlay = document.getElementById('modalOverlay');
+        if (modal && modalOverlay) {
+            modal.style.display = 'block';
+            modalOverlay.style.display = 'block';
+            loadApplicantTypes();
+        } else {
+            alert("无法打开申请人类别管理窗口。");
+        }
+    };
+
+    // Closes the Applicant Types Management Modal.
+    window.closeApplicantTypesModal = function () {
+        const modal = document.getElementById('applicantTypesModal');
+        const modalOverlay = document.getElementById('modalOverlay');
+        if (modal) modal.style.display = 'none';
+        // Only hide the overlay if no other modal is open.
+        if (modalOverlay && document.querySelectorAll('.modal[style*="display: block"]').length === 0) {
+            modalOverlay.style.display = 'none';
+        }
+    };
+
+    // Loads the applicant types from the API and displays them in the modal.
+    async function loadApplicantTypes() {
+        const container = document.getElementById('applicantTypesContainer');
+        container.innerHTML = '<p>加载中……</p>';
+        try {
+            const response = await fetch(`${API_BASE_URL}?table=applicants_types`);
+            if (!response.ok) throw new Error("获取申请人类别失败。");
+            const data = await response.json();
+            const types = data.data || [];
+            if (types.length === 0) {
+                container.innerHTML = '<p>没有找到任何申请人类别。</p>';
+                return;
+            }
+            container.innerHTML = '';
+            types.forEach(item => {
+                // Adjust the field names as needed based on your API response.
+                const typeId = item.ID || item.id || '';
+                const typeName = item.designation_of_applicant || '';
+                const typeDiv = document.createElement('div');
+                typeDiv.className = 'applicant-type-item';
+                // Use encodeURIComponent to safely pass the type name to the functions.
+                typeDiv.innerHTML = `
+                <span class="applicant-type-name">${typeName}</span>
+                <button class="btn btn-edit" onclick="editApplicantType('${typeId}', '${encodeURIComponent(typeName)}')">编辑</button>
+                <button class="btn btn-delete" onclick="deleteApplicantType('${typeId}', '${encodeURIComponent(typeName)}')">删除</button>
+            `;
+                container.appendChild(typeDiv);
+            });
+        } catch (error) {
+            container.innerHTML = `<p>加载失败: ${error.message}</p>`;
+        }
+    }
+
+    // Handles editing an applicant type.
+    // Prompts the user for a new name and requires entering "CONFIRM" to proceed.
+    window.editApplicantType = async function (typeId, encodedTypeName) {
+        const currentName = decodeURIComponent(encodedTypeName);
+        const newName = prompt("请输入新的类别名称，当前名称为：" + currentName, currentName);
+        if (newName === null || newName.trim() === "") {
+            alert("操作取消或输入无效。");
+            return;
+        }
+        const confirmInput = prompt("注意：编辑操作将级联更新相关数据。请输入 'COMFIRM' 以确认修改。");
+        if (confirmInput !== "COMFIRM") {
+            alert("确认失败，修改取消。");
+            return;
+        }
+        try {
+            const updateUrl = `${API_BASE_URL}?table=applicants_types&ID=${encodeURIComponent(typeId)}`;
+            // Assume the update uses a PUT request with JSON data.
+            const response = await fetch(updateUrl, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ designation_of_applicant: newName })
+            });
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error("更新失败: " + errorText);
+            }
+            alert("类别更新成功！");
+            loadApplicantTypes();
+            // Refresh the memberFilter options, if needed.
+            fetchApplicantType();
+        } catch (error) {
+            alert("更新类别出错: " + error.message);
+        }
+    };
+
+    // Handles deleting an applicant type.
+    // Requires the user to type "CONFIRM" before deletion.
+    window.deleteApplicantType = async function (typeId, encodedTypeName) {
+        const typeName = decodeURIComponent(encodedTypeName);
+        const confirmInput = prompt("删除操作将级联删除相关数据。请输入 'COMFIRM' 确认删除类别：" + typeName);
+        if (confirmInput !== "COMFIRM") {
+            alert("确认失败，删除取消。");
+            return;
+        }
+        try {
+            const deleteUrl = `${API_BASE_URL}?table=applicants_types&ID=${encodeURIComponent(typeId)}`;
+            const response = await fetch(deleteUrl, { method: 'DELETE' });
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error("删除失败: " + errorText);
+            }
+            alert("类别删除成功！");
+            loadApplicantTypes();
+            // Refresh the memberFilter options, if needed.
+            fetchApplicantType();
+        } catch (error) {
+            alert("删除类别出错: " + error.message);
+        }
+    };
+
+
     window.openExportModal = openExportModal;
     window.closeExportModal = closeExportModal;
 });

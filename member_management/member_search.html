@@ -20,6 +20,10 @@
                     <i class="fas fa-home"></i> 返回
                     <span class="tooltip-text">返回到主页面，查看所有系统模块</span>
                 </button>
+                <button class="btn btn-secondary tooltip" onclick="openApplicantTypesModal()">
+                    <i class="fas fa-cogs"></i> 管理种类
+                    <span class="tooltip-text">管理申请人类别：编辑名称或删除类别（操作需确认）</span>
+                </button>
                 <button class="btn btn-success tooltip" onclick="location.href='member_management.html'">
                     <i class="fas fa-box"></i> 增加塾员
                     <span class="tooltip-text">添加新塾员到系统中，录入塾员的详细信息</span>
@@ -298,6 +302,25 @@
             <div class="modal-actions">
                 <button id="confirmExport" class="btn btn-success">导出</button>
                 <button type="button" class="btn btn-secondary" onclick="closeExportModal()">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="applicantTypesModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeApplicantTypesModal()">×</span>
+            <h2>管理申请人类别</h2>
+            <p>
+                在此处您可以编辑或删除申请人类别。<br>
+                注意：每次编辑或删除操作都需要输入 <strong>CONFIRM</strong> 以确认，
+                因为该操作会引发级联更新或删除。
+            </p>
+            <div id="applicantTypesContainer">
+                <!-- Applicant types will be loaded here dynamically -->
+                <p>加载中……</p>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeApplicantTypesModal()">关闭</button>
             </div>
         </div>
     </div>

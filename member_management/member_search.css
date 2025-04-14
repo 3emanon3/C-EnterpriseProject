@@ -942,3 +942,18 @@ tr:hover {
     padding: 5px 10px;
     font-size: 0.9rem;
 }
+
+/* Styles for Applicant Types Management Modal */
+#applicantTypesContainer .applicant-type-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px;
+    border-bottom: 1px solid var(--border-color);
+}
+#applicantTypesContainer .applicant-type-item span.applicant-type-name {
+    flex-grow: 1;
+}
+#applicantTypesContainer .applicant-type-item button {
+    margin-left: 10px;
+}
