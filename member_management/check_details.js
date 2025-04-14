@@ -99,10 +99,12 @@ document.addEventListener("DOMContentLoaded", function () {
                             color: #333;
                         }
                         .print-header {
+                            height: 150px;
                             text-align: center;
                             margin-bottom: 20px;
                             padding-bottom: 10px;
                             border-bottom: 1px solid #ddd;
+                            position: relative;
                         }
                         .print-timestamp {
                             font-size: 12px;
@@ -112,15 +114,14 @@ document.addEventListener("DOMContentLoaded", function () {
                         }
                         .logo-container {
                             text-align: center;
-                            margin-bottom: 15px;
                             font-weight: bold;
-                            position: relative; /* Change from absolute to relative */
+                            position: relative;
                             height: 100px;
                             width: 100%;
                             background-position: center top;
                         }
                         h1 {
-                            margin: 0;
+                            height: auto;
                             color: #333;
                             font-size: 24px;
                         }
@@ -190,14 +191,14 @@ document.addEventListener("DOMContentLoaded", function () {
                             page-break-before: always;
                         }
 
-                        .logo-container {
-                        position: absolute;
-                        text-indent: -9999px;
-                        background: url('../assets/logo.png');
-                        background-repeat: no-repeat;
-                        background-position: center;
-                        width: 200px;
-                        height: 100px;
+                        .logo-container img {
+                            position: absolute;
+                            top: 0;
+                            left: 50%;
+                            transform: translateX(-50%);
+                            width: 200px;
+                            height: 100px;
+                            object-fit: contain;
                         }
 
                         @media print {
