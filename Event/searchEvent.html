@@ -22,7 +22,10 @@
                         <br>
                         录入活动的详细信息</span>
                 </button>
-                
+                <button class="btn btn-export tooltip" id="exportButton">
+                    <i class="fas fa-file-export"></i> 导出数据
+                    <span class="tooltip-text">将当前数据导出为Excel文件</span>
+                </button>
             </nav>
         </header>
 
@@ -93,8 +96,10 @@
                 </div>
             </div>
         </section>
+        
     </div>
-
+    
+    <script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
     <script src="searchEvent.js"></script>
 </body>
 </html>

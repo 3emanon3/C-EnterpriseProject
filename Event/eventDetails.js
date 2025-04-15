@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 搜索按钮点击事件
     if (modalSearchButton) {
         modalSearchButton.addEventListener('click', function() {
-            performModalSearch(1);
+            performModalSearch();
         });
     }
     
@@ -102,13 +102,13 @@ document.addEventListener('DOMContentLoaded', function() {
     if (modalSearchInput) {
         modalSearchInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
-                performModalSearch(1);
+                performModalSearch();
             }
         });
         
         // 输入时自动搜索（防抖）
         modalSearchInput.addEventListener('input', debounce(function() {
-            performModalSearch(1);
+            performModalSearch();
         }, 300));
     }
     
@@ -133,7 +133,7 @@ document.addEventListener('DOMContentLoaded', function() {
         modalSearchInput.focus();
         
         // Perform initial search to show all members
-        performModalSearch(1);
+        performModalSearch();
     }
     
     // 全选会员
@@ -194,32 +194,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         errorCount++;
                         continue;
                     }
-                    
-                    // Get next ID
-                    const maxIdResponse = await fetch(`${API_BASE_URL}?table=participants&action=maxid`);
-                    const maxIdData = await maxIdResponse.json();
-                    
-                    let nextId;
-                    if (maxIdData.maxId !== undefined) {
-                        nextId = parseInt(maxIdData.maxId) + 1;
-                    } else if (maxIdData.data && maxIdData.data.maxId !== undefined) {
-                        nextId = parseInt(maxIdData.data.maxId) + 1;
-                    } else {
-                        const allParticipantsResponse = await fetch(`${API_BASE_URL}?table=participants&search=true`);
-                        const allParticipants = await allParticipantsResponse.json();
-                        
-                        if (allParticipants.data && allParticipants.data.length > 0) {
-                            const highestId = Math.max(...allParticipants.data.map(p => parseInt(p.ID) || 0));
-                            nextId = highestId + 1;
-                        } else {
-                            nextId = 1;
-                        }
-                    }
-                    
-                    // Create participant
+                   
                     const participantData = {
                         table: 'participants',
-                        ID: nextId, 
                         eventID: eventId,
                         memberID: memberId,
                         joined_at: new Date().toISOString().slice(0, 19).replace('T', ' ')
@@ -232,18 +209,23 @@ document.addEventListener('DOMContentLoaded', function() {
                         },
                         body: JSON.stringify(participantData)
                     });
-                    
-                    if (response.ok) {
+                   
+                    const result = await response.json();
+                
+                    if (response.ok && result.status === 'success') {
                         successCount++;
                     } else {
-                        errorCount++;
+                        throw new Error(result.message || '添加会员失败');
                     }
                 } catch (error) {
                     console.error(`添加会员 ${memberName} 时出错:`, error);
                     errorCount++;
                 }
             }
-            
+                    
+                
+                
+             
             // Close the modal and refresh the participants list
             memberSearchModal.style.display = 'none';
             fetchParticipants(eventId);
@@ -279,70 +261,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
- 
-    
-    // 更新模态框分页
-    function updateModalPagination(pagination, currentPage) {
-        modalPagination.innerHTML = '';
-        
-        if (!pagination || !pagination.total || !pagination.per_page || pagination.total <= pagination.per_page) {
-            return;
-        }
-
-        const totalPages = Math.ceil(parseInt(pagination.total) / parseInt(pagination.per_page));
-
-        if (isNaN(totalPages) || totalPages <= 1) {
-            return;
-        }
-
-        // Previous page button
-    const paginationContainer = document.createElement('div');
-    paginationContainer.className = 'pagination-controls';
-    
-    // Previous page button
-    const prevButton = document.createElement('button');
-    prevButton.innerHTML = '&laquo; 上一页';
-    prevButton.className = 'pagination-btn';
-    prevButton.disabled = currentPage <= 1;
-    if (!prevButton.disabled) {
-        prevButton.addEventListener('click', () => performModalSearch(currentPage - 1));
-    }
-    paginationContainer.appendChild(prevButton);
-        
-        // Page numbers
-        const startPage = Math.max(1, currentPage - 2);
-        const endPage = Math.min(totalPages, startPage + 4);
-        
-        for (let i = startPage; i <= endPage; i++) {
-            const pageButton = document.createElement('button');
-            pageButton.textContent = i;
-            pageButton.classList.toggle('active', i === currentPage);
-            pageButton.className = 'pagination-btn' + (i === currentPage ? ' active' : '');
-
-            if (i !== currentPage) {
-                pageButton.addEventListener('click', () => performModalSearch(i));
-            }
-            
-            paginationContainer.appendChild(pageButton);
-        }
-        
-        // Next page button
-        const nextButton = document.createElement('button');
-    nextButton.innerHTML = '下一页 &raquo;';
-    nextButton.className = 'pagination-btn';
-    nextButton.disabled = currentPage >= totalPages;
-    if (!nextButton.disabled) {
-        nextButton.addEventListener('click', () => performModalSearch(currentPage + 1));
-    }
-    paginationContainer.appendChild(nextButton);
-
-    const pageInfo = document.createElement('div');
-    pageInfo.className = 'pagination-info';
-    pageInfo.textContent = `第 ${currentPage} 页，共 ${totalPages} 页`;
-    paginationContainer.appendChild(pageInfo);
-    
-    modalPagination.appendChild(paginationContainer);
-}
     // 防抖函数
     function debounce(func, wait) {
         let timeout;
@@ -758,14 +676,14 @@ document.addEventListener('DOMContentLoaded', function() {
         modalSearchInput.focus();
         
         // Perform initial search to show all members
-        performModalSearch(1);
+        performModalSearch();
     }
     
     // 执行会员搜索
-    async function performModalSearch(page = 1) {
+    async function performModalSearch() {
         // 隐藏加载指示器
         const searchTerm = modalSearchInput.value.trim();
-        const limit = 10; // 每页显示数量
+        const limit = 1000000; // 每页显示数量
         // 显示加载指示器
         modalLoadingIndicator.style.display = 'block';
         // 隐藏无结果提示
@@ -773,7 +691,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         try {
             // 构建API请求URL
-            let apiUrl = `${API_BASE_URL}?table=members&limit=${limit}&page=${page}`;
+            let apiUrl = `${API_BASE_URL}?table=members&limit=${limit}`;
             
             // 如果有搜索词，添加搜索参数
             if (searchTerm) {
@@ -796,24 +714,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 // 显示会员列表
                 displayModalResults(data.data);
                 
-                // 检查是否需要显示分页
-                const paginationData = data.pagination || {
-                    total: data.total || data.data.length,
-                    per_page: limit,
-                    current_page: page
-                };
-
-                // 更新分页
-                updateModalPagination(paginationData , page);
+                
             } else {
                 // 显示无结果消息
                 modalNoResults.style.display = 'block';
-                modalPagination.innerHTML = '';
+               
             }
         } catch (error) {
             console.error('Search error:', error);
             modalResultsBody.innerHTML = `<tr><td colspan="5" class="error">搜索出错: ${error.message}</td></tr>`;
-            modalPagination.innerHTML = '';
+   
         }finally {
             // 隐藏加载指示器
             modalLoadingIndicator.style.display = 'none'; 

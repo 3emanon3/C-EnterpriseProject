@@ -1,5 +1,6 @@
 const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
 
+document.head.innerHTML += '<script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>';
 document.addEventListener("DOMContentLoaded", function () {
     const searchInput = document.getElementById("searchInput");
     const searchButton = document.getElementById("searchButton");
@@ -14,6 +15,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const tableHeaders = table.querySelectorAll('th');
     const pageInput = document.getElementById('pageInput');
     const jumpButton = document.getElementById('jumpButton');
+    const exportButton = document.getElementById('exportButton');
+    const exportModal = document.getElementById('exportModal');
 
     let currentSortColumn = null;
     let currentSortOrder = null;
@@ -23,6 +26,61 @@ document.addEventListener("DOMContentLoaded", function () {
     let totalPages = 0;
     let currentSearchQuery = "";
     
+    
+    // 添加导出功能
+    exportButton.addEventListener('click', async function() {
+        try {
+            // 显示加载动画
+            loader.style.display = "flex";
+            
+            // 获取表头
+            const headers = Array.from(document.querySelectorAll('#eventTable thead th'))
+                .map(th => th.textContent.trim())
+                .filter(header => header !== '操作'); // 排除操作列
+            
+            // 准备导出数据
+            const exportData = eventData.map(event => ({
+                '序号': event.ID,
+                '标题': event.title,
+                '状态': event.status,
+                '开始时间': formatDateTime(event.start_time),
+                '结束时间': formatDateTime(event.end_time),
+                '创建时间': formatDateTime(event.created_at),
+                '地点': event.location,
+                '描述': event.description,
+                '参与者数量': event.max_participant,
+                '报名截止': formatDateTime(event.registration_deadline),
+                '价格': formatPrice(event.price),
+                '在线链接': event.online_link
+            }));
+    
+            // 创建工作簿
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.json_to_sheet(exportData);
+            
+            // 设置列宽
+            const colWidths = headers.map(() => ({wch: 15}));
+            ws['!cols'] = colWidths;
+            
+            // 添加工作表到工作簿
+            XLSX.utils.book_append_sheet(wb, ws, "活动数据");
+            
+            // 生成文件名
+            const fileName = `活动数据_${new Date().toLocaleDateString('zh-CN').replace(/\//g, '-')}.xlsx`;
+            
+            // 导出文件
+            XLSX.writeFile(wb, fileName);
+            
+            // 显示成功提示
+            alert('导出成功！');
+        } catch (error) {
+            console.error('导出失败:', error);
+            alert('导出失败，请稍后重试');
+        } finally {
+            // 隐藏加载动画
+            loader.style.display = "none";
+        }
+    });
     
     function debounce(func, wait) {
         let timeout;
@@ -453,6 +511,113 @@ eventTableBody.addEventListener('click', function(e) {
             document.removeEventListener('mouseup', stopResize);
         }
     });
+
+    function setupPrintFunction() {
+        // Add print button to the header navigation
+        const systemNav = document.querySelector('.system-nav');
+        if (systemNav) {
+            const printButton = document.createElement('button');
+            printButton.className = 'btn btn-info tooltip';
+            printButton.innerHTML = '<i class="fas fa-print"></i> 打印';
+            
+            // Create tooltip span
+            const tooltipSpan = document.createElement('span');
+            tooltipSpan.className = 'tooltip-text';
+            tooltipSpan.textContent = '打印当前页面活动列表';
+            printButton.appendChild(tooltipSpan);
+            
+            printButton.addEventListener('click', printEventList);
+            systemNav.appendChild(printButton);
+        }
+    }
+    
+    // Function to print the event list
+    function printEventList() {
+        // Prepare print-specific styles
+        const printStyles = document.createElement('style');
+        printStyles.id = 'print-styles';
+        printStyles.textContent = `
+            @media print {
+                body * {
+                    visibility: hidden;
+                }
+                .container, .table-container, #eventTable, #eventTable * {
+                    visibility: visible;
+                }
+                .container {
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    width: 100%;
+                }
+                .btn, .btn-edit, .btn-delete, .btn-view, .resizer, 
+                .search-container, .pagination-container, .system-nav {
+                    display: none !important;
+                }
+                header h1 {
+                    text-align: center;
+                    margin-bottom: 20px;
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
+                th, td {
+                    border: 1px solid #ddd;
+                    padding: 8px;
+                    text-align: left;
+                }
+                th {
+                    background-color: #f2f2f2 !important;
+                    color: black !important;
+                }
+                thead {
+                    display: table-header-group;
+                }
+                tfoot {
+                    display: table-footer-group;
+                }
+                /* Hide sort icons in print */
+                th i.fas {
+                    display: none;
+                }
+                /* Add print footer with pagination info */
+                .print-footer {
+                    visibility: visible;
+                    position: fixed;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    text-align: center;
+                    font-size: 12px;
+                    padding: 10px;
+                    border-top: 1px solid #ddd;
+                }
+            }
+        `;
+        document.head.appendChild(printStyles);
+    
+        // Create a footer with pagination info
+        const footer = document.createElement('div');
+        footer.className = 'print-footer';
+        footer.innerHTML = `
+            <p>打印时间: ${new Date().toLocaleString('zh-CN')}</p>
+            <p>页码: ${currentPage} / ${totalPages} | 每页显示: ${itemsPerPage} | 总活动数: ${totalEvents.textContent}</p>
+        `;
+        document.body.appendChild(footer);
+    
+        // Print the page
+        window.print();
+    
+        // Remove print-specific elements after printing
+        setTimeout(() => {
+            document.head.removeChild(printStyles);
+            document.body.removeChild(footer);
+        }, 1000);
+    }
+
+    // Call the setup function
+    setupPrintFunction();
 
     // Initial fetch
     fetchEvents();
