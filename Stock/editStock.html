@@ -70,320 +70,332 @@
 </body>
 <div id="print-template" style="display: none;">
     <html>
-        <head>
-            <title>Print Stock Details</title>
-            <style>
-                /* Scoped print template styles - only apply within the print window */
-                #print-content {
-                    margin: 0;
-                    padding: 0;
-                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                    color: #333;
-                    line-height: 1.6;
-                    background-color: #fff;
-                }
-                
-                #print-content {
-                    max-width: 1000px;
-                    margin: 0 auto;
-                    padding: 30px;
-                    box-shadow: 0 0 20px rgba(0,0,0,0.05);
-                }
-                
-                /* Header section */
-                .top-info {
-                    text-align: center;
-                    margin-bottom: 30px;
-                    padding-bottom: 20px;
-                    border-bottom: 2px solid #800000;
-                    position: relative;
-                }
-                
-                .logo {
-                    width: 180px;
-                    height: auto;
-                    display: block;
-                    margin: 0 auto 15px auto;
-                }
-                
-                h2 {
-                    margin: 0;
-                    color: #2c3e50;
-                    font-size: 28px;
-                    font-weight: 600;
-                    letter-spacing: 0.5px;
-                }
-                
-                h3 {
-                    margin: 25px 0 15px 0;
-                    color: #2c3e50;
-                    font-size: 20px;
-                    font-weight: 500;
-                    border-bottom: 2px solid #800000;
-                    padding-bottom: 8px;
-                    position: relative;
-                }
-                
-                h3:after {
-                    content: '';
-                    position: absolute;
-                    bottom: -2px;
-                    left: 0;
-                    width: 60px;
-                    height: 2px;
-                    background-color: #a52a2a;
-                }
-                
-                /* Product information section */
-                .product-info {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: flex-start;
-                    margin-top: 25px;
-                    border: 1px solid #e0e0e0;
-                    padding: 25px;
-                    border-radius: 8px;
-                    background-color: #f9f9f9;
-                    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
-                }
-                
-                .details {
-                    flex: 2;
-                    margin-right: 30px;
-                }
-                
-                .details p {
-                    margin: 12px 0;
-                    line-height: 1.7;
-                    font-size: 15px;
-                }
-                
-                .details strong {
-                    color: #800000;
-                    font-weight: 600;
-                    display: inline-block;
-                    width: 120px;
-                }
-                
-                .product-image-container {
-                    flex: 1;
-                    text-align: center;
-                }
-                
-                .product-image {
-                    max-width: 180px;
-                    max-height: 180px;
-                    border: 1px solid #ddd;
-                    padding: 8px;
+
+    <head>
+        <title>Print Stock Details</title>
+        <style>
+            /* Scoped print template styles - only apply within the print window */
+            #print-content {
+                margin: 0;
+                padding: 0;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                color: #333;
+                line-height: 1.6;
+                background-color: #fff;
+            }
+
+            #print-content {
+                max-width: 1000px;
+                margin: 0 auto;
+                padding: 30px;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+            }
+
+            /* Header section */
+            .top-info {
+                text-align: center;
+                margin-bottom: 30px;
+                padding-bottom: 20px;
+                border-bottom: 2px solid #800000;
+                position: relative;
+            }
+
+            .logo {
+                width: 180px;
+                height: auto;
+                display: block;
+                margin: 0 auto 15px auto;
+            }
+
+            h2 {
+                margin: 0;
+                color: #2c3e50;
+                font-size: 28px;
+                font-weight: 600;
+                letter-spacing: 0.5px;
+            }
+
+            h3 {
+                margin: 25px 0 15px 0;
+                color: #2c3e50;
+                font-size: 20px;
+                font-weight: 500;
+                border-bottom: 2px solid #800000;
+                padding-bottom: 8px;
+                position: relative;
+            }
+
+            h3:after {
+                content: '';
+                position: absolute;
+                bottom: -2px;
+                left: 0;
+                width: 60px;
+                height: 2px;
+                background-color: #a52a2a;
+            }
+
+            /* Product information section */
+            .product-info {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                margin-top: 25px;
+                border: 1px solid #e0e0e0;
+                padding: 25px;
+                border-radius: 8px;
+                background-color: #f9f9f9;
+                box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            }
+
+            .details {
+                flex: 2;
+                margin-right: 30px;
+            }
+
+            .details p {
+                margin: 12px 0;
+                line-height: 1.7;
+                font-size: 15px;
+            }
+
+            .details strong {
+                color: #800000;
+                font-weight: 600;
+                display: inline-block;
+                width: 120px;
+            }
+
+            .product-image-container {
+                flex: 1;
+                text-align: center;
+            }
+
+            .product-image {
+                max-width: 180px;
+                max-height: 180px;
+                border: 1px solid #ddd;
+                padding: 8px;
+                background-color: white;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                border-radius: 4px;
+                transition: transform 0.3s ease;
+            }
+
+            /* Transaction records section */
+            .sold-records {
+                margin-top: 40px;
+                background-color: #fff;
+                padding: 5px 0;
+                border-radius: 8px;
+            }
+
+            .records-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 15px;
+                font-size: 14px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+                border-radius: 8px;
+                overflow: hidden;
+            }
+
+            .records-table th,
+            .records-table td {
+                border: 1px solid #e0e0e0;
+                padding: 10px 12px;
+                text-align: left;
+            }
+
+            .records-table th {
+                background: linear-gradient(135deg, #800000, #a52a2a);
+                color: white;
+                font-weight: 500;
+                text-transform: uppercase;
+                font-size: 13px;
+                letter-spacing: 0.5px;
+            }
+
+            .records-table tr:nth-child(even) {
+                background-color: #fff5f5;
+            }
+
+            .records-table tr:hover {
+                background-color: #ffe6e6;
+            }
+
+            /* Additional styling elements */
+            .report-date {
+                font-size: 14px;
+                color: #666;
+                margin-top: 5px;
+            }
+
+            .print-controls {
+                margin-top: 30px;
+                text-align: center;
+            }
+
+            .print-button {
+                background: linear-gradient(135deg, #800000, #a52a2a);
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                font-size: 16px;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            }
+
+            .print-button:hover {
+                background: linear-gradient(135deg, #600000, #8b0000);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
+
+            .footer {
+                margin-top: 40px;
+                text-align: center;
+                color: #777;
+                border-top: 1px solid #eee;
+                padding-top: 15px;
+                font-size: 13px;
+            }
+
+            /* Print-specific styles */
+            @media print {
+                body {
                     background-color: white;
-                    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-                    border-radius: 4px;
-                    transition: transform 0.3s ease;
+                    -webkit-print-color-adjust: exact !important;
+                    print-color-adjust: exact !important;
                 }
-                
-                /* Transaction records section */
-                .sold-records {
-                    margin-top: 40px;
-                    background-color: #fff;
-                    padding: 5px 0;
-                    border-radius: 8px;
+
+                #print-content {
+                    margin: 0;
+                    padding: 15px;
+                    max-width: 100%;
+                    box-shadow: none;
                 }
-                
-                .records-table {
-                    width: 100%;
-                    border-collapse: collapse;
-                    margin-top: 15px;
-                    font-size: 14px;
-                    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-                    border-radius: 8px;
-                    overflow: hidden;
+
+                .top-info {
+                    margin-bottom: 20px;
+                    padding-bottom: 15px;
                 }
-                
-                .records-table th, .records-table td {
-                    border: 1px solid #e0e0e0;
-                    padding: 10px 12px;
-                    text-align: left;
+
+                h2 {
+                    font-size: 24px;
                 }
-                
-                .records-table th {
-                    background: linear-gradient(135deg, #800000, #a52a2a);
-                    color: white;
-                    font-weight: 500;
-                    text-transform: uppercase;
+
+                h3 {
+                    font-size: 18px;
+                    margin: 20px 0 10px 0;
+                }
+
+                .product-info {
+                    padding: 15px;
+                    page-break-inside: avoid;
+                }
+
+                .details p {
                     font-size: 13px;
-                    letter-spacing: 0.5px;
+                    margin: 8px 0;
                 }
-                
-                .records-table tr:nth-child(even) {
-                    background-color: #fff5f5;
+
+                .product-image {
+                    max-width: 150px;
+                    max-height: 150px;
                 }
-                
-                .records-table tr:hover {
-                    background-color: #ffe6e6;
+
+                .sold-records {
+                    page-break-before: auto;
                 }
-                /* Additional styling elements */
-                .report-date {
-                    font-size: 14px;
-                    color: #666;
-                    margin-top: 5px;
+
+                .records-table {
+                    font-size: 11px;
+                    page-break-inside: auto;
                 }
-                
+
+                .records-table th {
+                    background: #800000 !important;
+                }
+
+                .records-table th,
+                .records-table td {
+                    padding: 6px;
+                }
+
+                .records-table tr {
+                    page-break-inside: avoid;
+                }
+
                 .print-controls {
-                    margin-top: 30px;
-                    text-align: center;
+                    display: none;
                 }
-                
-                .print-button {
-                    background: linear-gradient(135deg, #800000, #a52a2a);
-                    color: white;
-                    border: none;
-                    padding: 10px 20px;
-                    font-size: 16px;
-                    border-radius: 4px;
-                    cursor: pointer;
-                    transition: all 0.3s ease;
-                    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-                }
-                
-                .print-button:hover {
-                    background: linear-gradient(135deg, #600000, #8b0000);
-                    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-                }
-                
+
                 .footer {
-                    margin-top: 40px;
+                    margin-top: 30px;
+                    font-size: 11px;
                     text-align: center;
                     color: #777;
                     border-top: 1px solid #eee;
-                    padding-top: 15px;
-                    font-size: 13px;
+                    padding-top: 10px;
                 }
-                
-                /* Print-specific styles */
-                @media print {
-                    body {
-                        background-color: white;
-                        -webkit-print-color-adjust: exact !important;
-                        print-color-adjust: exact !important;
-                    }
-                    
-                    #print-content {
-                        margin: 0;
-                        padding: 15px;
-                        max-width: 100%;
-                        box-shadow: none;
-                    }
-                    
-                    .top-info {
-                        margin-bottom: 20px;
-                        padding-bottom: 15px;
-                    }
-                    
-                    h2 {
-                        font-size: 24px;
-                    }
-                    
-                    h3 {
-                        font-size: 18px;
-                        margin: 20px 0 10px 0;
-                    }
-                    
-                    .product-info {
-                        padding: 15px;
-                        page-break-inside: avoid;
-                    }
-                    
-                    .details p {
-                        font-size: 13px;
-                        margin: 8px 0;
-                    }
-                    
-                    .product-image {
-                        max-width: 150px;
-                        max-height: 150px;
-                    }
-                    
-                    .sold-records {
-                        page-break-before: auto;
-                    }
-                    
-                    .records-table {
-                        font-size: 11px;
-                        page-break-inside: auto;
-                    }
-                    
-                    .records-table th {
-                        background: #800000 !important;
-                    }
-                    
-                    .records-table th, .records-table td {
-                        padding: 6px;
-                    }
-                    
-                    .records-table tr {
-                        page-break-inside: avoid;
-                    }
-                    
-                    .print-controls {
-                        display: none;
-                    }
-                    
-                    .footer {
-                        margin-top: 30px;
-                        font-size: 11px;
-                        text-align: center;
-                        color: #777;
-                        border-top: 1px solid #eee;
-                        padding-top: 10px;
-                    }
-                }
-            </style>
-        </head>
-        <body>
-            <div id="print-content">
-                <section class="top-info">
-                    <img src="../assets/logo.png" alt="Seiwajyuku Malaysia Logo" class="logo">
-                    <h2>库存详情报告</h2>
-                    <p class="report-date">报告生成时间: <span id="currentDate"></span></p>
-                </section>
-                
-                <section class="product-info">
-                    <div class="details">
-                        <p><strong>产品ID:</strong> {{productId}}</p>
-                        <p><strong>名称:</strong> {{name}}</p>
-                        <p><strong>库存数量:</strong> {{stock}}</p>
-                        <p><strong>价格:</strong> RM {{price}}</p>
-                        <p><strong>出版社:</strong> {{publisher}}</p>
-                        <p><strong>备注:</strong> {{remarks}}</p>
-                    </div>
-                    <section class="product-image-container">
-                        <img src="{{productImage}}" alt="产品图片" class="product-image">
-                    </section>
-                </section>
-                
-                {{soldRecordsTable}}
-                
-                <div class="footer">
-                    <p>© Seiwajyuku Malaysia - Inventory Management System</p>
-                    <p>This is a computer-generated document. No signature is required.</p>
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="print-content">
+            <section class="top-info">
+                <img src="../assets/logo.png" alt="Seiwajyuku Malaysia Logo" class="logo">
+                <h2>库存详情报告</h2>
+                <p class="report-date">报告生成时间: <span id="currentDate"></span></p>
+            </section>
+
+            <section class="product-info">
+                <div class="details">
+                    <p><strong>产品ID:</strong> {{productId}}</p>
+                    <p><strong>名称:</strong> {{name}}</p>
+                    <p><strong>库存数量:</strong> {{stock}}</p>
+                    <p><strong>价格:</strong> RM {{price}}</p>
+                    <p><strong>出版社:</strong> {{publisher}}</p>
+                    <p><strong>备注:</strong> {{remarks}}</p>
                 </div>
-                
-                <div class="print-controls">
-                    <button class="print-button" onclick="window.print()"><i class="fas fa-print"></i> 打印报告</button>
-                </div>
+                <section class="product-image-container">
+                    <img src="{{productImage}}" alt="产品图片" class="product-image">
+                </section>
+            </section>
+
+            {{soldRecordsTable}}
+
+            <div class="footer">
+                <p>© Seiwajyuku Malaysia - Inventory Management System</p>
+                <p>This is a computer-generated document. No signature is required.</p>
             </div>
-            
-            <script>
-                // Set current date in the report
-                document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-MY', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-            </script>
-        </body>
+
+            <div class="print-controls">
+                <button class="print-button" onclick="window.print()"><i class="fas fa-print"></i> 打印报告</button>
+            </div>
+        </div>
+
+        <script>
+            // Set current date in the report
+            document.addEventListener('DOMContentLoaded', function () {
+                const currentDateEl = document.getElementById('currentDate');
+                if (currentDateEl) {
+                    currentDateEl.textContent = new Date().toLocaleDateString('zh-CN', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                }
+            });
+
+        </script>
+    </body>
+
     </html>
 </div>
 

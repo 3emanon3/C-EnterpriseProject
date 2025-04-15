@@ -112,8 +112,8 @@ document.addEventListener("DOMContentLoaded", function () {
             
             row.innerHTML = `
                 <td>${record.Book || '-'}</td>
-                <td>${record.membership || '-'}</td>
-                <td>${record["Name/Company Name"] || '-'}</td>
+                <td>${record.membership_display || '-'}</td>
+                <td>${record["Name/Company_Name"] || '-'}</td>
                 <td>${record.quantity_in || '-'}</td>
                 <td>${record.quantity_out || '-'}</td>
                 <td>${record.InvoiceNo || '-'}</td>

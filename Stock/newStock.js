@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 async function saveNewData() {
     const newStock = {
-        'Product ID': document.getElementById('productId').value,
+        'Product_ID': document.getElementById('productId').value,
         'Name': document.getElementById('name').value,
         'stock': document.getElementById('stock').value,
         'Price': document.getElementById('price').value,

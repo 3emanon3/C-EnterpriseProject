@@ -12,7 +12,7 @@ window.addEventListener('beforeunload', function (e) {
     }
 });
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Get the stock ID from URL parameters
     const urlParams = new URLSearchParams(window.location.search);
     const stockId = urlParams.get('id');
@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Fetch stock details
     fetchStockDetails(stockId);
-    
+
     // Set up image container click event
     const imageContainer = document.getElementById('imageContainer');
     if (imageContainer) {
@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 async function fetchStockDetails(stockId) {
     try {
-        const response = await fetch(`${API_BASE_URL}?table=stock&search=${stockId}&ID=${stockId}`);
+        const response = await fetch(`${API_BASE_URL}?table=stock&search=true&ID=${stockId}`);
         const data = await response.json();
 
         if (data && data.data && data.data.length > 0) {
@@ -54,13 +54,13 @@ async function fetchStockDetails(stockId) {
 }
 
 function populateForm(stock) {
-    document.getElementById('productId').value = stock['Product ID'];
+    document.getElementById('productId').value = stock['Product_ID'];
     document.getElementById('name').value = stock.Name;
     document.getElementById('stock').value = stock.stock;
     document.getElementById('price').value = stock.Price;
     document.getElementById('publisher').value = stock.Publisher;
     document.getElementById('remarks').value = stock.Remarks;
-    
+
     // Store and display the image
     if (stock.Picture) {
         currentBase64Image = stock.Picture;
@@ -70,9 +70,9 @@ function populateForm(stock) {
 
 async function saveChanges() {
     const stockId = new URLSearchParams(window.location.search).get('id');
-    
+
     const updatedStock = {
-        'Product ID': document.getElementById('productId').value,
+        'Product_ID': document.getElementById('productId').value,
         'Name': document.getElementById('name').value,
         'stock': document.getElementById('stock').value,
         'Price': document.getElementById('price').value,
@@ -123,13 +123,13 @@ async function printData() {
     const price = parseFloat(document.getElementById('price').value).toFixed(2);
     const publisher = document.getElementById('publisher').value;
     const remarks = document.getElementById('remarks').value.replace(new RegExp('\n', 'g'), '<br>');
-    
+
     // Get the current image
     const imageSource = currentBase64Image || '../assets/placeholder.png';
 
     // Fetch sold records for this product
     const soldRecords = await fetchSoldRecords(stockId, 20);
-    
+
     // Generate sold records table HTML
     let soldRecordsHtml = '';
     if (soldRecords.length > 0) {
@@ -151,7 +151,7 @@ async function printData() {
                     </thead>
                     <tbody>
         `;
-        
+
         soldRecords.forEach(record => {
             soldRecordsHtml += `
                 <tr>
@@ -166,7 +166,7 @@ async function printData() {
                 </tr>
             `;
         });
-        
+
         soldRecordsHtml += `
                     </tbody>
                 </table>
@@ -216,11 +216,11 @@ function displayBase64Image(base64String) {
 function encodeImageToBase64(file, callback) {
     const reader = new FileReader();
 
-    reader.onload = function(event) {
+    reader.onload = function (event) {
         callback(event.target.result);
     };
 
-    reader.onerror = function(error) {
+    reader.onerror = function (error) {
         console.error("Error reading file:", error);
         callback(null); // Indicate an error
     };
@@ -250,11 +250,16 @@ fileInput.addEventListener('change', (event) => {
         });
     }
 });
-                // Set current date in the report
-                document.getElementById('currentDate').textContent = new Date().toLocaleDateString('zh-CN', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
+// Set current date in the report
+document.addEventListener('DOMContentLoaded', function () {
+    const currentDateEl = document.getElementById('currentDate');
+    if (currentDateEl) {
+        currentDateEl.textContent = new Date().toLocaleDateString('zh-CN', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+});

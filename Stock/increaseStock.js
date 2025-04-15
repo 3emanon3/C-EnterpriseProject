@@ -26,7 +26,7 @@ async function saveChanges() {
     
     // Validate required fields
     if (quantityIn <= 0 || !date) {
-        alert('请填写必要的字段：公司名字、增加数量和日期');
+        alert('请填写必要的字段：增加数量和日期');
         return;
     }
     
@@ -83,11 +83,11 @@ async function saveChanges() {
                 try {
                     // Create the new applicant type
                     const newType = {
-                        "designation of applicant": newTypeName.trim()
+                        "designation_of_applicant": newTypeName.trim()
                     };
                     
                     // Send request to create new applicant type
-                    const typeResponse = await fetch(`${API_BASE_URL}?table=applicants%20types`, {
+                    const typeResponse = await fetch(`${API_BASE_URL}?table=applicants_types`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -144,7 +144,7 @@ async function saveChanges() {
             const newMember = {
                 'Name': name,
                 'CName': cname,
-                'Designation of Applicant': applicantType,
+                'Designation_of_Applicant': applicantType,
                 'Address': address,
                 'phone_number': contact,
                 'email': email,
@@ -153,8 +153,8 @@ async function saveChanges() {
                 'gender': gender,
                 'componyName': componyName,
                 'Birthday': monthOfBirth,
-                'expired date': formattedExpirationDate,
-                'place of birth': placeOfBirth,
+                'expired_date': formattedExpirationDate,
+                'place_of_birth': placeOfBirth,
                 'others': others,
                 'remarks': memberRemarks
             };
@@ -175,15 +175,14 @@ async function saveChanges() {
             const memberData = await memberResponse.json();
             memberId = memberData.ids[0]; // Get the ID of the newly created member
         } else {
-            alert('请选择会员或创建新会员');
-            return;
+            memberId = null; // No member selected
         }
         
         // Create sold record object
         const newSoldRecord = {
             'Book': bookId,
             'membership': memberId,
-            'Name/Company Name': companyName,
+            'Name/Company_Name': companyName,
             'quantity_in': quantityIn,
             'quantity_out': null, // This is an increase record, so quantity_out is 0
             'InvoiceNo': invoiceNo,
@@ -221,14 +220,19 @@ function updateMemberSection() {
     const searchMemberSection = document.querySelector('.search-member-section');
 
     if (membershipType === '1') { // 新人 - New member
-        newMemberSection.style.display = 'block'; // Show new member section
-        searchMemberSection.style.display = 'none'; // Hide search member section
-        selectedMemberId = null; // Reset selected member ID when switching to new member
+        newMemberSection.style.display = 'block';
+        searchMemberSection.style.display = 'none';
+        selectedMemberId = null; // Reset selected member ID when switching
     } else if (membershipType === '2') { // 旧人 - Existing member
-        newMemberSection.style.display = 'none'; // Hide new member section
-        searchMemberSection.style.display = 'block'; // Show search member section
+        newMemberSection.style.display = 'none';
+        searchMemberSection.style.display = 'block';
+    } else if (membershipType === '0') { // 无 - Display both sections without auto-selecting a member
+        newMemberSection.style.display = 'none';
+        searchMemberSection.style.display = 'none';
+        selectedMemberId = null;
     }
 }
+
 
 async function searchMembers() {
     const searchTerm = document.getElementById('searchMember').value;
@@ -345,7 +349,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     async function fetchApplicantType(){
         try {
-            const response = await fetch(`${API_BASE_URL}?table=applicants%20types&limit=100`);
+            const response = await fetch(`${API_BASE_URL}?table=applicants_types&limit=100`);
             const data = await response.json();
             
             if (data && data.data) {
@@ -359,7 +363,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 uniqueApplicant.forEach(item => {
                     const option = document.createElement("option");
                     option.value = item.ID;
-                    option.textContent = `${item["designation of applicant"]}`;
+                    option.textContent = `${item["designation_of_applicant"]}`;
                     applicantType.appendChild(option);
                 });
                 
@@ -404,11 +408,11 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             // Create the new applicant type object
             const newType = {
-                "designation of applicant": typeName
+                "designation_of_applicant": typeName
             };
             
             // Send request to create new applicant type
-            const response = await fetch(`${API_BASE_URL}?table=applicants%20types`, {
+            const response = await fetch(`${API_BASE_URL}?table=applicants_types`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
