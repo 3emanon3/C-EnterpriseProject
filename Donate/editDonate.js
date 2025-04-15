@@ -56,7 +56,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize - If there's an ID parameter, load donation details
     if (donationId) {
         document.getElementById('donationId').value = donationId;
-        loadDonationDetails();
+        // First initialize dropdowns, then load donation details
+        initializeDropdowns().then(() => {
+            loadDonationDetails();
+        }).catch(error => {
+            console.error('Failed to initialize dropdowns:', error);
+            showError('Failed to load dropdown options');
+        });
     } else {
         window.location.href = buildReturnUrl();
     }
@@ -206,19 +212,15 @@ function populateForm(donation) {
     const membershipValue = donation.membership ||  null;
     const selectedMemberIdField = document.getElementById('selectedMemberId');
     // Default to value "2" (Non Member) if membership is null
-    setSelectIfExists('membership', membershipValue === null ? '2' : membershipValue);
+    let membershipType = donation.membershipType || null;
     
     // If there's a member ID, set the hidden field and select Old Member
     if (membershipValue) {
-        // If membership value exists, this is an "Old Member"
         selectedMemberIdField.value = membershipValue;
         setSelectIfExists('membership', '1'); // Set to "Old Member"
-        console.log('Setting membership to Old Member with ID:', membershipValue);
     } else {
-        // No member ID means "Non Member"
         selectedMemberIdField.value = '';
         setSelectIfExists('membership', '2'); // Set to "Non Member"
-        console.log('Setting membership to Non Member');
     }
     
     // Handle date format
@@ -336,6 +338,7 @@ function populateForm(donation) {
 
             const membershipValue = document.getElementById('membership').value;
             let memberIdValue = null;
+            let membershipType = null;
             
             // Only use member ID if "Old Member" is selected
             if (membershipValue === '1') {
@@ -343,7 +346,9 @@ function populateForm(donation) {
                 // Double check we have a valid member ID
              
                 console.log('Using member ID:', memberIdValue);
-            }
+            } else if (membershipValue === '2') {
+                membershipType = 'non_member';
+            } 
 
             // Create a structured object that matches API expectations
             const donationData = {
@@ -351,8 +356,8 @@ function populateForm(donation) {
                 "Name/Company_Name": document.getElementById('nameCompany').value || null,
                 donationTypes: document.getElementById('donationTypes').value || null,
                 Bank: document.getElementById('bank').value || null,
-                membership: document.getElementById('membership').value === '1' ?
-                document.getElementById('selectedMemberId').value : null,
+                membership: memberIdValue,
+                membershipType: membershipType,
                 paymentDate: document.getElementById('paymentDate').value || null,
                 official_receipt_no: document.getElementById('receiptNo').value || null,
                 amount: document.getElementById('amount').value || null,
@@ -482,12 +487,34 @@ function displayModalResults(members) {
     members.forEach(member => {
         const row = document.createElement('tr');
         // Update these lines to match the actual property names from the response
+        const memberName = escapeHTML(member.Name || '');
+        const companyName = escapeHTML(member.componyName || '');
         row.innerHTML = `
             <td>${escapeHTML(member.membersID || '')}</td>
-            <td>${escapeHTML(member.Name || '')}</td>
-            <td>${escapeHTML(member.componyName || '')}</td>
+            <td>${memberName}</td>
+            <td>${companyName}</td>
             <td>${escapeHTML(member.phone_number || '')}</td>
+              <td>
+                <button class="btn btn-sm btn-primary select-name">Select Name</button>
+                <button class="btn btn-sm btn-secondary select-company" ${!companyName ? 'disabled' : ''}>Select Company</button>
+            </td>
         `;
+
+        modalResultsBody.appendChild(row);
+        
+        // Add click events for the two selection buttons
+        const selectNameBtn = row.querySelector('.select-name');
+        const selectCompanyBtn = row.querySelector('.select-company');
+        
+        selectNameBtn.addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent row click event
+            selectMember(member, 'name');
+        });
+        
+        selectCompanyBtn.addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent row click event
+            selectMember(member, 'company');
+        });
         
         // Add click event to select member
         row.style.cursor = 'pointer';
@@ -522,9 +549,11 @@ function displayModalResults(members) {
 
     // Select member
     // Select member
-function selectMember(member) {
+function selectMember(member,selectionType) {
     // Debugging - Check what IDs are available
     console.log('Member data:', member);
+    console.log('Selection type:', selectionType);
+    
     
     // Be more specific about which ID we're using
     const memberId = member.membersID || member.ID;
@@ -541,7 +570,12 @@ function selectMember(member) {
     
     // Set name/company name
     const nameField = document.getElementById('nameCompany');
-    nameField.value = member.Name || member.CName || '';
+    if (selectionType === 'company' && member.componyName) {
+        nameField.value = member.componyName;
+    } else {
+        // Default to name (either explicitly selected or as fallback)
+        nameField.value = member.Name || member.CName || '';
+    }
     
     // Close modal
     memberSearchModal.style.display = 'none';
@@ -587,3 +621,76 @@ function selectMember(member) {
             .replace(/'/g, '&#39;');
     }
 });
+
+// Initialize dropdowns with options from API
+    async function initializeDropdowns() {
+        try {
+            console.log('Fetching dropdown options...');
+            
+            // Fetch donation types
+            const donationTypesResponse = await fetch(`${API_BASE_URL}?table=donationtypes&limit=999`);
+            const donationTypesData = await donationTypesResponse.json();
+            
+            if (donationTypesData.data && Array.isArray(donationTypesData.data)) {
+                const donationTypeOptions = donationTypesData.data.map(item => ({
+                    value: item.ID,
+                    text: item.donationTypes
+                }));
+                const donationTypesSelect = document.getElementById('donationTypes');
+                populateDropdown(donationTypesSelect, donationTypeOptions, true);
+            }
+
+            // Fetch bank options
+            const bankResponse = await fetch(`${API_BASE_URL}?table=bank&limit=999`);
+            const bankData = await bankResponse.json();
+            
+            if (bankData.data && Array.isArray(bankData.data)) {
+                const bankOptions = bankData.data.map(item => ({
+                    value: item.ID,
+                    text: item.Bank
+                }));
+                const bankSelect = document.getElementById('bank');
+                populateDropdown(bankSelect, bankOptions, true);
+            }
+
+        } catch (error) {
+            console.error('加载下拉选项错误:', error);
+            showError('加载选项失败: ' + error.message);
+        }
+    }
+
+    // Function to populate dropdown with options
+    function populateDropdown(selectElement, options, useObjectFormat = false) {
+        // Save current value
+        const currentValue = selectElement.value;
+        
+        // Clear existing options, keeping only the first default option
+        while (selectElement.options.length > 1) {
+            selectElement.remove(1);
+        }
+        
+        // Add new options
+        options.forEach(option => {
+            const optionElement = document.createElement('option');
+            
+            if (useObjectFormat && typeof option === 'object') {
+                optionElement.value = option.value;
+                optionElement.textContent = option.text;
+            } else {
+                optionElement.value = option;
+                optionElement.textContent = option;
+            }
+            
+            selectElement.appendChild(optionElement);
+        });
+        
+        // Restore previous value if it exists in new options
+        if (currentValue) {
+            for (let i = 0; i < selectElement.options.length; i++) {
+                if (selectElement.options[i].value === currentValue) {
+                    selectElement.value = currentValue;
+                    break;
+                }
+            }
+        }
+    }

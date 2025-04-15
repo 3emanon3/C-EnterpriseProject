@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const dateRangeFilterBtn = document.getElementById("dateRangeFilterBtn");
     const amountRangeFilterBtn = document.getElementById("amountRangeFilterBtn");
     const printTableBtn = document.getElementById("printTableBtn"); // Get reference to the new print button
+    const listAllBtn = document.getElementById('listAllBtn');
 
     // --- State Variables ---
     // ... (keep existing state variables)
@@ -33,6 +34,46 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentEndPrice = null;
     let DONATION_TYPES = {};
     let BANKS = {};
+
+    if (listAllBtn) {
+        listAllBtn.addEventListener('click', () => {
+            // Clear all filters
+            currentBankFilter = null;
+            currentDonationTypeFilter = null;
+            currentStartDate = null;
+            currentEndDate = null;
+            currentStartPrice = null;
+            currentEndPrice = null;
+            
+            // Clear search input
+            if (searchInput) {
+                searchInput.value = '';
+            }
+            
+            // Reset to page 1
+            currentPage = 1;
+            
+            // Update filter button texts
+            updateBankFilterButtonText();
+            updateDonationTypeFilterButtonText();
+            updateDateRangeFilterButton();
+            updateAmountRangeFilterButton();
+            
+            // Fetch all donations
+            fetchDonations('');
+            
+            // Optional: Show confirmation message
+            Swal.fire({
+                title: '已重置',
+                text: '已清除所有筛选条件，显示全部乐捐记录',
+                icon: 'info',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 1000
+            });
+        });
+    }
 
     // --- Utility Functions ---
     // ... (keep existing utility functions: escapeHTML, formatDateTime, etc.)
@@ -230,12 +271,37 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function updateBankFilterButtonText() {
         if (!bankSearchBtn) return;
+
+ 
+    // Ensure the button has the necessary structure
+    if (!bankSearchBtn.querySelector('.button-content')) {
+        // Save the original tooltip
+        const tooltip = bankSearchBtn.querySelector('.tooltip-text');
+        
+        // Create button content structure
+        const contentSpan = document.createElement('span');
+        contentSpan.className = 'button-content';
+        
+        // Move current button text (excluding tooltip) to the content span
+        const currentHTML = bankSearchBtn.innerHTML;
+        const tooltipHTML = tooltip ? tooltip.outerHTML : '';
+        contentSpan.innerHTML = currentHTML.replace(tooltipHTML, '');
+        
+        // Clear button and rebuild structure
+        bankSearchBtn.innerHTML = '';
+        bankSearchBtn.appendChild(contentSpan);
+        if (tooltip) bankSearchBtn.appendChild(tooltip);
+    }
+    
+    // Now update only the content span
+    const contentSpan = bankSearchBtn.querySelector('.button-content');
+
         if (currentBankFilter) {
-            bankSearchBtn.innerHTML = `<i class="fas fa-filter"></i> ${escapeHTML(currentBankFilter)}`;
+            contentSpan .innerHTML = `<i class="fas fa-filter"></i> ${escapeHTML(currentBankFilter)}`;
             bankSearchBtn.classList.add('active-filter');
             bankSearchBtn.title = `筛选银行: ${escapeHTML(currentBankFilter)}`;
         } else {
-            bankSearchBtn.innerHTML = `<i class="fas fa-university"></i> 银行筛选`;
+            contentSpan .innerHTML = `<i class="fas fa-university"></i> 银行筛选`;
             bankSearchBtn.classList.remove('active-filter');
             bankSearchBtn.title = '';
         }
@@ -258,13 +324,37 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function updateDonationTypeFilterButtonText() {
         if (!donationTypeFilterBtn) return;
+
+         // Ensure the button has the necessary structure
+    if (!donationTypeFilterBtn.querySelector('.button-content')) {
+        // Save the original tooltip
+        const tooltip = donationTypeFilterBtn.querySelector('.tooltip-text');
+        
+        // Create button content structure
+        const contentSpan = document.createElement('span');
+        contentSpan.className = 'button-content';
+        
+        // Move current button text (excluding tooltip) to the content span
+        const currentHTML = donationTypeFilterBtn.innerHTML;
+        const tooltipHTML = tooltip ? tooltip.outerHTML : '';
+        contentSpan.innerHTML = currentHTML.replace(tooltipHTML, '');
+        
+        // Clear button and rebuild structure
+        donationTypeFilterBtn.innerHTML = '';
+        donationTypeFilterBtn.appendChild(contentSpan);
+        if (tooltip) donationTypeFilterBtn.appendChild(tooltip);
+    }
+    
+    // Now update only the content span
+    const contentSpan = donationTypeFilterBtn.querySelector('.button-content');
+
         if (currentDonationTypeFilter) {
             const displayName = currentDonationTypeFilter.length > 15 ? currentDonationTypeFilter.substring(0, 12) + '...' : currentDonationTypeFilter;
-            donationTypeFilterBtn.innerHTML = `<i class="fas fa-filter"></i> ${escapeHTML(displayName)}`;
+            contentSpan.innerHTML = `<i class="fas fa-filter"></i> ${escapeHTML(displayName)}`;
             donationTypeFilterBtn.title = `筛选类型: ${escapeHTML(currentDonationTypeFilter)}`;
             donationTypeFilterBtn.classList.add('active-filter');
         } else {
-            donationTypeFilterBtn.innerHTML = `<i class="fas fa-tags"></i> 类型筛选`;
+            contentSpan.innerHTML = `<i class="fas fa-tags"></i> 类型筛选`;
             donationTypeFilterBtn.title = '';
             donationTypeFilterBtn.classList.remove('active-filter');
         }
@@ -361,6 +451,29 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function updateDateRangeFilterButton() {
         if (!dateRangeFilterBtn) return;
+
+        if (!dateRangeFilterBtn.querySelector('.button-content')) {
+            // Save the original tooltip
+            const tooltip = dateRangeFilterBtn.querySelector('.tooltip-text');
+            
+            // Create button content structure
+            const contentSpan = document.createElement('span');
+            contentSpan.className = 'button-content';
+            
+            // Move current button text (excluding tooltip) to the content span
+            const currentHTML = dateRangeFilterBtn.innerHTML;
+            const tooltipHTML = tooltip ? tooltip.outerHTML : '';
+            contentSpan.innerHTML = currentHTML.replace(tooltipHTML, '');
+            
+            // Clear button and rebuild structure
+            dateRangeFilterBtn.innerHTML = '';
+            dateRangeFilterBtn.appendChild(contentSpan);
+            if (tooltip) dateRangeFilterBtn.appendChild(tooltip);
+        }
+        
+        // Now update only the content span
+        const contentSpan = dateRangeFilterBtn.querySelector('.button-content');
+
         if (currentStartDate || currentEndDate) {
             let text = '日期: ';
             if (currentStartDate && currentEndDate) text += `${currentStartDate} 至 ${currentEndDate}`;
@@ -369,11 +482,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Truncate if too long for button display
             const shortText = text.length > 25 ? text.substring(0, 22) + '...' : text;
-            dateRangeFilterBtn.innerHTML = `<i class="fas fa-filter"></i> ${escapeHTML(shortText)}`;
+            contentSpan.innerHTML = `<i class="fas fa-filter"></i> ${escapeHTML(shortText)}`;
             dateRangeFilterBtn.title = escapeHTML(text); // Full range on hover
             dateRangeFilterBtn.classList.add('active-filter');
         } else {
-            dateRangeFilterBtn.innerHTML = `<i class="fas fa-calendar-alt"></i> 日期范围筛选`;
+            contentSpan.innerHTML = `<i class="fas fa-calendar-alt"></i> 日期范围筛选`;
             dateRangeFilterBtn.title = '';
             dateRangeFilterBtn.classList.remove('active-filter');
         }
@@ -476,6 +589,29 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function updateAmountRangeFilterButton() {
         if (!amountRangeFilterBtn) return;
+
+        if (!amountRangeFilterBtn.querySelector('.button-content')) {
+            // Save the original tooltip
+            const tooltip = amountRangeFilterBtn.querySelector('.tooltip-text');
+            
+            // Create button content structure
+            const contentSpan = document.createElement('span');
+            contentSpan.className = 'button-content';
+            
+            // Move current button text (excluding tooltip) to the content span
+            const currentHTML = amountRangeFilterBtn.innerHTML;
+            const tooltipHTML = tooltip ? tooltip.outerHTML : '';
+            contentSpan.innerHTML = currentHTML.replace(tooltipHTML, '');
+            
+            // Clear button and rebuild structure
+            amountRangeFilterBtn.innerHTML = '';
+            amountRangeFilterBtn.appendChild(contentSpan);
+            if (tooltip) amountRangeFilterBtn.appendChild(tooltip);
+        }
+        
+        // Now update only the content span
+        const contentSpan = amountRangeFilterBtn.querySelector('.button-content');
+
         if (currentStartPrice !== null || currentEndPrice !== null) {
             let text = '金额: ';
             if (currentStartPrice !== null && currentEndPrice !== null) text += `RM ${currentStartPrice} - ${currentEndPrice}`;
@@ -484,11 +620,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Truncate if too long
             const shortText = text.length > 25 ? text.substring(0, 22) + '...' : text;
-            amountRangeFilterBtn.innerHTML = `<i class="fas fa-filter"></i> ${escapeHTML(shortText)}`;
+            contentSpan.innerHTML = `<i class="fas fa-filter"></i> ${escapeHTML(shortText)}`;
             amountRangeFilterBtn.title = escapeHTML(text); // Full range on hover
             amountRangeFilterBtn.classList.add('active-filter');
         } else {
-            amountRangeFilterBtn.innerHTML = `<i class="fas fa-dollar-sign"></i> 金额范围筛选`;
+            contentSpan.innerHTML = `<i class="fas fa-dollar-sign"></i> 金额范围筛选`;
             amountRangeFilterBtn.title = '';
             amountRangeFilterBtn.classList.remove('active-filter');
         }
@@ -639,6 +775,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const donorName = donation['Name/Company_Name'] || '-';
             const donationType = donation.donationTypes || '-';
             const bank = donation.Bank || '-';
+            // Updated membership display logic
             const membership = donation.membership || '非塾员';
             const paymentDate = formatDateTime(donation.paymentDate);
             const receiptNo = donation['official_receipt_no'] || '-';

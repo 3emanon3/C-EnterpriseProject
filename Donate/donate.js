@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const itemsPerPage = 10;
     let totalItems = 0;
     let currentSearchTerm = '';
+    
 
     // Initialize
     if (donationId) {
@@ -85,13 +86,16 @@ document.addEventListener('DOMContentLoaded', function() {
             modalResultsBody.innerHTML = '';
             modalNoResults.style.display = 'none';
             modalPagination.innerHTML = '';
+
+       
         } else if (this.value === '2') { // Non Member
             // Clear any previously selected member ID
             if (document.getElementById('selectedMemberId')) {
                 document.getElementById('selectedMemberId').value = '';
             }
+           
             // Continue with donation form without member association
-        }
+        } 
     });
 
     // 模态框搜索功能 - 增强版，支持实时搜索
@@ -500,29 +504,22 @@ document.addEventListener('DOMContentLoaded', function() {
         const membershipValue = membershipSelect.value;
         console.log('提交表单时的会员选择值:', membershipValue);
         
-        const selectedMemberId = document.getElementById('selectedMemberId')?.value;
-        console.log('提交表单时的selectedMemberId值:', selectedMemberId);
+        
         
         // 处理会员身份 - 保持原始格式，不使用parseInt
         if (membershipValue === '2') {
             // 非会员情况下，设置membership为null
             data.membership = null;
+            data.membershipType = 'non_member';
             console.log('Non-member selected, setting membership to null');
         } else if (membershipValue === '1') {
-            // 老会员选项，但没有具体会员ID
-            // 检查是否有selectedMemberId
-            if (selectedMemberId && selectedMemberId.trim() !== '') {
-                // 保持原始的会员ID格式
-                data.membership = selectedMemberId.trim();
-                console.log('Using selected member ID for old member:', data.membership);
-            } else {
-                data.membership = null;
-                console.log('No valid member ID for old member, setting to null');
+            const selectedMemberId = document.getElementById('selectedMemberId')?.value;
+            if (!selectedMemberId) {
+                showError('Please select a valid member first');
+                return;
             }
-        } else if (selectedMemberId && selectedMemberId.trim() !== '') {
-            // 如果有选择具体会员，使用selectedMemberId
-            data.membership = selectedMemberId.trim();
-            console.log('Using selected member ID:', data.membership);
+            data.membership = selectedMemberId;
+            data.membershipType = 'old_member';          
         } else if (membershipValue && membershipValue !== 'null' && membershipValue !== 'custom') {
             // 直接使用membershipValue作为会员ID，保持原始格式
             if (membershipValue && membershipValue.trim() !== '') {
@@ -625,53 +622,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Populate form with donation data - UPDATED to handle membership IDs correctly
-    // Initialize dropdowns with options from API
-   /* async function initializeDropdowns() {
-        try {
-            console.log('Fetching dropdown options...');
-            const response = await fetch(`${API_BASE_URL}?table=donationtypes&limit=999`);
-            const data = await response.json();
-            console.log('API Response:', data);
-            
-            if (data.data && Array.isArray(data.data)) {
-                // Populate donation types dropdown with ID and name
-                if (data.data.length > 0) {
-                    console.log('Donation type options:', data.data);
-                    // Clear existing options, keeping only the first default option
-                    while (donationTypesSelect.options.length > 1) {
-                        donationTypesSelect.remove(1);
-                    }
-                    
-                    // Add options with ID as value and name as text
-                    data.data.forEach(item => {
-                        const option = document.createElement('option');
-                        option.value = item.ID; // Use ID as value
-                        option.textContent = item.donationTypes; // Use name as display text
-                        donationTypesSelect.appendChild(option);
-                    });
-                }
-
-                // Make a separate call for bank options
-                try {
-                    const bankResponse = await fetch(`${API_BASE_URL}?table=bank&limit=999`);
-                    const bankData = await bankResponse.json();
-                    if (bankData.data && Array.isArray(bankData.data)) {
-                        const bankOptions = bankData.data.map(item => item.Bank);
-                        if (bankOptions.length > 0) {
-                            console.log('Bank options:', bankOptions);
-                            populateDropdown(bankSelect, bankOptions);
-                        }
-                    }
-                } catch (bankError) {
-                    console.error('Error loading bank options:', bankError);
-                }
-            }
-        } catch (error) {
-            console.error('加载下拉选项错误:', error);
-            showError('加载选项失败: ' + error.message);
-        }
-    }*/
 
     // Update the populateForm function to handle donation type IDs
     function populateForm(donation) {
@@ -732,12 +682,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 })
                 .catch(error => console.error('获取会员详情失败:', error));
-        } else {
-            membershipSelect.value = '2'; // 设为非会员
-            if (document.getElementById('selectedMemberId')) {
-                document.getElementById('selectedMemberId').value = '';
-            }
-        }
+        } 
 
         // Format payment date if needed
         if (donation.payment_date) {
@@ -813,6 +758,13 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.json();
             console.log('API Response:', data);
             
+            // 确保donationTypesSelect存在
+            const donationTypesSelect = document.getElementById('donationTypes');
+            if (!donationTypesSelect) {
+                console.error('找不到donationTypes下拉菜单元素');
+                return;
+            }
+            
             if (data.data && Array.isArray(data.data)) {
                 // Create donation types options with ID as value and name as text
                 if (data.data.length > 0) {
@@ -826,6 +778,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // Make a separate call for bank options with high limit
                 try {
+                    const bankSelect = document.getElementById('bank');
+                    if (!bankSelect) {
+                        console.error('找不到bank下拉菜单元素');
+                        return;
+                    }
+                    
                     const bankResponse = await fetch(`${API_BASE_URL}?table=bank&limit=999`);
                     const bankData = await bankResponse.json();
                     if (bankData.data && Array.isArray(bankData.data)) {
@@ -850,7 +808,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Function to populate dropdown with options
-    function populateDropdown(selectElement, options,useObjectFormat = false) {
+    function populateDropdown(selectElement, options, useObjectFormat = false) {
+        if (!selectElement) {
+            console.error('下拉菜单元素不存在');
+            return;
+        }
+        
         // Save current value
         const currentValue = selectElement.value;
         
@@ -890,23 +853,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Call dropdown initialization on page load
     initializeDropdowns();
-});
-
-// Delete everything after this line
-document.addEventListener('DOMContentLoaded', function() {
-    // 添加模态框关闭按钮事件监听器
-    document.querySelectorAll('.modal .close').forEach(closeBtn => {
-        closeBtn.addEventListener('click', function() {
-            this.closest('.modal').style.display = 'none';
-        });
-    });
-
-    // 点击模态框外部关闭
-    window.addEventListener('click', function(event) {
-        if (event.target.classList.contains('modal')) {
-            event.target.style.display = 'none';
-        }
-    });
 
     // 保存乐捐类型按钮事件
     if (saveDonationTypeBtn) {
@@ -931,19 +877,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 const data = await response.json();
                 if (data.status === 'success') {
-                     // Important: After adding, get the new type's ID
-            const newId = data.id; // Assuming API returns the new ID
-            
-            // Add option with correct ID value
-            const option = document.createElement('option');
-            option.value = newId;
-            option.textContent = newType;
-            donationTypesSelect.appendChild(option);
-            
+                    // Important: After adding, get the new type's ID
+                    const newId = data.id; // Assuming API returns the new ID
+                    
+                    // Add option with correct ID value
+                    const option = document.createElement('option');
+                    option.value = newId;
+                    option.textContent = newType;
                     donationTypesSelect.appendChild(option);
                     
                     // 选择新添加的选项
-                    donationTypesSelect.value = newType;
+                    donationTypesSelect.value = newId;
                     
                     // 关闭模态框
                     document.getElementById('customDonationTypeModal').style.display = 'none';
