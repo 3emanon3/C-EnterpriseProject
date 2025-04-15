@@ -461,18 +461,21 @@ tr:hover {
 
 .filter-button.active {
     position: fixed;
-    bottom: 20px;
     right: 20px;
     z-index: 1000;
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     transform: scale(0.85);
 }
 
-.filter-button.active:nth-of-type(2) {
+#searchBirthday.filter-button.active {
+    bottom: 20px;
+}
+
+#searchExpiry.filter-button.active {
     bottom: 70px;
 }
 
-.filter-button.active:nth-of-type(3) {
+#memberFilter.filter-button.active {
     bottom: 120px;
 }
 

@@ -115,8 +115,8 @@ document.addEventListener("DOMContentLoaded", function () {
     let sortColumn = '';
     let sortDirection = '';
     let totalPages = 0;
-    let currentSearchType = 'all'; // 'all', 'search', 'Birthday', 'expired'
-    let currentFilterValue = '';
+    // let currentSearchType = 'all'; // 'all', 'search', 'Birthday', 'expired' - Replaced by checking individual filter states
+    // let currentFilterValue = ''; // Use memberFilter.value directly
     let membersData = [];
     let targetStartDate = null; // For expiry search (YYYY-MM-DD)
     let targetEndDate = null;
@@ -131,42 +131,54 @@ document.addEventListener("DOMContentLoaded", function () {
         fetchMembers();
         setupFilterButtonsAnimation();
     }
-    
+
     // ===== FILTER BUTTON ANIMATION =====
     function setupFilterButtonsAnimation() {
         // Add filter-button class to the buttons we want to animate
         if (birthdayButton) {
             birthdayButton.classList.add('filter-button');
-            birthdayButton.innerHTML += '<span class="filter-badge">1</span>';
+            // Check if badge already exists to prevent duplicates on reload
+            if (!birthdayButton.querySelector('.filter-badge')) {
+                birthdayButton.innerHTML += '<span class="filter-badge">1</span>';
+            }
         }
         if (expiredButton) {
             expiredButton.classList.add('filter-button');
-            expiredButton.innerHTML += '<span class="filter-badge">2</span>';
+            if (!expiredButton.querySelector('.filter-badge')) {
+                expiredButton.innerHTML += '<span class="filter-badge">2</span>';
+            }
         }
         if (memberFilter) {
             memberFilter.classList.add('filter-button');
-            memberFilter.innerHTML += '<span class="filter-badge">3</span>';
+            // Select elements don't easily support adding HTML like buttons,
+            // so we might skip the badge or use a different approach if needed.
+            // For now, just add the class for potential styling.
         }
     }
-    
+
     // Function to update filter button states
     function updateFilterButtonStates() {
-        // Reset all buttons first
+        const isGeneralSearchActive = searchInput?.value.trim() !== '';
+
         document.querySelectorAll('.filter-button').forEach(btn => {
             btn.classList.remove('active');
         });
-        
-        // Activate buttons based on current filters
-        if (currentSearchType === 'Birthday' && targetBirthdayMonth) {
-            birthdayButton?.classList.add('active');
-        }
-        if (currentSearchType === 'expired' && targetStartDate && targetEndDate) {
-            expiredButton?.classList.add('active');
-        }
-        if (memberFilter && memberFilter.value) {
-            memberFilter.classList.add('active');
+
+        // Only activate filter buttons if general search is NOT active
+        if (!isGeneralSearchActive) {
+            if (targetBirthdayMonth) {
+                birthdayButton?.classList.add('active');
+            }
+            if (targetStartDate && targetEndDate) {
+                expiredButton?.classList.add('active');
+            }
+            if (memberFilter && memberFilter.value) {
+                // Special handling for select - maybe add a class to its parent or container if needed
+                memberFilter.classList.add('active');
+            }
         }
     }
+
 
     // ===== DATA FETCHING FUNCTIONS =====
     async function fetchApplicantType() {
@@ -174,6 +186,8 @@ document.addEventListener("DOMContentLoaded", function () {
             console.log("memberFilter element not found in the DOM");
             return;
         }
+        // Preserve current value if exists
+        const currentValue = memberFilter.value;
         while (memberFilter.options.length > 1) memberFilter.remove(1);
         const defaultOption = document.createElement("option");
         defaultOption.value = "";
@@ -190,87 +204,82 @@ document.addEventListener("DOMContentLoaded", function () {
                 option.textContent = item["designation_of_applicant"];
                 memberFilter.appendChild(option);
             });
+            // Restore previous selection if possible
+            if (currentValue) {
+                memberFilter.value = currentValue;
+            }
         } catch (error) {
             console.error("Error fetching applicant types:", error);
         }
     }
 
-    async function fetchMembers(query = "") {
+    async function fetchMembers() {
         if (loader) loader.style.display = 'flex';
         if (memberTableBody) memberTableBody.innerHTML = "";
+
         const params = new URLSearchParams();
         params.append("table", "members_with_applicant_designation");
         params.append("limit", itemsPerPage);
         params.append("page", currentPage);
 
-        if (currentSearchType === 'Birthday') {
+        const generalSearchQuery = searchInput?.value.trim() || "";
+        let isAnyFilterActive = false;
+
+        // --- General Search (Overrides other filters) ---
+        if (generalSearchQuery !== "") {
+            console.log("Performing general search for:", generalSearchQuery);
+            params.append("search", generalSearchQuery);
+            // Ensure filter states are cleared if general search is active
+            // This should ideally be handled by the input event listener,
+            // but double-check here for safety.
+            targetBirthdayMonth = null;
+            targetStartDate = null;
+            targetEndDate = null;
+            if (memberFilter) memberFilter.value = '';
+        }
+        // --- Specific Filters (Applied only if general search is inactive) ---
+        else {
+            // Birthday Filter
             if (targetBirthdayMonth) {
                 params.append("Birthday", "true");
-                params.append("search", "true");
                 params.append("targetMonth", targetBirthdayMonth.toString());
-                console.log(`Searching for birthdays in month ${targetBirthdayMonth}`);
-            } else {
-                console.warn("Birthday search triggered without target month. Reverting to 'all'.");
-                currentSearchType = 'all';
-                targetBirthdayMonth = null;
+                isAnyFilterActive = true;
+                console.log(`Filtering for birthdays in month ${targetBirthdayMonth}`);
             }
-            targetStartDate = null;
-            targetEndDate = null;
-        } else if (currentSearchType === 'expired') {
+
+            // Expiry Filter
             if (targetStartDate && targetEndDate) {
                 params.append("expired", "true");
-                params.append("search", "true");
                 params.append("startDate", targetStartDate);
                 params.append("endDate", targetEndDate);
-                console.log(`Fetching members expiring between ${targetStartDate} and ${targetEndDate}`);
-            } else {
-                console.warn("Expired search triggered without target dates. Reverting to 'all'.");
-                currentSearchType = 'all';
-                targetStartDate = null;
-                targetEndDate = null;
+                isAnyFilterActive = true;
+                console.log(`Filtering for members expiring between ${targetStartDate} and ${targetEndDate}`);
             }
-            targetBirthdayMonth = null;
-        } else if (query.trim() !== "") {
-            params.append("search", query);
-            currentSearchType = 'search';
-            targetStartDate = null;
-            targetEndDate = null;
-            targetBirthdayMonth = null;
-        } else {
-            currentSearchType = 'all';
-            targetStartDate = null;
-            targetEndDate = null;
-            targetBirthdayMonth = null;
+
+            // Applicant Type Filter
+            if (memberFilter && memberFilter.value) {
+                params.append("designation_of_applicant", memberFilter.value);
+                isAnyFilterActive = true;
+                console.log("Filtering by applicant type:", memberFilter.value);
+            }
+
+            // Add search=true if any specific filter is active
+            if (isAnyFilterActive) {
+                params.append("search", "true"); // Generic flag for filtering
+            }
         }
 
-        if (memberFilter && memberFilter.value) {
-            if (!params.has('search')) {
-                params.append("search", "true");
-            }
-            params.append("designation_of_applicant", memberFilter.value);
-            console.log("Filtering by applicant:", memberFilter.value);
-        }
-
+        // --- Sorting ---
         if (sortColumn) {
             let dbSortColumn = sortColumn;
+            // Simplified map - ensure your backend handles these column names
             const columnMap = {
-                'membersID': 'membersID',
-                'Name': 'Name',
-                'CName': 'CName',
-                'Designation_of_Applicant': 'Designation_of_Applicant',
-                'Address': 'Address',
-                'phone_number': 'phone_number',
-                'email': 'email',
-                'IC': 'IC',
-                'oldIC': 'oldIC',
-                'gender': 'gender',
-                'componyName': 'componyName',
-                'Birthday': 'Birthday',
-                'expired_date': 'expired_date',
-                'place_of_birth': 'place_of_birth',
-                'position': 'position',
-                'others': 'others',
-                'remarks': 'remarks'
+                'membersID': 'membersID', 'Name': 'Name', 'CName': 'CName',
+                'Designation_of_Applicant': 'Designation_of_Applicant', 'Address': 'Address',
+                'phone_number': 'phone_number', 'email': 'email', 'IC': 'IC', 'oldIC': 'oldIC',
+                'gender': 'gender', 'componyName': 'componyName', 'Birthday': 'Birthday',
+                'expired_date': 'expired_date', 'place_of_birth': 'place_of_birth',
+                'position': 'position', 'others': 'others', 'remarks': 'remarks'
             };
             dbSortColumn = columnMap[sortColumn] || sortColumn;
             params.append("sort", dbSortColumn);
@@ -302,6 +311,7 @@ document.addEventListener("DOMContentLoaded", function () {
             displayMembers(membersData);
             updatePagination();
             updateSortIcons();
+            updateFilterButtonStates(); // Update button visuals after fetch
         } catch (error) {
             console.error("Error fetching members:", error);
             if (memberTableBody) {
@@ -312,10 +322,12 @@ document.addEventListener("DOMContentLoaded", function () {
             if (totalMembers) totalMembers.textContent = 0;
             totalPages = 1;
             updatePagination();
+            updateFilterButtonStates(); // Also update on error
         } finally {
             if (loader) loader.style.display = "none";
         }
     }
+
 
     // ===== DISPLAY FUNCTIONS =====
     function displayMembers(members) {
@@ -325,21 +337,31 @@ document.addEventListener("DOMContentLoaded", function () {
             console.error("Expected members to be an array, got:", members);
             members = [];
         }
+
+        // Determine message based on search/filter state
+        let message = '暂无记录';
+        const generalSearchQuery = searchInput?.value.trim();
+        const isBirthdayFilterActive = !!targetBirthdayMonth;
+        const isExpiryFilterActive = !!(targetStartDate && targetEndDate);
+        const isTypeFilterActive = !!(memberFilter && memberFilter.value);
+
         if (members.length === 0) {
-            let message = '暂无记录';
-            if (currentSearchType === 'search' && searchInput?.value) {
-                message = '没有找到匹配的记录';
-            } else if (currentSearchType === 'Birthday' && targetBirthdayMonth) {
-                message = `没有在 ${targetBirthdayMonth} 月份生日的塾员`;
-            } else if (currentSearchType === 'expired' && targetStartDate && targetEndDate) {
-                message = `没有在 ${targetStartDate} 到 ${targetEndDate} 之间到期的塾员`;
-            } else if (currentFilterValue) {
-                message = `没有符合 "${currentFilterValue}" 条件的记录`;
+            if (generalSearchQuery) {
+                message = `没有找到匹配 "${generalSearchQuery}" 的记录`;
+            } else if (isBirthdayFilterActive || isExpiryFilterActive || isTypeFilterActive) {
+                let filterDescriptions = [];
+                if (isTypeFilterActive) filterDescriptions.push(`种类 "${memberFilter.value}"`);
+                if (isBirthdayFilterActive) filterDescriptions.push(`${targetBirthdayMonth}月生日`);
+                if (isExpiryFilterActive) filterDescriptions.push(`到期日期 ${targetStartDate} 至 ${targetEndDate}`);
+                message = `没有找到符合条件 (${filterDescriptions.join(', ')}) 的记录`;
             }
+            // Default message '暂无记录' remains if no search/filter is active
+
             const colspan = table?.querySelector('thead tr')?.cells.length || 18;
             memberTableBody.innerHTML = `<tr><td colspan="${colspan}" class="no-results">${message}</td></tr>`;
             return;
         }
+
 
         members.forEach(member => {
             if (!member || typeof member !== 'object') {
@@ -361,7 +383,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const position = formatData(member['position']);
             const companyName = formatData(member['componyName'] || member['companyName']);
             const memberId = formatData(member['membersID']);
-            const rawId = member.ID || member.id || '';
+            const rawId = member.ID || member.id || ''; // Use the actual primary key ID
 
             const row = document.createElement("tr");
             row.innerHTML = `
@@ -382,7 +404,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <td>${position}</td>
                 <td>${formatData(member.others)}</td>
                 <td>${formatData(member.remarks)}</td>
-                <td class="action-cell"> 
+                <td class="action-cell">
                     <button class="btn btn-edit" onclick="editMember('${rawId}')" title="编辑">
                         <i class="fas fa-edit"></i>
                     </button>
@@ -433,10 +455,12 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         prevPageButton.disabled = currentPage === 1;
         nextPageButton.disabled = currentPage >= totalPages;
-        if (!document.getElementById('pageInput')) {
+        // Update or create page jump info
+        let pageInfoDiv = document.querySelector('.pagination-info');
+        if (!pageInfoDiv) {
             const pageInfoContainer = document.querySelector('.pagination-container');
             if (pageInfoContainer) {
-                const pageInfoDiv = document.createElement('div');
+                pageInfoDiv = document.createElement('div');
                 pageInfoDiv.className = 'pagination-info';
                 pageInfoDiv.innerHTML = `
                     <span class="page-indicator">${currentPage} / ${totalPages}</span>
@@ -459,12 +483,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
             }
         } else {
-            const pageIndicator = document.querySelector('.page-indicator');
+            const pageIndicator = pageInfoDiv.querySelector('.page-indicator');
             if (pageIndicator) pageIndicator.textContent = `${currentPage} / ${totalPages}`;
-            const pageInput = document.getElementById('pageInput');
+            const pageInput = pageInfoDiv.querySelector('#pageInput');
             if (pageInput) pageInput.max = totalPages;
         }
     }
+
 
     function createPaginationButton(pageNumber, isActive = false) {
         const button = document.createElement('button');
@@ -488,23 +513,25 @@ document.addEventListener("DOMContentLoaded", function () {
             if (!icon) {
                 icon = document.createElement('i');
                 icon.className = 'sort-arrow fas fa-sort';
-                if (!th.lastChild || th.lastChild.nodeType !== Node.TEXT_NODE) {
-                    th.appendChild(document.createTextNode(' '));
+                // Ensure space before icon if header text exists
+                if (th.firstChild && th.firstChild.nodeType === Node.TEXT_NODE) {
+                   th.insertBefore(document.createTextNode(' '), th.firstChild.nextSibling);
+                } else {
+                   th.appendChild(document.createTextNode(' '));
                 }
                 th.appendChild(icon);
-            } else {
-                icon.classList.remove('fa-sort-up', 'fa-sort-down');
-                if (column !== sortColumn) {
-                    icon.classList.add('fa-sort');
-                } else {
-                    icon.classList.remove('fa-sort');
-                }
             }
+
+            icon.classList.remove('fa-sort-up', 'fa-sort-down', 'fa-sort'); // Reset classes
+
             if (column === sortColumn) {
                 icon.classList.add(sortDirection === 'ASC' ? 'fa-sort-up' : 'fa-sort-down');
+            } else {
+                icon.classList.add('fa-sort'); // Default icon if not the sorted column
             }
         });
     }
+
 
     function handleSortClick(columnName) {
         if (!columnName) return;
@@ -515,9 +542,10 @@ document.addEventListener("DOMContentLoaded", function () {
             sortDirection = 'ASC';
         }
         currentPage = 1;
-        fetchMembers(searchInput?.value || '');
+        fetchMembers(); // Fetch with current search/filter state
     }
 
+    // ===== Column Resizing (No changes needed) =====
     function initializeResizableColumns() {
         const table = document.getElementById('memberTable');
         if (!table) return;
@@ -669,38 +697,31 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // ===== EVENT LISTENERS =====
     function initializeEventListeners() {
-        const debouncedSearch = debounce((searchText) => {
+        const debouncedSearch = debounce(() => {
             currentPage = 1;
-            fetchMembers(searchText.trim());
+            fetchMembers(); // fetchMembers now reads searchInput value directly
         }, 350);
 
         searchInput?.addEventListener("input", function () {
-            if (this.value.trim() !== "") {
-                // Cancel any active filter settings when a search term is entered
-                currentSearchType = 'search';
+            const query = this.value.trim();
+            if (query !== "") {
+                // General search is active, clear specific filters
+                console.log("General search activated, clearing specific filters.");
                 targetBirthdayMonth = null;
                 targetStartDate = null;
                 targetEndDate = null;
-        
-                // Reset the member filter dropdown (if used)
-                if (memberFilter) {
-                    memberFilter.value = '';
-                }
-                
-                // Remove the active (animated) class from all filter buttons
-                document.querySelectorAll('.filter-button').forEach(btn => btn.classList.remove('active'));
-        
-                // Also close the Birthday or Expiry modals if they are open
-                if (birthdayModal && birthdayModal.style.display === 'block') {
-                    closeBirthdayModal();
-                }
-                if (expiryModal && expiryModal.style.display === 'block') {
-                    closeExpiryModal();
-                }
+                if (memberFilter) memberFilter.value = '';
+
+                // Close modals if open
+                if (birthdayModal && birthdayModal.style.display === 'block') closeBirthdayModal();
+                if (expiryModal && expiryModal.style.display === 'block') closeExpiryModal();
             }
-            debouncedSearch(this.value);
+             // Always trigger debounced search on input
+            debouncedSearch();
+            // Update button states immediately for responsiveness
+            updateFilterButtonStates();
         });
-        
+
 
         thead?.addEventListener('click', function (event) {
             const header = event.target.closest('th[data-column]');
@@ -713,29 +734,31 @@ document.addEventListener("DOMContentLoaded", function () {
         nextPageButton?.addEventListener("click", () => changePage(currentPage + 1));
 
         listAllMembersButton?.addEventListener("click", function () {
+            console.log("Listing all members, resetting filters and search.");
             currentPage = 1;
-            currentSearchType = 'all';
             targetStartDate = null;
             targetEndDate = null;
             targetBirthdayMonth = null;
-            currentFilterValue = '';
             if (memberFilter) memberFilter.value = '';
             if (searchInput) searchInput.value = '';
             fetchMembers();
-            updateFilterButtonStates();
+            // No need to call updateFilterButtonStates here, fetchMembers does it
         });
 
         memberFilter?.addEventListener('change', function () {
-            currentFilterValue = this.value;
+            console.log("Applicant type filter changed to:", this.value);
+            // Clear general search when a specific filter is changed
+            if (searchInput) searchInput.value = '';
             currentPage = 1;
-            fetchMembers(searchInput?.value || '');
-            updateFilterButtonStates();
+            fetchMembers();
+            // No need to call updateFilterButtonStates here, fetchMembers does it
         });
 
         itemsPerPageSelect?.addEventListener("change", function () {
             itemsPerPage = parseInt(this.value);
             currentPage = 1;
-            fetchMembers(searchInput?.value || '');
+            fetchMembers();
+            // No need to call updateFilterButtonStates here, fetchMembers does it
         });
 
         confirmExpirySearchButton?.addEventListener('click', handleConfirmExpirySearch);
@@ -745,8 +768,11 @@ document.addEventListener("DOMContentLoaded", function () {
         closeBirthdayButton?.addEventListener('click', closeBirthdayModal);
 
         modalOverlay?.addEventListener('click', () => {
-            closeExpiryModal();
-            closeBirthdayModal();
+            // Close any open modal when clicking overlay
+            if (expiryModal?.style.display === 'block') closeExpiryModal();
+            if (birthdayModal?.style.display === 'block') closeBirthdayModal();
+            if (exportModal?.style.display === 'block') closeExportModal();
+            if (applicantTypesModal?.style.display === 'block') closeApplicantTypesModal();
         });
     }
 
@@ -793,18 +819,16 @@ document.addEventListener("DOMContentLoaded", function () {
             alert("开始日期不能晚于结束日期。");
             return;
         }
+
+        console.log(`Applying expiry filter: ${startDateStr} to ${endDateStr}`);
         targetStartDate = startDateStr;
         targetEndDate = endDateStr;
-        targetBirthdayMonth = null;
-        currentPage = 1;
-        currentSearchType = 'expired';
-        currentFilterValue = '';
-        if (memberFilter) memberFilter.value = '';
+        // Clear general search when applying specific filter
         if (searchInput) searchInput.value = '';
-        console.log(`Searching for members expiring between ${targetStartDate} and ${targetEndDate}`);
+        currentPage = 1;
         fetchMembers();
         closeExpiryModal();
-        updateFilterButtonStates();
+        // No need to call updateFilterButtonStates here, fetchMembers does it
     }
 
     function handleConfirmBirthdaySearch() {
@@ -814,20 +838,18 @@ document.addEventListener("DOMContentLoaded", function () {
             birthdayMonthInput?.focus();
             return;
         }
+        console.log(`Applying birthday filter for month: ${month}`);
         targetBirthdayMonth = parseInt(month, 10);
-        targetStartDate = null;
-        targetEndDate = null;
-        currentPage = 1;
-        currentSearchType = 'Birthday';
-        currentFilterValue = '';
-        if (memberFilter) memberFilter.value = '';
+        // Clear general search when applying specific filter
         if (searchInput) searchInput.value = '';
-        console.log(`Searching for members with birthday in month ${targetBirthdayMonth}`);
+        currentPage = 1;
         fetchMembers();
         closeBirthdayModal();
-        updateFilterButtonStates();
+        // No need to call updateFilterButtonStates here, fetchMembers does it
     }
 
+
+    // ===== Action Button Handlers (No changes needed) =====
     window.editMember = function (id) {
         if (!id) { console.error("Edit Error: No ID"); alert("无法编辑：ID未提供"); return; }
         console.log(`Redirecting to edit member with ID: ${id}`);
@@ -862,7 +884,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
                 alert(message);
                 if (success) {
-                    fetchMembers(searchInput?.value || '');
+                    fetchMembers(); // Refresh list after successful deletion
                 }
             } catch (error) {
                 console.error("Error deleting member:", error);
@@ -877,12 +899,13 @@ document.addEventListener("DOMContentLoaded", function () {
         window.location.href = `check_details.html?id=${id}`;
     };
 
+    // ===== Pagination Handlers (No changes needed) =====
     window.changePage = function (page) {
         const targetPage = parseInt(page, 10);
         if (!isNaN(targetPage) && targetPage >= 1 && targetPage <= totalPages && targetPage !== currentPage) {
             console.log(`Changing page from ${currentPage} to ${targetPage}`);
             currentPage = targetPage;
-            fetchMembers(searchInput?.value || '');
+            fetchMembers();
         } else {
             console.log(`Page change to ${page} ignored. Current: ${currentPage}, Total: ${totalPages}`);
         }
@@ -902,6 +925,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
+    // ===== Modal Handlers (Minor adjustments for overlay logic) =====
     window.openExpiryModal = function () {
         if (expiryModal && modalOverlay) {
             const now = new Date();
@@ -924,7 +948,8 @@ document.addEventListener("DOMContentLoaded", function () {
     window.closeExpiryModal = function () {
         if (expiryModal && modalOverlay) {
             expiryModal.style.display = 'none';
-            if (!birthdayModal || birthdayModal.style.display !== 'block') {
+            // Only hide overlay if NO OTHER modal is open
+            if (document.querySelectorAll('.modal[style*="display: block"]').length === 0) {
                 modalOverlay.style.display = 'none';
             }
         }
@@ -946,36 +971,42 @@ document.addEventListener("DOMContentLoaded", function () {
     window.closeBirthdayModal = function () {
         if (birthdayModal && modalOverlay) {
             birthdayModal.style.display = 'none';
-            if (!expiryModal || expiryModal.style.display !== 'block') {
+            // Only hide overlay if NO OTHER modal is open
+            if (document.querySelectorAll('.modal[style*="display: block"]').length === 0) {
                 modalOverlay.style.display = 'none';
             }
         }
     };
 
+    // Make reset function globally accessible
     window.resetColumnWidths = resetColumnWidths;
 
-    // ===== INITIALIZE PAGE =====
-    initializePage();
-
-    // ===== EXPORT FUNCTIONS =====
+    // ===== EXPORT FUNCTIONS (No changes needed) =====
     const exportModal = document.getElementById('exportModal');
     const exportColumnsContainer = document.querySelector('.export-columns-container');
     const confirmExportButton = document.getElementById('confirmExport');
+    const applicantTypesModal = document.getElementById('applicantTypesModal'); // Define applicantTypesModal
 
-    function openExportModal() {
-        if (!exportModal || !exportColumnsContainer) return;
-        exportColumnsContainer.innerHTML = '';
+    window.openExportModal = function() { // Make globally accessible
+        if (!exportModal || !exportColumnsContainer || !modalOverlay) return;
+        exportColumnsContainer.innerHTML = ''; // Clear previous content
+
+        // Add Select/Deselect All buttons
         const selectActions = document.createElement('div');
         selectActions.className = 'select-actions';
         selectActions.innerHTML = `
             <button type="button" class="btn btn-secondary" id="selectAllColumns">全选</button>
             <button type="button" class="btn btn-secondary" id="deselectAllColumns">取消全选</button>
         `;
-        exportColumnsContainer.appendChild(selectActions);
+        // Prepend actions to the container
+        exportColumnsContainer.insertBefore(selectActions, exportColumnsContainer.firstChild);
+
+
         const columnHeaders = Array.from(document.querySelectorAll('#memberTable thead th[data-column]'));
         columnHeaders.forEach(header => {
             const columnName = header.dataset.column;
-            const displayName = header.textContent.trim().replace(/[▲▼]/, '');
+            // Get text content and remove sort arrows (▲▼) if present
+            const displayName = header.textContent.trim().replace(/[▲▼\s]*$/, '');
             const columnItem = document.createElement('div');
             columnItem.className = 'export-column-item';
             columnItem.innerHTML = `
@@ -984,6 +1015,8 @@ document.addEventListener("DOMContentLoaded", function () {
             `;
             exportColumnsContainer.appendChild(columnItem);
         });
+
+        // Add event listeners for select/deselect buttons
         document.getElementById('selectAllColumns')?.addEventListener('click', () => {
             document.querySelectorAll('input[name="export-columns"]').forEach(checkbox => {
                 checkbox.checked = true;
@@ -994,15 +1027,20 @@ document.addEventListener("DOMContentLoaded", function () {
                 checkbox.checked = false;
             });
         });
+
         exportModal.style.display = 'block';
         modalOverlay.style.display = 'block';
     }
 
-    function closeExportModal() {
-        if (!exportModal) return;
+    window.closeExportModal = function() { // Make globally accessible
+        if (!exportModal || !modalOverlay) return;
         exportModal.style.display = 'none';
-        modalOverlay.style.display = 'none';
+        // Only hide overlay if NO OTHER modal is open
+        if (document.querySelectorAll('.modal[style*="display: block"]').length === 0) {
+            modalOverlay.style.display = 'none';
+        }
     }
+
 
     // Helper function to split emails with multiple addresses
     function splitEmails(emailStr) {
@@ -1024,16 +1062,23 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         // 获取选择的导出格式
-        const exportFormat = document.querySelector('input[name="export-format"]:checked').value;
+        const exportFormatElement = document.querySelector('input[name="export-format"]:checked');
+        if (!exportFormatElement) {
+             alert('请选择导出格式 (TXT 或 CSV)');
+             return;
+        }
+        const exportFormat = exportFormatElement.value;
         const delimiter = exportFormat === 'csv' ? ',' : ';';
 
         let exportContent = '';
         const headers = selectedColumns.map(column => {
             const headerElement = document.querySelector(`#memberTable thead th[data-column="${column}"]`);
-            const headerText = headerElement ? headerElement.textContent.trim().replace(/[▲▼]/, '') : column;
-            // 如果是CSV格式，需要处理包含逗号的字段
+            // Get text content and remove sort arrows (▲▼) if present
+            const headerText = headerElement ? headerElement.textContent.trim().replace(/[▲▼\s]*$/, '') : column;
+            // If CSV format, handle quotes and commas within the header itself
             return exportFormat === 'csv' ? `"${headerText.replace(/"/g, '""')}"` : headerText;
         });
+
 
         exportContent += headers.join(delimiter) + '\n';
 
@@ -1049,18 +1094,19 @@ document.addEventListener("DOMContentLoaded", function () {
             selectedColumns.forEach((column, index) => {
                 if (column === 'email' && hasEmailColumn) {
                     // Skip email column here, we'll handle it separately
-                    rowDataTemplate.push('');
+                    rowDataTemplate.push(''); // Placeholder
                     return;
                 }
 
                 let value = '';
 
+                // Use original unformatted data where appropriate for export
                 if (column === 'phone_number') {
-                    value = member[column] || ''; // Don't format phone numbers for export
+                    value = member[column] || ''; // Export raw phone number
                 } else if (column === 'IC' || column === 'oldIC') {
-                    value = formatIC(member[column] || '');
+                     value = member[column] || ''; // Export raw IC
                 } else if (column === 'expired_date') {
-                    value = formatDate(member[column] || member['expiredDate'] || '');
+                    value = formatDate(member[column] || member['expiredDate'] || ''); // Keep formatted date
                 } else if (column === 'Designation_of_Applicant') {
                     value = member[column] || member['designation_of_applicant'] || '';
                 } else if (column === 'place_of_birth') {
@@ -1071,12 +1117,12 @@ document.addEventListener("DOMContentLoaded", function () {
                     value = member[column] || '';
                 }
 
-                // 处理分隔符和引号
+                // Escape for CSV or replace delimiter for TXT
                 if (exportFormat === 'csv') {
-                    // CSV格式：将字段用双引号包围，内部的双引号用两个双引号表示
+                    // CSV: Enclose in quotes, double internal quotes
                     rowDataTemplate[index] = `"${String(value).replace(/"/g, '""')}"`;
                 } else {
-                    // TXT格式：将分号替换为逗号
+                    // TXT: Replace semicolon with comma (or another safe char)
                     rowDataTemplate[index] = String(value).replace(/;/g, ',');
                 }
             });
@@ -1095,7 +1141,7 @@ document.addEventListener("DOMContentLoaded", function () {
             emails.forEach(email => {
                 const rowData = [...rowDataTemplate]; // Clone the template
 
-                // Format the email value
+                // Format the email value for the current row
                 if (exportFormat === 'csv') {
                     rowData[emailColumnIndex] = `"${email.replace(/"/g, '""')}"`;
                 } else {
@@ -1106,12 +1152,12 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         });
 
-        // 设置正确的MIME类型
+        // Set correct MIME type
         const mimeType = exportFormat === 'csv'
             ? 'text/csv;charset=utf-8;'
             : 'text/plain;charset=utf-8';
 
-        // 为CSV添加BOM标记，以便Excel正确识别UTF-8编码
+        // Add BOM for CSV for Excel compatibility
         const BOM = exportFormat === 'csv' ? new Uint8Array([0xEF, 0xBB, 0xBF]) : '';
         const blob = BOM
             ? new Blob([BOM, exportContent], { type: mimeType })
@@ -1121,19 +1167,26 @@ document.addEventListener("DOMContentLoaded", function () {
         const a = document.createElement('a');
         a.href = url;
 
-        // 设置文件名
+        // Set filename based on filters
         let filename = '塾员数据';
-        if (currentSearchType === 'Birthday' && targetBirthdayMonth) {
-            filename = `${targetBirthdayMonth}月生日塾员`;
-        } else if (currentSearchType === 'expired' && targetStartDate && targetEndDate) {
-            filename = `${targetStartDate}至${targetEndDate}到期塾员`;
-        } else if (currentFilterValue) {
-            filename = `${currentFilterValue}塾员`;
+        let filtersApplied = [];
+        if (memberFilter && memberFilter.value) filtersApplied.push(memberFilter.value);
+        if (targetBirthdayMonth) filtersApplied.push(`${targetBirthdayMonth}月生日`);
+        if (targetStartDate && targetEndDate) filtersApplied.push(`${targetStartDate}至${targetEndDate}到期`);
+
+        if (filtersApplied.length > 0) {
+            filename = filtersApplied.join('_');
+        } else if (searchInput?.value.trim()) {
+             filename = `搜索_${searchInput.value.trim()}`;
         }
 
-        // 设置文件扩展名
+
+        // Set file extension
         const extension = exportFormat === 'csv' ? '.csv' : '.txt';
-        a.download = `${filename}_${new Date().toISOString().slice(0, 10)}${extension}`;
+        // Sanitize filename slightly
+        const safeFilename = filename.replace(/[^a-z0-9_\-月日至\u4e00-\u9fa5]/gi, '_').substring(0, 50);
+        a.download = `${safeFilename}_${new Date().toISOString().slice(0, 10)}${extension}`;
+
 
         document.body.appendChild(a);
         a.click();
@@ -1144,23 +1197,33 @@ document.addEventListener("DOMContentLoaded", function () {
 
     confirmExportButton?.addEventListener('click', exportData);
 
+    // Global click listener for closing modals via overlay
     window.addEventListener('click', function (event) {
         if (event.target === modalOverlay) {
-            if (birthdayModal && birthdayModal.style.display === 'block') {
-                closeBirthdayModal();
-            } else if (expiryModal && expiryModal.style.display === 'block') {
-                closeExpiryModal();
-            } else if (exportModal && exportModal.style.display === 'block') {
-                closeExportModal();
-            }
+             // Close any modal that is currently displayed
+             document.querySelectorAll('.modal').forEach(modal => {
+                 if (modal.style.display === 'block') {
+                     // Call the specific close function if available, otherwise just hide
+                     const closeFnName = `close${modal.id.charAt(0).toUpperCase() + modal.id.slice(1)}`;
+                     if (typeof window[closeFnName] === 'function') {
+                         window[closeFnName]();
+                     } else {
+                         modal.style.display = 'none';
+                     }
+                 }
+             });
+             // Ensure overlay is hidden if all modals are closed
+             if (document.querySelectorAll('.modal[style*="display: block"]').length === 0) {
+                modalOverlay.style.display = 'none';
+             }
         }
     });
 
+
     // ===============================
-    // Applicant Types Management Functions
+    // Applicant Types Management Functions (No changes needed)
     // ===============================
 
-    // Opens the Applicant Types Management Modal and loads the data.
     window.openApplicantTypesModal = function () {
         const modal = document.getElementById('applicantTypesModal');
         const modalOverlay = document.getElementById('modalOverlay');
@@ -1173,7 +1236,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
-    // Closes the Applicant Types Management Modal.
     window.closeApplicantTypesModal = function () {
         const modal = document.getElementById('applicantTypesModal');
         const modalOverlay = document.getElementById('modalOverlay');
@@ -1184,9 +1246,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
-    // Loads the applicant types from the API and displays them in the modal.
     async function loadApplicantTypes() {
         const container = document.getElementById('applicantTypesContainer');
+        if (!container) return;
         container.innerHTML = '<p>加载中……</p>';
         try {
             const response = await fetch(`${API_BASE_URL}?table=applicants_types`);
@@ -1197,7 +1259,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 container.innerHTML = '<p>没有找到任何申请人类别。</p>';
                 return;
             }
-            container.innerHTML = '';
+            container.innerHTML = ''; // Clear loading message
             types.forEach(item => {
                 // Adjust the field names as needed based on your API response.
                 const typeId = item.ID || item.id || '';
@@ -1217,17 +1279,15 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Handles editing an applicant type.
-    // Prompts the user for a new name and requires entering "CONFIRM" to proceed.
     window.editApplicantType = async function (typeId, encodedTypeName) {
         const currentName = decodeURIComponent(encodedTypeName);
         const newName = prompt("请输入新的类别名称，当前名称为：" + currentName, currentName);
-        if (newName === null || newName.trim() === "") {
-            alert("操作取消或输入无效。");
+        if (newName === null || newName.trim() === "" || newName.trim() === currentName) {
+            alert("操作取消或名称未更改。");
             return;
         }
-        const confirmInput = prompt("注意：编辑操作将级联更新相关数据。请输入 'COMFIRM' 以确认修改。");
-        if (confirmInput !== "COMFIRM") {
+        const confirmInput = prompt(`注意：编辑操作将级联更新相关数据。\n将 "${currentName}" 修改为 "${newName}"？\n请输入 'CONFIRM' 以确认修改。`);
+        if (confirmInput !== "CONFIRM") {
             alert("确认失败，修改取消。");
             return;
         }
@@ -1235,51 +1295,69 @@ document.addEventListener("DOMContentLoaded", function () {
             const updateUrl = `${API_BASE_URL}?table=applicants_types&ID=${encodeURIComponent(typeId)}`;
             // Assume the update uses a PUT request with JSON data.
             const response = await fetch(updateUrl, {
-                method: 'PUT',
+                method: 'PUT', // Or POST/PATCH depending on your API
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ designation_of_applicant: newName })
+                body: JSON.stringify({ designation_of_applicant: newName.trim() }) // Send new name
             });
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error("更新失败: " + errorText);
+
+            // Check response status and content type
+            let responseData = {};
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.includes("application/json")) {
+                responseData = await response.json();
+            } else {
+                responseData.message = await response.text(); // Get text if not JSON
             }
-            alert("类别更新成功！");
-            loadApplicantTypes();
-            // Refresh the memberFilter options, if needed.
-            fetchApplicantType();
+
+            if (!response.ok) {
+                throw new Error(responseData.message || `更新失败 (Status: ${response.status})`);
+            }
+
+            alert(responseData.message || "类别更新成功！");
+            loadApplicantTypes(); // Refresh the list in the modal
+            fetchApplicantType(); // Refresh the main filter dropdown
         } catch (error) {
+            console.error("Error updating applicant type:", error);
             alert("更新类别出错: " + error.message);
         }
     };
 
-    // Handles deleting an applicant type.
-    // Requires the user to type "CONFIRM" before deletion.
     window.deleteApplicantType = async function (typeId, encodedTypeName) {
         const typeName = decodeURIComponent(encodedTypeName);
-        const confirmInput = prompt("删除操作将级联删除相关数据。请输入 'COMFIRM' 确认删除类别：" + typeName);
-        if (confirmInput !== "COMFIRM") {
+        const confirmInput = prompt(`删除操作将级联删除相关数据。\n确定要删除类别 "${typeName}" 吗？\n请输入 'CONFIRM' 确认删除。`);
+        if (confirmInput !== "CONFIRM") {
             alert("确认失败，删除取消。");
             return;
         }
         try {
             const deleteUrl = `${API_BASE_URL}?table=applicants_types&ID=${encodeURIComponent(typeId)}`;
             const response = await fetch(deleteUrl, { method: 'DELETE' });
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error("删除失败: " + errorText);
+
+             // Check response status and content type
+            let responseData = {};
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.includes("application/json")) {
+                responseData = await response.json();
+            } else {
+                responseData.message = await response.text(); // Get text if not JSON
             }
-            alert("类别删除成功！");
-            loadApplicantTypes();
-            // Refresh the memberFilter options, if needed.
-            fetchApplicantType();
+
+            if (!response.ok) {
+                 throw new Error(responseData.message || `删除失败 (Status: ${response.status})`);
+            }
+
+            alert(responseData.message || "类别删除成功！");
+            loadApplicantTypes(); // Refresh the list in the modal
+            fetchApplicantType(); // Refresh the main filter dropdown
         } catch (error) {
+             console.error("Error deleting applicant type:", error);
             alert("删除类别出错: " + error.message);
         }
     };
 
+    // ===== INITIALIZE PAGE =====
+    initializePage();
 
-    window.openExportModal = openExportModal;
-    window.closeExportModal = closeExportModal;
-});
+}); // End DOMContentLoaded
