@@ -227,128 +227,142 @@ tr:hover {
     background-color: #c82333;
 }
 
-/* Event details styling */
+/* Enhanced Event Details Styling */
 .event-details {
     margin-bottom: 30px;
     background-color: #f9f9f9;
     padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    width:910px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    width: 910px;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0,0,0,0.1);
+}
+
+.event-details:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
 }
 
 .event-details h2 {
     margin-top: 0;
-    color: #800000;
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 10px;
-    margin-bottom: 15px;
-}
-
-.event-info {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+    color: rgb(0, 0, 0);
+    border-bottom: 2px solid rgba(255,255,255,0.2);
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+    font-size: 24px;
+    transition: color 0.3s ease;
 }
 
 .info-row {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
+    padding: 10px 0;
+    transition: all 0.3s ease;
+}
+
+.info-row:hover {
+    background-color: rgba(255,255,255,0.05);
+    border-radius: 4px;
 }
 
 .info-item {
     flex: 1;
     min-width: 200px;
+    padding: 10px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
 }
 
-.full-width {
-    width: 100%;
+.info-item:hover {
+    background-color: rgba(255,255,255,0.1);
 }
 
 .label {
     font-weight: bold;
-    color: #555;
+    color: #ffffff;
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .value {
-    color: #333;
+    color: #ffffff;
+    font-size: 16px;
+    padding: 5px 0;
+    word-break: break-word;
 }
 
 .description {
     white-space: pre-line;
-    line-height: 1.5;
-    margin-top: 5px;
-    padding: 10px;
-    background-color: #fff;
-    border-radius: 3px;
-    border: 1px solid #eee;
+    line-height: 1.6;
+    margin-top: 10px;
+    padding: 15px;
+    background-color: rgba(255,255,255,0.9);
+    border-radius: 6px;
+    border: 1px solid rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
 }
 
-/* Status styling */
-.status-not\\ started {
-    color: #0066cc;
-    font-weight: bold;
+.description:hover {
+    background-color: #ffffff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-.status-started {
-    color: #009900;
-    font-weight: bold;
+/* Enhanced Button Styles */
+.btn {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
 }
 
-.status-cancelled {
-    color: #cc0000;
-    font-weight: bold;
-}
-
-.status-ended {
-    color: #666666;
-    font-weight: bold;
-}
-
-/* Heading styling */
-h1 {
-    margin-bottom: 20px;
-    color: #800000;
-}
-
-/* Loading spinner */
-.loading-spinner {
-    position: fixed;
+.btn:after {
+    content: '';
+    position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: rgba(255, 255, 255, 0.8);
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
+    width: 5px;
+    height: 5px;
+    background: rgba(255,255,255,0.5);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%);
+    transform-origin: 50% 50%;
 }
 
-/* Alert styling */
-.alert {
-    padding: 15px;
-    margin-bottom: 20px;
-    border: 1px solid transparent;
-    border-radius: 4px;
+.btn:hover:after {
+    animation: ripple 1s ease-out;
 }
 
-.alert-danger {
-    color: #721c24;
-    background-color: #f8d7da;
-    border-color: #f5c6cb;
+@keyframes ripple {
+    0% {
+        transform: scale(0, 0);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(40, 40);
+        opacity: 0;
+    }
 }
 
-/* Participants table styling */
+/* Enhanced Table Styles */
 .participants-table {
-    width: 100%;
-    border-spacing: 0;
-    margin-top: 20px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    border-radius: 8px;
-    overflow: hidden;
+    transition: all 0.3s ease;
+    transform-origin: top;
+}
+
+.participants-table tr {
+    transition: all 0.3s ease;
+}
+
+.participants-table tr:hover {
+    transform: scale(1.01);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    z-index: 1;
+    position: relative;
 }
 
 .participants-table th, 
@@ -499,7 +513,7 @@ h1 {
 
 .event-details h2 {
     margin-top: 0;
-    color: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
     border-bottom: 1px solid #ddd;
     padding-bottom: 10px;
     margin-bottom: 15px;
@@ -627,17 +641,86 @@ h1 {
     border: none;
 }
 
-/* Modal styling */
-#memberSearchModal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.4);
+
+#memberSearchModal .modal-content {
+    max-height: 90vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
 }
+
+#modalResultsContainer {
+    overflow-y: auto;
+    max-height: 50vh;
+}
+这些变化将确保分页可见且样式适当，即使在滚动模式时也可以访问它。
+
+/* Add to your CSS */
+#modalPagination {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.pagination-controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.pagination-btn {
+    padding: 5px 10px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.pagination-btn.active {
+    background-color: #4CAF50;
+    color: white;
+    border-color: #4CAF50;
+}
+
+.pagination-btn:hover:not(:disabled):not(.active) {
+    background-color: #f1f1f1;
+}
+
+.pagination-info {
+    font-size: 14px;
+    color: #666;
+    margin-top: 10px;
+}
+
+.jump-page-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.jump-page-input {
+    width: 50px;
+    padding: 3px 5px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+
+.jump-btn {
+    padding: 3px 8px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
 
 .modal-content {
     background-color: #fefefe;

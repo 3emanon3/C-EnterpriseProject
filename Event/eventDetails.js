@@ -28,14 +28,54 @@ document.addEventListener('DOMContentLoaded', function() {
     const modalPagination = document.getElementById('modalPagination');
     const addMemberBtn = document.getElementById('addMemberBtn');
     
-    // Get event ID from URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const eventId = urlParams.get('id');
+
+     // Store selected members
+     const selectedMembers = new Map();
     
-    // Store return navigation parameters
-    let returnPage = urlParams.get('returnPage') || '';
-    let returnQuery = urlParams.get('returnQuery') || '';
-    let returnStatus = urlParams.get('returnStatus') || '';
+     // Create Multi-select control panel
+     const modalControlPanel = document.createElement('div');
+     modalControlPanel.className = 'modal-control-panel';
+     modalControlPanel.innerHTML = `
+         <div class="selected-count">已选择: <span id="selectedMemberCount">0</span> 位会员</div>
+         <div class="control-buttons">
+             <button id="selectAllBtn" class="btn">全选</button>
+             <button id="deselectAllBtn" class="btn">取消全选</button>
+             <button id="addSelectedMembersBtn" class="btn btn-success" disabled>添加所选会员</button>
+         </div>
+     `;
+     
+     // Insert control panel after search container
+     const searchContainer = document.querySelector('.search-container');
+     if (searchContainer) {
+         searchContainer.parentNode.insertBefore(modalControlPanel, searchContainer.nextSibling);
+     }
+     
+     // Add event listeners for control panel buttons
+     const selectAllBtn = document.getElementById('selectAllBtn');
+     const deselectAllBtn = document.getElementById('deselectAllBtn');
+     const addSelectedMembersBtn = document.getElementById('addSelectedMembersBtn');
+     const selectedMemberCount = document.getElementById('selectedMemberCount');
+     
+     if (selectAllBtn) {
+         selectAllBtn.addEventListener('click', selectAllMembers);
+     }
+     
+     if (deselectAllBtn) {
+         deselectAllBtn.addEventListener('click', deselectAllMembers);
+     }
+     
+     if (addSelectedMembersBtn) {
+         addSelectedMembersBtn.addEventListener('click', addSelectedMembers);
+     }
+     
+     // Get event ID from URL
+     const urlParams = new URLSearchParams(window.location.search);
+     const eventId = urlParams.get('id');
+     
+     // Store return navigation parameters
+     let returnPage = urlParams.get('returnPage') || '';
+     let returnQuery = urlParams.get('returnQuery') || '';
+     let returnStatus = urlParams.get('returnStatus') || '';
 
     // 模态框事件监听
     if (modalClose) {
@@ -77,6 +117,239 @@ document.addEventListener('DOMContentLoaded', function() {
         addMemberBtn.addEventListener('click', function() {
             openMemberSearchModal();
         });
+    }
+    
+    // 打开会员搜索模态框
+    function openMemberSearchModal() {
+        // Clear previous search results and selections
+        modalResultsBody.innerHTML = '';
+        modalSearchInput.value = '';
+        modalNoResults.style.display = 'none';
+        selectedMembers.clear();
+        updateSelectedCount();
+        
+        // Show the modal
+        memberSearchModal.style.display = 'block';
+        modalSearchInput.focus();
+        
+        // Perform initial search to show all members
+        performModalSearch(1);
+    }
+    
+    // 全选会员
+    function selectAllMembers() {
+        const checkboxes = document.querySelectorAll('#modalResultsBody input[type="checkbox"]');
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = true;
+            const memberId = checkbox.getAttribute('data-id');
+            const memberName = checkbox.getAttribute('data-name');
+            selectedMembers.set(memberId, memberName);
+        });
+        updateSelectedCount();
+    }
+    
+    // 取消全选会员
+    function deselectAllMembers() {
+        const checkboxes = document.querySelectorAll('#modalResultsBody input[type="checkbox"]');
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = false;
+        });
+        selectedMembers.clear();
+        updateSelectedCount();
+    }
+    
+    // 添加选中的会员
+    async function addSelectedMembers() {
+        if (selectedMembers.size === 0) {
+            alert('请至少选择一位会员');
+            return;
+        }
+        
+        const confirmAdd = confirm(`确定要将选中的 ${selectedMembers.size} 位会员添加到此活动吗？`);
+        if (!confirmAdd) return;
+        
+        showLoading();
+        
+        try {
+            // Get event ID from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const eventId = urlParams.get('id');
+            
+            if (!eventId) {
+                throw new Error('无法获取活动ID');
+            }
+            
+            let successCount = 0;
+            let errorCount = 0;
+            
+            // For each selected member, create a participant record
+            for (const [memberId, memberName] of selectedMembers.entries()) {
+                try {
+                    // Check if already added
+                    const checkResponse = await fetch(`${API_BASE_URL}?table=vparticipants&search=true&eventID=${eventId}&membersID=${memberId}`);
+                    const checkData = await checkResponse.json();
+                    
+                    if (checkData.data && checkData.data.length > 0) {
+                        console.log(`会员 ${memberName} (ID: ${memberId}) 已经添加到此活动中`);
+                        errorCount++;
+                        continue;
+                    }
+                    
+                    // Get next ID
+                    const maxIdResponse = await fetch(`${API_BASE_URL}?table=participants&action=maxid`);
+                    const maxIdData = await maxIdResponse.json();
+                    
+                    let nextId;
+                    if (maxIdData.maxId !== undefined) {
+                        nextId = parseInt(maxIdData.maxId) + 1;
+                    } else if (maxIdData.data && maxIdData.data.maxId !== undefined) {
+                        nextId = parseInt(maxIdData.data.maxId) + 1;
+                    } else {
+                        const allParticipantsResponse = await fetch(`${API_BASE_URL}?table=participants&search=true`);
+                        const allParticipants = await allParticipantsResponse.json();
+                        
+                        if (allParticipants.data && allParticipants.data.length > 0) {
+                            const highestId = Math.max(...allParticipants.data.map(p => parseInt(p.ID) || 0));
+                            nextId = highestId + 1;
+                        } else {
+                            nextId = 1;
+                        }
+                    }
+                    
+                    // Create participant
+                    const participantData = {
+                        table: 'participants',
+                        ID: nextId, 
+                        eventID: eventId,
+                        memberID: memberId,
+                        joined_at: new Date().toISOString().slice(0, 19).replace('T', ' ')
+                    };
+                    
+                    const response = await fetch(`${API_BASE_URL}?table=participants`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(participantData)
+                    });
+                    
+                    if (response.ok) {
+                        successCount++;
+                    } else {
+                        errorCount++;
+                    }
+                } catch (error) {
+                    console.error(`添加会员 ${memberName} 时出错:`, error);
+                    errorCount++;
+                }
+            }
+            
+            // Close the modal and refresh the participants list
+            memberSearchModal.style.display = 'none';
+            fetchParticipants(eventId);
+            
+            // Show success/error message
+            let message = '';
+            if (successCount > 0) {
+                message += `成功添加 ${successCount} 位会员`;
+            }
+            if (errorCount > 0) {
+                message += message ? `, ${errorCount} 位会员添加失败` : `${errorCount} 位会员添加失败`;
+            }
+            
+            showError(message);
+            
+        } catch (error) {
+            console.error('Error adding members:', error);
+            showError(`添加会员失败: ${error.message}`);
+        } finally {
+            hideLoading();
+        }
+    }
+    
+    // 更新已选择会员数量
+    function updateSelectedCount() {
+        if (selectedMemberCount) {
+            selectedMemberCount.textContent = selectedMembers.size;
+        }
+        
+        // Enable/disable the add button based on selection
+        if (addSelectedMembersBtn) {
+            addSelectedMembersBtn.disabled = selectedMembers.size === 0;
+        }
+    }
+    
+ 
+    
+    // 更新模态框分页
+    function updateModalPagination(pagination, currentPage) {
+        modalPagination.innerHTML = '';
+        
+        if (!pagination || !pagination.total || !pagination.per_page || pagination.total <= pagination.per_page) {
+            return;
+        }
+
+        const totalPages = Math.ceil(parseInt(pagination.total) / parseInt(pagination.per_page));
+
+        if (isNaN(totalPages) || totalPages <= 1) {
+            return;
+        }
+
+        // Previous page button
+    const paginationContainer = document.createElement('div');
+    paginationContainer.className = 'pagination-controls';
+    
+    // Previous page button
+    const prevButton = document.createElement('button');
+    prevButton.innerHTML = '&laquo; 上一页';
+    prevButton.className = 'pagination-btn';
+    prevButton.disabled = currentPage <= 1;
+    if (!prevButton.disabled) {
+        prevButton.addEventListener('click', () => performModalSearch(currentPage - 1));
+    }
+    paginationContainer.appendChild(prevButton);
+        
+        // Page numbers
+        const startPage = Math.max(1, currentPage - 2);
+        const endPage = Math.min(totalPages, startPage + 4);
+        
+        for (let i = startPage; i <= endPage; i++) {
+            const pageButton = document.createElement('button');
+            pageButton.textContent = i;
+            pageButton.classList.toggle('active', i === currentPage);
+            pageButton.className = 'pagination-btn' + (i === currentPage ? ' active' : '');
+
+            if (i !== currentPage) {
+                pageButton.addEventListener('click', () => performModalSearch(i));
+            }
+            
+            paginationContainer.appendChild(pageButton);
+        }
+        
+        // Next page button
+        const nextButton = document.createElement('button');
+    nextButton.innerHTML = '下一页 &raquo;';
+    nextButton.className = 'pagination-btn';
+    nextButton.disabled = currentPage >= totalPages;
+    if (!nextButton.disabled) {
+        nextButton.addEventListener('click', () => performModalSearch(currentPage + 1));
+    }
+    paginationContainer.appendChild(nextButton);
+
+    const pageInfo = document.createElement('div');
+    pageInfo.className = 'pagination-info';
+    pageInfo.textContent = `第 ${currentPage} 页，共 ${totalPages} 页`;
+    paginationContainer.appendChild(pageInfo);
+    
+    modalPagination.appendChild(paginationContainer);
+}
+    // 防抖函数
+    function debounce(func, wait) {
+        let timeout;
+        return function(...args) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(this, args), wait);
+        };
     }
     
     function updateReturnButtonUrl() {
@@ -474,29 +747,29 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     // 打开会员搜索模态框
     function openMemberSearchModal() {
+        modalResultsBody.innerHTML = '';
+        modalSearchInput.value = '';
+        modalNoResults.style.display = 'none';
+        selectedMembers.clear();
+        updateSelectedCount();
+        
+        // Show the modal
         memberSearchModal.style.display = 'block';
         modalSearchInput.focus();
-        modalSearchInput.value = '';
-        modalResultsBody.innerHTML = '';
-        modalNoResults.style.display = 'none';
-        modalPagination.innerHTML = '';
         
-        // 初始加载会员列表
+        // Perform initial search to show all members
         performModalSearch(1);
     }
     
     // 执行会员搜索
     async function performModalSearch(page = 1) {
+        // 隐藏加载指示器
         const searchTerm = modalSearchInput.value.trim();
         const limit = 10; // 每页显示数量
-        
-        // 清空之前的结果
-        modalResultsBody.innerHTML = '';
-        modalNoResults.style.display = 'none';
-        modalPagination.innerHTML = '';
-        
         // 显示加载指示器
         modalLoadingIndicator.style.display = 'block';
+        // 隐藏无结果提示
+        modalNoResults.style.display = 'none';
         
         try {
             // 构建API请求URL
@@ -516,25 +789,36 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.json();
             
             // 隐藏加载指示器
-            modalLoadingIndicator.style.display = 'none';
+            modalResultsBody.innerHTML = '';
             
             // 处理搜索结果
             if (data.data && data.data.length > 0) {
                 // 显示会员列表
                 displayModalResults(data.data);
                 
+                // 检查是否需要显示分页
+                const paginationData = data.pagination || {
+                    total: data.total || data.data.length,
+                    per_page: limit,
+                    current_page: page
+                };
+
                 // 更新分页
-                updateModalPagination(data.pagination, page);
+                updateModalPagination(paginationData , page);
             } else {
                 // 显示无结果消息
                 modalNoResults.style.display = 'block';
+                modalPagination.innerHTML = '';
             }
         } catch (error) {
-            console.error('会员搜索错误:', error);
-            modalLoadingIndicator.style.display = 'none';
-            modalNoResults.textContent = `搜索出错: ${error.message}`;
-            modalNoResults.style.display = 'block';
+            console.error('Search error:', error);
+            modalResultsBody.innerHTML = `<tr><td colspan="5" class="error">搜索出错: ${error.message}</td></tr>`;
+            modalPagination.innerHTML = '';
+        }finally {
+            // 隐藏加载指示器
+            modalLoadingIndicator.style.display = 'none'; 
         }
+
     }
     
     // 显示模态框搜索结果
@@ -542,184 +826,48 @@ document.addEventListener('DOMContentLoaded', function() {
         modalResultsBody.innerHTML = '';
         
         members.forEach(member => {
-            const fullMemberId = member.membersID || '';
-            const actualMemberId = member.ID || '';
+            const memberId = member.ID || '';
+            const displayId = member.membersID || memberId;
+            const memberName = member.Name || member.CName || 'Unknown';
+            const isSelected = selectedMembers.has(memberId);
 
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${escapeHTML(fullMemberId || '')}</td>
+                <td>${escapeHTML(displayId || '')}</td>
                 <td>${escapeHTML(member.Name || '')}</td>
                 <td>${escapeHTML(member.CName || '')}</td>
                 <td>${escapeHTML(member.phone_number || '')}</td>
                 <td>
-                    <button class="select-btn" 
-                    data-member-display-id="${fullMemberId}" 
-                    data-member-actual-id="${actualMemberId}" 
-                    data-member-name="${escapeHTML(member.Name || '')}">
-                        选择
-                    </button>
+                    <label class="checkbox-container">
+                    <input type="checkbox" 
+                           data-id="${memberId}" 
+                           data-name="${escapeHTML(memberName)}" 
+                           ${isSelected ? 'checked' : ''}>
+                    <span class="checkmark"></span>
+                </label>
                 </td>
-            `;
-            
-            // 添加选择按钮点击事件
-            const selectBtn = row.querySelector('.select-btn');
-            selectBtn.addEventListener('click', () => selectMember({
-                displayId: fullMemberId,
-                actualId: actualMemberId,
-                Name: member.Name,
-                CName: member.CName
-            }));
+            `; 
             
             modalResultsBody.appendChild(row);
         });
-    }
-    
-    // 更新模态框分页
-    function updateModalPagination(pagination, currentPage) {
-        if (!pagination) return;
-        
-        modalPagination.innerHTML = '';
-        
-        const totalPages = Math.ceil(pagination.total / pagination.per_page);
-        
-        // 上一页按钮
-        if (currentPage > 1) {
-            const prevButton = document.createElement('button');
-            prevButton.textContent = '上一页';
-            prevButton.addEventListener('click', () => {
-                performModalSearch(currentPage - 1);
+        const checkboxes = document.querySelectorAll('#modalResultsBody input[type="checkbox"]');
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const memberId = this.getAttribute('data-id');
+                const memberName = this.getAttribute('data-name');
+                
+                if (this.checked) {
+                    selectedMembers.set(memberId, memberName);
+                } else {
+                    selectedMembers.delete(memberId);
+                }
+                
+                updateSelectedCount();
             });
-            modalPagination.appendChild(prevButton);
-        }
-        
-        // 页码按钮
-        const startPage = Math.max(1, currentPage - 2);
-        const endPage = Math.min(totalPages, startPage + 4);
-        
-        for (let i = startPage; i <= endPage; i++) {
-            const pageButton = document.createElement('button');
-            pageButton.textContent = i;
-            if (i === currentPage) {
-                pageButton.classList.add('active');
-            }
-            pageButton.addEventListener('click', () => {
-                performModalSearch(i);
-            });
-            modalPagination.appendChild(pageButton);
-        }
-        
-        // 下一页按钮
-        if (currentPage < totalPages) {
-            const nextButton = document.createElement('button');
-            nextButton.textContent = '下一页';
-            nextButton.addEventListener('click', () => {
-                performModalSearch(currentPage + 1);
-            });
-            modalPagination.appendChild(nextButton);
-        }
-    }
-    
-
-    // 选择会员并添加到活动
-    // Function to select a member and add them to the event
-async function selectMember(member) {
-    const memberIdToUse = member.actualId;
-    const displayMemberId = member.displayId;
-
-    console.log("Full member ID being used:", memberIdToUse);
-    console.log("Complete member object:", member);
-
-    if (!memberIdToUse || memberIdToUse === '0' || memberIdToUse === 0) {
-        showError('无效的会员ID，请选择有效的会员');
-        return;
-    }
-
-    const confirmAdd = confirm(`确定要将会员 ${member.Name || member.CName || member.ID} 添加到此活动吗？`);
-    
-    if (!confirmAdd) return;
-    
-    showLoading();
-    
-    try {
-        // Check if the member is already added to this event - using vparticipants and membersID
-        const checkResponse = await fetch(`${API_BASE_URL}?table=vparticipants&search=true&eventID=${eventId}&membersID=${memberIdToUse}`);
-        const checkData = await checkResponse.json();
-        
-        if (checkData.data && checkData.data.length > 0) {
-            showError(`该会员已经添加到此活动中`);
-            hideLoading();
-            return;
-        }
-        
-        // Get the current max ID to ensure sequential IDs
-        const maxIdResponse = await fetch(`${API_BASE_URL}?table=participants&action=maxid`);
-        const maxIdData = await maxIdResponse.json();
-        console.log("maxIdData response:", maxIdData);
-
-        let nextId;
-        if (maxIdData.maxId !== undefined) {
-            nextId = parseInt(maxIdData.maxId) + 1;
-        } else if (maxIdData.data && maxIdData.data.maxId !== undefined) {
-            nextId = parseInt(maxIdData.data.maxId) + 1;
-        } else {
-            console.log("Full maxId response:", maxIdData);
-            
-            // Try to get the highest ID from existing participants
-            const allParticipantsResponse = await fetch(`${API_BASE_URL}?table=participants&search=true`);
-            const allParticipants = await allParticipantsResponse.json();
-            
-            if (allParticipants.data && allParticipants.data.length > 0) {
-                const highestId = Math.max(...allParticipants.data.map(p => parseInt(p.ID) || 0));
-                nextId = highestId + 1;
-            } else {
-                nextId = 1;
-            }
-        }
-    
-        // Create participant record - Store in participants table using memberID (not membersID)
-        const participantData = {
-            table: 'participants',
-            ID: nextId, 
-            eventID: eventId,
-            memberID: memberIdToUse,  // Use memberID for the participants table
-            joined_at: new Date().toISOString().slice(0, 19).replace('T', ' ')
-        };
-        
-        // Send POST request to add participant
-        const response = await fetch(`${API_BASE_URL}?table=participants`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(participantData)
         });
-        
-        if (!response.ok) {
-            throw new Error(`添加失败: ${response.status}`);
-        }
-        
-        const result = await response.json();
-        
-        if (result.status === 'success') {
-            // Close modal
-            memberSearchModal.style.display = 'none';
-            
-            // Show success message
-            showError(`会员 ${member.Name || member.CName || memberIdToUse} 已成功添加到活动`);
-            
-            // Reload participants list - use vparticipants for display
-            fetchParticipants(eventId);
-        } else {
-            throw new Error(result.message || '添加参与者失败');
-        }
-    } catch (error) {
-        console.error('添加参与者时出错:', error);
-        showError(`添加失败: ${error.message}`);
-    } finally {
-        hideLoading();
     }
-}
-    
+ 
+
     // 防抖函数
     function debounce(func, wait) {
         let timeout;
@@ -803,5 +951,4 @@ async function selectMember(member) {
             .replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#39;');
-    }
-});
+    }});

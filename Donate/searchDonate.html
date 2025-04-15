@@ -15,31 +15,109 @@
             <div class="header-container">
                 <h1>乐捐管理系统</h1>
                 <div class="button-container">
-                    <button class="btn btn-primary" onclick="location.href='../project.html'">
+                    <button class="btn btn-primary tooltip" onclick="location.href='../project.html'">
                         <i class="fas fa-home"></i> 返回
+                        <span class="tooltip-text">
+                            功能:返回到主项目页面
+                            <br>
+                            使用方法: 单击按钮即可返回到项目主页
+                            <br>
+                            适用情况: 当您完成当前操作，
+                            <br>
+                            需要回到主页面时使用
+                        </span>
                     </button>
-                    <button class="btn btn-success" onclick="location.href='donate.html'">
+                    <button class="btn btn-success tooltip" onclick="location.href='donate.html'">
                         <i class="fas fa-hand-holding-heart"></i> 添加新乐捐
+                        <span class="tooltip-text">
+                            功能:打开表单添加新的活动记录
+                            <br>
+                            使用方法:点击按钮跳转到活动表单页面，
+                            <br>
+                            填写新的活动信息
+                            <br>
+                            适用情况:当需要录新的活动数据时使用
+                        </span>
                     </button>
                     <!-- Button for Bank Filter -->
-                    <button class="btn btn-warning" type="button" id="bankSearchBtn">
+                    <button class="btn btn-warning tooltip" type="button" id="bankSearchBtn">
                         <i class="fas fa-university"></i> 银行筛选
+                        <span class="tooltip-text">
+                            功能:根据银行类型过滤点击记录
+                            <br>
+                            使用方法:点击需要按钮后将显示银行选项列表，
+                            <br>
+                            选择所需银行即可筛选结果
+                            <br>
+                            适用情况:查看特定银行渠道的点击记录时使用
+                        </span>
                     </button>
                     <!-- Button for Donation Type Filter -->
-                    <button class="btn btn-danger" type="button" id="donationTypeFilterBtn">
+                    <button class="btn btn-danger tooltip" type="button" id="donationTypeFilterBtn">
                         <i class="fas fa-tags"></i> 类型筛选
+                        <span class="tooltip-text">
+                            功能:点击类型过滤记录
+                            <br>
+                            使用方法:点击按钮后显示点击类型列表，
+                            <br>
+                            可选择一个或多个类型
+                            <br>
+                            适用情况:当需要查看特定类型的
+                            <br>
+                            点击记录（如活动点击、会费等）时使用
+                        </span>
                     </button>
                     <!-- New Button for Date Range Filter -->
-                    <button class="btn btn-info" type="button" id="dateRangeFilterBtn">
+                    <button class="btn btn-info tooltip" type="button" id="dateRangeFilterBtn">
                         <i class="fas fa-calendar-alt"></i> 日期范围筛选
+                        <span class="tooltip-text">
+                            功能:根据日期范围过滤记录
+                            <br>
+                            使用方法:单击按钮后弹出日期选择器，
+                            <br>
+                            设置开始和结束日期，
+                            <br>
+                            适用情况: 当需要查看特定时间段内的捐款记录时使用
+                        </span>
                     </button>
                     <!-- New Button for Amount Range Filter -->
-                    <button class="btn btn-purple" type="button" id="amountRangeFilterBtn">
+                    <button class="btn btn-purple tooltip" type="button" id="amountRangeFilterBtn">
                         <i class="fas fa-dollar-sign"></i> 金额范围筛选
+                        <span class="tooltip-text">
+                            功能:根据捐款金额范围过滤记录
+                            <br>
+                            使用方法:点击按钮后弹出金额范围选择器，
+                            <br>
+                            设置最小和最大金额，
+                            <br>
+                            适用情况:当需要查看特定金额范围内的
+                            <br>
+                            捐款记录时使用
+                        </span>
                     </button>
                     <!-- New Button for Printing -->
-                    <button class="btn btn-dark" type="button" id="printTableBtn">
+                    <button class="btn btn-dark tooltip" type="button" id="printTableBtn">
                         <i class="fas fa-print"></i> 打印表格
+                        <span class="tooltip-text">
+                            功能:打印捐款记录表格
+                            <br>
+                            使用方法:单击按钮后，将当前捐款记录表格打印出来
+                            <br>
+                            适用情况:当需要打印捐款记录表格时使用
+                        </span>
+                    </button>
+                    <!-- Button for List All -->
+                    <button class="btn btn-secondary tooltip" type="button" id="listAllBtn">
+                    <i class="fas fa-list-ul"></i> 显示全部
+                    <span class="tooltip-text">
+                        功能:显示所有记录
+                        <br>
+                        使用方法:点击按钮后将显示所有记录，
+                        <br>
+                        适用于需要查看所有记录的情况
+                        <br>
+                        会清除所有筛选条件
+                    </span>
                     </button>
                 </div>
             </div>

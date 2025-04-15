@@ -628,12 +628,56 @@ tr:hover {
     flex-shrink: 0; /* Prevent footer from shrinking */
 }
 
+/* Tooltip Styles */
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltip-text {
+    visibility: hidden;
+    width: 400px;
+    background-color: #333;
+    color: #fff;
+    text-align: left;
+    border-radius: 6px;
+    padding: 8px;
+    position: absolute;
+    z-index: 1000;
+    top: 125%; /* Position above the button */
+    left: 50%;
+    margin-left: -200px; /* Center tooltip (width/2) */
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 14px; /* Slightly smaller tooltip text */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    line-height: 1.4; /* Adjust line height in tooltip */
+}
+
+.tooltip .tooltip-text strong {
+    color: #5dade2; /* Highlight key terms */
+}
+
+/* Tooltip Arrow */
+.tooltip .tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: 100%; /* Arrow at the bottom */
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color:transparent transparent #333   transparent; /* Pointing down */
+}
+
+.tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
 
 /* Responsive Design */
 @media (max-width: 1200px) {
-     .header-container {
-        /* Allow title and buttons to stack vertically if needed */
-     }
+     
      h1 {
         font-size: 1.8rem;
      }
