@@ -197,8 +197,34 @@ th, td {
     padding: 12px;
     text-align: left;
     border-bottom: none;
-    border-right: 5px solid rgba(220, 220, 220, 0.922);
+    position: relative;
 }
+
+th::after, td::after {
+    content: "";
+    position: absolute;
+    top: 10px;
+    right: 0;
+    width: 1px;
+    height: calc(100% - 20px);
+    background-image: linear-gradient(
+        to bottom,
+        transparent,
+        var(--border-color) 15%,
+        var(--border-color) 50%,
+        var(--border-color) 85%,
+        transparent
+    );
+    background-size: 4px 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.8;
+}
+
+th:last-child::after, td:last-child::after {
+    display: none;
+}
+
 
 tbody tr:nth-child(odd) {
     background-color: white;

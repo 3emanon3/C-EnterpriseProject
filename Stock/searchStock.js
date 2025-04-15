@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const tableHeaders = table.querySelectorAll('th');
     let currentSortColumn = null;
     let currentSortOrder = null;
-    
+
 
     // Debounce function to limit API calls during rapid typing
     function debounce(func, wait) {
@@ -36,30 +36,30 @@ document.addEventListener("DOMContentLoaded", function () {
         fetchStocks(searchText);
     }, 300); // 300ms delay
 
-    searchInput.addEventListener("input", function() {
+    searchInput.addEventListener("input", function () {
         debouncedSearch(this.value);
     });
 
     async function fetchStocks(query = "") {
         loader.style.display = "block";
         stockTableBody.innerHTML = "";
-        
+
         const params = new URLSearchParams();
         params.append("table", "stock");
         params.append("limit", itemsPerPage);
         params.append("page", currentPage);
         if (query.trim() !== "") {
-           params.append("search", query);
-        
+            params.append("search", query);
+
         }
         if (currentSortColumn) {
             params.append("sort", currentSortColumn);
             params.append("order", currentSortOrder);
         }
-        
+
         const url = `${API_BASE_URL}?${params.toString()}`;
         console.log("API URL:", url);
-        
+
         try {
             const response = await fetch(url);
             const data = await response.json();
@@ -79,25 +79,34 @@ document.addEventListener("DOMContentLoaded", function () {
         stocks.forEach(stock => {
             const row = document.createElement("tr");
             row.innerHTML = `
-                <td>${stock["Product_ID"]}</td>
-                <td>${stock.Name}</td>
-                <td>${stock.stock}</td>
-                <td>${stock.Price}</td>
-                <td>${stock.Publisher}</td>
-                <td>${stock.Remarks}</td>
-                <td>
-                    <button class="btn btn-edit" onclick="editStock(${stock.ID})">更改</button>
-                    <button class="btn btn-delete" onclick="deleteStock(${stock.ID})">删除</button>
-                    <button class="btn btn-increase" onclick="increaseStock(${stock.ID})">增加</button>
-                    <button class="btn btn-decrease" onclick="decreaseStock(${stock.ID})">减少</button>    
-                </td>
-            `;
+    <td>${stock["Product_ID"]}</td>
+    <td>${stock.Name}</td>
+    <td>${stock.stock}</td>
+    <td>${stock.Price}</td>
+    <td>${stock.Publisher}</td>
+    <td>${stock.Remarks}</td>
+    <td>
+        <button class="btn btn-edit" onclick="editStock(${stock.ID})" title="编辑">
+            <i class="fas fa-edit"></i>
+        </button>
+        <button class="btn btn-delete" onclick="deleteStock(${stock.ID})" title="删除">
+            <i class="fas fa-trash"></i>
+        </button>
+        <button class="btn btn-increase" onclick="increaseStock(${stock.ID})" title="增加">
+            <i class="fas fa-plus"></i>
+        </button>
+        <button class="btn btn-decrease" onclick="decreaseStock(${stock.ID})" title="减少">
+            <i class="fas fa-minus"></i>
+        </button>
+    </td>
+`;
+
             stockTableBody.appendChild(row);
         });
     }
 
     function handleSortClick(colunmName) {
-        if(currentSortColumn === colunmName) {
+        if (currentSortColumn === colunmName) {
             currentSortOrder = currentSortOrder === 'ASC' ? 'DESC' : 'ASC';
         } else {
             currentSortColumn = colunmName;
@@ -112,8 +121,8 @@ document.addEventListener("DOMContentLoaded", function () {
         document.querySelectorAll('th[data-column]').forEach(th => {
             const icon = th.querySelector('i');
             icon.classList.remove('fa-sort', 'fa-sort-up', 'fa-sort-down');
-            if(th.dataset.column === currentSortColumn) {
-                if(currentSortOrder === 'ASC') {
+            if (th.dataset.column === currentSortColumn) {
+                if (currentSortOrder === 'ASC') {
                     icon.classList.add('fa-sort-up');
                 } else {
                     icon.classList.add('fa-sort-down');
@@ -125,7 +134,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     document.querySelectorAll('th[data-column]').forEach(th => {
-        th.addEventListener('click', function() {
+        th.addEventListener('click', function () {
             handleSortClick(th.dataset.column);
         });
     });
@@ -143,8 +152,8 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // Remove searchButton event listener since we'll use real-time search
-    
-    
+
+
 
     // Update itemsPerPage handler to refresh data immediately
     itemsPerPageSelect.addEventListener("change", function () {
@@ -160,10 +169,10 @@ document.addEventListener("DOMContentLoaded", function () {
     window.deleteStock = async function (id) {
         if (confirm("确定要删除这条记录吗？")) {
             try {
-                const response = await fetch(`${API_BASE_URL}?table=s&ID=${id}`, { 
-                    method: "DELETE" 
+                const response = await fetch(`${API_BASE_URL}?table=s&ID=${id}`, {
+                    method: "DELETE"
                 });
-                
+
                 if (response.ok) {
                     const filterParams = activeFilter ? { Book: activeFilter } : {};
                     fetchRecords(filterParams);
@@ -184,25 +193,25 @@ document.addEventListener("DOMContentLoaded", function () {
     window.decreaseStock = function (id) {
         window.location.href = `decreaseStock.html?id=${id}`;
     };
-    
+
     tableHeaders.forEach(th => {
         const resizer = th.querySelector('.resizer');
         if (!resizer) return;
-        
+
         let startX, startWidth;
-        
-        resizer.addEventListener('mousedown', function(e) {
+
+        resizer.addEventListener('mousedown', function (e) {
             startX = e.pageX;
             startWidth = th.offsetWidth;
             document.addEventListener('mousemove', resizeColumn);
             document.addEventListener('mouseup', stopResize);
         });
-        
+
         function resizeColumn(e) {
             const newWidth = startWidth + (e.pageX - startX);
             th.style.width = newWidth + 'px';
         }
-        
+
         function stopResize() {
             document.removeEventListener('mousemove', resizeColumn);
             document.removeEventListener('mouseup', stopResize);
@@ -211,7 +220,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Add reset columns functionality
     const resetColumnsButton = document.getElementById('resetColumns');
-    resetColumnsButton.addEventListener('click', function() {
+    resetColumnsButton.addEventListener('click', function () {
         tableHeaders.forEach(th => {
             th.style.width = ''; // Remove inline width to reset to CSS default
         });
