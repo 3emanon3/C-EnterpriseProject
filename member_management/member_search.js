@@ -136,48 +136,58 @@ document.addEventListener("DOMContentLoaded", function () {
     function setupFilterButtonsAnimation() {
         // Add filter-button class to the buttons we want to animate
         if (birthdayButton) {
-            birthdayButton.classList.add('filter-button');
-            // Check if badge already exists to prevent duplicates on reload
-            if (!birthdayButton.querySelector('.filter-badge')) {
-                birthdayButton.innerHTML += '<span class="filter-badge">1</span>';
-            }
+            birthdayButton.classList.add('filter-button');        
         }
         if (expiredButton) {
             expiredButton.classList.add('filter-button');
-            if (!expiredButton.querySelector('.filter-badge')) {
-                expiredButton.innerHTML += '<span class="filter-badge">2</span>';
-            }
         }
         if (memberFilter) {
             memberFilter.classList.add('filter-button');
-            // Select elements don't easily support adding HTML like buttons,
-            // so we might skip the badge or use a different approach if needed.
-            // For now, just add the class for potential styling.
         }
     }
 
     // Function to update filter button states
     function updateFilterButtonStates() {
         const isGeneralSearchActive = searchInput?.value.trim() !== '';
-
+        // This array will hold the active filter elements in the order they are applied
+        const activeFilters = [];
+    
+        // First, remove the active class and clear any inline bottom position on all filter buttons.
         document.querySelectorAll('.filter-button').forEach(btn => {
             btn.classList.remove('active');
+            btn.style.bottom = '';  // clear any inline bottom setting
         });
-
-        // Only activate filter buttons if general search is NOT active
+    
+        // Only activate filter buttons if a general search is not in progress.
         if (!isGeneralSearchActive) {
+            // Check each filter and, if active, add it to the list.
             if (targetBirthdayMonth) {
                 birthdayButton?.classList.add('active');
+                activeFilters.push(birthdayButton);
             }
             if (targetStartDate && targetEndDate) {
                 expiredButton?.classList.add('active');
+                activeFilters.push(expiredButton);
             }
             if (memberFilter && memberFilter.value) {
-                // Special handling for select - maybe add a class to its parent or container if needed
                 memberFilter.classList.add('active');
+                activeFilters.push(memberFilter);
             }
         }
+    
+        // Now update each active filter’s position:
+        // The first in the activeFilters array will be at the bottom (baseBottom), 
+        // the second is shifted up by spacing, and the third even higher.
+        const baseBottom = 20;  // starting offset from the bottom in px
+        const spacing = 50;     // vertical spacing between filters in px
+    
+        activeFilters.forEach((btn, index) => {
+             btn.style.bottom = (baseBottom + index * spacing) + 'px';
+             // Adjust z-index so the later (stacked on top) have a higher z-index
+             btn.style.zIndex = 1000 + index;
+        });
     }
+    
 
 
     // ===== DATA FETCHING FUNCTIONS =====
