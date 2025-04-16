@@ -43,9 +43,15 @@ async function saveNewData() {
         });
 
         if (response.ok) {
-            alert('Stock updated successfully');
+            // Show success modal instead of alert
+            const successModal = document.getElementById('successModal');
+            successModal.classList.add('show');
+            
+            // Set redirect timer after animation completes
             isLeaving = true;
-            window.location.href = 'searchStock.html';
+            setTimeout(() => {
+                window.location.href = 'searchStock.html';
+            }, 2000); // 2 seconds delay to show the animation
         } else {
             throw new Error('Failed to update stock');
         }

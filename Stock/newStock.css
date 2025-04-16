@@ -115,3 +115,100 @@
         width: 100%;
     }
 }
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.show {
+    display: flex;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    max-width: 400px;
+    width: 90%;
+}
+
+.modal h2 {
+    color: var(--primary-color);
+    margin: 15px 0;
+}
+
+/* Success Animation */
+.success-animation {
+    margin: 20px auto;
+}
+
+.checkmark-circle {
+    width: 80px;
+    height: 80px;
+    position: relative;
+    display: inline-block;
+    vertical-align: top;
+    margin: 0 auto;
+}
+
+.checkmark-circle .background {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: #4BB543;
+    position: absolute;
+}
+
+.checkmark {
+    border-radius: 5px;
+}
+
+.checkmark.draw:after {
+    content: '';
+    width: 35px;
+    height: 70px;
+    border: solid #4BB543;
+    border-width: 0 10px 10px 0;
+    position: absolute;
+    left: 25px;
+    top: 0;
+    transform: rotate(45deg);
+    animation: checkmark 0.8s ease-in-out forwards;
+    opacity: 0;
+}
+
+@keyframes checkmark {
+    0% {
+        height: 0;
+        width: 0;
+        opacity: 0;
+    }
+    40% {
+        height: 0;
+        width: 35px;
+        opacity: 1;
+    }
+    100% {
+        height: 70px;
+        width: 35px;
+        opacity: 1;
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
