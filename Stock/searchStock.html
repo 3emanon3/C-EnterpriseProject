@@ -12,6 +12,9 @@
         <header>
             <h1>库存管理系统</h1>
             <nav class="system-nav">
+                <button class="btn btn-primary" onclick="resetColumnWidths()">
+                    <i class="fas fa-arrows-alt-h"></i> 重置列宽
+                </button>
                 <button class="btn btn-primary" onclick="location.href='../project.html'">
                     <i class="fas fa-home"></i> 返回
                 </button>
@@ -47,12 +50,6 @@
                 <span>Loading stocks...</span>
             </div>
             
-            <div class="table-actions">
-                <button id="resetColumns" class="btn btn-primary">
-                    <i class="fas fa-undo"></i> 重置列宽
-                </button>
-            </div>
-            
             <div class="table-responsive">
                 <table id="stockTable" aria-label="Stock list">
                     <thead>
@@ -63,7 +60,7 @@
                             <th data-column="Price">价格 <i class="fas fa-sort"></i><div class="resizer"></div></th>
                             <th data-column="Publisher">出版社<i class="fas fa-sort"></i><div class="resizer"></div></th>
                             <th data-column="Remarks">备注<i class="fas fa-sort"></i><div class="resizer"></div></th>
-                            <th>操作</th>
+                            <th>操作<div class="resizer"></div></th>
                         </tr>
                     </thead>
                     <tbody>

@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Fetch book options for filter
     async function fetchBookOptions() {
         try {
-            const response = await fetch(`${API_BASE_URL}?table=stock`);
+            const response = await fetch(`${API_BASE_URL}?table=stock&limit=10000`);
             const data = await response.json();
             
             if (data && data.data) {

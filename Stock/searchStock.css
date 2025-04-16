@@ -21,10 +21,11 @@ body {
     color: var(--text-color);
     line-height: 1.6;
     overflow-x: auto;
+    min-width: 320px;
 }
 
 .container {
-    width: 3600px;
+    width: fit-content;
     margin: 0 auto;
     padding: 20px;
     min-height: 95vh;
@@ -170,8 +171,8 @@ h1 {
 }
 
 .search-stats {
-    font-size: 1rem;         
-    color: #ffffff;          
+    font-size: 1rem;
+    color: #ffffff;
 }
 
 /* Table Styles */
@@ -191,6 +192,7 @@ table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 20px;
+    table-layout: fixed;
 }
 
 th, td {
@@ -198,6 +200,9 @@ th, td {
     text-align: left;
     border-bottom: none;
     position: relative;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 th::after, td::after {
@@ -225,19 +230,37 @@ th:last-child::after, td:last-child::after {
     display: none;
 }
 
+/* Column Resizer Styles */
+.resizer {
+    position: absolute;
+    top: 0;
+    right: -3px;
+    width: 6px;
+    height: 100%;
+    cursor: col-resize;
+    user-select: none;
+    z-index: 10;
+}
+
+.resizer:hover,
+.resizing .resizer {
+    background-color: rgba(0, 0, 255, 0.2);
+}
+
+th {
+    position: relative; /* Ensure relative positioning for resizer */
+}
 
 tbody tr:nth-child(odd) {
     background-color: white;
 }
 
-/* Style for even rows */
 tbody tr:nth-child(even) {
-    background-color: #f2f2f2; /* Light grey */
+    background-color: #f2f2f2;
 }
 
-/* Keep the hover effect, but adjust it if needed */
 tr:hover {
-    background-color: #f8f9fa; /* This might need slight adjustment */
+    background-color: #f8f9fa;
 }
 
 th {
@@ -248,27 +271,9 @@ th {
     position: relative;
 }
 
-.resizer {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 5px;
-    height: 100%;
-    cursor: col-resize;
-    user-select: none;
-}
-
-.resizer:hover {
-    background-color: rgba(19, 17, 17, 0.1);
-}
-
 th i {
     margin-left: 5px;
     font-size: 12px;
-}
-
-tr:hover {
-    background-color: #f8f9fa;
 }
 
 /* Loader Styles */
@@ -360,24 +365,11 @@ tr:hover {
         flex-direction: column;
         gap: 15px;
     }
-}
-
-.table-actions {
-    margin-bottom: 15px;
-    display: flex;
-    justify-content: flex-end;
-}
-
-.table-actions .btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    transition: all 0.3s ease;
-}
-
-.table-actions .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    
+    /* Hide resizers on mobile */
+    .resizer {
+        display: none;
+    }
 }
 
 /* Modal Styles */

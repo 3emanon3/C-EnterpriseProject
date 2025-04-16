@@ -106,6 +106,28 @@ class DatabaseAPI {
                 'param' => ['startPrice','endPrice'],
                 'paramTypes' => 'dd'
             ]
+        ],
+        'event' => [
+            'startDateRange' => [
+                'conditions' => ['`start_time` BETWEEN ? AND ?'],
+                'param' => ['startDate', 'endDate'],
+                'paramTypes' => 'ss'
+            ],
+            'endDateRange' => [
+                'conditions' => ['`end_time` BETWEEN ? AND ?'],
+                'param' => ['startDate', 'endDate'],
+                'paramTypes' =>'ss'
+            ],
+            'createDateRange' => [
+                'conditions' => ['`created_at` BETWEEN ? AND ?'],
+                'param' => ['startDate', 'endDate'],
+                'paramTypes' =>'ss'
+            ],
+            'priceRange' => [
+                'conditions' => ['`price` BETWEEN ? AND ?'],
+                'param' => ['startPrice','endPrice'],
+                'paramTypes' => 'dd'
+            ]
         ]
         // --- END MODIFICATION ---
     ];
