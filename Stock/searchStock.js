@@ -166,25 +166,74 @@ document.addEventListener("DOMContentLoaded", function () {
         window.location.href = `editStock.html?id=${id}`;
     };
 
-    window.deleteStock = async function (id) {
-        if (confirm("确定要删除这条记录吗？")) {
+    // Variable to store the ID of the stock to be deleted
+    let stockIdToDelete = null;
+    const deleteModal = document.getElementById('deleteModal');
+    const closeModalBtn = document.querySelector('.close-modal');
+    const cancelDeleteBtn = document.getElementById('cancelDelete');
+    const confirmDeleteBtn = document.getElementById('confirmDelete');
+    const notification = document.getElementById('notification');
+    const notificationIcon = document.getElementById('notification-icon');
+    const notificationMessage = document.getElementById('notification-message');
+
+    // Close modal functions
+    function closeDeleteModal() {
+        deleteModal.style.display = 'none';
+    }
+
+    // Event listeners for modal
+    closeModalBtn.addEventListener('click', closeDeleteModal);
+    cancelDeleteBtn.addEventListener('click', closeDeleteModal);
+    window.addEventListener('click', (event) => {
+        if (event.target === deleteModal) {
+            closeDeleteModal();
+        }
+    });
+
+    // Show notification function
+    function showNotification(success, message) {
+        notificationIcon.className = success ? 'fas fa-check-circle' : 'fas fa-times-circle';
+        notificationMessage.textContent = message;
+        notification.className = success ? 'notification show success' : 'notification show error';
+        
+        setTimeout(() => {
+            notification.className = notification.className.replace('show', 'hide');
+            setTimeout(() => {
+                notification.className = 'notification';
+            }, 600);
+        }, 3000);
+    }
+
+    // Updated delete function to use modal
+    window.deleteStock = function (id) {
+        stockIdToDelete = id;
+        deleteModal.style.display = 'block';
+    };
+
+    // Confirm delete action
+    confirmDeleteBtn.addEventListener('click', async function() {
+        closeDeleteModal();
+        
+        if (stockIdToDelete) {
             try {
-                const response = await fetch(`${API_BASE_URL}?table=stock&ID=${id}`, {
+                const response = await fetch(`${API_BASE_URL}?table=stock&ID=${stockIdToDelete}`, {
                     method: "DELETE"
                 });
 
                 if (response.ok) {
-                    const filterParams = activeFilter ? { Book: activeFilter } : {};
-                    fetchRecords(filterParams);
+                    showNotification(true, "删除成功！");
+                    fetchStocks(searchInput.value);
                 } else {
-                    alert("删除记录失败。");
+                    showNotification(false, "删除失败，请重试。");
                 }
             } catch (error) {
                 console.error("Error deleting record:", error);
-                alert("删除操作发生错误。");
+                showNotification(false, "删除操作发生错误。");
             }
+            
+            stockIdToDelete = null;
         }
-    };
+    });
 
     window.increaseStock = function (id) {
         window.location.href = `increaseStock.html?id=${id}`;

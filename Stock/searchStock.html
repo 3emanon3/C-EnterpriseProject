@@ -88,6 +88,31 @@
         </section>
     </div>
 
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>确认删除</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>确定要删除这条记录吗？此操作无法撤销。</p>
+            </div>
+            <div class="modal-footer">
+                <button id="cancelDelete" class="btn btn-secondary">取消</button>
+                <button id="confirmDelete" class="btn btn-danger">删除</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Element -->
+    <div id="notification" class="notification">
+        <div id="notification-content">
+            <i id="notification-icon" class="fas"></i>
+            <span id="notification-message"></span>
+        </div>
+    </div>
+
     <script src="searchStock.js"></script>
 </body>
 </html>
