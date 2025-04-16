@@ -68,13 +68,13 @@ async function saveChanges() {
             
             // Validate required member fields
             if (!applicantType) {
-                alert('请填写必要的会员信息：种类');
+                alert('请填写必要的塾员信息：种类');
                 return;
             }
             
             // If the applicant type is "new", prompt user to create a new type
             if (applicantType === "new") {
-                const newTypeName = prompt("请输入新的会员种类名称:");
+                const newTypeName = prompt("请输入新的塾员种类名称:");
                 if (!newTypeName || newTypeName.trim() === "") {
                     alert('请输入有效的种类名称');
                     return;
@@ -262,26 +262,26 @@ async function searchMembers() {
             const ul = document.createElement('ul');
             members.forEach(member => {
                 const li = document.createElement('li');
-                // Display member name and ID
-                li.textContent = `${member.Name || ''} ${member.CName || ''} (ID: ${member.ID})`;
+                // Display member name and memberID (not database ID)
+                li.textContent = `${member.Name || ''} ${member.CName || ''} (塾员ID: ${member.membersID || 'N/A'})`;
                 li.addEventListener('click', function() {
                     // Pass the member ID and name to the selectMember function
-                    selectMember(member.ID, member.Name, member.CName);
+                    selectMember(member.ID, member.Name, member.CName, member.membersID);
                 });
                 ul.appendChild(li);
             });
             searchResultsDiv.appendChild(ul);
         } else {
-            searchResultsDiv.textContent = '未找到会员。'; // Display message if no members found
+            searchResultsDiv.textContent = '未找到塾员。'; // Display message if no members found
         }
 
     } catch (error) {
         console.error('Member search error:', error);
-        searchResultsDiv.textContent = '搜索会员时出错。'; // Display error message to user
+        searchResultsDiv.textContent = '搜索塾员时出错。'; // Display error message to user
     }
 }
 
-function selectMember(memberId, memberName, memberCName) {
+function selectMember(memberId, memberName, memberCName, membersID) {
     // Store the selected member ID in the global variable
     selectedMemberId = memberId;
     
@@ -291,8 +291,8 @@ function selectMember(memberId, memberName, memberCName) {
     
     searchResultsDiv.innerHTML = `
         <div class="selected-member">
-            <p><strong>已选择会员:</strong> ${displayName}</p>
-            <p><strong>会员ID:</strong> ${memberId}</p>
+            <p><strong>已选择塾员:</strong> ${displayName}</p>
+            <p><strong>塾员ID:</strong> ${membersID || 'N/A'}</p>
             <button class="btn btn-sm btn-primary" onclick="clearSelectedMember()">重新选择</button>
         </div>
     `;
@@ -387,7 +387,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // If "Add New Type" is selected
         if (selectedValue === "new") {
             // Show a prompt to enter new type
-            const newTypeName = prompt("请输入新的会员种类名称:");
+            const newTypeName = prompt("请输入新的塾员种类名称:");
             
             // If user entered a value and didn't cancel
             if (newTypeName && newTypeName.trim() !== "") {

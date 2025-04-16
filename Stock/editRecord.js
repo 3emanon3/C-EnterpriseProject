@@ -118,7 +118,7 @@ async function saveChanges() {
 
             // Validate required member fields
             if (!applicantType) {
-                alert('请填写必要的会员信息：种类');
+                alert('请填写必要的塾员信息：种类');
                 return;
             }
 
@@ -166,7 +166,7 @@ async function saveChanges() {
                 memberId = memberResult.ids[0];
             } catch (error) {
                 console.error('Error creating new member:', error);
-                alert(`创建新会员失败: ${error.message}`);
+                alert(`创建新塾员失败: ${error.message}`);
                 return;
             }
         }
@@ -316,7 +316,7 @@ async function searchMembers() {
                 memberDiv.innerHTML = `
                     <div class="member-info">
                         <span class="member-name">${member.Name || ''} (${member.CName || ''})</span>
-                        <span class="member-details">ID: ${member.ID}</span>
+                        <span class="member-details">塾员ID: ${member.membersID || 'N/A'}</span>
                     </div>
                     <button class="btn btn-primary select-member" data-id="${member.ID}">选择</button>
                 `;
@@ -335,11 +335,11 @@ async function searchMembers() {
                 resultsContainer.appendChild(memberDiv);
             });
         } else {
-            resultsContainer.innerHTML = '<div class="no-results">没有找到会员</div>';
+            resultsContainer.innerHTML = '<div class="no-results">没有找到塾员</div>';
         }
     } catch (error) {
         console.error('Error searching members:', error);
-        resultsContainer.innerHTML = '<div class="error">搜索会员时出错</div>';
+        resultsContainer.innerHTML = '<div class="error">搜索塾员时出错</div>';
     }
 }
 
@@ -364,7 +364,7 @@ async function fetchAndDisplayMemberInfo(memberId) {
             const resultsContainer = document.querySelector('.member-results');
             resultsContainer.innerHTML = `
                 <div class="selected-member">
-                    已选择: ${member.Name || ''} (${member.CName || ''})
+                    已选择塾员: ${member.Name || ''} (${member.CName || ''})
                     <button class="btn btn-small btn-danger" onclick="clearSelectedMember()">清除</button>
                 </div>
             `;

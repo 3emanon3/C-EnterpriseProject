@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", function () {
     <td>${stock["Product_ID"]}</td>
     <td>${stock.Name}</td>
     <td>${stock.stock}</td>
-    <td>${stock.Price}</td>
+    <td>RM ${stock.Price}</td>
     <td>${stock.Publisher}</td>
     <td>${stock.Remarks}</td>
     <td>
