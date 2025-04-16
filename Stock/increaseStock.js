@@ -114,15 +114,21 @@ async function saveChanges() {
             }
             
             // Calculate expiration date
-            let expirationDate = new Date();
+            let formattedExpirationDate = null; // Default to null for "none" option
             const expirationType = document.getElementById('expirationType').value;
             
             if (expirationType === '1year') {
-                // Add 1 year to current date
+                // Add 1 year to current date and subtract 1 day
+                let expirationDate = new Date();
                 expirationDate.setFullYear(expirationDate.getFullYear() + 1);
+                expirationDate.setDate(expirationDate.getDate() - 1);
+                formattedExpirationDate = `${expirationDate.getFullYear()}-${(expirationDate.getMonth() + 1).toString().padStart(2, '0')}-${expirationDate.getDate().toString().padStart(2, '0')}`;
             } else if (expirationType === '3year') {
-                // Add 3 years to current date
+                // Add 3 years to current date and subtract 1 day
+                let expirationDate = new Date();
                 expirationDate.setFullYear(expirationDate.getFullYear() + 3);
+                expirationDate.setDate(expirationDate.getDate() - 1);
+                formattedExpirationDate = `${expirationDate.getFullYear()}-${(expirationDate.getMonth() + 1).toString().padStart(2, '0')}-${expirationDate.getDate().toString().padStart(2, '0')}`;
             } else if (expirationType === 'custom') {
                 // Get custom expiration date values
                 const year = parseInt(document.getElementById('expirationYear').value);
@@ -130,15 +136,14 @@ async function saveChanges() {
                 const day = parseInt(document.getElementById('expirationDay').value);
                 
                 if (year && month >= 0 && month <= 11 && day >= 1 && day <= 31) {
-                    expirationDate = new Date(year, month, day);
+                    let expirationDate = new Date(year, month, day);
+                    formattedExpirationDate = `${expirationDate.getFullYear()}-${(expirationDate.getMonth() + 1).toString().padStart(2, '0')}-${expirationDate.getDate().toString().padStart(2, '0')}`;
                 } else {
                     alert('请输入有效的到期日期');
                     return;
                 }
             }
-            
-            // Format the expiration date for storage (YYYY-MM-DD format)
-            const formattedExpirationDate = `${expirationDate.getFullYear()}-${(expirationDate.getMonth() + 1).toString().padStart(2, '0')}-${expirationDate.getDate().toString().padStart(2, '0')}`;
+            // For "none" option, formattedExpirationDate remains null
             
             // Create new member object
             const newMember = {
@@ -153,7 +158,7 @@ async function saveChanges() {
                 'gender': gender,
                 'componyName': componyName,
                 'Birthday': monthOfBirth,
-                'expired_date': formattedExpirationDate,
+                'expired_date': formattedExpirationDate, // This can now be null for "none" option
                 'place_of_birth': placeOfBirth,
                 'others': others,
                 'remarks': memberRemarks
@@ -317,11 +322,38 @@ function clearSelectedMember() {
 function updateExpirationFields() {
     const expirationType = document.getElementById('expirationType').value;
     const customFields = document.getElementById('customExpirationFields');
+    const expirationDisplay = document.createElement('div');
+    expirationDisplay.id = 'expirationDateDisplay';
+    
+    // Remove any existing display element
+    const oldDisplay = document.getElementById('expirationDateDisplay');
+    if (oldDisplay) {
+        oldDisplay.remove();
+    }
     
     if (expirationType === 'custom') {
         customFields.style.display = 'block';
+        // Hide the date display for custom option
     } else {
         customFields.style.display = 'none';
+        
+        // Create and display calculated date for 1year and 3year options
+        if (expirationType === '1year' || expirationType === '3year') {
+            const yearsToAdd = expirationType === '1year' ? 1 : 3;
+            const currentDate = new Date();
+            const futureDate = new Date(currentDate);
+            
+            futureDate.setFullYear(currentDate.getFullYear() + yearsToAdd);
+            
+            // For both 1year and 3year options, decrease the day by 1
+            futureDate.setDate(futureDate.getDate() - 1);
+            
+            // Format the date as YYYY-MM-DD
+            const formattedDate = `${futureDate.getFullYear()}-${(futureDate.getMonth() + 1).toString().padStart(2, '0')}-${futureDate.getDate().toString().padStart(2, '0')}`;
+            
+            expirationDisplay.innerHTML = `<p>到期日期: ${formattedDate}</p>`;
+            customFields.parentNode.insertBefore(expirationDisplay, customFields);
+        }
     }
 }
 
@@ -330,6 +362,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const quantityInput = document.getElementById('quantity_in');
     const quantityButtons = document.querySelectorAll('.quantity-btn');
     const applicantType = document.getElementById("applicantTypeFilter");
+
+    // Set expirationType to "none" by default
+    if (document.getElementById('expirationType')) {
+        document.getElementById('expirationType').value = 'none';
+    }
+    
+    // Initialize expiration fields display
+    updateExpirationFields();
 
     quantityButtons.forEach(button => {
         button.addEventListener('click', function() {

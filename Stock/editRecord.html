@@ -141,6 +141,29 @@
                         <input type="text" id="MonthofBirth">
                     </div>
                     <div class="form-group">
+                        <label for="expirationType">会员期限:</label>
+                        <select id="expirationType" onchange="updateExpirationFields()">
+                            <option value="none">无</option>
+                            <option value="1year">1年</option>
+                            <option value="3year">3年</option>
+                            <option value="custom">自定义</option>
+                        </select>
+                    </div>
+                    <div id="customExpirationFields" style="display: none;">
+                        <div class="form-group">
+                            <label for="expirationYear">到期年份:</label>
+                            <input type="number" id="expirationYear">
+                        </div>
+                        <div class="form-group">
+                            <label for="expirationMonth">到期月份:</label>
+                            <input type="number" id="expirationMonth" min="1" max="12">
+                        </div>
+                        <div class="form-group">
+                            <label for="expirationDay">到期日期:</label>
+                            <input type="number" id="expirationDay" min="1" max="31">
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <label for="placeOfBirth">出生地点:</label>
                         <input type="text" id="placeOfBirth">
                     </div>
