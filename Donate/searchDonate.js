@@ -18,6 +18,31 @@ document.addEventListener("DOMContentLoaded", function () {
     const printTableBtn = document.getElementById("printTableBtn"); // Get reference to the new print button
     const listAllBtn = document.getElementById('listAllBtn');
 
+    // Filter buttons
+if (bankSearchBtn) bankSearchBtn.addEventListener('click', openBankFilterModal);
+if (donationTypeFilterBtn) donationTypeFilterBtn.addEventListener('click', openDonationTypeFilterModal);
+if (dateRangeFilterBtn) dateRangeFilterBtn.addEventListener('click', openDateRangeModal);
+if (amountRangeFilterBtn) amountRangeFilterBtn.addEventListener('click', openAmountRangeModal);
+if (printTableBtn) printTableBtn.addEventListener('click', () => {
+    console.log("Print button clicked. Triggering window.print().");
+    window.print();
+});
+
+// Add Bank Management button listener
+const mamageCustomBankBtn = document.getElementById("mamageCustomBankBtn");
+const manageTypeBtn = document.getElementById("manageTypeBtn");
+
+if (mamageCustomBankBtn) {
+    mamageCustomBankBtn.addEventListener('click', openBankManagementModal);
+}
+
+if (manageTypeBtn) {
+    manageTypeBtn.addEventListener('click', openTypeManagementModal);
+}
+
+
+
+
     // --- State Variables ---
     // ... (keep existing state variables)
     let currentSortColumn = null;
@@ -1153,7 +1178,732 @@ document.addEventListener("DOMContentLoaded", function () {
          } finally {
              // Optional: Hide loading state
          }
+
+
      }
+
+     // --- Bank Management ---
+function openBankManagementModal() {
+    const modalId = 'bankManagementModal';
+    const existingModal = document.getElementById(modalId);
+    if (existingModal) existingModal.remove();
+
+    const modalOverlay = document.createElement('div');
+    modalOverlay.className = 'modal-overlay';
+    modalOverlay.id = modalId;
+
+    const modalContent = document.createElement('div');
+    modalContent.className = 'modal-content bank-management-modal';
+
+    modalContent.innerHTML = `
+        <div class="modal-header">
+            <h3>银行管理</h3>
+            <button class="close-btn" aria-label="关闭">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="bank-management-controls">
+                <button class="btn btn-success add-bank-btn">
+                    <i class="fas fa-plus"></i> 添加新银行
+                </button>
+            </div>
+            <div class="bank-table-container">
+                <table class="bank-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>银行名称</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bankTableBody">
+                        <tr>
+                            <td colspan="3" class="loading-message">加载银行数据中...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modalOverlay);
+    modalOverlay.appendChild(modalContent);
+
+    // Show modal with transition
+    requestAnimationFrame(() => {
+        modalOverlay.classList.add('visible');
+    });
+
+    // Close modal function
+    const closeModal = () => {
+        modalOverlay.classList.remove('visible');
+        modalOverlay.addEventListener('transitionend', () => modalOverlay.remove(), { once: true });
+    };
+
+    // Event Listeners
+    modalContent.querySelector('.close-btn').addEventListener('click', closeModal);
+    modalOverlay.addEventListener('click', (e) => { 
+        if (e.target === modalOverlay) closeModal(); 
+    });
+
+    // Add button event
+    modalContent.querySelector('.add-bank-btn').addEventListener('click', () => {
+        openAddEditBankModal();
+    });
+
+    // Load banks
+    loadBanks();
+
+    // Load bank data
+    async function loadBanks() {
+        const bankTableBody = document.getElementById('bankTableBody');
+        bankTableBody.innerHTML = '<tr><td colspan="3" class="loading-message">加载银行数据中...</td></tr>';
+
+        try {
+            const response = await fetch(`${API_BASE_URL}?table=bank`);
+            if (!response.ok) throw new Error(`Failed to fetch banks: ${response.status}`);
+            
+            const data = await response.json();
+            if (!data?.data || !Array.isArray(data.data)) {
+                throw new Error("Invalid bank data format received");
+            }
+
+            // Refresh BANKS global object
+            BANKS = {};
+            data.data.forEach(item => { 
+                BANKS[item.ID] = item.Bank;
+            });
+
+            // Render banks table
+            renderBanksTable(data.data);
+        } catch (error) {
+            console.error("Error loading banks:", error);
+            bankTableBody.innerHTML = `<tr><td colspan="3" class="error-message">加载银行数据失败: ${escapeHTML(error.message)}</td></tr>`;
+        }
+    }
+
+    // Render banks table
+    function renderBanksTable(banks) {
+        const bankTableBody = document.getElementById('bankTableBody');
+        
+        if (!banks || banks.length === 0) {
+            bankTableBody.innerHTML = '<tr><td colspan="3" class="no-data">暂无银行数据</td></tr>';
+            return;
+        }
+
+        bankTableBody.innerHTML = '';
+        banks.forEach(bank => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${bank.ID}</td>
+                <td>${escapeHTML(bank.Bank)}</td>
+                <td>
+                    <button class="btn btn-sm btn-edit edit-bank-btn" data-id="${bank.ID}" data-name="${escapeHTML(bank.Bank)}">
+                        <i class="fas fa-edit"></i> 编辑
+                    </button>
+                    <button class="btn btn-sm btn-delete delete-bank-btn" data-id="${bank.ID}" data-name="${escapeHTML(bank.Bank)}">
+                        <i class="fas fa-trash"></i> 删除
+                    </button>
+                </td>
+            `;
+            bankTableBody.appendChild(row);
+        });
+
+        // Add event listeners to the new buttons
+        bankTableBody.querySelectorAll('.edit-bank-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const bankId = btn.getAttribute('data-id');
+                const bankName = btn.getAttribute('data-name');
+                openAddEditBankModal(bankId, bankName);
+            });
+        });
+
+        bankTableBody.querySelectorAll('.delete-bank-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const bankId = btn.getAttribute('data-id');
+                const bankName = btn.getAttribute('data-name');
+                deleteBank(bankId, bankName);
+            });
+        });
+    }
+}
+
+// Add/Edit Bank Modal
+function openAddEditBankModal(bankId = null, bankName = '') {
+    const isEditing = !!bankId;
+    const modalId = 'addEditBankModal';
+    const existingModal = document.getElementById(modalId);
+    if (existingModal) existingModal.remove();
+
+    const modalOverlay = document.createElement('div');
+    modalOverlay.className = 'modal-overlay';
+    modalOverlay.id = modalId;
+
+    const modalContent = document.createElement('div');
+    modalContent.className = 'modal-content';
+
+    modalContent.innerHTML = `
+        <div class="modal-header">
+            <h3>${isEditing ? '编辑银行' : '添加新银行'}</h3>
+            <button class="close-btn" aria-label="关闭">×</button>
+        </div>
+        <div class="modal-body">
+            <form id="bankForm">
+                ${isEditing ? `<input type="hidden" id="bankId" value="${bankId}">` : ''}
+                <div class="form-group">
+                    <label for="bankName">银行名称:</label>
+                    <input type="text" id="bankName" value="${escapeHTML(bankName)}" required>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary cancel-btn">取消</button>
+            <button class="btn btn-primary save-bank-btn">${isEditing ? '保存修改' : '添加银行'}</button>
+        </div>
+    `;
+
+    document.body.appendChild(modalOverlay);
+    modalOverlay.appendChild(modalContent);
+
+    requestAnimationFrame(() => {
+        modalOverlay.classList.add('visible');
+    });
+
+    const closeModal = () => {
+        modalOverlay.classList.remove('visible');
+        modalOverlay.addEventListener('transitionend', () => modalOverlay.remove(), { once: true });
+    };
+
+    // Event listeners
+    modalContent.querySelector('.close-btn').addEventListener('click', closeModal);
+    modalContent.querySelector('.cancel-btn').addEventListener('click', closeModal);
+    modalOverlay.addEventListener('click', (e) => { 
+        if (e.target === modalOverlay) closeModal(); 
+    });
+
+    // Save button
+    modalContent.querySelector('.save-bank-btn').addEventListener('click', async () => {
+        const bankNameInput = document.getElementById('bankName');
+        const bankName = bankNameInput.value.trim();
+        
+        if (!bankName) {
+            alert('请输入银行名称');
+            bankNameInput.focus();
+            return;
+        }
+
+        try {
+            let response;
+            let requestBody;
+            
+            if (isEditing) {
+                // Update existing bank
+                requestBody = JSON.stringify({
+                    table: 'bank',
+                    ID: bankId,
+                    Bank: bankName
+                });
+                
+                response = await fetch(`${API_BASE_URL}?table=bank&ID=${bankId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: requestBody
+                });
+            } else {
+                // Add new bank
+                requestBody = JSON.stringify({
+                    table: 'bank',
+                    Bank: bankName
+                });
+                
+                response = await fetch(`${API_BASE_URL}?table=bank`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: requestBody
+                });
+            }
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || `服务器返回错误: ${response.status}`);
+            }
+
+            // Success!
+            Swal.fire({
+                icon: 'success',
+                title: isEditing ? '银行已更新' : '银行已添加',
+                text: isEditing ? `银行 "${bankName}" 已成功更新` : `银行 "${bankName}" 已成功添加`,
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000
+            });
+
+            closeModal();
+            
+            // Refresh banks list and data
+            openBankManagementModal();
+            
+            // Refresh bank filter data (global BANKS object was already updated in the loadBanks function)
+            updateBankFilterButtonText();
+            
+            // If current filter was the edited/deleted bank, reset it
+            if (isEditing && currentBankFilter === bankName) {
+                // Update current filter with new name so it persists
+                currentBankFilter = bankName;
+                updateBankFilterButtonText();
+            }
+            
+        } catch (error) {
+            console.error("Error saving bank:", error);
+            Swal.fire({
+                icon: 'error',
+                title: '操作失败',
+                text: `${isEditing ? '更新' : '添加'}银行时出错: ${error.message}`,
+            });
+        }
+    });
+}
+
+// Delete Bank Function
+async function deleteBank(bankId, bankName) {
+    if (!bankId) {
+        console.error("Delete failed: No bank ID provided");
+        return;
+    }
+
+    // First check if the bank is being used in any donations
+    try {
+        const response = await fetch(`${API_BASE_URL}?table=donation_details&checkBank=${bankName}`);
+        const data = await response.json();
+        
+        if (data.used && data.used > 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: '无法删除银行',
+                text: `银行 "${bankName}" 已被${data.used}条捐款记录使用，无法删除。请先修改或删除相关捐款记录。`,
+            });
+            return;
+        }
+    } catch (error) {
+        console.error("Error checking bank usage:", error);
+    }
+
+    // Confirm deletion
+    const result = await Swal.fire({
+        title: '确认删除',
+        text: `确定要删除银行 "${bankName}" 吗？此操作无法撤销。`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: '是的，删除！',
+        cancelButtonText: '取消'
+    });
+
+    if (!result.isConfirmed) return;
+
+    // Proceed with deletion
+    try {
+        const response = await fetch(`${API_BASE_URL}?table=bank&ID=${bankId}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ table: 'bank', ID: bankId })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || `服务器返回错误: ${response.status}`);
+        }
+
+        // Success
+        Swal.fire({
+            icon: 'success',
+            title: '银行已删除',
+            text: `银行 "${bankName}" 已成功删除`,
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+        });
+
+        // If current filter was the deleted bank, reset it
+        if (currentBankFilter === bankName) {
+            currentBankFilter = null;
+            updateBankFilterButtonText();
+            fetchDonations(searchInput.value);
+        }
+
+        // Refresh banks modal
+        openBankManagementModal();
+        
+    } catch (error) {
+        console.error("Error deleting bank:", error);
+        Swal.fire({
+            icon: 'error',
+            title: '删除失败',
+            text: `删除银行时出错: ${error.message}`,
+        });
+    }
+}
+
+function openTypeManagementModal() {
+    const modalId = 'typeManagementModal';
+    const existingModal = document.getElementById(modalId);
+    if (existingModal) existingModal.remove();
+
+    const modalOverlay = document.createElement('div');
+    modalOverlay.className = 'modal-overlay';
+    modalOverlay.id = modalId;
+
+    const modalContent = document.createElement('div');
+    modalContent.className = 'modal-content type-management-modal';
+
+    modalContent.innerHTML = `
+        <div class="modal-header">
+            <h3>乐捐类型管理</h3>
+            <button class="close-btn" aria-label="关闭">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="type-management-controls">
+                <button class="btn btn-success add-type-btn">
+                    <i class="fas fa-plus"></i> 添加新类型
+                </button>
+            </div>
+            <div class="type-table-container">
+                <table class="type-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>类型名称</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="typeTableBody">
+                        <tr>
+                            <td colspan="3" class="loading-message">加载类型数据中...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modalOverlay);
+    modalOverlay.appendChild(modalContent);
+
+    // Show modal with transition
+    requestAnimationFrame(() => {
+        modalOverlay.classList.add('visible');
+    });
+
+    const closeModal = () => {
+        modalOverlay.classList.remove('visible');
+        modalOverlay.addEventListener('transitionend', () => modalOverlay.remove(), { once: true });
+    };
+
+    // Event Listeners
+    modalContent.querySelector('.close-btn').addEventListener('click', closeModal);
+    modalOverlay.addEventListener('click', (e) => { 
+        if (e.target === modalOverlay) closeModal(); 
+    });
+
+    // Add button event
+    modalContent.querySelector('.add-type-btn').addEventListener('click', () => {
+        openAddEditTypeModal();
+    });
+
+    // Load types
+    loadTypes();
+}
+
+// 加载类型数据
+async function loadTypes() {
+    const typeTableBody = document.getElementById('typeTableBody');
+    typeTableBody.innerHTML = '<tr><td colspan="3" class="loading-message">加载类型数据中...</td></tr>';
+
+    try {
+        const response = await fetch(`${API_BASE_URL}?table=donationtypes`);
+        if (!response.ok) throw new Error(`Failed to fetch types: ${response.status}`);
+        
+        const data = await response.json();
+        if (!data?.data || !Array.isArray(data.data)) {
+            throw new Error("Invalid type data format received");
+        }
+
+        // Refresh DONATION_TYPES global object
+        DONATION_TYPES = {};
+        data.data.forEach(item => { 
+            DONATION_TYPES[item.ID] = item.donationTypes;
+        });
+
+        // Render types table
+        renderTypesTable(data.data);
+    } catch (error) {
+        console.error("Error loading types:", error);
+        typeTableBody.innerHTML = `<tr><td colspan="3" class="error-message">加载类型数据失败: ${escapeHTML(error.message)}</td></tr>`;
+    }
+}
+
+// 渲染类型表格
+function renderTypesTable(types) {
+    const typeTableBody = document.getElementById('typeTableBody');
+    
+    if (!types || types.length === 0) {
+        typeTableBody.innerHTML = '<tr><td colspan="3" class="no-data">暂无类型数据</td></tr>';
+        return;
+    }
+
+    typeTableBody.innerHTML = '';
+    types.forEach(type => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${type.ID}</td>
+            <td>${escapeHTML(type.donationTypes)}</td>
+            <td>
+                <button class="btn btn-sm btn-edit edit-type-btn" data-id="${type.ID}" data-name="${escapeHTML(type.donationTypes)}">
+                    <i class="fas fa-edit"></i> 编辑
+                </button>
+                <button class="btn btn-sm btn-delete delete-type-btn" data-id="${type.ID}" data-name="${escapeHTML(type.donationTypes)}">
+                    <i class="fas fa-trash"></i> 删除
+                </button>
+            </td>
+        `;
+        typeTableBody.appendChild(row);
+    });
+
+    // Add event listeners to the new buttons
+    typeTableBody.querySelectorAll('.edit-type-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const typeId = btn.getAttribute('data-id');
+            const typeName = btn.getAttribute('data-name');
+            openAddEditTypeModal(typeId, typeName);
+        });
+    });
+
+    typeTableBody.querySelectorAll('.delete-type-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const typeId = btn.getAttribute('data-id');
+            const typeName = btn.getAttribute('data-name');
+            deleteType(typeId, typeName);
+        });
+    });
+}
+
+// 添加/编辑类型模态框
+function openAddEditTypeModal(typeId = null, typeName = '') {
+    const isEditing = !!typeId;
+    const modalId = 'addEditTypeModal';
+    const existingModal = document.getElementById(modalId);
+    if (existingModal) existingModal.remove();
+
+    const modalOverlay = document.createElement('div');
+    modalOverlay.className = 'modal-overlay';
+    modalOverlay.id = modalId;
+
+    const modalContent = document.createElement('div');
+    modalContent.className = 'modal-content';
+
+    modalContent.innerHTML = `
+        <div class="modal-header">
+            <h3>${isEditing ? '编辑类型' : '添加新类型'}</h3>
+            <button class="close-btn" aria-label="关闭">×</button>
+        </div>
+        <div class="modal-body">
+            <form id="typeForm">
+                ${isEditing ? `<input type="hidden" id="typeId" value="${typeId}">` : ''}
+                <div class="form-group">
+                    <label for="typeName">类型名称:</label>
+                    <input type="text" id="typeName" value="${escapeHTML(typeName)}" required>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary cancel-btn">取消</button>
+            <button class="btn btn-primary save-type-btn">${isEditing ? '保存修改' : '添加类型'}</button>
+        </div>
+    `;
+
+    document.body.appendChild(modalOverlay);
+    modalOverlay.appendChild(modalContent);
+
+    requestAnimationFrame(() => {
+        modalOverlay.classList.add('visible');
+    });
+
+    const closeModal = () => {
+        modalOverlay.classList.remove('visible');
+        modalOverlay.addEventListener('transitionend', () => modalOverlay.remove(), { once: true });
+    };
+
+    // Event listeners
+    modalContent.querySelector('.close-btn').addEventListener('click', closeModal);
+    modalContent.querySelector('.cancel-btn').addEventListener('click', closeModal);
+    modalOverlay.addEventListener('click', (e) => { 
+        if (e.target === modalOverlay) closeModal(); 
+    });
+
+    // Save button
+    modalContent.querySelector('.save-type-btn').addEventListener('click', async () => {
+        const typeNameInput = document.getElementById('typeName');
+        const typeName = typeNameInput.value.trim();
+        
+        if (!typeName) {
+            alert('请输入类型名称');
+            typeNameInput.focus();
+            return;
+        }
+
+        try {
+            let response;
+            let requestBody;
+            
+            if (isEditing) {
+                // Update existing type
+                requestBody = JSON.stringify({
+                    table: 'donationtypes',
+                    ID: typeId,
+                    donationTypes: typeName
+                });
+                
+                response = await fetch(`${API_BASE_URL}?table=donationtypes&ID=${typeId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: requestBody
+                });
+            } else {
+                // Add new type
+                requestBody = JSON.stringify({
+                    table: 'donationtypes',
+                    donationTypes: typeName
+                });
+                
+                response = await fetch(`${API_BASE_URL}?table=donationtypes`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: requestBody
+                });
+            }
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || `服务器返回错误: ${response.status}`);
+            }
+
+            // Success!
+            Swal.fire({
+                icon: 'success',
+                title: isEditing ? '类型已更新' : '类型已添加',
+                text: isEditing ? `类型 "${typeName}" 已成功更新` : `类型 "${typeName}" 已成功添加`,
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000
+            });
+
+            closeModal();
+            
+            // Refresh types list and data
+            openTypeManagementModal();
+            
+            // Refresh type filter data
+            updateDonationTypeFilterButtonText();
+            
+            // If current filter was the edited/deleted type, reset it
+            if (isEditing && currentDonationTypeFilter === typeName) {
+                currentDonationTypeFilter = typeName;
+                updateDonationTypeFilterButtonText();
+            }
+            
+        } catch (error) {
+            console.error("Error saving type:", error);
+            Swal.fire({
+                icon: 'error',
+                title: '操作失败',
+                text: `${isEditing ? '更新' : '添加'}类型时出错: ${error.message}`,
+            });
+        }
+    });
+}
+
+// 删除类型函数
+async function deleteType(typeId, typeName) {
+    if (!typeId) {
+        console.error("Delete failed: No type ID provided");
+        return;
+    }
+
+    // First check if the type is being used in any donations
+    try {
+        const response = await fetch(`${API_BASE_URL}?table=donation_details&checkType=${typeName}`);
+        const data = await response.json();
+        
+        if (data.used && data.used > 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: '无法删除类型',
+                text: `类型 "${typeName}" 已被${data.used}条捐款记录使用，无法删除。请先修改或删除相关捐款记录。`,
+            });
+            return;
+        }
+    } catch (error) {
+        console.error("Error checking type usage:", error);
+    }
+
+    // Confirm deletion
+    const result = await Swal.fire({
+        title: '确认删除',
+        text: `确定要删除类型 "${typeName}" 吗？此操作无法撤销。`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: '是的，删除！',
+        cancelButtonText: '取消'
+    });
+
+    if (result.isConfirmed) {
+        try {
+            const response = await fetch(`${API_BASE_URL}?table=donationtypes&ID=${typeId}`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ table: 'donationtypes', ID: typeId })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || `服务器返回错误: ${response.status}`);
+            }
+
+            Swal.fire({
+                icon: 'success',
+                title: '类型已删除',
+                text: `类型 "${typeName}" 已成功删除`,
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000
+            });
+
+            // If the deleted type was the current filter, reset it
+            if (currentDonationTypeFilter === typeName) {
+                currentDonationTypeFilter = null;
+                updateDonationTypeFilterButtonText();
+                fetchDonations(searchInput.value);
+            }
+
+            // Refresh the types list
+            openTypeManagementModal();
+
+        } catch (error) {
+            console.error("Error deleting type:", error);
+            Swal.fire({
+                icon: 'error',
+                title: '删除失败',
+                text: `删除类型时出错: ${error.message}`,
+            });
+        }
+    }
+}
 
     // --- Initializations ---
     initializeResizableColumns(); // Setup column resizing
