@@ -15,6 +15,25 @@ function confirmCancel() {
     }
 }
 
+// Add this function to show the success modal
+function showSuccessModal() {
+    const modal = document.getElementById('successModal');
+    
+    // Show the modal
+    modal.style.display = 'flex';
+    
+    // Trigger animation
+    setTimeout(() => {
+        modal.classList.add('show');
+    }, 10);
+    
+    // Redirect after 1.5 seconds
+    setTimeout(() => {
+        isLeaving = true;
+        window.location.href = 'searchStock.html';
+    }, 1500);
+}
+
 async function saveChanges() {
     // Get common stock record fields
     const companyName = document.getElementById('Name/Company Name').value;
@@ -206,9 +225,7 @@ async function saveChanges() {
         });
         
         if (response.ok) {
-            alert('库存记录已成功添加');
-            isLeaving = true;
-            window.location.href = 'searchStock.html';
+            showSuccessModal(); // Replace the alert with the modal
         } else {
             throw new Error('Failed to update stock');
         }
@@ -228,6 +245,12 @@ function updateMemberSection() {
         newMemberSection.style.display = 'block';
         searchMemberSection.style.display = 'none';
         selectedMemberId = null; // Reset selected member ID when switching
+        
+        // Add "4 - 专门买书的人" to the others field
+        const othersField = document.getElementById('others');
+        if (othersField && !othersField.value) {
+            othersField.value = "4 - 专门买书的人";
+        }
     } else if (membershipType === '2') { // 旧人 - Existing member
         newMemberSection.style.display = 'none';
         searchMemberSection.style.display = 'block';
