@@ -370,3 +370,51 @@ legend {
         color: red !important; /* Make sure it's visible */
     }
 }
+
+/* Confirmation Modal Styles */
+#confirmModal {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+#confirmModal.show {
+    opacity: 1;
+}
+
+#confirmModal .modal-content {
+    transform: scale(0.8);
+    transition: transform 0.3s ease;
+}
+
+#confirmModal.show .modal-content {
+    transform: scale(1);
+}
+
+.confirm-icon {
+    font-size: 60px;
+    color: #ffc107;
+    margin-bottom: 20px;
+    animation: scaleUp 0.5s ease-out;
+}
+
+@keyframes scaleUp {
+    0% {
+        transform: scale(0);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}

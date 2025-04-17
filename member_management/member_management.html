@@ -10,7 +10,7 @@
 <body>
     <div class="container">
         <div class="header-actions">
-            <button class="btn btn-primary" onclick="location.href='member_search.html'">
+            <button class="btn btn-primary" onclick="goBack()">
                 <i class="fas fa-home"></i> 返回搜索
             </button>
         </div>
@@ -50,11 +50,11 @@
                                     <strong>使用须知：</strong><br>
                                     1.  <strong>点击添加：</strong> 点击此 '+' 按钮打开添加窗口。
                                     <br>
-                                    2.  <strong>输入名称：</strong> 在弹出窗口中输入新的种类名称（例如：“荣誉塾员”）。
+                                    2.  <strong>输入名称：</strong> 在弹出窗口中输入新的种类名称（例如："荣誉塾员"）。
                                     <br>
-                                    3.  <strong>保存：</strong> 点击“保存”将新种类永久添加到数据库和此下拉列表中。
+                                    3.  <strong>保存：</strong> 点击"保存"将新种类永久添加到数据库和此下拉列表中。
                                     <br>
-                                    4.  <strong>取消：</strong> 点击“取消”或关闭窗口则不作任何更改。
+                                    4.  <strong>取消：</strong> 点击"取消"或关闭窗口则不作任何更改。
                                     <br>
                                     <strong>数据影响：</strong> 添加后，新种类将可用于所有塾员记录。请谨慎添加，避免重复或不清晰的分类。
                                 </span>
@@ -194,6 +194,21 @@
     </div>
     <!-- End: Add Applicant Type Modal -->
 
+    <!-- Confirm Modal -->
+    <div id="confirmModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="confirm-icon">
+                <i class="fas fa-question-circle"></i>
+            </div>
+            <h3>确认</h3>
+            <p>确定要取消吗？您所作的更改将不会保存。</p>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-danger" onclick="confirmRedirect()">确认</button>
+                <button type="button" class="btn btn-secondary" onclick="hideConfirmModal()">取消</button>
+            </div>
+        </div>
+    </div>
+    <!-- End Confirm Modal -->
 
     <script src="member_management.js"></script>
 </body>

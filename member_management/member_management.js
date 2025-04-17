@@ -2,6 +2,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     // API endpoint configuration
     const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
+    let isLeaving = false;
+    let formChanged = false; // Track if the user has made any changes
 
     // Main form elements
     const addMemberForm = document.getElementById('addMemberForm');
@@ -22,6 +24,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Get return URL from query parameters
     const urlParams = new URLSearchParams(window.location.search);
     const returnUrl = urlParams.get('returnUrl');
+
+    // Add beforeunload event listener to confirm when leaving with unsaved changes
+    window.addEventListener('beforeunload', function (e) {
+        if (!isLeaving && formChanged) {
+            e.returnValue = '确定要取消吗？您的更改可能不会被保存。';
+        }
+    });
 
     // --- Crucial Check: Ensure elements are found ---
     if (!addApplicantTypeBtn) {
@@ -61,8 +70,67 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     // --- End Event Listeners for Modal ---
 
+    // Track form changes
+    const formInputs = addMemberForm.querySelectorAll('input, textarea, select');
+    formInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            formChanged = true;
+        });
+        input.addEventListener('input', function() {
+            formChanged = true;
+        });
+    });
+
     // Initialize expiry date handling
     handleExpiryOptionChange();
+    
+    // Reset formChanged after initialization
+    formChanged = false;
+
+    // Function to handle back button click with confirmation
+    window.goBack = function() {
+        if (formChanged) {
+            showConfirmModal();
+        } else {
+            isLeaving = true;
+            window.location.href = 'member_search.html';
+        }
+    };
+
+    // Function to show confirm modal with animation
+    function showConfirmModal() {
+        const modal = document.getElementById('confirmModal');
+        
+        // Show the modal
+        modal.style.display = 'flex';
+        
+        // Trigger animation
+        setTimeout(() => {
+            modal.classList.add('show');
+        }, 10);
+    }
+
+    // Function to hide confirm modal
+    window.hideConfirmModal = function() {
+        const modal = document.getElementById('confirmModal');
+        modal.classList.remove('show');
+        
+        // Wait for animation to complete before hiding
+        setTimeout(() => {
+            modal.style.display = 'none';
+        }, 300);
+    };
+
+    // Function to confirm and redirect
+    window.confirmRedirect = function() {
+        hideConfirmModal();
+        
+        // Wait for modal to close before redirecting
+        setTimeout(() => {
+            isLeaving = true;
+            window.location.href = 'member_search.html';
+        }, 300);
+    };
 
     /**
      * Fetches applicant types from the API and populates the dropdown.
@@ -145,10 +213,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const phoneField = document.getElementById('phone_number');
         if (phoneField && phoneField.value && !isValidPhone(phoneField.value)) {
             isValid = false; errors.push('手机号码格式不正确'); phoneField.classList.add('error');
-        }
-        const icField = document.getElementById('IC');
-        if (icField && icField.value && !isValidIC(icField.value)) {
-             isValid = false; errors.push('IC号码格式不正确'); icField.classList.add('error');
         }
         const expiredDateField = document.getElementById('expiredDate');
         // Validate expired date only if it's visible and has a value
@@ -376,10 +440,6 @@ document.addEventListener('DOMContentLoaded', function() {
      * Validates phone number format (basic).
      */
     function isValidPhone(phone) { return /^\+?[\d\s-()]{7,}$/.test(phone); }
-    /**
-     * Validates IC number format (basic).
-     */
-    function isValidIC(ic) { return /^[\d-]{6,}/.test(ic); }
 
     /**
      * Displays error messages on the main form.
