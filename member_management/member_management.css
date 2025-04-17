@@ -418,3 +418,29 @@ legend {
     background-color: #6c757d;
     color: white;
 }
+
+/* Success Modal Styles */
+#successModal {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+#successModal.show {
+    opacity: 1;
+}
+
+#successModal .modal-content {
+    transform: scale(0.8);
+    transition: transform 0.3s ease;
+}
+
+#successModal.show .modal-content {
+    transform: scale(1);
+}
+
+.success-icon {
+    font-size: 60px;
+    color: #28a745;
+    margin-bottom: 20px;
+    animation: scaleUp 0.5s ease-out;
+}

@@ -21,6 +21,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const modalErrorMessages = document.getElementById('modalErrorMessages');
     const modalLoadingIndicator = document.getElementById('modalLoadingIndicator');
 
+    // Success modal element
+    const successModal = document.getElementById('successModal');
+
     // Get return URL from query parameters
     const urlParams = new URLSearchParams(window.location.search);
     const returnUrl = urlParams.get('returnUrl');
@@ -129,6 +132,44 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => {
             isLeaving = true;
             window.location.href = 'member_search.html';
+        }, 300);
+    };
+
+    // Function to show success modal with animation
+    function showSuccessModal(message) {
+        // Set message content if provided
+        if (message) {
+            const messageEl = successModal.querySelector('.modal-message');
+            if (messageEl) messageEl.textContent = message;
+        }
+        
+        // Show the modal
+        successModal.style.display = 'flex';
+        
+        // Trigger animation
+        setTimeout(() => {
+            successModal.classList.add('show');
+        }, 10);
+    }
+
+    // Function to hide success modal
+    window.hideSuccessModal = function() {
+        successModal.classList.remove('show');
+        
+        // Wait for animation to complete before hiding
+        setTimeout(() => {
+            successModal.style.display = 'none';
+        }, 300);
+    };
+
+    // Function to confirm success and redirect
+    window.successRedirect = function(url) {
+        hideSuccessModal();
+        
+        // Wait for modal to close before redirecting
+        setTimeout(() => {
+            isLeaving = true;
+            window.location.href = url;
         }, 300);
     };
 
@@ -276,20 +317,44 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (parsedData.status === 'success' && parsedData.ids && parsedData.ids.length > 0) {
                 const memberId = parsedData.ids[0];
-                alert('塾员添加成功！');
-                // Handle redirection
+                
+                // Set isLeaving to true to prevent unsaved changes warning
+                isLeaving = true;
+                
+                // Show success modal instead of alert
+                showSuccessModal('塾员添加成功！');
+                
+                // Handle redirection with delay
                 const designationType = parseInt(data['Designation_of_Applicant'], 10);
+                
+                // Prepare redirect URL
+                let redirectUrl;
                 if (returnUrl) {
-                    const redirectUrl = new URL(returnUrl);
-                    if (designationType === 1 || designationType === 3) { // Example condition
+                    redirectUrl = new URL(returnUrl);
+                    if (designationType === 1 || designationType === 3) {
                         redirectUrl.searchParams.set('memberId', parsedData.memberId);
                     } else {
-                         redirectUrl.searchParams.set('memberId', 'null');
+                        redirectUrl.searchParams.set('memberId', 'null');
                     }
-                    window.location.href = redirectUrl.toString();
+                    redirectUrl = redirectUrl.toString();
                 } else {
-                    window.location.href = `member_search.html?add=success&id=${memberId}`;
+                    redirectUrl = `member_search.html?add=success&id=${memberId}`;
                 }
+                
+                // Add click handler for success modal's confirm button
+                const confirmBtn = successModal.querySelector('.confirm-btn');
+                if (confirmBtn) {
+                    confirmBtn.onclick = function() {
+                        successRedirect(redirectUrl);
+                    };
+                }
+                
+                // Automatically redirect after 3 seconds if user doesn't click
+                setTimeout(() => {
+                    if (successModal.style.display === 'flex') {
+                        successRedirect(redirectUrl);
+                    }
+                }, 3000);
             } else {
                 throw new Error(parsedData.message || parsedData.error || '添加塾员失败，未知错误');
             }
