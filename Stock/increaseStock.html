@@ -69,7 +69,7 @@
                     <button class="btn btn-success" onclick="saveChanges()">
                         <i class="fas fa-save"></i> 保存更改
                     </button>
-                    <button class="btn btn-primary" onclick=confirmCancel()>
+                    <button class="btn btn-primary" onclick="confirmCancel()">
                         <i class="fas fa-times"></i> 取消
                     </button>
                 </div>
@@ -186,6 +186,21 @@
             </div>
             <h3>成功!</h3>
             <p>库存记录已成功添加</p>
+        </div>
+    </div>
+    
+    <!-- Confirm Modal -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <div class="confirm-icon">
+                <i class="fas fa-question-circle"></i>
+            </div>
+            <h3>确认</h3>
+            <p>确定要取消吗？您所作的更改将不会保存。</p>
+            <div class="confirm-actions">
+                <button class="btn btn-danger" onclick="confirmRedirect()">确认</button>
+                <button class="btn btn-secondary" onclick="hideConfirmModal()">取消</button>
+            </div>
         </div>
     </div>
 

@@ -2,9 +2,10 @@ const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI
 let isLeaving = false;
 let selectedMemberId = null;
 let productUnitPrice = 0; // Store the unit price of the product
+let formChanged = false; // Track if the user has made any changes
 
 window.addEventListener('beforeunload', function (e) {
-    if (!isLeaving) {
+    if (!isLeaving && formChanged) {
         e.returnValue = '确定要取消吗？您的更改可能不会被保。';
     }
 });
@@ -20,7 +21,7 @@ async function fetchProductDetails() {
             return;
         }
         
-        const response = await fetch(`${API_BASE_URL}?table=stock&ID=${bookId}`);
+        const response = await fetch(`${API_BASE_URL}?table=stock&search=true&ID=${bookId}`);
         if (!response.ok) {
             throw new Error('Failed to fetch product details');
         }
@@ -39,10 +40,47 @@ async function fetchProductDetails() {
 }
 
 function confirmCancel() {
-    if (confirm('确定要取消吗，您所作的更改将不会保存。')) {
+    if (formChanged) {
+        showConfirmModal();
+    } else {
         isLeaving = true; // Set flag before redirecting
         window.location.href = 'searchStock.html';
     }
+}
+
+// Function to show confirm modal with animation
+function showConfirmModal() {
+    const modal = document.getElementById('confirmModal');
+    
+    // Show the modal
+    modal.style.display = 'flex';
+    
+    // Trigger animation
+    setTimeout(() => {
+        modal.classList.add('show');
+    }, 10);
+}
+
+// Function to hide confirm modal
+function hideConfirmModal() {
+    const modal = document.getElementById('confirmModal');
+    modal.classList.remove('show');
+    
+    // Wait for animation to complete before hiding
+    setTimeout(() => {
+        modal.style.display = 'none';
+    }, 300);
+}
+
+// Function to confirm and redirect
+function confirmRedirect() {
+    hideConfirmModal();
+    
+    // Wait for modal to close before redirecting
+    setTimeout(() => {
+        isLeaving = true;
+        window.location.href = 'searchStock.html';
+    }, 300);
 }
 
 // Add this function to show the success modal
@@ -69,6 +107,7 @@ function updatePrice() {
     const quantity = parseInt(document.getElementById('quantity_out').value) || 0;
     const totalPrice = quantity * productUnitPrice;
     document.getElementById('price').value = totalPrice.toFixed(2);
+    formChanged = true; // Mark form as changed
 }
 
 async function saveChanges() {
@@ -432,10 +471,24 @@ document.addEventListener('DOMContentLoaded', function() {
     const quantityInput = document.getElementById('quantity_out');
     const quantityButtons = document.querySelectorAll('.quantity-btn');
     const applicantType = document.getElementById("applicantTypeFilter");
+    
+    // Track form changes
+    const formInputs = document.querySelectorAll('input, textarea, select');
+    formInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            formChanged = true;
+        });
+        input.addEventListener('input', function() {
+            formChanged = true;
+        });
+    });
 
     // Set default date to today
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('Date').value = today;
+    
+    // After setting default values, reset formChanged flag
+    formChanged = false;
     
     // Set expirationType to "none" by default
     document.getElementById('expirationType').value = 'none';
