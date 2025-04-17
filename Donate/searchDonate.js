@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const amountRangeFilterBtn = document.getElementById("amountRangeFilterBtn");
     const printTableBtn = document.getElementById("printTableBtn"); // Get reference to the new print button
     const listAllBtn = document.getElementById('listAllBtn');
+    const resetColumnWidthBtn = document.getElementById("resetColumnWidthBtn");
 
     // Filter buttons
 if (bankSearchBtn) bankSearchBtn.addEventListener('click', openBankFilterModal);
@@ -40,7 +41,9 @@ if (manageTypeBtn) {
     manageTypeBtn.addEventListener('click', openTypeManagementModal);
 }
 
-
+if (resetColumnWidthBtn) {
+    resetColumnWidthBtn.addEventListener('click', resetColumnWidths);
+}
 
 
     // --- State Variables ---
@@ -97,6 +100,47 @@ if (manageTypeBtn) {
                 showConfirmButton: false,
                 timer: 1000
             });
+        });
+    }
+
+    function resetColumnWidths() {
+        // Clear stored widths from localStorage
+        try {
+            localStorage.removeItem('donationTableColumnWidths');
+        } catch (e) {
+            console.error("Failed to clear stored column widths:", e);
+        }
+    
+        const defaultWidths = {
+            'id': '50px',
+            'donor_name': '150px',
+            'donationTypes': '120px',
+            'Bank': '100px',
+            'membership': '120px',
+            'payment_date': '150px',
+            'receipt_no': '120px',
+            'amount': '110px',
+            'Remarks': '130px',
+            'actions': '200px'
+        };
+
+        // Reset width style on all headers
+        tableHeaders.forEach(header => {
+            const columnName = header.textContent.trim();
+            if (defaultWidths[columnName]) {
+                header.style.width = defaultWidths[columnName];
+            }
+        });
+    
+        // Show confirmation message
+        Swal.fire({
+            title: '已重置',
+            text: '已重置所有列宽度为默认值',
+            icon: 'success',
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 1500
         });
     }
 
@@ -658,6 +702,10 @@ if (manageTypeBtn) {
     // --- Core Data Fetching and Display ---
     // ... (keep existing fetchDonations function)
     async function fetchDonations(query = "") {
+        showLoadingSpinner();
+        try {
+            
+        
         loader.style.display = "flex";
         donationTableBody.innerHTML = ""; // Clear previous results
 
@@ -755,7 +803,9 @@ if (manageTypeBtn) {
             displayDonations(donationData);
             updatePagination();
             updateSortIcons();
-
+        }finally {
+            hideLoadingSpinner();
+        }
         } catch (error) {
             console.error("Error fetching or processing donations:", error);
             donationTableBody.innerHTML = `<tr><td colspan="10" class="error-message">加载乐捐记录失败. 错误: ${escapeHTML(error.message)}</td></tr>`;
@@ -765,6 +815,24 @@ if (manageTypeBtn) {
             updatePagination();
         } finally {
             loader.style.display = "none";
+        }
+    }
+
+    function showLoadingSpinner() {
+        const spinner = document.createElement('div');
+        spinner.className = 'loading-spinner';
+        spinner.innerHTML = `
+            <div class="spinner-border" role="status">
+                <span class="sr-only">加载中...</span>
+            </div>
+        `;
+        document.body.appendChild(spinner);
+    }
+    
+    function hideLoadingSpinner() {
+        const spinner = document.querySelector('.loading-spinner');
+        if (spinner) {
+            spinner.remove();
         }
     }
 

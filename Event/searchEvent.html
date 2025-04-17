@@ -26,6 +26,23 @@
                     <i class="fas fa-file-export"></i> 导出数据
                     <span class="tooltip-text">将当前数据导出为Excel文件</span>
                 </button>
+                <button id="statusFilterButton" class="btn btn-secondary tooltip">
+                    <i class="fas fa-filter"></i> 按状态筛选
+                    <span class="tooltip-text">按活动状态筛选</span>
+                </button>
+                <button id="dateFilterButton" class="btn btn-secondary tooltip">
+                    <i class="fas fa-filter"></i> 开始时间筛选
+                    <span class="tooltip-text">按活动开始时间范围筛选</span>
+                </button>
+                <button id="endTimeFilterButton" class="btn btn-secondary tooltip">
+                    <i class="fas fa-filter"></i> 结束时间筛选
+                    <span class="tooltip-text">按活动结束时间范围筛选</span>
+                </button>
+                
+                <button id="priceFilterButton" class="btn btn-secondary tooltip">
+                    <i class="fas fa-dollar-sign"></i> 按价格筛选
+                    <span class="tooltip-text">按价格范围筛选</span>
+                </button>
             </nav>
         </header>
 
@@ -45,6 +62,10 @@
                 <span class="stats-label">活动数量:</span>
                 <span id="totalEvents" class="stats-value">0</span>
             </div>
+            <button id="resetColumnWidthBtn" class="btn btn-secondary tooltip">
+                <i class="fas fa-arrows-alt-h"></i> 重置列宽
+                <span class="tooltip-text">将所有列宽重置为默认值</span>
+            </button>
         </section>
 
         <section class="table-container">
@@ -99,7 +120,7 @@
         
     </div>
     
-    <script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <script src="searchEvent.js"></script>
 </body>
 </html>

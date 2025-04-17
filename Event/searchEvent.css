@@ -46,30 +46,32 @@ header {
     right: 0;
     z-index: 100;
     height: 80px; 
-    
 }
-
-
 
 h1 {
     color: #f8f9fa;
     font-size: 2rem;
 }
 
-/* Button Styles */
+/* Button Styles - Fixed the btn-info class */
 .btn {
-    padding: 8px 16px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    transition: all 0.3s ease;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-right: 0.5rem;
+    white-space: nowrap;
+    max-width: 2;
 }
 
-btn-info {
+.btn-info {
     background-color: #17a2b8;
     color: white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -95,19 +97,45 @@ btn-info {
 
 /* Icon Styling within Buttons */
 .btn i {
-    margin-right: 6px;
+    margin-right: 0.5rem;
+    font-size: 1rem;
 }
-
 
 .btn-primary {
     background-color: var(--primary-color);
     color: white;
 }
 
+.btn-primary:hover {
+    background-color: #3a56d4;
+  }
+
+  .btn-secondary {
+    background-color: #6c757d;
+    color: white;
+  }
+  
+  .btn-secondary:hover {
+    background-color: #5a6268;
+  }
+
 .btn-success {
     background-color: var(--success-color);
     color: white;
 }
+
+.btn-success:hover {
+    background-color: #2d9900;
+  }
+
+  .btn-export {
+    background-color: #ff9f1c;
+    color: white;
+  }
+  
+  .btn-export:hover {
+    background-color: #f08c00;
+  }
 
 .btn-search {
     background-color: var(--secondary-color);
@@ -142,13 +170,15 @@ btn-info {
 
 /* Search Container Styles */
 .search-container {
-    margin-top: 20px; /* Add some top margin to the search container */
+    margin-top: 20px;
     position: relative;
     z-index: 50;
 }
 
 .search-wrapper {
-    margin-bottom: 20px;
+    margin-bottom: 30px;
+    position: relative;
+    z-index: 50;
 }
 
 .search-input-group {
@@ -186,6 +216,115 @@ btn-info {
 .stats-value {
     font-weight: bold;
     margin-left: 5px;
+}
+
+/* Export Modal Styles */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: white;
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+    position: relative;
+}
+
+.modal-body {
+    padding: 15px;
+}
+
+.modal-footer {
+    padding: 15px;
+    border-top: 1px solid #ddd;
+    text-align: right;
+}
+
+.close {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    cursor: pointer;
+}
+
+.export-format {
+    margin-bottom: 20px;
+}
+
+.export-format label {
+    margin-right: 20px;
+}
+
+.select-actions {
+    margin-bottom: 15px;
+}
+
+.columns-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding: 10px;
+}
+
+.columns-grid label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px;
+}
+
+.date-range {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.date-group {
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.date-inputs {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.date-inputs div {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.date-inputs input,
+.date-inputs select {
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 80px;
+}
+
+.date-inputs label {
+    font-size: 14px;
+    color: #666;
 }
 
 /* Table Styles */
@@ -282,7 +421,7 @@ tr:hover {
 .pagination-container {
     display: flex;
     align-items: center;
-    justify-content:  flex-start;
+    justify-content: flex-start;
     gap: 10px;
     margin-top: 20px;
 }
@@ -361,10 +500,12 @@ tr:hover {
 }
 
 .system-nav {
-    position: fixed;
-top: 20px;    
-right: 20px; 
-z-index: 100;
+    position: static;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 10px;
 }
 
 /* Add this to your CSS file */
@@ -387,32 +528,35 @@ z-index: 100;
 
 .tooltip .tooltip-text {
     visibility: hidden;
-    width: 400px;
+    width: max-content;
+    max-width: 200px;
     background-color: #333;
-    color: #fff;
-    text-align: left;
-    border-radius: 6px;
-    padding: 8px;
+    color: white;
+    text-align: center;
+    border-radius: 4px;
+    padding: 8px 12px;
     position: absolute;
-    z-index: 1000;
-    top: 125%;
+    z-index: 100;
+    bottom: 125%;
     left: 50%;
-    margin-left: -100px;
+    transform: translateX(-50%);
     opacity: 0;
-    transition: opacity 0.3s;
-    font-size: 15px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: opacity 0.3s, visibility 0.3s;
+    font-size: 0.8rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    pointer-events: none;
+  
 }
 
 .tooltip .tooltip-text::after {
     content: "";
     position: absolute;
-    bottom: 100%;
+    top: 100%;
     left: 50%;
     margin-left: -5px;
     border-width: 5px;
     border-style: solid;
-    border-color: transparent transparent #333 transparent;
+    border-color: #333 transparent transparent transparent;
 }
 
 .tooltip:hover .tooltip-text {
@@ -420,50 +564,226 @@ z-index: 100;
     opacity: 1;
 }
 
-/* Responsive Design */
+/* Add these styles to your existing CSS */
+.date-filter-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 10px;
+}
+
+.date-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.date-input-group label {
+    font-weight: 500;
+    color: #333;
+}
+
+.date-input-group input {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.date-input-group input:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+/* Style for the date filter button */
+#dateFilterButton {
+    background-color: #3498db;
+    color: white;
+}
+
+#dateFilterButton:hover {
+    background-color: #2980b9;
+}
+
+/* Add active state for when filter is applied */
+#dateFilterButton.active {
+    background-color: #2980b9;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Only apply responsive changes when in mobile view */
+/* ... existing code ... */
+
+/* Mobile Responsive Design */
 @media (max-width: 768px) {
     header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 15px 20px;
-        border-bottom: 2px solid var(--border-color);
-        background-color: var(--background-color);
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 100;
-        height: 80px; 
+        flex-direction: column;
+        height: auto;
+        padding: 10px;
+        position: relative; /* Change from fixed to allow content flow */
     }
 
-    .system-nav {
-        position: fixed;
-    top: 20px;    
-    right: 20px; 
-    z-index: 100;
+    h1 {
+        margin-bottom: 15px;
+        font-size: 1.5rem; /* Smaller font size for mobile */
+    }
+
+    .container {
+        padding: 10px;
+        margin-top: 20px; /* Reduced margin since header is not fixed */
+        width: 100%; /* Full width on mobile */
     }
 
     .search-input-group {
         flex-direction: column;
+        padding: 8px;
     }
 
-    .pagination-container {
-        flex-direction: column;
-        gap: 15px;
-        align-items: flex-start;
+    #searchInput {
+        width: 100%;
     }
-    
-    .pagination-info, .items-per-page {
+
+    .system-nav {
+        position: static;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: center;
         margin-top: 10px;
     }
 
     .btn {
         padding: 6px 12px;
-        font-size: 12px;
+        font-size: 0.9rem;
+        width: calc(50% - 4px); /* Two buttons per row with gap */
+    }
+
+    .table-container {
+        padding: 10px;
+        margin: 10px 0;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    }
+
+    table {
+        font-size: 0.9rem; /* Slightly smaller font for mobile */
+    }
+
+    th, td {
+        padding: 8px;
+        min-width: 100px; /* Ensure minimum width for cells */
+    }
+
+    /* Adjust pagination for mobile */
+    .pagination-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .pagination {
+        order: 1;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .pagination-info {
+        order: 2;
+        flex-direction: column;
+        width: 100%;
+        text-align: center;
+    }
+
+    .items-per-page {
+        order: 3;
+        justify-content: center;
+        width: 100%;
+    }
+
+    /* Modal adjustments for mobile */
+    .modal {
+        width: 95%;
+        max-width: none;
+    }
+
+    .modal-content {
+        padding: 15px;
+    }
+
+    /* Filter buttons positioning */
+    .filter-button.active {
+        position: fixed;
+        right: 10px;
+        transform: scale(0.8);
+    }
+
+    /* Export modal adjustments */
+    .export-columns-container {
+        max-height: 60vh;
+        overflow-y: auto;
+    }
+
+    .columns-grid {
+        grid-template-columns: 1fr; /* Single column on mobile */
+    }
+
+    /* Tooltip adjustments */
+    .tooltip .tooltip-text {
+        width: 280px;
+        margin-left: -140px;
+    }
+
+    /* Action buttons in table */
+    .action-cell {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+
+    .action-cell .btn {
+        width: auto;
+        padding: 4px 8px;
+        font-size: 0.8rem;
+    }
+}
+
+/* Additional fix for the very small viewport shown in screenshot */
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+    }
+
+    .system-nav {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 3px;
+    }
+
+    .system-nav .btn {
+        padding: 3px 6px;
+        font-size: 10px;
     }
     
-    .btn i {
-        margin-right: 4px;
+    /* Stack buttons if needed */
+    .system-nav {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Add support for Chinese characters */
+@media all {
+    body, button, input, select, textarea {
+        font-family: 'Segoe UI', 'Microsoft YaHei', '微软雅黑', sans-serif;
+    }
+
+    /* Ensure buttons with Chinese text have adequate width */
+    .btn {
+        min-width: 40px; /* Minimum width for buttons */
     }
 }

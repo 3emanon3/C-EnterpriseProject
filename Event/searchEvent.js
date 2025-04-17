@@ -17,6 +17,43 @@ document.addEventListener("DOMContentLoaded", function () {
     const jumpButton = document.getElementById('jumpButton');
     const exportButton = document.getElementById('exportButton');
     const exportModal = document.getElementById('exportModal');
+    const dateFilterButton = document.getElementById('dateFilterButton');
+    const systemNav = document.querySelector('.system-nav');
+    const statusFilterButton = document.getElementById('statusFilterButton');
+    const endTimeFilterButton = document.getElementById('endTimeFilterButton');
+    const priceFilterButton = document.getElementById('priceFilterButton');
+    const listAllButton = document.createElement('button');
+    const resetColumnWidthButton = document.getElementById('resetColumnWidthBtn');
+
+    listAllButton.className = 'btn btn-secondary tooltip';
+    listAllButton.innerHTML = '<i class="fas fa-list"></i> 列出所有';
+    const tooltipSpan = document.createElement('span');
+    tooltipSpan.className = 'tooltip-text';
+    tooltipSpan.textContent = '显示所有数据';
+    listAllButton.appendChild(tooltipSpan);
+    systemNav.appendChild(listAllButton);
+
+    // Add List All button event listener
+    listAllButton.addEventListener('click', function() {
+        // Reset all filters
+        currentSearchQuery = "";
+        currentStartDate = "";
+        currentEndDate = "";
+        currentEndTimeStartDate = "";
+        currentEndTimeEndDate = "";
+        currentStatuses = [];
+        currentStartPrice = "";
+        currentEndPrice = "";
+        currentPage = 1;
+        
+        // Clear search input if it exists
+        if (searchInput) {
+            searchInput.value = "";
+        }
+        
+        // Fetch all events
+        fetchEvents();
+    });
 
     let currentSortColumn = null;
     let currentSortOrder = null;
@@ -25,63 +62,529 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentPage = 1;
     let totalPages = 0;
     let currentSearchQuery = "";
+    let currentStartDate = "";
+    let currentEndDate = ""; 
+    let currentEndTimeStartDate = ""; 
+    let currentEndTimeEndDate = "";   
+    let currentStatuses = [];
+    let currentStartPrice = "";
+    let currentEndPrice = "";
+
+  
+
+    // Add Reset Column Width button event listener
+    resetColumnWidthButton.addEventListener('click', resetColumnWidths);
+
+    // Function to reset column widths
+    function resetColumnWidths() {
+        const defaultWidth = '160px'; // You can adjust this value
+        const headers = table.querySelectorAll('th');
+        
+        headers.forEach(header => {
+            header.style.width = defaultWidth;
+        });
+
+        // Special cases for specific columns
+        const columnWidths = {
+            '序号': '60px',        // Smaller for index numbers
+        '活动ID': '80px',      // Smaller for IDs
+        '标题': '150px',       // Wider for titles
+        '状态': '80px',        // Smaller for status
+        '开始时间': '130px',   // Standard for dates
+        '结束时间': '130px',   // Standard for dates
+        '创建时间': '130px',   // Standard for dates
+        '地点': '120px',       // Medium for location
+        '描述': '200px',       // Wider for descriptions
+        '参与者数量': '200px', // Medium for numbers
+        '报名截止': '130px',   // Standard for dates
+        '价格': '80px',        // Smaller for prices
+        '在线链接': '160px',   // Medium-wide for links
+        '操作': '160px' 
+        };
+
+        headers.forEach(header => {
+            const columnName = header.textContent.trim();
+            if (columnWidths[columnName]) {
+                header.style.width = columnWidths[columnName];
+            }
+        });
+
+        // Save the reset widths to localStorage if you're using persistence
+        saveColumnWidths();
+    }
+
+    function saveColumnWidths() {
+        const widths = {};
+        const headers = table.querySelectorAll('th');
+        headers.forEach(header => {
+            widths[header.textContent.trim()] = header.style.width;
+        });
+        localStorage.setItem('eventTableColumnWidths', JSON.stringify(widths));
+    }
+
+    // Optional: Function to load saved column widths
+    function loadSavedColumnWidths() {
+        const savedWidths = localStorage.getItem('eventTableColumnWidths');
+        if (savedWidths) {
+            const widths = JSON.parse(savedWidths);
+            const headers = table.querySelectorAll('th');
+            headers.forEach(header => {
+                const width = widths[header.textContent.trim()];
+                if (width) {
+                    header.style.width = width;
+                }
+            });
+        }
+    }
+
+    if (priceFilterButton) {
+        priceFilterButton.addEventListener('click', function() {
+            const filterModal = document.createElement('div');
+            filterModal.className = 'modal';
+            filterModal.innerHTML = `
+                <div class="modal-content" style="max-width: 500px;">
+                    <div class="modal-header">
+                        <h3>选择价格范围</h3>
+                        <span class="close">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <div class="price-filter-form">
+                            <div class="price-input-group">
+                                <label>最低价格 (RM):</label>
+                                <input type="number" min="0" step="0.01" id="startPrice" value="${currentStartPrice}">
+                            </div>
+                            <div class="price-input-group">
+                                <label>最高价格 (RM):</label>
+                                <input type="number" min="0" step="0.01" id="endPrice" value="${currentEndPrice}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" id="clearPriceFilter">清除筛选</button>
+                        <button class="btn btn-primary" id="applyPriceFilter">应用</button>
+                        <button class="btn btn-secondary" id="cancelPriceFilter">取消</button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(filterModal);
+
+            const closeBtn = filterModal.querySelector('.close');
+            const cancelBtn = filterModal.querySelector('#cancelPriceFilter');
+            const applyBtn = filterModal.querySelector('#applyPriceFilter');
+            const clearBtn = filterModal.querySelector('#clearPriceFilter');
+
+            closeBtn.onclick = () => document.body.removeChild(filterModal);
+            cancelBtn.onclick = () => document.body.removeChild(filterModal);
+
+            clearBtn.onclick = () => {
+                currentStartPrice = "";
+                currentEndPrice = "";
+                document.body.removeChild(filterModal);
+                currentPage = 1;
+                fetchEvents(currentSearchQuery, currentStatuses);
+            };
+
+            applyBtn.onclick = () => {
+                const startPrice = filterModal.querySelector('#startPrice').value;
+                const endPrice = filterModal.querySelector('#endPrice').value;
+
+                if (startPrice && endPrice && parseFloat(startPrice) > parseFloat(endPrice)) {
+                    alert('最低价格不能大于最高价格');
+                    return;
+                }
+
+                currentStartPrice = startPrice;
+                currentEndPrice = endPrice;
+                
+                document.body.removeChild(filterModal);
+                currentPage = 1;
+                fetchEvents(currentSearchQuery, currentStatuses);
+            };
+        });
+    }
+
+    if (endTimeFilterButton) {
+        endTimeFilterButton.addEventListener('click', function() {
+            const filterModal = document.createElement('div');
+            filterModal.className = 'modal';
+            filterModal.innerHTML = `
+                <div class="modal-content" style="max-width: 500px;">
+                    <div class="modal-header">
+                        <h3>选择结束时间范围</h3>
+                        <span class="close">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <div class="date-filter-form">
+                            <div class="date-input-group">
+                                <label>开始日期:</label>
+                                <input type="date" id="endTimeStartDate" value="${currentEndTimeStartDate}">
+                            </div>
+                            <div class="date-input-group">
+                                <label>结束日期:</label>
+                                <input type="date" id="endTimeEndDate" value="${currentEndTimeEndDate}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" id="clearEndTimeFilter">清除筛选</button>
+                        <button class="btn btn-primary" id="applyEndTimeFilter">应用</button>
+                        <button class="btn btn-secondary" id="cancelEndTimeFilter">取消</button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(filterModal);
+
+            const closeBtn = filterModal.querySelector('.close');
+            const cancelBtn = filterModal.querySelector('#cancelEndTimeFilter');
+            const applyBtn = filterModal.querySelector('#applyEndTimeFilter');
+            const clearBtn = filterModal.querySelector('#clearEndTimeFilter');
+
+            closeBtn.onclick = () => document.body.removeChild(filterModal);
+            cancelBtn.onclick = () => document.body.removeChild(filterModal);
+
+            clearBtn.onclick = () => {
+                currentEndTimeStartDate = "";
+                currentEndTimeEndDate = "";
+                document.body.removeChild(filterModal);
+                currentPage = 1;
+                fetchEvents(currentSearchQuery, currentStatuses);
+            };
+
+            applyBtn.onclick = () => {
+                const startDate = filterModal.querySelector('#endTimeStartDate').value;
+                const endDate = filterModal.querySelector('#endTimeEndDate').value;
+
+                if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
+                    alert('开始日期不能大于结束日期');
+                    return;
+                }
+
+                currentEndTimeStartDate = startDate;
+                currentEndTimeEndDate = endDate;
+                
+                document.body.removeChild(filterModal);
+                currentPage = 1;
+                fetchEvents(currentSearchQuery, currentStatuses);
+            };
+        });
+    }
+
     
-    
-    // 添加导出功能
-    exportButton.addEventListener('click', async function() {
+    if (dateFilterButton) {
+        dateFilterButton.addEventListener('click', function() {
+            const filterModal = document.createElement('div');
+            filterModal.className = 'modal';
+            filterModal.innerHTML = `
+                <div class="modal-content" style="max-width: 500px;">
+                    <div class="modal-header">
+                        <h3>选择开始时间范围</h3>
+                        <span class="close">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <div class="date-filter-form">
+                            <div class="date-input-group">
+                                <label>开始日期:</label>
+                                <input type="date" id="startDate" value="${currentStartDate}">
+                            </div>
+                            <div class="date-input-group">
+                                <label>结束日期:</label>
+                                <input type="date" id="endDate" value="${currentEndDate}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" id="clearDateFilter">清除筛选</button>
+                        <button class="btn btn-primary" id="applyDateFilter">应用</button>
+                        <button class="btn btn-secondary" id="cancelDateFilter">取消</button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(filterModal);
+
+            // Add event listeners for the modal
+            const closeBtn = filterModal.querySelector('.close');
+            const cancelBtn = filterModal.querySelector('#cancelDateFilter');
+            const applyBtn = filterModal.querySelector('#applyDateFilter');
+            const clearBtn = filterModal.querySelector('#clearDateFilter');
+
+            closeBtn.onclick = () => document.body.removeChild(filterModal);
+            cancelBtn.onclick = () => document.body.removeChild(filterModal);
+
+            clearBtn.onclick = () => {
+                currentStartDate = "";
+                currentEndDate = "";
+                document.body.removeChild(filterModal);
+                currentPage = 1;
+                fetchEvents(currentSearchQuery, currentStatuses);
+            };
+
+            applyBtn.onclick = () => {
+                const startDate = filterModal.querySelector('#startDate').value;
+                const endDate = filterModal.querySelector('#endDate').value;
+
+                if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
+                    alert('开始日期不能大于结束日期');
+                    return;
+                }
+
+                currentStartDate = startDate;
+                currentEndDate = endDate;
+                
+                document.body.removeChild(filterModal);
+                currentPage = 1;
+                fetchEvents(currentSearchQuery, currentStatuses);
+            };
+        });
+    }
+
+     
+
+   
+
+    if (statusFilterButton) {
+        statusFilterButton.addEventListener('click', function() {
+            const filterModal = document.createElement('div');
+            filterModal.className = 'modal';
+            filterModal.innerHTML = `
+                <div class="modal-content" style="max-width: 500px;">
+                    <div class="modal-header">
+                        <h3>选择活动状态</h3>
+                        <span class="close">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <div class="status-selection">
+                            <label class="status-option">
+                                <input type="checkbox" value="not started" ${currentStatuses.includes('not started') ? 'checked' : ''}> 未开始
+                            </label>
+                            <label class="status-option">
+                                <input type="checkbox" value="ongoing" ${currentStatuses.includes('ongoing') ? 'checked' : ''}> 进行中
+                            </label>
+                            <label class="status-option">
+                                <input type="checkbox" value="completed" ${currentStatuses.includes('completed') ? 'checked' : ''}> 已结束
+                            </label>
+                            <label class="status-option">
+                                <input type="checkbox" value="cancelled" ${currentStatuses.includes('cancelled') ? 'checked' : ''}> 已取消
+                            </label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" id="applyStatusFilter">应用</button>
+                        <button class="btn btn-secondary" id="cancelStatusFilter">取消</button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(filterModal);
+
+            // Add event listeners for the modal
+            const closeBtn = filterModal.querySelector('.close');
+            const cancelBtn = filterModal.querySelector('#cancelStatusFilter');
+            const applyBtn = filterModal.querySelector('#applyStatusFilter');
+
+            closeBtn.onclick = () => document.body.removeChild(filterModal);
+            cancelBtn.onclick = () => document.body.removeChild(filterModal);
+
+            applyBtn.onclick = () => {
+                const selectedStatuses = Array.from(filterModal.querySelectorAll('input[type="checkbox"]:checked'))
+                    .map(cb => cb.value);
+                
+                // Update the currentStatuses array with the selected values
+                currentStatuses = selectedStatuses;
+                
+                document.body.removeChild(filterModal);
+                currentPage = 1;
+                // Pass all current filter parameters
+                fetchEvents(currentSearchQuery, currentStatuses);
+            };
+        });
+    }
+   
+    // Add export button event listener
+     // Add export button event listener if the button exists
+     if (exportButton) {
+        exportButton.addEventListener('click', async function() {
+            // Create and show format selection modal
+            const formatModal = document.createElement('div');
+            formatModal.className = 'modal';
+            formatModal.innerHTML = `
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>选择要导出的数据列</h3>
+                    <span class="close">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="export-format">
+                        <p>选择导出格式:</p>
+                        <label>
+                            <input type="radio" name="exportFormat" value="xlsx" checked> XLSX (Excel)
+                        </label>
+                        <label>
+                            <input type="radio" name="exportFormat" value="csv"> CSV
+                        </label>
+                    </div>
+                    <div class="column-selection">
+                        <div class="select-actions">
+                            <button class="btn btn-secondary" id="selectAll">全选</button>
+                            <button class="btn btn-secondary" id="deselectAll">取消全选</button>
+                        </div>
+                        <div class="columns-grid">
+                            <label><input type="checkbox" value="序号" checked> 序号</label>
+                            <label><input type="checkbox" value="活动ID" checked> 活动ID</label>
+                            <label><input type="checkbox" value="标题" checked> 标题</label>
+                            <label><input type="checkbox" value="状态" checked> 状态</label>
+                            <label><input type="checkbox" value="开始时间" checked> 开始时间</label>
+                            <label><input type="checkbox" value="结束时间" checked> 结束时间</label>
+                            <label><input type="checkbox" value="创建时间" checked> 创建时间</label>
+                            <label><input type="checkbox" value="地点" checked> 地点</label>
+                            <label><input type="checkbox" value="描述" checked> 描述</label>
+                            <label><input type="checkbox" value="参与者数量" checked> 参与者数量</label>
+                            <label><input type="checkbox" value="报名截止" checked> 报名截止</label>
+                            <label><input type="checkbox" value="价格" checked> 价格</label>
+                            <label><input type="checkbox" value="在线链接" checked> 在线链接</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" id="confirmExport">导出</button>
+                    <button class="btn btn-secondary" id="cancelExport">取消</button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(formatModal);
+
+
+          // Add event listeners for the modal
+          const closeBtn = formatModal.querySelector('.close');
+          const selectAllBtn = formatModal.querySelector('#selectAll');
+          const deselectAllBtn = formatModal.querySelector('#deselectAll');
+          const confirmBtn = formatModal.querySelector('#confirmExport');
+          const cancelBtn = formatModal.querySelector('#cancelExport');
+          const checkboxes = formatModal.querySelectorAll('.columns-grid input[type="checkbox"]');
+
+          closeBtn.onclick = () => document.body.removeChild(formatModal);
+          cancelBtn.onclick = () => document.body.removeChild(formatModal);
+
+          selectAllBtn.onclick = () => checkboxes.forEach(cb => cb.checked = true);
+          deselectAllBtn.onclick = () => checkboxes.forEach(cb => cb.checked = false);
+
+          confirmBtn.onclick = () => {
+              const format = formatModal.querySelector('input[name="exportFormat"]:checked').value;
+              const selectedColumns = Array.from(checkboxes)
+                  .filter(cb => cb.checked)
+                  .map(cb => cb.value);
+
+              if (selectedColumns.length === 0) {
+                  alert('请至少选择一个导出列');
+                  return;
+              }
+
+              document.body.removeChild(formatModal);
+              exportData(format, selectedColumns);
+          };
+      });
+    }
+
+    // Export function that handles both XLSX and CSV formats
+    async function exportData(format,selectedColumns) {
         try {
-            // 显示加载动画
-            loader.style.display = "flex";
+            if (loader) loader.style.display = "flex";
             
-            // 获取表头
-            const headers = Array.from(document.querySelectorAll('#eventTable thead th'))
-                .map(th => th.textContent.trim())
-                .filter(header => header !== '操作'); // 排除操作列
+            const params = new URLSearchParams();
+            params.append("table", "event");
+            params.append("export", "true");
             
-            // 准备导出数据
-            const exportData = eventData.map(event => ({
-                '序号': event.ID,
-                '标题': event.title,
-                '状态': event.status,
-                '开始时间': formatDateTime(event.start_time),
-                '结束时间': formatDateTime(event.end_time),
-                '创建时间': formatDateTime(event.created_at),
-                '地点': event.location,
-                '描述': event.description,
-                '参与者数量': event.max_participant,
-                '报名截止': formatDateTime(event.registration_deadline),
-                '价格': formatPrice(event.price),
-                '在线链接': event.online_link
-            }));
-    
-            // 创建工作簿
-            const wb = XLSX.utils.book_new();
-            const ws = XLSX.utils.json_to_sheet(exportData);
+            if (currentSearchQuery.trim() !== "") {
+                params.append("search", currentSearchQuery);
+            }
+            if (currentSortColumn) {
+                params.append("sort", currentSortColumn);
+                params.append("order", currentSortOrder);
+            }
             
-            // 设置列宽
-            const colWidths = headers.map(() => ({wch: 15}));
-            ws['!cols'] = colWidths;
+            const url = `${API_BASE_URL}?${params.toString()}`;
+            const response = await fetch(url);
             
-            // 添加工作表到工作簿
-            XLSX.utils.book_append_sheet(wb, ws, "活动数据");
+            if (!response.ok) {
+                throw new Error(`Server responded with status: ${response.status}`);
+            }
             
-            // 生成文件名
-            const fileName = `活动数据_${new Date().toLocaleDateString('zh-CN').replace(/\//g, '-')}.xlsx`;
+            const data = await response.json();
+            const exportData = (data.data || []).map((event, index) => {
+                const rowData = {};
+                if (selectedColumns.includes('序号')) rowData['序号'] = index + 1;
+                if (selectedColumns.includes('活动ID')) rowData['活动ID'] = event.ID;
+                if (selectedColumns.includes('标题')) rowData['标题'] = event.title || '';
+                if (selectedColumns.includes('状态')) rowData['状态'] = event.status || '';
+                if (selectedColumns.includes('开始时间')) rowData['开始时间'] = formatDateTime(event.start_time) || '';
+                if (selectedColumns.includes('结束时间')) rowData['结束时间'] = formatDateTime(event.end_time) || '';
+                if (selectedColumns.includes('创建时间')) rowData['创建时间'] = formatDateTime(event.created_at) || '';
+                if (selectedColumns.includes('地点')) rowData['地点'] = event.location || '';
+                if (selectedColumns.includes('描述')) rowData['描述'] = event.description || '';
+                if (selectedColumns.includes('参与者数量')) rowData['参与者数量'] = event.max_participant || '';
+                if (selectedColumns.includes('报名截止')) rowData['报名截止'] = formatDateTime(event.registration_deadline) || '';
+                if (selectedColumns.includes('价格')) rowData['价格'] = formatPrice(event.price) || '';
+                if (selectedColumns.includes('在线链接')) rowData['在线链接'] = event.online_link || '';
+                return rowData;
+            });
+
+
+            const currentDate = new Date().toLocaleDateString('zh-CN').replace(/\//g, '-');
             
-            // 导出文件
-            XLSX.writeFile(wb, fileName);
-            
-            // 显示成功提示
+            if (format === 'xlsx') {
+                // Export as XLSX
+                const wb = XLSX.utils.book_new();
+                const ws = XLSX.utils.json_to_sheet(exportData);
+                
+                // Set column widths
+                const colWidths = Object.keys(exportData[0] || {}).map(() => ({ wch: 15 }));
+                ws['!cols'] = colWidths;
+
+                // Style the worksheet
+                for (let cell in ws) {
+                    if (cell[0] === '!') continue;
+                    if (!ws[cell].v) ws[cell].v = '';
+                }
+
+                XLSX.utils.book_append_sheet(wb, ws, "活动数据");
+                XLSX.writeFile(wb, `活动数据_${currentDate}.xlsx`);
+            } else {
+                // Export as CSV
+                const headers = Object.keys(exportData[0] || {});
+                let csvContent = headers.join(',') + '\n';
+                
+                exportData.forEach(row => {
+                    const rowData = headers.map(header => {
+                        const value = row[header] || '';
+                        // Escape quotes and wrap in quotes if contains comma or newline
+                        return `"${String(value).replace(/"/g, '""')}"`;
+                    });
+                    csvContent += rowData.join(',') + '\n';
+                });
+
+                // Create blob and download
+                const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `活动数据_${currentDate}.csv`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+
             alert('导出成功！');
         } catch (error) {
-            console.error('导出失败:', error);
-            alert('导出失败，请稍后重试');
+            console.error('Export failed:', error);
+            alert('导出失败，请稍后重试\n错误信息: ' + error.message);
         } finally {
-            // 隐藏加载动画
-            loader.style.display = "none";
+            if (loader) loader.style.display = "none";
         }
-    });
-    
+        
+    }
+
     function debounce(func, wait) {
         let timeout;
         return function executedFunction(...args) {
@@ -108,7 +611,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    async function fetchEvents(query = "") {
+    async function fetchEvents(query = "", statuses = []) {
         loader.style.display = "flex";
         eventTableBody.innerHTML = "";
         
@@ -119,9 +622,46 @@ document.addEventListener("DOMContentLoaded", function () {
         params.append("table", "event");
         params.append("limit", itemsPerPage);
         params.append("page", currentPage);
+        params.append("search", "true"); 
+
         if (query.trim() !== "") {
             params.append("search", query);
         }
+        
+        if (statuses && statuses.length > 0) {
+            params.append("status", statuses[0]); // API expects single status value
+            console.log("Filtering by status:", statuses[0]);
+        }
+
+        let useMultipleRequests = false;
+        let startTimeEvents = null;
+        let endTimeEvents = null;
+        
+        // Check if both filters are active
+        if (currentStartDate && currentEndTimeStartDate) {
+            useMultipleRequests = true;
+        } else {
+            // Use single request with appropriate parameters
+            if (currentStartDate) {
+                params.append("startDate", currentStartDate);
+                params.append("endDate", currentEndDate);
+                params.append("startDateRange", "true");
+            }
+            
+            if (currentEndTimeStartDate) {
+                params.append("startDate", currentEndTimeStartDate);
+                params.append("endDate", currentEndTimeEndDate);
+                params.append("endDateRange", "true");
+            }
+        }
+    
+        
+        if (currentStartPrice) {
+            params.append("startPrice", currentStartPrice);
+            params.append("endPrice", currentEndPrice);
+            params.append("priceRange", "true");
+        }
+
         if (currentSortColumn) {
             params.append("sort", currentSortColumn);
             params.append("order", currentSortOrder);
@@ -132,15 +672,65 @@ document.addEventListener("DOMContentLoaded", function () {
         
         try {
             console.log("Fetching events...");
-            const response = await fetch(url);
-            console.log("Raw response status:", response.status);
             
-            if (!response.ok) {
-                const errorText = await response.text();
-                console.error(`Server error response: ${errorText}`);
-                throw new Error(`Server responded with status: ${response.status}`);
+            let data;
+            
+            if (useMultipleRequests) {
+                // Make two separate requests and combine results
+                
+                // First request - start time filter
+                const startTimeParams = new URLSearchParams(params.toString());
+                startTimeParams.append("startDate", currentStartDate);
+                startTimeParams.append("endDate", currentEndDate);
+                startTimeParams.append("startDateRange", "true");
+                
+                // Second request - end time filter
+                const endTimeParams = new URLSearchParams(params.toString());
+                endTimeParams.append("startDate", currentEndTimeStartDate);
+                endTimeParams.append("endDate", currentEndTimeEndDate);
+                endTimeParams.append("endDateRange", "true");
+                
+                // Execute both requests
+                const [startTimeResponse, endTimeResponse] = await Promise.all([
+                    fetch(`${API_BASE_URL}?${startTimeParams.toString()}`),
+                    fetch(`${API_BASE_URL}?${endTimeParams.toString()}`)
+                ]);
+                
+                if (!startTimeResponse.ok || !endTimeResponse.ok) {
+                    throw new Error('One or more API requests failed');
+                }
+                
+                const startTimeData = await startTimeResponse.json();
+                const endTimeData = await endTimeResponse.json();
+                
+                // Process and filter the data to find common events that match both criteria
+                const startTimeIds = new Set(startTimeData.data.map(event => event.ID));
+                const filteredEndTimeEvents = endTimeData.data.filter(event => startTimeIds.has(event.ID));
+                
+                // Use the filtered data
+                data = {
+                    data: filteredEndTimeEvents,
+                    total: filteredEndTimeEvents.length
+                };
+                
+            } else {
+                // Single request approach
+                const url = `${API_BASE_URL}?${params.toString()}`;
+                console.log("API URL:", url);
+                
+                const response = await fetch(url);
+                console.log("Raw response status:", response.status);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error(`Server error response: ${errorText}`);
+                    throw new Error(`Server responded with status: ${response.status}`);
+                }
+                
+                data = await response.json();
             }
-            const data = await response.json();
+            
+          
             eventData = data.data;
             totalEvents.textContent = data.total || 0;
             totalPages = Math.ceil((data.total || eventData.length) / itemsPerPage);
@@ -169,6 +759,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
         events.forEach((event,index) => {
             const displayIndex = startIndex + index;
+
+            let onlineLinkDisplay = '';
+            if (event.online_link) {
+                // Ensure the link has http:// or https:// prefix
+                const linkUrl = event.online_link.startsWith('http') ? event.online_link : `https://${event.online_link}`;
+                // Create a clickable link with truncated visible text
+                onlineLinkDisplay = `<a href="${linkUrl}" target="_blank" class="event-link">${truncateText(event.online_link, 30)}</a>`;
+            }
+
             const row = document.createElement("tr");
             row.innerHTML = `
                 <td>${displayIndex}</td> <!-- Display sequential number -->
@@ -183,7 +782,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <td>${highlightText(event.max_participant || '-', currentSearchQuery)}</td>
                 <td>${highlightText(formatDateTime(event.registration_deadline) || '-', currentSearchQuery)}</td>
                 <td>${highlightText(formatPrice(event.price) || '0', currentSearchQuery)}</td>
-                <td>${highlightText(truncateText(event.online_link, 30) || '', currentSearchQuery)}</td>
+                <td>${onlineLinkDisplay}</td>
                 <td>
                 <button class="btn btn-edit" data-id="${event.ID}">编辑</button>
                 <button class="btn btn-delete" data-id="${event.ID}">删除</button>
@@ -339,32 +938,92 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
     
+    // 添加本地存储相关的常量
+    const STORAGE_KEY = 'eventListSettings';
+    
+    // 在 DOMContentLoaded 事件处理函数开始处添加
+    const savedSettings = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    itemsPerPage = parseInt(savedSettings.itemsPerPage) || parseInt(itemsPerPageSelect.value);
+    itemsPerPageSelect.value = itemsPerPage;
+    
+    // 修改 jumpToPage 函数
     window.jumpToPage = function() {
         const pageInputElement = document.getElementById('pageInput');
         if (!pageInputElement) return;
         
         let targetPage = parseInt(pageInputElement.value);
         
-        // Validate input
-        if (isNaN(targetPage)) {
-            alert('请输入有效的页码');
+        // 增强的输入验证
+        if (!pageInputElement.value.trim()) {
+            alert('请输入页码');
+            return;
+        }
+        
+        if (isNaN(targetPage) || !Number.isInteger(targetPage)) {
+            alert('请输入有效的整数页码');
+            pageInputElement.value = '';
             return;
         }
         
         if (targetPage < 1) {
+            alert('页码不能小于1');
             targetPage = 1;
         } else if (targetPage > totalPages) {
+            alert(`页码不能大于最大页数 ${totalPages}`);
             targetPage = totalPages;
         }
         
-        // Only change page if it's different from current page
         if (targetPage !== currentPage) {
+            // 更新 URL 参数
+            const url = new URL(window.location.href);
+            url.searchParams.set('page', targetPage);
+            window.history.pushState({}, '', url);
+            
             changePage(targetPage);
         }
         
-        // Clear input after jumping
         pageInputElement.value = '';
     };
+    
+    // 修改 itemsPerPageSelect 的事件监听器
+    itemsPerPageSelect.addEventListener("change", function () {
+        const newItemsPerPage = parseInt(this.value);
+        if (newItemsPerPage !== itemsPerPage) {
+            itemsPerPage = newItemsPerPage;
+            currentPage = 1;
+            
+            // 保存设置到本地存储
+            const settings = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+            settings.itemsPerPage = itemsPerPage;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+            
+            // 更新 URL 参数
+            const url = new URL(window.location.href);
+            url.searchParams.set('perPage', itemsPerPage);
+            url.searchParams.delete('page'); // 重置页码
+            window.history.pushState({}, '', url);
+            
+            fetchEvents(currentSearchQuery, currentStatuses);
+        }
+    });
+    
+    // 添加页面加载时的 URL 参数处理
+    window.addEventListener('load', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const pageParam = parseInt(urlParams.get('page'));
+        const perPageParam = parseInt(urlParams.get('perPage'));
+        
+        if (!isNaN(perPageParam) && perPageParam > 0) {
+            itemsPerPage = perPageParam;
+            itemsPerPageSelect.value = perPageParam;
+        }
+        
+        if (!isNaN(pageParam) && pageParam > 0) {
+            currentPage = pageParam;
+        }
+        
+        fetchEvents(currentSearchQuery,currentStatuses );
+    });
 
     function updatePageInputMax() {
         if (pageInput) {
@@ -394,8 +1053,9 @@ document.addEventListener("DOMContentLoaded", function () {
     if (searchButton && searchInput) {
         searchButton.addEventListener("click", function() {
             currentPage = 1;
-            fetchEvents(searchInput.value);
+            fetchEvents(searchInput.value, currentStatuses);
         });
+
         
         // Also search when Enter key is pressed
         searchInput.addEventListener('keypress', function(e) {
@@ -410,7 +1070,7 @@ document.addEventListener("DOMContentLoaded", function () {
     itemsPerPageSelect.addEventListener("change", function () {
         itemsPerPage = parseInt(this.value);
         currentPage = 1; // Reset to first page when changing items per page
-        fetchEvents(currentSearchQuery);
+        fetchEvents(currentSearchQuery, currentStatuses);
     });
 
     // Jump button event handler
@@ -512,112 +1172,9 @@ eventTableBody.addEventListener('click', function(e) {
         }
     });
 
-    function setupPrintFunction() {
-        // Add print button to the header navigation
-        const systemNav = document.querySelector('.system-nav');
-        if (systemNav) {
-            const printButton = document.createElement('button');
-            printButton.className = 'btn btn-info tooltip';
-            printButton.innerHTML = '<i class="fas fa-print"></i> 打印';
-            
-            // Create tooltip span
-            const tooltipSpan = document.createElement('span');
-            tooltipSpan.className = 'tooltip-text';
-            tooltipSpan.textContent = '打印当前页面活动列表';
-            printButton.appendChild(tooltipSpan);
-            
-            printButton.addEventListener('click', printEventList);
-            systemNav.appendChild(printButton);
-        }
-    }
-    
-    // Function to print the event list
-    function printEventList() {
-        // Prepare print-specific styles
-        const printStyles = document.createElement('style');
-        printStyles.id = 'print-styles';
-        printStyles.textContent = `
-            @media print {
-                body * {
-                    visibility: hidden;
-                }
-                .container, .table-container, #eventTable, #eventTable * {
-                    visibility: visible;
-                }
-                .container {
-                    position: absolute;
-                    left: 0;
-                    top: 0;
-                    width: 100%;
-                }
-                .btn, .btn-edit, .btn-delete, .btn-view, .resizer, 
-                .search-container, .pagination-container, .system-nav {
-                    display: none !important;
-                }
-                header h1 {
-                    text-align: center;
-                    margin-bottom: 20px;
-                }
-                table {
-                    width: 100%;
-                    border-collapse: collapse;
-                }
-                th, td {
-                    border: 1px solid #ddd;
-                    padding: 8px;
-                    text-align: left;
-                }
-                th {
-                    background-color: #f2f2f2 !important;
-                    color: black !important;
-                }
-                thead {
-                    display: table-header-group;
-                }
-                tfoot {
-                    display: table-footer-group;
-                }
-                /* Hide sort icons in print */
-                th i.fas {
-                    display: none;
-                }
-                /* Add print footer with pagination info */
-                .print-footer {
-                    visibility: visible;
-                    position: fixed;
-                    bottom: 0;
-                    left: 0;
-                    right: 0;
-                    text-align: center;
-                    font-size: 12px;
-                    padding: 10px;
-                    border-top: 1px solid #ddd;
-                }
-            }
-        `;
-        document.head.appendChild(printStyles);
-    
-        // Create a footer with pagination info
-        const footer = document.createElement('div');
-        footer.className = 'print-footer';
-        footer.innerHTML = `
-            <p>打印时间: ${new Date().toLocaleString('zh-CN')}</p>
-            <p>页码: ${currentPage} / ${totalPages} | 每页显示: ${itemsPerPage} | 总活动数: ${totalEvents.textContent}</p>
-        `;
-        document.body.appendChild(footer);
-    
-        // Print the page
-        window.print();
-    
-        // Remove print-specific elements after printing
-        setTimeout(() => {
-            document.head.removeChild(printStyles);
-            document.body.removeChild(footer);
-        }, 1000);
-    }
-
-    // Call the setup function
-    setupPrintFunction();
+  
+    loadSavedColumnWidths();
+  
 
     // Initial fetch
     fetchEvents();

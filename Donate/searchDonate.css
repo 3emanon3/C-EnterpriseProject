@@ -51,7 +51,7 @@ body {
 /* Header Styles */
 header {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
     padding: 15px 20px;
     border-bottom: 2px solid var(--border-color);
@@ -61,15 +61,14 @@ header {
     left: 0;
     right: 0;
     z-index: 100;
-    min-height: 80px; /* Use min-height for flexibility */
+    min-height: 60px; /* Use min-height for flexibility */
+
 }
 
 .header-container {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    align-items: center; 
     width: 100%;
-    flex-wrap: wrap; /* Allow wrapping if needed */
     gap: 10px; /* Add gap between title and buttons */
 }
 
@@ -84,7 +83,8 @@ h1 {
     display: flex;
     gap: 10px;
     flex-wrap: wrap; /* Allow buttons to wrap */
-    justify-content: flex-end; /* Align buttons to the right */
+    width: 100%; 
+    justify-content: center; /* Align buttons to the right */
 }
 
 /* Button Styles */
@@ -139,7 +139,7 @@ h1 {
 
 /* Search Container Styles */
 .search-container {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     position: relative;
     z-index: 50; /* Ensure it's below header */
 }
@@ -198,14 +198,18 @@ h1 {
 
 .table-responsive {
     overflow-x: auto;
+    width: 100%;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 20px;
-    table-layout: fixed; /* Important for resizing */
+    table-layout: fixed ; /* Important for resizing */
+    min-width: 1200px
 }
+
+
 
 th, td {
     padding: 12px;
@@ -217,14 +221,6 @@ th, td {
     text-overflow: ellipsis; /* Show ellipsis for overflow */
     white-space: nowrap;   /* Keep content on one line initially */
 }
-
-/* Allow wrapping in specific columns if needed */
-th[data-column="Remarks"], td:nth-child(9), /* Remarks column */
-th[data-column="donor_name"], td:nth-child(2) /* Name column */
-{
-    white-space: normal; /* Allow wrapping */
-}
-
 
 th {
     background-color: #f8f9fa;
@@ -869,138 +865,161 @@ tr:hover {
      }
 }
 
-
-@media (max-width: 992px) {
-     .container {
-        padding-top: 90px; /* Adjust padding if header wraps */
-    }
-    header {
-        min-height: auto; /* Allow header height to adjust */
-        padding-bottom: 15px; /* Add padding when wrapped */
-    }
-    .header-container {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    h1 {
-        margin-bottom: 15px; /* Space below title */
-    }
-
-     .pagination-container {
-        flex-direction: column;
-        align-items: center; /* Center items when stacked */
-    }
-     .pagination { order: 2; margin-bottom: 15px; }
-     #prevPage, #nextPage { order: 1; margin-bottom: 10px; }
-     .pagination-info { order: 3; flex-basis: auto; margin-top: 0; }
-     .items-per-page { order: 4; margin-top: 10px; }
-}
-
-
 @media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        height: auto;
+        padding: 10px;
+        position: relative; /* Change from fixed to allow content flow */
+    }
+
+    .header-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        gap: 30px;
+    }
+
     h1 {
-        font-size: 1.7rem;
+        margin-bottom: 15px;
+        font-size: 1.5rem; /* Smaller font size for mobile */
     }
-    .btn {
-        font-size: 13px;
-        padding: 7px 12px;
+
+    .container {
+        padding: 10px;
+        margin-top: 20px; /* Reduced margin since header is not fixed */
+        width: 100%; /* Full width on mobile */
     }
+
     .search-input-group {
         flex-direction: column;
         padding: 8px;
     }
+
     #searchInput {
-        font-size: 13px;
+        width: 100%;
     }
+
+    .system-nav {
+        position: static;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: center;
+        margin-top: 10px;
+    }
+
+    .btn {
+        padding: 6px 12px;
+        font-size: 0.9rem;
+        width: calc(50% - 4px); /* Two buttons per row with gap */
+    }
+
+    .table-container {
+        padding: 10px;
+        margin: 10px 0;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    }
+
+    table {
+        font-size: 0.9rem; /* Slightly smaller font for mobile */
+    }
+
     th, td {
-        padding: 10px 8px; /* Reduce padding */
-        font-size: 13px;
-        white-space: nowrap; /* Force nowrap on smaller screens initially */
+        padding: 8px;
+        min-width: 100px; /* Ensure minimum width for cells */
     }
-    /* Allow wrapping again for specific columns */
-    th[data-column="Remarks"], td:nth-child(9),
-    th[data-column="donor_name"], td:nth-child(2)
-    {
-        white-space: normal;
+
+    .button-container {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        width: 90%; /* Reduced width to center buttons */
+        justify-content: center;
+        margin: 0 auto; /* Center the container */
+    }
+
+    /* Adjust pagination for mobile */
+    .pagination-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .pagination {
+        order: 1;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .pagination-info {
+        order: 2;
+        flex-direction: column;
+        width: 100%;
+        text-align: center;
+    }
+
+    .items-per-page {
+        order: 3;
+        justify-content: center;
+        width: 100%;
+    }
+
+    /* Modal adjustments for mobile */
+    .modal {
+        width: 95%;
+        max-width: none;
     }
 
     .modal-content {
-        width: 95%;
-        max-height: 85vh; /* Adjust max height for smaller screens */
+        padding: 15px;
     }
-    .filter-selection-grid {
-       grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); /* Smaller cards */
-       gap: 10px;
+
+    /* Filter buttons positioning */
+    .filter-button.active {
+        position: fixed;
+        right: 10px;
+        transform: scale(0.8);
     }
-    .filter-option-card {
-        padding: 12px;
-        min-height: 80px;
+
+    /* Export modal adjustments */
+    .export-columns-container {
+        max-height: 60vh;
+        overflow-y: auto;
     }
-     .filter-option-icon {
-        font-size: 20px;
-        margin-bottom: 8px;
+
+    .columns-grid {
+        grid-template-columns: 1fr; /* Single column on mobile */
     }
-     .filter-option-name {
-        font-size: 13px;
+
+    /* Tooltip adjustments */
+    .tooltip .tooltip-text {
+        width: 280px;
+        margin-left: -140px;
     }
-     .pagination-btn {
-        padding: 5px 10px;
-        font-size: 13px;
+
+    /* Action buttons in table */
+    .action-cell {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
     }
-     .page-input {
-        width: 50px;
-        padding: 4px 6px;
-    }
-     .jump-btn {
+
+    .action-cell .btn {
+        width: auto;
         padding: 4px 8px;
-        font-size: 12px;
+        font-size: 0.8rem;
     }
-     .items-per-page label, .items-per-page select {
-        font-size: 13px;
-    }
-     .modal-footer {
-        padding: 10px 15px;
-        gap: 8px;
-     }
-     .modal-footer .btn {
-        padding: 6px 10px;
-        font-size: 13px;
-     }
 }
 
-@media (max-width: 480px) {
-     .button-container {
-        gap: 5px; /* Reduce gap between buttons */
-        width: 100%; /* Take full width */
-        justify-content: space-around; /* Distribute buttons */
-    }
-     .btn {
-        padding: 6px 8px; /* Smaller padding */
-        font-size: 12px;
-        gap: 4px; /* Smaller gap */
-        flex-grow: 1; /* Allow buttons to grow */
-        justify-content: center;
-     }
-     .btn i.fas {
-        font-size: 11px; /* Smaller icons in buttons */
-     }
-     th, td {
-        padding: 8px 5px;
-        font-size: 12px;
-    }
-     .btn-edit, .btn-delete {
-        padding: 4px 6px;
-        font-size: 11px;
-    }
-     .pagination-info {
-        flex-direction: column;
-        gap: 8px;
-     }
-     .page-jump {
-        width: 100%;
-        justify-content: center;
-     }
-}
+
+
+
 
 @media print {
     /* --- Print Specific Styles --- */

@@ -56,6 +56,32 @@ document.addEventListener('DOMContentLoaded', function() {
      const addSelectedMembersBtn = document.getElementById('addSelectedMembersBtn');
      const selectedMemberCount = document.getElementById('selectedMemberCount');
      
+// Add this after the DOM element references section
+const exportTableBtn = document.createElement('button');
+exportTableBtn.id = 'exportTableBtn';
+exportTableBtn.className = 'btn btn-success';
+exportTableBtn.innerHTML = '<i class="fas fa-file-export"></i> 导出名单';
+exportTableBtn.title = '导出参与者名单';
+
+// Add the export button to the page
+const headerActions = document.querySelector('.header-actions');
+if (headerActions) {
+    headerActions.appendChild(exportTableBtn);
+}
+
+// Add click event listener for export button
+if (exportTableBtn) {
+    exportTableBtn.addEventListener('click', async () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const eventId = urlParams.get('id');
+        if (eventId) {
+            await exportParticipantsList(eventId);
+        } else {
+            showError('无法获取活动ID');
+        }
+    });
+}
+
      if (selectAllBtn) {
          selectAllBtn.addEventListener('click', selectAllMembers);
      }
@@ -460,7 +486,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         try {
             console.log(`Fetching participants for event ID: ${eventId}`);
-            const response = await fetch(`${API_BASE_URL}?table=vparticipants&search=true&eventID=${eventId}`);
+            const response = await fetch(`${API_BASE_URL}?table=vparticipants&search=true&eventID=${eventId}&limit=100000`);
             if (!response.ok) {
                 throw new Error(`Loading failed: ${response.status}`);
             }
@@ -475,7 +501,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 populateParticipantsTable(validParticipants);
             } else {
                 // If no data in vparticipants, try the original participants table as fallback
-                const fallbackResponse = await fetch(`${API_BASE_URL}?table=participants&search=true&eventID=${eventId}`);
+                const fallbackResponse = await fetch(`${API_BASE_URL}?table=participants&search=true&eventID=${eventId}&limit=100000`);
                 if (fallbackResponse.ok) {
                     const fallbackData = await fallbackResponse.json();
                     if (fallbackData.data && fallbackData.data.length > 0) {
@@ -844,12 +870,18 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Show loading indicator
     function showLoading() {
-        loadingIndicator.style.display = 'block';
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        if (loadingIndicator) {
+            loadingIndicator.style.display = 'block';
+        }
     }
     
     // Hide loading indicator
     function hideLoading() {
-        loadingIndicator.style.display = 'none';
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        if (loadingIndicator) {
+            loadingIndicator.style.display = 'none';
+        }
     }
     
     // HTML escape function to prevent XSS attacks
@@ -861,4 +893,135 @@ document.addEventListener('DOMContentLoaded', function() {
             .replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#39;');
-    }});
+    }
+    async function exportParticipantsList(eventId) {
+        showLoading();
+        try {
+            console.log("Starting export for event ID:", eventId);
+            // First get event details for the title
+            const eventResponse = await fetch(`${API_BASE_URL}?table=event&search=true&ID=${eventId}`);
+            const eventData = await eventResponse.json();
+            const eventTitle = eventData.data?.[0]?.title || '活动';
+    
+            // Fetch all participants data using vparticipants view
+            const response = await fetch(`${API_BASE_URL}?table=vparticipants&search=true&eventID=${eventId}&limit=100000`);
+            if (!response.ok) {
+                throw new Error(`Loading failed: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            console.log("Fetched participants data:", data);
+
+            let participantsToExport = [];
+            
+            if (data.data && data.data.length > 0) {
+                // Filter participants for this event
+                participantsToExport = data.data.filter(participant => participant.eventID == eventId);
+                console.log(`Filtered ${participantsToExport.length} participants for event ID ${eventId}`);
+                
+                // Sort by member ID or sequence number
+                participantsToExport.sort((a, b) => {
+                    const aId = a.membersID || a.memberID || a.ID;
+                    const bId = b.membersID || b.memberID || b.ID;
+                    return aId - bId;
+                });
+            } else {
+                 // Try the original participants table as fallback - same as in fetchParticipants function
+            console.log("No data in vparticipants, trying participants table");
+            const fallbackResponse = await fetch(`${API_BASE_URL}?table=participants&search=true&eventID=${eventId}&limit=100000`);
+            if (fallbackResponse.ok) {
+                const fallbackData = await fallbackResponse.json();
+                console.log("Fallback data from participants table:", fallbackData);
+                
+                if (fallbackData.data && fallbackData.data.length > 0) {
+                    // Need to fetch member info for each participant - similar to the table display logic
+                    const participantsWithMemberInfo = await Promise.all(
+                        fallbackData.data.map(async (participant) => {
+                            if (participant.memberID) {
+                                try {
+                                    const memberResponse = await fetch(`${API_BASE_URL}?table=members&search=true&ID=${participant.memberID}`);
+                                    if (memberResponse.ok) {
+                                        const memberData = await memberResponse.json();
+                                        if (memberData.data && memberData.data.length > 0) {
+                                            return { ...participant, ...memberData.data[0] };
+                                        }
+                                    }
+                                } catch (error) {
+                                    console.error(`Error fetching member data:`, error);
+                                }
+                            }
+                            return participant;
+                        })
+                    );
+                    participantsToExport = participantsWithMemberInfo;
+                    console.log(`Assembled ${participantsToExport.length} participants with member info`);
+                }
+            }
+        }
+
+            if (participantsToExport.length === 0) {
+                showError('没有可导出的参与者数据');
+                return;
+            }
+
+            console.log(`Exporting ${participantsToExport.length} participants:`, participantsToExport);
+    
+            // Create CSV content with BOM for Excel
+            let csvContent = '\uFEFF';
+            
+            // Add headers
+            csvContent += '序号,会员ID,英文姓名,中文姓名,电话号码,电子邮件,身份证号码,活动ID,加入时间\n';
+            
+            // Add data rows with row numbers
+            participantsToExport.forEach((participant, index) => {
+                const rowData = [
+                    (index + 1), // Add row number
+                    participant.membersID || participant.memberID || 'N/A',
+                    participant.Name || 'N/A',
+                    participant.CName || 'N/A',
+                    participant.phone_number || 'N/A',
+                    participant.email || 'N/A',
+                    participant.IC || 'N/A',
+                    participant.eventID || 'N/A',
+                    formatDate(participant.joined_at)
+                ].map(field => {
+                    // Properly escape fields for CSV
+                    const escaped = String(field)
+                        .replace(/"/g, '""')
+                        .replace(/\n/g, ' '); // Replace newlines with spaces
+                    return `"${escaped}"`;
+                });
+                
+                csvContent += rowData.join(',') + '\n';
+            });
+    
+            // Create and trigger download
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            
+            // Generate filename with timestamp
+            const timestamp = new Date().toISOString().slice(0, 19).replace(/[:-]/g, '');
+            const filename = `${eventTitle}_参与者名单_${timestamp}.csv`;
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', filename);
+            document.body.appendChild(link);
+            link.click();
+            
+            // Cleanup
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+            
+            showError(`成功导出 ${participantsToExport.length} 位参与者数据！`);
+        } catch (error) {
+            console.error('Export error:', error);
+            showError('导出失败: ' + error.message);
+        } finally {
+            hideLoading();
+        }
+    }
+});
+
+    
+    
