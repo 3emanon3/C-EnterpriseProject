@@ -1,12 +1,42 @@
 const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
 let isLeaving = false;
 let selectedMemberId = null;
+let productUnitPrice = 0; // Store the unit price of the product
 
 window.addEventListener('beforeunload', function (e) {
     if (!isLeaving) {
         e.returnValue = '确定要取消吗？您的更改可能不会被保。';
     }
 });
+
+// Function to fetch product details when page loads
+async function fetchProductDetails() {
+    try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const bookId = urlParams.get('id');
+        
+        if (!bookId) {
+            console.error('No product ID found in URL');
+            return;
+        }
+        
+        const response = await fetch(`${API_BASE_URL}?table=stock&ID=${bookId}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch product details');
+        }
+        
+        const data = await response.json();
+        if (data && data.data && data.data.length > 0) {
+            const product = data.data[0];
+            productUnitPrice = parseFloat(product.Price) || 0;
+            
+            // Update UI with product information if needed
+            document.getElementById('productName').textContent = product.Name || 'Product';
+        }
+    } catch (error) {
+        console.error('Error fetching product details:', error);
+    }
+}
 
 function confirmCancel() {
     if (confirm('确定要取消吗，您所作的更改将不会保存。')) {
@@ -32,6 +62,13 @@ function showSuccessModal() {
         isLeaving = true;
         window.location.href = 'searchStock.html';
     }, 1500);
+}
+
+// Function to update price based on quantity
+function updatePrice() {
+    const quantity = parseInt(document.getElementById('quantity_out').value) || 0;
+    const totalPrice = quantity * productUnitPrice;
+    document.getElementById('price').value = totalPrice.toFixed(2);
 }
 
 async function saveChanges() {
@@ -408,6 +445,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize expiration fields display
     updateExpirationFields();
+    
+    // Fetch product details when the page loads
+    fetchProductDetails();
 
     quantityButtons.forEach(button => {
         button.addEventListener('click', function() {
@@ -416,10 +456,17 @@ document.addEventListener('DOMContentLoaded', function() {
             let newValue = currentValue + change;
             newValue = Math.max(0, newValue);
             quantityInput.value = newValue;
+            
+            // Update price when quantity changes via buttons
+            updatePrice();
         });
     });
-     quantityInput.addEventListener('input', function() {
+    
+    quantityInput.addEventListener('input', function() {
         this.value = this.value.replace(/[^0-9]/g, '');
+        
+        // Update price when quantity changes via direct input
+        updatePrice();
     });
     
     // Add event listener for applicant type dropdown
