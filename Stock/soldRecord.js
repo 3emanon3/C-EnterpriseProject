@@ -190,7 +190,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // Event listeners for filter buttons
-    applyFilterButton.addEventListener("click", function() {
+    bookFilter.addEventListener("change", function() {
         const selectedID = bookFilter.value;
         activeFilter = selectedID;
         currentPage = 1;

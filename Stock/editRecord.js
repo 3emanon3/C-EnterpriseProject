@@ -114,6 +114,7 @@ async function saveChanges() {
             const componyName = document.getElementById('componyName').value;
             const monthOfBirth = document.getElementById('MonthofBirth').value;
             const placeOfBirth = document.getElementById('placeOfBirth').value;
+            const position = document.getElementById('position').value;
             const others = document.getElementById('others').value;
 
             // Validate required member fields
@@ -169,6 +170,7 @@ async function saveChanges() {
                 Birthday: monthOfBirth,
                 expired_date: formattedExpirationDate, // This can now be null for "none" option
                 place_of_birth: placeOfBirth,
+                position: position,
                 others: others,
                 remarks: remarks
             };
