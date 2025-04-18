@@ -735,7 +735,7 @@ document.addEventListener("DOMContentLoaded", function () {
             
             try {
                 const encodedName = encodeURIComponent(memberCName);
-                const response = await fetch(`${API_BASE_URL}?table=vsoldrecord&search=true&membership=${encodedName}`);
+                const response = await fetch(`${API_BASE_URL}?table=vsoldrecord&search=true&Name/Company_Name=${encodedName}`);
                 
                 if (response.ok) {
                     const data = await response.json();
