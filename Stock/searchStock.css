@@ -345,16 +345,86 @@ th i {
         flex-direction: column;
         align-items: center;
         height: auto;
-        padding: 15px;
+        padding: 10px 15px;
         position: relative;
         margin-bottom: 10px;
     }
     
     h1 {
-        font-size: 1.5rem;
-        margin-bottom: 15px;
+        font-size: 1.2rem;
+        margin-bottom: 10px;
         text-align: center;
         width: 100%;
+    }
+
+    .container {
+        padding: 10px;
+        margin-top: 20px;
+        width: 100%;
+        overflow-x: visible;
+    }
+
+    .system-nav {
+        position: static;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 5px;
+        width: 100%;
+        margin-top: 0;
+    }
+
+    .system-nav .btn {
+        width: auto;
+        white-space: nowrap;
+        padding: 5px 8px;
+        font-size: 0.8rem;
+    }
+    
+    .system-nav .btn i {
+        margin-right: 2px;
+    }
+
+    .system-nav .btn-text {
+        display: none;
+    }
+
+    /* For extra small screens, make header more compact */
+    @media (max-width: 480px) {
+        header {
+            padding: 8px 5px;
+        }
+        
+        h1 {
+            font-size: 1rem;
+        }
+        
+        .system-nav {
+            gap: 3px;
+        }
+        
+        .system-nav .btn {
+            padding: 4px 6px;
+        }
+    }
+
+    .search-input-group {
+        flex-direction: column;
+        padding: 8px;
+    }
+
+    #searchInput {
+        width: 100%;
+    }
+
+    .btn {
+        padding: 6px 10px;
+        font-size: 0.85rem;
+    }
+
+    .btn-edit {
+        margin-bottom: 3px;
     }
 
     table {
@@ -367,48 +437,17 @@ th i {
         width: 100%;
         -webkit-overflow-scrolling: touch;
     }
-    
-    .container {
-        padding: 10px;
-        margin-top: 20px;
-        width: 100%;
-        overflow-x: visible;
-    }
-
-    .search-input-group {
-        flex-direction: column;
-        padding: 8px;
-    }
-
-    #searchInput {
-        width: 100%;
-    }
-
-    .system-nav {
-        position: static;
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        gap: 8px;
-        margin-top: 10px;
-    }
-
-    .btn {
-        width: 100%;
-        justify-content: center;
-        padding: 10px;
-        font-size: 14px;
-    }
-
-    .btn-edit {
-        margin-bottom: 3px;
-    }
 
     .table-container {
         padding: 10px;
         margin: 10px 0;
         width: 100%;
         overflow: visible;
+    }
+    
+    th, td {
+        padding: 8px;
+        min-width: 100px;
     }
     
     /* Adjust pagination for mobile */
@@ -440,16 +479,48 @@ th i {
     /* Action buttons in table */
     .action-cell {
         display: flex;
-        flex-direction: row; 
-        flex-wrap: nowrap;
-        gap: 8px;
+        flex-wrap: wrap;
+        gap: 4px;
     }
 
     .action-cell .btn {
-        width: auto !important;
+        width: auto;
         padding: 4px 8px;
         font-size: 0.8rem;
         margin-bottom: 0 !important;
+    }
+    
+    /* Modal adjustments for mobile */
+    .modal {
+        width: 95%;
+        max-width: none;
+    }
+
+    .modal-content {
+        padding: 15px;
+    }
+
+    /* Filter buttons positioning */
+    .filter-button.active {
+        position: fixed;
+        right: 10px;
+        transform: scale(0.8);
+    }
+
+    /* Export modal adjustments */
+    .export-columns-container {
+        max-height: 60vh;
+        overflow-y: auto;
+    }
+
+    .columns-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Tooltip adjustments */
+    .tooltip .tooltip-text {
+        width: 280px;
+        margin-left: -140px;
     }
 }
 
@@ -613,144 +684,6 @@ th i {
     to {
         transform: translateX(100%);
         opacity: 0;
-    }
-}
-
-/* ... existing code ... */
-
-/* Mobile Responsive Design */
-@media (max-width: 768px) {
-    header {
-        flex-direction: column;
-        height: auto;
-        padding: 10px;
-        position: relative; /* Change from fixed to allow content flow */
-    }
-
-    h1 {
-        margin-bottom: 15px;
-        font-size: 1.5rem; /* Smaller font size for mobile */
-    }
-
-    .container {
-        padding: 10px;
-        margin-top: 20px; /* Reduced margin since header is not fixed */
-        width: 100%; /* Full width on mobile */
-    }
-
-    .search-input-group {
-        flex-direction: column;
-        padding: 8px;
-    }
-
-    #searchInput {
-        width: 100%;
-    }
-
-    .system-nav {
-        position: static;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        justify-content: center;
-        margin-top: 10px;
-    }
-
-    .btn {
-        padding: 6px 12px;
-        font-size: 0.9rem;
-        width: calc(50% - 4px); /* Two buttons per row with gap */
-    }
-
-    .table-container {
-        padding: 10px;
-        margin: 10px 0;
-    }
-
-    .table-responsive {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-    }
-
-    table {
-        font-size: 0.9rem; /* Slightly smaller font for mobile */
-    }
-
-    th, td {
-        padding: 8px;
-        min-width: 100px; /* Ensure minimum width for cells */
-    }
-
-    /* Adjust pagination for mobile */
-    .pagination-container {
-        flex-direction: column;
-        align-items: center;
-        gap: 15px;
-    }
-
-    .pagination {
-        order: 1;
-        justify-content: center;
-        width: 100%;
-    }
-
-    .pagination-info {
-        order: 2;
-        flex-direction: column;
-        width: 100%;
-        text-align: center;
-    }
-
-    .items-per-page {
-        order: 3;
-        justify-content: center;
-        width: 100%;
-    }
-
-    /* Modal adjustments for mobile */
-    .modal {
-        width: 95%;
-        max-width: none;
-    }
-
-    .modal-content {
-        padding: 15px;
-    }
-
-    /* Filter buttons positioning */
-    .filter-button.active {
-        position: fixed;
-        right: 10px;
-        transform: scale(0.8);
-    }
-
-    /* Export modal adjustments */
-    .export-columns-container {
-        max-height: 60vh;
-        overflow-y: auto;
-    }
-
-    .columns-grid {
-        grid-template-columns: 1fr; /* Single column on mobile */
-    }
-
-    /* Tooltip adjustments */
-    .tooltip .tooltip-text {
-        width: 280px;
-        margin-left: -140px;
-    }
-
-    /* Action buttons in table */
-    .action-cell {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 4px;
-    }
-
-    .action-cell .btn {
-        width: auto;
-        padding: 4px 8px;
-        font-size: 0.8rem;
     }
 }
 

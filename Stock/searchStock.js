@@ -260,22 +260,22 @@ document.addEventListener("DOMContentLoaded", function () {
                     
                     // Set default widths based on data-column attribute
                     if (header.dataset.column === "Product ID") {
-                        header.style.width = "90px";
+                        header.style.width = "100px";
                     }
                     if (header.dataset.column === "Name") {
-                        header.style.width = "250px";
+                        header.style.width = "450px";
                     }
                     if (header.dataset.column === "stock") {
-                        header.style.width = "70px";
+                        header.style.width = "100px";
                     }
                     if (header.dataset.column === "Price") {
                         header.style.width = "100px";
                     }
                     if (header.dataset.column === "Publisher") {
-                        header.style.width = "150px";
+                        header.style.width = "450px";
                     }
                     if (header.dataset.column === "Remarks") {
-                        header.style.width = "150px";
+                        header.style.width = "200px";
                     }
                 });
             }
@@ -302,22 +302,22 @@ document.addEventListener("DOMContentLoaded", function () {
             
             // Set default widths based on data-column attribute
             if (header.dataset.column === "Product ID") {
-                header.style.width = "90px";
+                header.style.width = "100px";
             }
             if (header.dataset.column === "Name") {
-                header.style.width = "250px";
+                header.style.width = "450px";
             }
             if (header.dataset.column === "stock") {
-                header.style.width = "70px";
+                header.style.width = "100px";
             }
             if (header.dataset.column === "Price") {
                 header.style.width = "100px";
             }
             if (header.dataset.column === "Publisher") {
-                header.style.width = "150px";
+                header.style.width = "450px";
             }
             if (header.dataset.column === "Remarks") {
-                header.style.width = "150px";
+                header.style.width = "200px";
             }
         });
         
