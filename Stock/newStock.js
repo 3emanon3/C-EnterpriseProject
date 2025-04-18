@@ -1,14 +1,19 @@
 const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
 let isLeaving = false;
 let currentBase64Image = ''; // Store the current image
+let formChanged = false; // Track if form has been modified
 
 const imageDisplay = document.getElementById('imageDisplay');
 const fileInput = document.getElementById('fileInput');
 const imageContainer = document.getElementById('imageContainer');
 
+// Replace browser beforeunload with our own handling
 window.addEventListener('beforeunload', function (e) {
-    if (!isLeaving) {
-        e.returnValue = '确定要取消吗？您的更改可能不会被保。';
+    if (!isLeaving && formChanged) {
+        e.preventDefault();
+        e.returnValue = '';
+        showLeaveConfirmation();
+        return e.returnValue;
     }
 });
 
@@ -20,7 +25,41 @@ document.addEventListener('DOMContentLoaded', function() {
             fileInput.click(); // Trigger the file input
         });
     }
+
+    // Add event listeners to track form changes
+    const formInputs = document.querySelectorAll('input, textarea');
+    formInputs.forEach(input => {
+        input.addEventListener('input', () => {
+            formChanged = true;
+        });
+    });
+
+    // Set up confirmation modal buttons
+    const confirmLeaveBtn = document.getElementById('confirmLeaveBtn');
+    const stayBtn = document.getElementById('stayBtn');
+
+    confirmLeaveBtn.addEventListener('click', () => {
+        isLeaving = true;
+        hideLeaveConfirmation();
+        window.location.href = 'searchStock.html';
+    });
+
+    stayBtn.addEventListener('click', () => {
+        hideLeaveConfirmation();
+    });
 });
+
+// Show the leave confirmation modal
+function showLeaveConfirmation() {
+    const modal = document.getElementById('confirmLeaveModal');
+    modal.classList.add('show');
+}
+
+// Hide the leave confirmation modal
+function hideLeaveConfirmation() {
+    const modal = document.getElementById('confirmLeaveModal');
+    modal.classList.remove('show');
+}
 
 async function saveNewData() {
     const newStock = {
@@ -49,6 +88,7 @@ async function saveNewData() {
             
             // Set redirect timer after animation completes
             isLeaving = true;
+            formChanged = false; // Reset form changed state
             setTimeout(() => {
                 window.location.href = 'searchStock.html';
             }, 2000); // 2 seconds delay to show the animation
@@ -62,7 +102,9 @@ async function saveNewData() {
 }
 
 function confirmCancel() {
-    if (confirm('确定要取消吗，您所作的更改将不会保存。')) {
+    if (formChanged) {
+        showLeaveConfirmation();
+    } else {
         isLeaving = true; // Set flag before redirecting
         window.location.href = 'searchStock.html';
     }
@@ -97,6 +139,7 @@ function encodeImageToBase64(file, callback) {
 // Event listener for when a file is selected
 fileInput.addEventListener('change', (event) => {
     const file = event.target.files[0];
+    formChanged = true; // Mark form as changed when image is uploaded
 
     if (file) {
         // Check if the file size exceeds 1MB (1,048,576 bytes)

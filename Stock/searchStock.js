@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <td>RM ${stock.Price !== null ? parseFloat(stock.Price).toFixed(2) : 'N/A'}</td>
                 <td>${stock.Publisher || '-'}</td>
                 <td>${stock.Remarks || ''}</td>
-                <td>
+                <td class="action-cell">
                     <button class="btn btn-edit" onclick="editStock(${stock.ID})" title="编辑">
                         <i class="fas fa-edit"></i>
                     </button>
@@ -221,6 +221,9 @@ document.addEventListener("DOMContentLoaded", function () {
         const widths = {};
         
         headers.forEach((header, index) => {
+            // Skip the operations column (last column)
+            if (index === headers.length - 1) return;
+            
             if (header.style.width) {
                 widths[index] = header.style.width;
             }
@@ -241,14 +244,21 @@ document.addEventListener("DOMContentLoaded", function () {
                         headers[index].style.width = widths[index];
                     }
                 });
+
+                // Always set operation column width
+                const operationColumn = headers[headers.length - 1];
+                operationColumn.style.width = "150px";
             } else {
                 // Set default column widths for specific columns
                 const headers = document.querySelectorAll('#stockTable th');
-                headers.forEach(header => {
-                    // You can set default widths for specific columns if needed
-                    if (header.dataset.column === "Remarks") {
+                headers.forEach((header, index) => {
+                    // Skip the operations column (last column)
+                    if (index === headers.length - 1) {
                         header.style.width = "150px";
+                        return;
                     }
+                    
+                    // Set default widths based on data-column attribute
                     if (header.dataset.column === "Product ID") {
                         header.style.width = "90px";
                     }
@@ -264,10 +274,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     if (header.dataset.column === "Publisher") {
                         header.style.width = "150px";
                     }
-                    if (header.dataset.column === "操作") {
+                    if (header.dataset.column === "Remarks") {
                         header.style.width = "150px";
                     }
-                    
                 });
             }
         } catch (e) {
@@ -282,10 +291,31 @@ document.addEventListener("DOMContentLoaded", function () {
         
         // Reset all column widths to default
         const headers = document.querySelectorAll('#stockTable th');
-        headers.forEach(header => {
+        headers.forEach((header, index) => {
+            // Set operations column width separately
+            if (index === headers.length - 1) {
+                header.style.width = "150px";
+                return;
+            }
+            
             header.style.width = '';
             
-            // Set default widths for specific columns if needed
+            // Set default widths based on data-column attribute
+            if (header.dataset.column === "Product ID") {
+                header.style.width = "90px";
+            }
+            if (header.dataset.column === "Name") {
+                header.style.width = "250px";
+            }
+            if (header.dataset.column === "stock") {
+                header.style.width = "70px";
+            }
+            if (header.dataset.column === "Price") {
+                header.style.width = "100px";
+            }
+            if (header.dataset.column === "Publisher") {
+                header.style.width = "150px";
+            }
             if (header.dataset.column === "Remarks") {
                 header.style.width = "150px";
             }
