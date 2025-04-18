@@ -2,7 +2,6 @@ const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI
 
 document.addEventListener("DOMContentLoaded", function () {
     const bookFilter = document.getElementById("bookFilter");
-    const applyFilterButton = document.getElementById("applyFilter");
     const resetFilterButton = document.getElementById("resetFilter");
     const recordsTableBody = document.querySelector("#recordsTable tbody");
     const totalRecords = document.getElementById("totalRecords");
