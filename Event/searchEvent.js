@@ -1,6 +1,20 @@
 const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
-
 document.head.innerHTML += '<script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>';
+
+const EventManager = {
+    init() {
+        this.setupEventListeners();
+        this.loadSavedSettings();
+        this.fetchEvents();
+    },
+    
+    setupEventListeners() {
+        // Group related listeners
+    },
+    
+    // Other methods
+};
+
 document.addEventListener("DOMContentLoaded", function () {
     const searchInput = document.getElementById("searchInput");
     const searchButton = document.getElementById("searchButton");
@@ -21,16 +35,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const statusFilterButton = document.getElementById('statusFilterButton');
     const endTimeFilterButton = document.getElementById('endTimeFilterButton');
     const priceFilterButton = document.getElementById('priceFilterButton');
-    const listAllButton = document.createElement('button');
+    const listAllButton = document.getElementById('listAllButton');
     const resetColumnWidthButton = document.getElementById('resetColumnWidthButton');
 
-    listAllButton.className = 'btn btn-secondary tooltip';
-    listAllButton.innerHTML = '<i class="fas fa-list"></i> 列出所有';
-    const tooltipSpan = document.createElement('span');
-    tooltipSpan.className = 'tooltip-text';
-    tooltipSpan.textContent = '显示所有数据';
-    listAllButton.appendChild(tooltipSpan);
-    systemNav.appendChild(listAllButton);
+ 
 
     if (resetColumnWidthButton) {
         resetColumnWidthButton.addEventListener('click', function() {
@@ -54,7 +62,15 @@ document.addEventListener("DOMContentLoaded", function () {
             });
             
             // Show feedback to the user
-            alert('列宽已重置为默认值');
+            Swal.fire({
+                title: '已重置',
+                text: '列宽已重置为默认值',
+                icon: 'info',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 1000
+            });
         });
     }
 
@@ -113,19 +129,14 @@ document.addEventListener("DOMContentLoaded", function () {
     
             function handleMouseMove(e) {
                 if (!isResizing) return;
-            
-            const width = Math.max(startWidth + (e.pageX - startX), minWidths[index] || 80);
-            th.style.width = `${width}px`;
-            
-            const cells = table.querySelectorAll(`td:nth-child(${index + 1})`);
-            cells.forEach(cell => {
-                cell.style.width = `${width}px`;
-            });
-
-            // Save to localStorage
-            const savedWidths = JSON.parse(localStorage.getItem('eventTableColumnWidths') || '{}');
-            savedWidths[index] = width;
-            localStorage.setItem('eventTableColumnWidths', JSON.stringify(savedWidths));
+                
+                requestAnimationFrame(() => {
+                    const width = Math.max(startWidth + (e.pageX - startX), minWidths[index] || 80);
+                    th.style.width = `${width}px`;
+                    
+                    // Store the width but don't update all cells on every move
+                    resizeData.currentWidth = width;
+                });
             }
     
             function handleMouseUp() {
