@@ -16,14 +16,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const pageInput = document.getElementById('pageInput');
     const jumpButton = document.getElementById('jumpButton');
     const exportButton = document.getElementById('exportButton');
-    const exportModal = document.getElementById('exportModal');
     const dateFilterButton = document.getElementById('dateFilterButton');
     const systemNav = document.querySelector('.system-nav');
     const statusFilterButton = document.getElementById('statusFilterButton');
     const endTimeFilterButton = document.getElementById('endTimeFilterButton');
     const priceFilterButton = document.getElementById('priceFilterButton');
     const listAllButton = document.createElement('button');
-    const resetColumnWidthButton = document.createElement('button');
+    const resetColumnWidthButton = document.getElementById('resetColumnWidthButton');
 
     listAllButton.className = 'btn btn-secondary tooltip';
     listAllButton.innerHTML = '<i class="fas fa-list"></i> 列出所有';
@@ -33,7 +32,123 @@ document.addEventListener("DOMContentLoaded", function () {
     listAllButton.appendChild(tooltipSpan);
     systemNav.appendChild(listAllButton);
 
+    if (resetColumnWidthButton) {
+        resetColumnWidthButton.addEventListener('click', function() {
+            // Clear saved column widths from localStorage
+            localStorage.removeItem('eventTableColumnWidths');
+            
+            // Reset all column widths to their default values
+            tableHeaders.forEach(th => {
+                th.style.width = ''; // 移除内联宽度设置
+                th.style.position = 'relative';
+            });
+            
+            // Reinitialize the resizers
+            initializeColumnResizers();
+
+            const savedWidths = JSON.parse(localStorage.getItem('eventTableColumnWidths') || '{}');
+            tableHeaders.forEach((th, index) => {
+                if (savedWidths[index]) {
+                    th.style.width = savedWidths[index] + 'px';
+                }
+            });
+            
+            // Show feedback to the user
+            alert('列宽已重置为默认值');
+        });
+    }
+
+    function initializeColumnResizers() {
+        console.log('Initializing column resizers...');
+        tableHeaders.forEach((th, index) => {
+            if (index === tableHeaders.length - 1) return; // Skip last column
     
+            console.log(`Setting up resizer for column ${index}`);
+            // 移除已存在的 resizer
+            const existingResizer = th.querySelector('.resizer');
+            if (existingResizer) {
+                existingResizer.remove();
+            }
+    
+            // 创建新的 resizer
+            const resizer = document.createElement('div');
+            resizer.className = 'resizer';
+            th.appendChild(resizer);
+            th.style.position = 'relative';
+    
+            let isResizing = false;
+            let startX, startWidth;
+
+            const minWidths = {
+                0: 60,  // 序
+                1: 150, // 标题
+                2: 80,  // 状态
+                3: 120, // 开始时间
+                4: 120, // 结束时间
+                5: 120, // 创建时间
+                6: 100, // 地点
+                7: 150, // 描述
+                8: 80,  // 参与者数量
+                9: 120, // 报名截止
+                10: 80, // 价格
+                11: 120, // 在线链接
+                12: 220  // 操作
+            };
+    
+            resizer.addEventListener('mousedown', function(e) {
+                console.log(`Resizer mousedown on column ${index}`);
+                isResizing = true;
+                startX = e.pageX;
+                startWidth = th.offsetWidth;
+                
+                // 添加调整中的类，改变表格样式
+                table.classList.add('resizing');
+                
+                // 添加全局事件监听器
+                document.addEventListener('mousemove', handleMouseMove);
+                document.addEventListener('mouseup', handleMouseUp);
+                
+                e.preventDefault();
+            });
+    
+            function handleMouseMove(e) {
+                if (!isResizing) return;
+            
+            const width = Math.max(startWidth + (e.pageX - startX), minWidths[index] || 80);
+            th.style.width = `${width}px`;
+            
+            const cells = table.querySelectorAll(`td:nth-child(${index + 1})`);
+            cells.forEach(cell => {
+                cell.style.width = `${width}px`;
+            });
+
+            // Save to localStorage
+            const savedWidths = JSON.parse(localStorage.getItem('eventTableColumnWidths') || '{}');
+            savedWidths[index] = width;
+            localStorage.setItem('eventTableColumnWidths', JSON.stringify(savedWidths));
+            }
+    
+            function handleMouseUp() {
+                isResizing = false;
+                table.classList.remove('resizing');
+                document.removeEventListener('mousemove', handleMouseMove);
+                document.removeEventListener('mouseup', handleMouseUp);
+            }
+        });
+    }
+
+    function loadSavedColumnWidths() {
+        const savedWidths = JSON.parse(localStorage.getItem('eventTableColumnWidths') || '{}');
+        tableHeaders.forEach((th, index) => {
+            if (savedWidths[index]) {
+                th.style.width = `${savedWidths[index]}px`;
+                const cells = table.querySelectorAll(`td:nth-child(${index + 1})`);
+                cells.forEach(cell => {
+                    cell.style.width = `${savedWidths[index]}px`;
+                });
+            }
+        });
+    }
 
     // Add List All button event listener
     listAllButton.addEventListener('click', function() {
@@ -72,7 +187,9 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentStartPrice = "";
     let currentEndPrice = "";
 
-    
+   
+
+  
 
     if (priceFilterButton) {
         priceFilterButton.addEventListener('click', function() {
@@ -1081,57 +1198,11 @@ eventTableBody.addEventListener('click', function(e) {
     }
 });
     
-    // Table column resizing
-    tableHeaders.forEach(th => {
-        if (index === tableHeaders.length - 1) return;
-        
-        // Check if resizer already exists
-        let resizer = th.querySelector('.resizer');
-        if (!resizer) {
-            resizer = document.createElement('div');
-            resizer.className = 'resizer';
-            th.appendChild(resizer);
-            th.style.position = 'relative'; // Ensure proper positioning
-        }
-        
-        // Load saved column width if it exists
-        const savedWidths = JSON.parse(localStorage.getItem('eventTableColumnWidths') || '{}');
-        if (savedWidths[index]) {
-            th.style.width = savedWidths[index] + 'px';
-        }
-        
-        let startX, startWidth;
-        
-        resizer.addEventListener('mousedown', function(e) {
-            startX = e.pageX;
-            startWidth = th.offsetWidth;
-            document.addEventListener('mousemove', resizeColumn);
-            document.addEventListener('mouseup', stopResize);
-            e.preventDefault(); // Prevent text selection while dragging
-            
-            // Add a class to the table during resize
-            table.classList.add('resizing');
-        });
-        
-        function resizeColumn(e) {
-            const newWidth = startWidth + (e.pageX - startX);
-            if (newWidth > 50) { // Minimum column width
-                th.style.width = newWidth + 'px';
+    
 
-                const savedWidths = JSON.parse(localStorage.getItem('eventTableColumnWidths') || '{}');
-                savedWidths[index] = newWidth;
-                localStorage.setItem('eventTableColumnWidths', JSON.stringify(savedWidths));
-            }
-        }
-        
-        function stopResize() {
-            document.removeEventListener('mousemove', resizeColumn);
-            document.removeEventListener('mouseup', stopResize);
-            table.classList.remove('resizing');
-        }
-    });
-
-  
+    
+loadSavedColumnWidths();   
+initializeColumnResizers();
     // Initial fetch
     fetchEvents();
 });

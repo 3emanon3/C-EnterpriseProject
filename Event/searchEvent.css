@@ -9,6 +9,20 @@
     --shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
+#eventTable th:nth-child(1) { width: 60px; }  /* 序 */
+#eventTable th:nth-child(2) { width: 170px; } /* 标题 */
+#eventTable th:nth-child(3) { width: 100px; } /* 状态 */
+#eventTable th:nth-child(4) { width: 140px; } /* 开始时间 */
+#eventTable th:nth-child(5) { width: 140px; } /* 结束时间 */
+#eventTable th:nth-child(6) { width: 140px; } /* 创建时间 */
+#eventTable th:nth-child(7) { width: 140px; } /* 地点 */
+#eventTable th:nth-child(8) { width: 170px; } /* 描述 */
+#eventTable th:nth-child(9) { width: 100px; } /* 参与者数量 */
+#eventTable th:nth-child(10) { width: 150px; } /* 报名截止 */
+#eventTable th:nth-child(11) { width: 100px; } /* 价格 */
+#eventTable th:nth-child(12) { width: 150px; } /* 在线链接 */
+#eventTable th:nth-child(13) { width: 220px; } /* 操作 */
+
 * {
     margin: 0;
     padding: 0;
@@ -384,20 +398,49 @@ tr:hover {
     color: #e74c3c;
 }
 
+#eventTable {
+    table-layout: fixed;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#eventTable th,
+#eventTable td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    position: relative;
+}
+
 /* Resizer Style */
 .resizer {
     position: absolute;
-    right: 0;
+    right: -5px;
     top: 0;
     height: 100%;
-    width: 5px;
-    background: rgba(0, 0, 0, 0.05);
+    width: 10px;
+    background: rgba(0, 0, 0, 0.1);
     cursor: col-resize;
     user-select: none;
-}
+    touch-action: none;
+    z-index: 1000;
+  }
+
+  
+
+  th:hover .resizer {
+    opacity: 0.5;
+  }
+  
+  /* 调整中的表格样式 */
+  table.resizing {
+    cursor: col-resize;
+    user-select: none;
+  }
 
 .resizer:hover {
-    background: rgba(0, 0, 0, 0.2);
+    cursor: col-resize;
+    user-select: none;
 }
 
 /* Loader Styles */
@@ -430,6 +473,7 @@ tr:hover {
     justify-content: flex-start;
     gap: 10px;
     margin-top: 20px;
+    max-width: 3200;
 }
 
 .pagination {
