@@ -66,6 +66,32 @@
         </section>
     </div>
 
+    <!-- Confirm Modal -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <div class="confirm-icon">
+                <i class="fas fa-question-circle"></i>
+            </div>
+            <h3>确认</h3>
+            <p>确定要取消吗？您所作的更改将不会保存。</p>
+            <div class="confirm-actions">
+                <button class="btn btn-danger" id="confirmLeave">确认</button>
+                <button class="btn btn-secondary" id="cancelLeave">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3>成功!</h3>
+            <p>库存记录已成功更新</p>
+        </div>
+    </div>
+
     <script src="editStock.js"></script>
 </body>
 <div id="print-template" style="display: none;">

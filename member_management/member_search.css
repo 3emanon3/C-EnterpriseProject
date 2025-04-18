@@ -103,28 +103,6 @@ header h1{color:var(--clr-header-txt);font-size:2rem}
     filter:none;
 }
 
-/* Remove any colour‑specific :hover that might appear earlier ----------- */
-.btn-primary:hover,
-.btn-success:hover,
-.btn-warning:hover,
-.btn-info:hover,
-.btn-secondary:hover,
-.btn-light:hover,
-.btn-back:hover,
-.btn-reset:hover,
-.btn-settings:hover,
-.btn-increase:hover,
-.btn-listAll:hover,
-.btn-birthday:hover,
-.btn-expiry:hover,
-.btn-export:hover,
-.btn-edit:hover,
-.btn-delete:hover,
-.btn-check:hover{
-    /* we deliberately leave this block empty so it is overridden
-       by the universal .btn:hover rule declared AFTER the base .btn */
-}
-
 /* Search Container Styles */
 .search-container {
     margin-top: 20px;

@@ -1,13 +1,17 @@
 const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
 let isLeaving = false;
 let currentBase64Image = ''; // Store the current image
+let hasChanges = false; // Track if user has made changes
+let navigateDestination = ''; // Store destination URL for navigation
 
 const imageDisplay = document.getElementById('imageDisplay');
 const fileInput = document.getElementById('fileInput');
 const imageContainer = document.getElementById('imageContainer');
 
+// Handle beforeunload event
 window.addEventListener('beforeunload', function (e) {
-    if (!isLeaving) {
+    if (!isLeaving && hasChanges) {
+        // Show standard browser dialog
         e.returnValue = '确定要取消吗？您的更改可能不会被保。';
     }
 });
@@ -33,7 +37,115 @@ document.addEventListener('DOMContentLoaded', function () {
             fileInput.click(); // Trigger the file input
         });
     }
+
+    // Set up form change detection
+    setupFormChangeDetection();
+    
+    // Set up modal event listeners
+    setupModalListeners();
+    
+    // Set current date in the report
+    const currentDateEl = document.getElementById('currentDate');
+    if (currentDateEl) {
+        currentDateEl.textContent = new Date().toLocaleDateString('zh-CN', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
 });
+
+function setupFormChangeDetection() {
+    // Form inputs that should trigger hasChanges
+    const formInputs = [
+        'productId', 'name', 'stock', 'price', 'publisher', 'remarks'
+    ];
+
+    // Add change event listeners to all inputs
+    formInputs.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.addEventListener('input', () => {
+                hasChanges = true;
+            });
+        }
+    });
+
+    // File input changes
+    fileInput.addEventListener('change', () => {
+        hasChanges = true;
+    });
+}
+
+function setupModalListeners() {
+    // Set up confirm modal buttons
+    const confirmLeaveBtn = document.getElementById('confirmLeave');
+    if (confirmLeaveBtn) {
+        confirmLeaveBtn.addEventListener('click', confirmRedirect);
+    }
+    
+    const cancelLeaveBtn = document.getElementById('cancelLeave');
+    if (cancelLeaveBtn) {
+        cancelLeaveBtn.addEventListener('click', hideConfirmModal);
+    }
+    
+    // Close modals when clicking outside
+    const modals = document.querySelectorAll('.modal');
+    modals.forEach(modal => {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                if (modal.id === 'confirmModal') {
+                    hideConfirmModal();
+                }
+            }
+        });
+    });
+}
+
+// Function to show confirm modal with animation
+function showConfirmModal() {
+    const modal = document.getElementById('confirmModal');
+    
+    // Show the modal
+    modal.style.display = 'flex';
+    
+    // Trigger animation
+    setTimeout(() => {
+        modal.classList.add('show');
+    }, 10);
+}
+
+// Function to hide confirm modal
+function hideConfirmModal() {
+    const modal = document.getElementById('confirmModal');
+    modal.classList.remove('show');
+    
+    // Wait for animation to complete before hiding
+    setTimeout(() => {
+        modal.style.display = 'none';
+    }, 300);
+}
+
+// Function to show success modal
+function showSuccessModal() {
+    const modal = document.getElementById('successModal');
+    
+    // Show the modal
+    modal.style.display = 'flex';
+    
+    // Trigger animation
+    setTimeout(() => {
+        modal.classList.add('show');
+    }, 10);
+    
+    // Redirect after 1.5 seconds
+    setTimeout(() => {
+        isLeaving = true;
+        window.location.href = 'searchStock.html';
+    }, 1500);
+}
 
 async function fetchStockDetails(stockId) {
     try {
@@ -66,6 +178,9 @@ function populateForm(stock) {
         currentBase64Image = stock.Picture;
         displayBase64Image(currentBase64Image);
     }
+    
+    // Reset hasChanges after form population
+    hasChanges = false;
 }
 
 async function saveChanges() {
@@ -91,9 +206,8 @@ async function saveChanges() {
         });
 
         if (response.ok) {
-            alert('Stock updated successfully');
-            isLeaving = true;
-            window.location.href = 'searchStock.html';
+            hasChanges = false; // Reset changes flag
+            showSuccessModal(); // Show the success modal instead of alert
         } else {
             throw new Error('Failed to update stock');
         }
@@ -196,11 +310,61 @@ async function printData() {
 }
 
 function confirmCancel() {
-    if (confirm('确定要取消吗，您所作的更改将不会保存。')) {
+    if (hasChanges) {
+        navigateDestination = 'searchStock.html';
+        showConfirmModal();
+    } else {
         isLeaving = true; // Set flag before redirecting
         window.location.href = 'searchStock.html';
     }
 }
+
+// Function to confirm and redirect
+function confirmRedirect() {
+    hideConfirmModal();
+    
+    // Wait for modal to close before redirecting
+    setTimeout(() => {
+        isLeaving = true;
+        hasChanges = false;
+        
+        if (navigateDestination === 'back') {
+            history.back();
+        } else if (navigateDestination) {
+            window.location.href = navigateDestination;
+        } else {
+            window.location.href = 'searchStock.html';
+        }
+    }, 300);
+}
+
+// Add listener for browser's back button
+window.addEventListener('popstate', function(e) {
+    if (hasChanges) {
+        // This doesn't actually prevent navigation in all browsers
+        // but we can use it to show our confirmation modal
+        navigateDestination = 'back';
+        showConfirmModal();
+    }
+});
+
+// Intercept links and buttons that might navigate away
+document.addEventListener('click', function(e) {
+    // Find closest anchor or button
+    const link = e.target.closest('a, button');
+    
+    if (link && link.getAttribute('href') && hasChanges) {
+        // Check if it's not a javascript function and not our action buttons
+        const href = link.getAttribute('href');
+        if (href && href !== '#' && !href.startsWith('javascript:')) {
+            e.preventDefault();
+            
+            // Store the destination for later navigation
+            navigateDestination = href;
+            showConfirmModal();
+        }
+    }
+});
 
 function displayBase64Image(base64String) {
     if (base64String) {
@@ -247,19 +411,6 @@ fileInput.addEventListener('change', (event) => {
                 currentBase64Image = base64String;
                 displayBase64Image(base64String);
             }
-        });
-    }
-});
-// Set current date in the report
-document.addEventListener('DOMContentLoaded', function () {
-    const currentDateEl = document.getElementById('currentDate');
-    if (currentDateEl) {
-        currentDateEl.textContent = new Date().toLocaleDateString('zh-CN', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
         });
     }
 });
