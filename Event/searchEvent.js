@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const endTimeFilterButton = document.getElementById('endTimeFilterButton');
     const priceFilterButton = document.getElementById('priceFilterButton');
     const listAllButton = document.createElement('button');
-    const resetColumnWidthButton = document.getElementById('resetColumnWidthBtn');
+    const resetColumnWidthButton = document.createElement('button');
 
     listAllButton.className = 'btn btn-secondary tooltip';
     listAllButton.innerHTML = '<i class="fas fa-list"></i> 列出所有';
@@ -32,6 +32,8 @@ document.addEventListener("DOMContentLoaded", function () {
     tooltipSpan.textContent = '显示所有数据';
     listAllButton.appendChild(tooltipSpan);
     systemNav.appendChild(listAllButton);
+
+    
 
     // Add List All button event listener
     listAllButton.addEventListener('click', function() {
@@ -70,72 +72,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentStartPrice = "";
     let currentEndPrice = "";
 
-  
-
-    // Add Reset Column Width button event listener
-    resetColumnWidthButton.addEventListener('click', resetColumnWidths);
-
-    // Function to reset column widths
-    function resetColumnWidths() {
-        const defaultWidth = '160px'; // You can adjust this value
-        const headers = table.querySelectorAll('th');
-        
-        headers.forEach(header => {
-            header.style.width = defaultWidth;
-        });
-
-        // Special cases for specific columns
-        const columnWidths = {
-            '序号': '60px',        // Smaller for index numbers
-        '活动ID': '80px',      // Smaller for IDs
-        '标题': '150px',       // Wider for titles
-        '状态': '80px',        // Smaller for status
-        '开始时间': '130px',   // Standard for dates
-        '结束时间': '130px',   // Standard for dates
-        '创建时间': '130px',   // Standard for dates
-        '地点': '120px',       // Medium for location
-        '描述': '200px',       // Wider for descriptions
-        '参与者数量': '200px', // Medium for numbers
-        '报名截止': '130px',   // Standard for dates
-        '价格': '80px',        // Smaller for prices
-        '在线链接': '160px',   // Medium-wide for links
-        '操作': '160px' 
-        };
-
-        headers.forEach(header => {
-            const columnName = header.textContent.trim();
-            if (columnWidths[columnName]) {
-                header.style.width = columnWidths[columnName];
-            }
-        });
-
-        // Save the reset widths to localStorage if you're using persistence
-        saveColumnWidths();
-    }
-
-    function saveColumnWidths() {
-        const widths = {};
-        const headers = table.querySelectorAll('th');
-        headers.forEach(header => {
-            widths[header.textContent.trim()] = header.style.width;
-        });
-        localStorage.setItem('eventTableColumnWidths', JSON.stringify(widths));
-    }
-
-    // Optional: Function to load saved column widths
-    function loadSavedColumnWidths() {
-        const savedWidths = localStorage.getItem('eventTableColumnWidths');
-        if (savedWidths) {
-            const widths = JSON.parse(savedWidths);
-            const headers = table.querySelectorAll('th');
-            headers.forEach(header => {
-                const width = widths[header.textContent.trim()];
-                if (width) {
-                    header.style.width = width;
-                }
-            });
-        }
-    }
+    
 
     if (priceFilterButton) {
         priceFilterButton.addEventListener('click', function() {
@@ -1146,8 +1083,22 @@ eventTableBody.addEventListener('click', function(e) {
     
     // Table column resizing
     tableHeaders.forEach(th => {
-        const resizer = th.querySelector('.resizer');
-        if (!resizer) return;
+        if (index === tableHeaders.length - 1) return;
+        
+        // Check if resizer already exists
+        let resizer = th.querySelector('.resizer');
+        if (!resizer) {
+            resizer = document.createElement('div');
+            resizer.className = 'resizer';
+            th.appendChild(resizer);
+            th.style.position = 'relative'; // Ensure proper positioning
+        }
+        
+        // Load saved column width if it exists
+        const savedWidths = JSON.parse(localStorage.getItem('eventTableColumnWidths') || '{}');
+        if (savedWidths[index]) {
+            th.style.width = savedWidths[index] + 'px';
+        }
         
         let startX, startWidth;
         
@@ -1157,25 +1108,30 @@ eventTableBody.addEventListener('click', function(e) {
             document.addEventListener('mousemove', resizeColumn);
             document.addEventListener('mouseup', stopResize);
             e.preventDefault(); // Prevent text selection while dragging
+            
+            // Add a class to the table during resize
+            table.classList.add('resizing');
         });
         
         function resizeColumn(e) {
             const newWidth = startWidth + (e.pageX - startX);
             if (newWidth > 50) { // Minimum column width
                 th.style.width = newWidth + 'px';
+
+                const savedWidths = JSON.parse(localStorage.getItem('eventTableColumnWidths') || '{}');
+                savedWidths[index] = newWidth;
+                localStorage.setItem('eventTableColumnWidths', JSON.stringify(savedWidths));
             }
         }
         
         function stopResize() {
             document.removeEventListener('mousemove', resizeColumn);
             document.removeEventListener('mouseup', stopResize);
+            table.classList.remove('resizing');
         }
     });
 
   
-    loadSavedColumnWidths();
-  
-
     // Initial fetch
     fetchEvents();
 });

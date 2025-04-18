@@ -314,10 +314,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Validate amount
         const amountField = document.getElementById('amount');
-        if (amountField.value && parseFloat(amountField.value) <= 0) {
-            isValid = false;
-            errors.push('捐赠金额必须大于0');
-            amountField.classList.add('error');
+        if (amountField.value) {
+            const amount = parseFloat(amountField.value);
+            if (isNaN(amount) || amount <= 0) {
+                isValid = false;
+                errors.push('捐赠金额必须大于0');
+                amountField.classList.add('error');
+            }
         }
 
         // Validate payment date
@@ -504,7 +507,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const membershipValue = membershipSelect.value;
         console.log('提交表单时的会员选择值:', membershipValue);
         
-        
+        // Add this inside submitForm() function just before the fetch call
+console.log('Remarks value before sending:', document.getElementById('remarks').value);
         
         // 处理会员身份 - 保持原始格式，不使用parseInt
         if (membershipValue === '2') {

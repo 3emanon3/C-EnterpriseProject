@@ -6,10 +6,12 @@
     <title>Event Management System - Search</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="searchEvent.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <div class="container">
         <header>
+            
             <h1>活动管理系统</h1>
             <nav class="system-nav">
                 <button class="btn btn-primary tooltip" onclick="location.href='../project.html'">
@@ -62,10 +64,7 @@
                 <span class="stats-label">活动数量:</span>
                 <span id="totalEvents" class="stats-value">0</span>
             </div>
-            <button id="resetColumnWidthBtn" class="btn btn-secondary tooltip">
-                <i class="fas fa-arrows-alt-h"></i> 重置列宽
-                <span class="tooltip-text">将所有列宽重置为默认值</span>
-            </button>
+           
         </section>
 
         <section class="table-container">

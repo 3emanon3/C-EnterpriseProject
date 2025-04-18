@@ -84,7 +84,7 @@ h1 {
     gap: 10px;
     flex-wrap: wrap; /* Allow buttons to wrap */
     width: 100%; 
-    justify-content: center; /* Align buttons to the right */
+    justify-content: right; /* Align buttons to the right */
 }
 
 /* Button Styles */
@@ -215,11 +215,11 @@ th, td {
     padding: 12px;
     text-align: left;
     border-bottom: 1px solid var(--border-color);
-    position: relative; /* Needed for resizer */
-    word-wrap: break-word; /* Prevent long text breaking layout */
-    overflow: hidden;     /* Hide overflow */
-    text-overflow: ellipsis; /* Show ellipsis for overflow */
-    white-space: nowrap;   /* Keep content on one line initially */
+    border-right: 1px solid var(--border-color);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: relative;
 }
 
 th {
@@ -1089,8 +1089,7 @@ tr:hover {
     .search-container,
     .pagination-container,
     .loader,
-    #donationTable th:last-child, /* Hide '操作' header */
-    #donationTable td:last-child, /* Hide '操作' cells (edit/delete buttons) */
+ 
     #donationTable .resizer,      /* Hide column resizers */
     #donationTable th i.fas,      /* Hide sort icons */
     .btn, /* Hide all buttons (including filter/add/etc.) */

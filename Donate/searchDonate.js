@@ -104,34 +104,26 @@ if (resetColumnWidthBtn) {
     }
 
     function resetColumnWidths() {
-        // Clear stored widths from localStorage
-        try {
+         // Clear stored widths from localStorage
+         try {
             localStorage.removeItem('donationTableColumnWidths');
         } catch (e) {
             console.error("Failed to clear stored column widths:", e);
         }
-    
-        const defaultWidths = {
-            'id': '50px',
-            'donor_name': '150px',
-            'donationTypes': '120px',
-            'Bank': '100px',
-            'membership': '120px',
-            'payment_date': '150px',
-            'receipt_no': '120px',
-            'amount': '110px',
-            'Remarks': '130px',
-            'actions': '200px'
-        };
 
         // Reset width style on all headers
         tableHeaders.forEach(header => {
-            const columnName = header.textContent.trim();
-            if (defaultWidths[columnName]) {
-                header.style.width = defaultWidths[columnName];
-            }
+            header.style.width = ''; // Remove inline width styles
+            header.style.minWidth = ''; // Remove inline min-width styles
         });
-    
+
+        // Force table layout recalculation
+        table.style.width = '100%';
+        table.style.tableLayout = 'auto';
+        
+        // Trigger a resize event to ensure proper layout
+        window.dispatchEvent(new Event('resize'));
+
         // Show confirmation message
         Swal.fire({
             title: '已重置',
@@ -1058,7 +1050,15 @@ if (resetColumnWidthBtn) {
     // --- Column Resizing ---
     // ... (keep existing resizing functions: initializeResizableColumns, saveColumnWidths, loadColumnWidths)
     function initializeResizableColumns() {
-        let currentResizer = null, startX, startWidth, thBeingResized;
+        let currentResizer = null;
+        let startX, startWidth, thBeingResized;
+        let initialWidths = new Map();
+
+        tableHeaders.forEach(th => {
+            if (th.dataset.column) {
+                initialWidths.set(th.dataset.column, th.offsetWidth);
+            }
+        });
 
         tableHeaders.forEach(th => {
             if (!th.dataset.column) return; // Don't add resizer to non-data columns like '操作'
@@ -1066,8 +1066,14 @@ if (resetColumnWidthBtn) {
             if (!resizer) {
                 resizer = document.createElement('div');
                 resizer.className = 'resizer';
+                resizer.title = '拖动调整列宽'; 
                 th.appendChild(resizer);
             }
+
+            resizer.addEventListener('dblclick', (e) => {
+                e.stopPropagation();
+                autoResizeColumn(th);
+            });
 
             resizer.addEventListener('mousedown', (e) => {
                 e.stopPropagation(); // Prevent sorting
@@ -1081,21 +1087,62 @@ if (resetColumnWidthBtn) {
             });
         });
 
+        function autoResizeColumn(th) {
+            // Get all cells in the column
+            const index = Array.from(th.parentElement.children).indexOf(th);
+            const cells = table.querySelectorAll(`tr td:nth-child(${index + 1})`);
+            
+            // Create temporary span to measure content width
+            const span = document.createElement('span');
+            span.style.position = 'absolute';
+            span.style.visibility = 'hidden';
+            span.style.whiteSpace = 'nowrap';
+            document.body.appendChild(span);
+    
+            // Find maximum content width
+            let maxWidth = 0;
+            span.textContent = th.textContent;
+            maxWidth = Math.max(maxWidth, span.offsetWidth);
+    
+            cells.forEach(cell => {
+                span.textContent = cell.textContent;
+                maxWidth = Math.max(maxWidth, span.offsetWidth);
+            });
+    
+            // Cleanup
+            document.body.removeChild(span);
+    
+            // Set new width with padding
+            const padding = 40; // Extra space for padding and resizer
+            th.style.width = `${maxWidth + padding}px`;
+            th.style.minWidth = `${maxWidth + padding}px`;
+    
+            // Save the new width
+            saveColumnWidths();
+        }  
+
         function handleMouseMove(e) {
             if (!currentResizer) return;
+
             const width = startWidth + (e.pageX - startX);
-            if (width >= 50) { // Min width
+            const minWidth = 50;  // Minimum width
+            const maxWidth = table.offsetWidth * 0.5;  // Maximum width (50% of table)
+    
+            if (width >= minWidth && width <= maxWidth) {
                 thBeingResized.style.width = `${width}px`;
+                thBeingResized.style.minWidth = `${width}px`;
             }
         }
 
         function handleMouseUp() {
             if (!currentResizer) return;
             table.closest('.table-container')?.classList.remove('resizing');
+            currentResizer.classList.remove('active');
+            saveColumnWidths();
             document.removeEventListener('mousemove', handleMouseMove);
             document.removeEventListener('mouseup', handleMouseUp);
-            saveColumnWidths();
-            currentResizer = null; thBeingResized = null;
+            currentResizer = null; 
+            thBeingResized = null;
         }
         loadColumnWidths(); // Load saved widths on init
     }
@@ -1119,10 +1166,13 @@ if (resetColumnWidthBtn) {
                 tableHeaders.forEach(th => {
                     if (th.dataset.column && columnWidths[th.dataset.column]) {
                         th.style.width = columnWidths[th.dataset.column];
+                        th.style.minWidth = columnWidths[th.dataset.column];
                     }
                 });
             }
-        } catch (e) { console.error('Failed to load column widths:', e); }
+        } catch (e) {
+            console.error('Failed to load column widths:', e);
+        }
     }
 
     // --- Event Listeners Setup ---
