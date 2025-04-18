@@ -20,11 +20,13 @@ body {
     background-color: var(--background-color);
     color: var(--text-color);
     line-height: 1.6;
-    overflow-x: auto;
+    overflow-x: auto; /* Allow horizontal scrolling */
+    min-width: fit-content; /* Ensure body expands to fit content */
 }
 
 .container {
-    max-width: 1200px;
+    width: auto;
+    min-width: fit-content;
     margin: 0 auto;
     padding: 20px;
     min-height: 95vh;
@@ -45,6 +47,8 @@ header {
     right: 0;
     z-index: 100;
     height: 80px;
+    width: 100%;
+    min-width: fit-content;
 }
 
 h1 {
@@ -180,22 +184,79 @@ h1 {
     box-shadow: var(--shadow);
     padding: 20px;
     margin-bottom: 25px;
+    width: auto;
+    min-width: fit-content;
 }
 
 .table-responsive {
-    overflow-x: auto;
+    overflow: visible;
+    width: auto;
+    min-width: fit-content;
 }
 
 table {
     width: 100%;
+    min-width: max-content; /* Ensure table takes at least the width of all columns */
     border-collapse: collapse;
     margin-bottom: 20px;
+    table-layout: auto;
 }
 
 th, td {
     padding: 12px;
     text-align: left;
     border-bottom: 1px solid var(--border-color);
+    position: relative;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+th::after, td::after {
+    content: "";
+    position: absolute;
+    top: 10px;
+    right: 0;
+    width: 1px;
+    height: calc(100% - 20px);
+    background-image: linear-gradient(
+        to bottom,
+        transparent,
+        var(--border-color) 15%,
+        var(--border-color) 50%,
+        var(--border-color) 85%,
+        transparent
+    );
+    background-size: 4px 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.8;
+}
+
+th:last-child::after, td:last-child::after {
+    display: none;
+}
+
+/* Make action column fit content */
+th:last-child, td:last-child {
+    white-space: nowrap;
+    width: 140px;
+}
+
+.resizer {
+    position: absolute;
+    top: 0;
+    right: -3px;
+    width: 6px;
+    height: 100%;
+    cursor: col-resize;
+    user-select: none;
+    z-index: 10;
+}
+
+.resizer:hover,
+.resizing .resizer {
+    background-color: rgba(0, 0, 255, 0.2);
 }
 
 th {
@@ -206,27 +267,9 @@ th {
     position: relative;
 }
 
-.resizer {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 5px;
-    height: 100%;
-    cursor: col-resize;
-    user-select: none;
-}
-
-.resizer:hover {
-    background-color: rgba(0, 0, 0, 0.1);
-}
-
 th i {
     margin-left: 5px;
     font-size: 12px;
-}
-
-tr:hover {
-    background-color: #f8f9fa;
 }
 
 /* Loader Styles */
@@ -297,6 +340,82 @@ tr:hover {
     border-radius: 4px;
 }
 
+/* Notification Styles */
+.notification {
+    display: none;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1001;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+.notification.show {
+    display: block;
+    animation: slideIn 0.5s ease-out;
+}
+
+.notification.hide {
+    animation: slideOut 0.5s ease-in forwards;
+}
+
+.notification.success {
+    border-left: 4px solid #28a745;
+}
+
+.notification.error {
+    border-left: 4px solid #dc3545;
+}
+
+#notification-content {
+    display: flex;
+    align-items: center;
+    padding: 16px 20px;
+}
+
+#notification-icon {
+    margin-right: 12px;
+    font-size: 20px;
+}
+
+.notification.success #notification-icon {
+    color: #28a745;
+}
+
+.notification.error #notification-icon {
+    color: #dc3545;
+}
+
+#notification-message {
+    font-size: 14px;
+    color: #333;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     header {
@@ -308,7 +427,6 @@ tr:hover {
         margin-bottom: 10px;
     }
     
-
     h1 {
         font-size: 1.5rem;
         margin-bottom: 15px;
@@ -316,40 +434,54 @@ tr:hover {
         width: 100%;
     }
 
-    table, thead, tbody, th, td, tr {
-        display: block;
+    table {
+        min-width: max-content; /* Ensure table width can accommodate all columns */
+        font-size: 0.9rem; /* Slightly smaller font for mobile */
+    }
+    
+    .table-responsive {
+        overflow-x: auto;
         width: 100%;
+        -webkit-overflow-scrolling: touch;
     }
+    
+    /* Only apply these styles for a vertical layout transformation */
+    @media (max-width: 480px) {
+        table, thead, tbody, th, td, tr {
+            display: block;
+            width: 100%;
+        }
 
-    thead tr {
-        position: absolute;
-        top: -9999px;
-        left: -9999px;
-    }
+        thead tr {
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
+        }
 
-    tr {
-        border: 1px solid var(--border-color);
-        margin-bottom: 15px;
-    }
+        tr {
+            border: 1px solid var(--border-color);
+            margin-bottom: 15px;
+        }
 
-    td {
-        border: none;
-        border-bottom: 1px solid var(--border-color);
-        position: relative;
-        padding-left: 50%;
-        white-space: normal;
-        text-align: left;
-    }
+        td {
+            border: none;
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+            padding-left: 50%;
+            white-space: normal;
+            text-align: left;
+        }
 
-    td:before {
-        position: absolute;
-        top: 8px;
-        left: 8px;
-        width: 45%;
-        padding-right: 10px;
-        white-space: nowrap;
-        content: attr(data-label);
-        font-weight: bold;
+        td:before {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            width: 45%;
+            padding-right: 10px;
+            white-space: nowrap;
+            content: attr(data-label);
+            font-weight: bold;
+        }
     }
 
     .filter-group {
@@ -364,6 +496,7 @@ tr:hover {
         padding: 10px;
         margin-top: 20px; /* Reduced margin since header is not fixed */
         width: 100%; /* Full width on mobile */
+        overflow-x: visible;
     }
 
     .btn-container {
@@ -382,7 +515,7 @@ tr:hover {
         width: 100%;
     }
 
-    .system-nav  {
+    .system-nav {
         position: static;
         display: flex;
         flex-direction: column; /* Stack buttons vertically */
@@ -390,8 +523,6 @@ tr:hover {
         gap: 8px;
         margin-top: 10px;
     }
-
-    
 
     .btn {
         width: 100%; /* Full width buttons */
@@ -407,18 +538,10 @@ tr:hover {
     .table-container {
         padding: 10px;
         margin: 10px 0;
+        width: 100%;
+        overflow: visible;
     }
-
-    .table-responsive {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-    }
-
-    table {
-        font-size: 0.9rem; /* Slightly smaller font for mobile */
-    }
-
-
+    
     /* Adjust pagination for mobile */
     .pagination-container {
         flex-direction: column;
@@ -459,7 +582,10 @@ tr:hover {
         grid-template-columns: 1fr; /* Single column on mobile */
     }
 
-    
+    /* Hide resizers on mobile */
+    .resizer {
+        display: none;
+    }
 
     /* Action buttons in table */
     .action-cell {
@@ -475,6 +601,4 @@ tr:hover {
         font-size: 0.8rem;
         margin-bottom: 0 !important; /* Remove potential margin causing stacking */
     }
-
-    
 }

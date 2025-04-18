@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>Stock Management System - Stock Records</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="soldRecord.css">
@@ -12,6 +12,9 @@
         <header>
             <h1>库存管理系统</h1>
             <nav class="system-nav">
+                <button class="btn btn-primary" onclick="resetColumnWidths()">
+                    <i class="fas fa-arrows-alt-h"></i> 重置列宽
+                </button>
                 <button class="btn btn-primary" onclick="location.href='searchStock.html'">
                     <i class="fas fa-undo"></i> 返回
                 </button>
@@ -61,7 +64,7 @@
                     <thead>
                         <tr>
                             <th data-column="Book">产品 <i class="fas fa-sort"></i><div class="resizer"></div></th>
-                            <th data-column="membership">名字 <i class="fas fa-sort"></i><div class="resizer"></div></th>
+                            <th data-column="membership_display">名字 <i class="fas fa-sort"></i><div class="resizer"></div></th>
                             <th data-column="Name/Company Name">公司 <i class="fas fa-sort"></i><div class="resizer"></div></th>
                             <th data-column="quantity_in">进库数量 <i class="fas fa-sort"></i><div class="resizer"></div></th>
                             <th data-column="quantity_out">出库数量 <i class="fas fa-sort"></i><div class="resizer"></div></th>
@@ -93,6 +96,15 @@
             </div>
         </section>
     </div>
+    
+    <!-- Notification Element -->
+    <div id="notification" class="notification">
+        <div id="notification-content">
+            <i id="notification-icon" class="fas"></i>
+            <span id="notification-message"></span>
+        </div>
+    </div>
+    
     <script src="soldRecord.js"></script>
 </body>
 </html>

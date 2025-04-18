@@ -12,6 +12,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const table = document.getElementById('recordsTable');
     const tableHeaders = table.querySelectorAll('th');
     const searchInput = document.getElementById("searchInput");
+    const notification = document.getElementById('notification');
+    const notificationIcon = document.getElementById('notification-icon');
+    const notificationMessage = document.getElementById('notification-message');
     
     let recordsData = [];
     let itemsPerPage = parseInt(itemsPerPageSelect.value);
@@ -21,6 +24,9 @@ document.addEventListener("DOMContentLoaded", function () {
     let activeFilter = null;
     let searchTerm = "";
     let searchTimeout = null;
+
+    // Initialize resizable columns
+    initializeResizableColumns();
 
     // Fetch book options for filter
     async function fetchBookOptions() {
@@ -115,7 +121,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // Map record data to table cells with data-label
             const cells = [
                 { label: headers[0], value: record.Book || '-' },
-                { label: headers[1], value: record.membership || '-' }, // Use 'membership' based on th data-column
+                { label: headers[1], value: record.membership_display || '-' }, // Use 'membership' based on th data-column
                 { label: headers[2], value: record["Name/Company_Name"] || '-' },
                 { label: headers[3], value: record.quantity_in || '-' },
                 { label: headers[4], value: record.quantity_out || '-' },
@@ -194,6 +200,139 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    // Column Resizing Functionality
+    function initializeResizableColumns() {
+        const headers = table.querySelectorAll('th');
+        
+        // Load saved column widths from localStorage
+        loadColumnWidths();
+
+        headers.forEach(header => {
+            const resizer = header.querySelector('.resizer');
+            if (resizer) {
+                resizer.addEventListener('mousedown', initResize);
+            }
+        });
+
+        function initResize(e) {
+            e.preventDefault();
+            const header = e.target.parentElement;
+            const initialWidth = header.offsetWidth;
+            const startX = e.clientX;
+            header.classList.add('resizing');
+            
+            document.addEventListener('mousemove', performResize);
+            document.addEventListener('mouseup', stopResize);
+            
+            function performResize(moveEvent) {
+                const width = initialWidth + (moveEvent.clientX - startX);
+                if (width > 30) { // Minimum width
+                    header.style.width = `${width}px`;
+                }
+            }
+            
+            function stopResize() {
+                header.classList.remove('resizing');
+                document.removeEventListener('mousemove', performResize);
+                document.removeEventListener('mouseup', stopResize);
+                
+                // Save column widths to localStorage
+                saveColumnWidths();
+            }
+        }
+    }
+
+    function saveColumnWidths() {
+        const headers = document.querySelectorAll('#recordsTable th');
+        const widths = {};
+        
+        headers.forEach((header, index) => {
+            // Skip the operations column (last column)
+            if (index === headers.length - 1) return;
+            
+            if (header.style.width) {
+                widths[index] = header.style.width;
+            }
+        });
+        
+        localStorage.setItem('soldRecordTableColumnWidths', JSON.stringify(widths));
+    }
+
+    function loadColumnWidths() {
+        try {
+            const savedWidths = localStorage.getItem('soldRecordTableColumnWidths');
+            if (savedWidths) {
+                const widths = JSON.parse(savedWidths);
+                const headers = document.querySelectorAll('#recordsTable th');
+                
+                Object.keys(widths).forEach(index => {
+                    if (headers[index]) {
+                        headers[index].style.width = widths[index];
+                    }
+                });
+
+                // Always set operation column width
+                const operationColumn = headers[headers.length - 1];
+                operationColumn.style.width = "140px";
+            } else {
+                // Set default column widths for specific columns
+                const headers = document.querySelectorAll('#recordsTable th');
+                headers.forEach((header, index) => {
+                    // Skip the operations column (last column)
+                    if (index === headers.length - 1) {
+                        header.style.width = "140px";
+                        return;
+                    }
+                    
+                    // Set default widths for specific columns
+                    if (header.dataset.column === "Book") {
+                        header.style.width = "180px";
+                    }
+                    if (header.dataset.column === "membership") {
+                        header.style.width = "120px";
+                    }
+                    if (header.dataset.column === "Name/Company Name") {
+                        header.style.width = "180px";
+                    }
+                    if (header.dataset.column === "quantity_in") {
+                        header.style.width = "100px";
+                    }
+                    if (header.dataset.column === "quantity_out") {
+                        header.style.width = "100px";
+                    }
+                    if (header.dataset.column === "InvoiceNo") {
+                        header.style.width = "120px";
+                    }
+                    if (header.dataset.column === "Date") {
+                        header.style.width = "120px";
+                    }
+                    if (header.dataset.column === "price") {
+                        header.style.width = "100px";
+                    }
+                    if (header.dataset.column === "Remarks") {
+                        header.style.width = "180px";
+                    }
+                });
+            }
+        } catch (e) {
+            console.error("Error loading column widths:", e);
+        }
+    }
+
+    // Show notification function
+    function showNotification(success, message) {
+        notificationIcon.className = success ? 'fas fa-check-circle' : 'fas fa-times-circle';
+        notificationMessage.textContent = message;
+        notification.className = success ? 'notification show success' : 'notification show error';
+
+        setTimeout(() => {
+            notification.className = notification.className.replace('show', 'hide');
+            setTimeout(() => {
+                notification.className = 'notification'; // Reset class fully after animation
+            }, 500); // Match animation duration
+        }, 3000);
+    }
+
     // Event listener for search input
     searchInput.addEventListener("input", handleSearch);
 
@@ -246,30 +385,55 @@ document.addEventListener("DOMContentLoaded", function () {
         fetchRecords(filterParams);
     });
 
-    // Column resizing
-    tableHeaders.forEach(th => {
-        const resizer = th.querySelector('.resizer');
-        if (!resizer) return;
+    // Make resetColumnWidths available globally
+    window.resetColumnWidths = function() {
+        // Remove saved column widths
+        localStorage.removeItem('soldRecordTableColumnWidths');
         
-        let startX, startWidth;
-        
-        resizer.addEventListener('mousedown', function(e) {
-            startX = e.pageX;
-            startWidth = th.offsetWidth;
-            document.addEventListener('mousemove', resizeColumn);
-            document.addEventListener('mouseup', stopResize);
+        // Reset all column widths to default
+        const headers = document.querySelectorAll('#recordsTable th');
+        headers.forEach((header, index) => {
+            // Set operations column width separately
+            if (index === headers.length - 1) {
+                header.style.width = "140px";
+                return;
+            }
+            
+            header.style.width = '';
+            
+            // Set default widths for specific columns
+            if (header.dataset.column === "Book") {
+                header.style.width = "180px";
+            }
+            if (header.dataset.column === "membership") {
+                header.style.width = "120px";
+            }
+            if (header.dataset.column === "Name/Company Name") {
+                header.style.width = "180px";
+            }
+            if (header.dataset.column === "quantity_in") {
+                header.style.width = "100px";
+            }
+            if (header.dataset.column === "quantity_out") {
+                header.style.width = "100px";
+            }
+            if (header.dataset.column === "InvoiceNo") {
+                header.style.width = "120px";
+            }
+            if (header.dataset.column === "Date") {
+                header.style.width = "120px";
+            }
+            if (header.dataset.column === "price") {
+                header.style.width = "100px";
+            }
+            if (header.dataset.column === "Remarks") {
+                header.style.width = "180px";
+            }
         });
         
-        function resizeColumn(e) {
-            const newWidth = startWidth + (e.pageX - startX);
-            th.style.width = newWidth + 'px';
-        }
-        
-        function stopResize() {
-            document.removeEventListener('mousemove', resizeColumn);
-            document.removeEventListener('mouseup', stopResize);
-        }
-    });
+        // Show notification
+        showNotification(true, "列宽已重置");
+    };
 
     // Global record editing and deleting functions
     window.editRecord = function(id) {
@@ -284,14 +448,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
                 
                 if (response.ok) {
+                    showNotification(true, "记录删除成功！");
                     const filterParams = activeFilter ? { Book: activeFilter } : {};
                     fetchRecords(filterParams);
                 } else {
-                    alert("删除记录失败。");
+                    showNotification(false, "删除记录失败。");
                 }
             } catch (error) {
                 console.error("Error deleting record:", error);
-                alert("删除操作发生错误。");
+                showNotification(false, "删除操作发生错误。");
             }
         }
     };
