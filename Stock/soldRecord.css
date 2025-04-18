@@ -88,6 +88,7 @@ h1 {
 .btn-edit {
     background-color: #f39c12;
     color: white;
+    margin-bottom: 3px;
 }
 
 .btn-delete {
@@ -297,9 +298,6 @@ tr:hover {
 }
 
 /* Responsive Design */
-/* ... existing code ... */
-
-/* Mobile Responsive Design */
 @media (max-width: 768px) {
     header {
         flex-direction: column;
@@ -402,6 +400,10 @@ tr:hover {
         font-size: 14px;
     }
 
+    .btn-edit {
+        margin-bottom: 3px;
+    }
+
     .table-container {
         padding: 10px;
         margin: 10px 0;
@@ -462,14 +464,16 @@ tr:hover {
     /* Action buttons in table */
     .action-cell {
         display: flex;
-        flex-wrap: wrap;
-        gap: 4px;
+        flex-direction: row; 
+        flex-wrap: nowrap;
+        gap: 8px;
     }
 
     .action-cell .btn {
-        width: auto;
+        width: auto !important; /* Override general .btn width: 100% */
         padding: 4px 8px;
         font-size: 0.8rem;
+        margin-bottom: 0 !important; /* Remove potential margin causing stacking */
     }
 
     

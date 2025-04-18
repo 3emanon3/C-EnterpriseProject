@@ -138,6 +138,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <button class="btn btn-edit" onclick="editRecord(${record.ID})">编辑</button>
                 <button class="btn btn-delete" onclick="deleteRecord(${record.ID})">删除</button>
             `;
+            actionTd.classList.add('action-cell');
             row.appendChild(actionTd);
             
             recordsTableBody.appendChild(row);
