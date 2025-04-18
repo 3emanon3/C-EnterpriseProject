@@ -12,25 +12,29 @@
         <header>
             <h1>塾员管理系统</h1>
             <nav class="system-nav">
-                <button class="btn btn-primary tooltip" onclick="resetColumnWidths()">
+                <button class="btn btn-primary tooltip btn-reset" onclick="resetColumnWidths()">
                     <i class="fas fa-arrows-alt-h"></i> 重置列宽
                     <span class="tooltip-text">将表格列宽重置为默认值</span>
                 </button>
-                <button class="btn btn-primary tooltip" onclick="location.href='../project.html'">
+                <button class="btn btn-primary tooltip btn-back" onclick="location.href='../project.html'">
                     <i class="fas fa-home"></i> 返回
                     <span class="tooltip-text">返回到主页面，查看所有系统模块</span>
                 </button>
-                <button class="btn btn-secondary tooltip" onclick="openApplicantTypesModal()">
+                <button class="btn btn-secondary tooltip btn-settings" onclick="openApplicantTypesModal()">
                     <i class="fas fa-cogs"></i> 管理种类
                     <span class="tooltip-text">管理申请人类别：编辑名称或删除类别（操作需确认）</span>
                 </button>
-                <button class="btn btn-success tooltip" onclick="location.href='member_management.html'">
+                <button class="btn btn-success tooltip btn-increase" onclick="location.href='member_management.html'">
                     <i class="fas fa-box"></i> 增加塾员
                     <span class="tooltip-text">添加新塾员到系统中，录入塾员的详细信息</span>
                 </button>
+                <button id="listAllMembers" class="btn btn-secondary tooltip btn-listAll">
+                    <i class="fas fa-list"></i> 所有塾员
+                    <span class="tooltip-text">显示系统中的所有塾员记录</span>
+                </button>
 
                 <!-- Birthday Button with filter-button class -->
-                <button id="searchBirthday" class="btn btn-info tooltip filter-button" onclick="openBirthdayModal()">
+                <button id="searchBirthday" class="btn btn-info tooltip filter-button btn-birthday" onclick="openBirthdayModal()">
                     <i class="fas fa-birthday-cake"></i> 生日查询 (选择月份)
                     <span class="tooltip-text">
                         <strong>核心功能：</strong> 查找并显示在指定月份过生日的塾员。
@@ -52,7 +56,7 @@
                 </button>
 
                 <!-- Modified Expiry Button Tooltip with filter-button class -->
-                <button id="searchExpiry" class="btn btn-warning tooltip filter-button" onclick="openExpiryModal()">
+                <button id="searchExpiry" class="btn btn-warning tooltip filter-button btn-expiry" onclick="openExpiryModal()">
                     <i class="fas fa-calendar-times"></i> 到期塾员 (选择日期范围)
                     <span class="tooltip-text">
                         <strong>核心功能：</strong> 查找并显示在指定日期范围（开始日期 到 结束日期）内到期的塾员。
@@ -70,25 +74,10 @@
                         <strong>开始日期 / 结束日期：</strong> 您在弹出的窗口中指定的日期范围的起始和终止点。
                     </span>
                 </button>
-                <button id="listAllMembers" class="btn btn-secondary tooltip">
-                    <i class="fas fa-list"></i> 所有塾员
-                    <span class="tooltip-text">显示系统中的所有塾员记录</span>
-                </button>
+                
 
                 <!-- 添加导出数据按钮 -->
-                <button id="exportData" class="btn btn-primary tooltip" onclick="openExportModal()">
-                    <i class="fas fa-file-export"></i> 导出数据
-                    <span class="tooltip-text">
-                        <strong>核心功能：</strong> 将当前筛选的塾员数据导出为文本文件。
-                        <br>
-                        <strong>使用须知：</strong><br>
-                        1. <strong>选择列：</strong> 您可以选择需要导出的数据列。
-                        <br>
-                        2. <strong>数据范围：</strong> 导出的数据将遵循当前的筛选条件（如种类筛选、生日月份筛选等）。
-                        <br>
-                        3. <strong>文件格式：</strong> 导出的文件为分号分隔的文本文件(.txt)，可用Excel等软件打开。
-                    </span>
-                </button>
+                
 
                 <select id="memberFilter" class="btn btn-light tooltip filter-button">
                     <!-- Options will be populated by JavaScript -->
@@ -106,6 +95,20 @@
                         <strong>种类 (Category/Type)：</strong> 指用于标识和区分名单中人员身份、状态或归属的标签。例如，“塾员”通常指正式注册的学员，“逾期”指缴费或状态过期的学员，“非塾员”则包括潜在客户、其他联系人等。具体的种类及其含义由系统设定或数据录入者决定。
                     </span>
                 </select>
+
+                <button id="exportData" class="btn btn-primary tooltip btn-export" onclick="openExportModal()">
+                    <i class="fas fa-file-export"></i> 导出数据
+                    <span class="tooltip-text">
+                        <strong>核心功能：</strong> 将当前筛选的塾员数据导出为文本文件。
+                        <br>
+                        <strong>使用须知：</strong><br>
+                        1. <strong>选择列：</strong> 您可以选择需要导出的数据列。
+                        <br>
+                        2. <strong>数据范围：</strong> 导出的数据将遵循当前的筛选条件（如种类筛选、生日月份筛选等）。
+                        <br>
+                        3. <strong>文件格式：</strong> 导出的文件为分号分隔的文本文件(.txt)，可用Excel等软件打开。
+                    </span>
+                </button>
 
             </nav>
         </header>
