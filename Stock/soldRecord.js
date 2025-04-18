@@ -106,25 +106,40 @@ document.addEventListener("DOMContentLoaded", function () {
             recordsTableBody.innerHTML = "<tr><td colspan='10' style='text-align: center;'>No records found</td></tr>";
             return;
         }
+
+        // Get headers text
+        const headers = Array.from(document.querySelectorAll('#recordsTable th[data-column]')).map(th => th.textContent.trim());
         
         records.forEach(record => {
             const row = document.createElement("tr");
             
-            row.innerHTML = `
-                <td>${record.Book || '-'}</td>
-                <td>${record.membership_display || '-'}</td>
-                <td>${record["Name/Company_Name"] || '-'}</td>
-                <td>${record.quantity_in || '-'}</td>
-                <td>${record.quantity_out || '-'}</td>
-                <td>${record.InvoiceNo || '-'}</td>
-                <td>${record.Date || '-'}</td>
-                <td>${record.price || '-'}</td>
-                <td>${record.Remarks || '-'}</td>
-                <td>
-                    <button class="btn btn-edit" onclick="editRecord(${record.ID})">编辑</button>
-                    <button class="btn btn-delete" onclick="deleteRecord(${record.ID})">删除</button>
-                </td>
+            // Map record data to table cells with data-label
+            const cells = [
+                { label: headers[0], value: record.Book || '-' },
+                { label: headers[1], value: record.membership || '-' }, // Use 'membership' based on th data-column
+                { label: headers[2], value: record["Name/Company_Name"] || '-' },
+                { label: headers[3], value: record.quantity_in || '-' },
+                { label: headers[4], value: record.quantity_out || '-' },
+                { label: headers[5], value: record.InvoiceNo || '-' },
+                { label: headers[6], value: record.Date || '-' },
+                { label: headers[7], value: record.price || '-' },
+                { label: headers[8], value: record.Remarks || '-' }
+            ];
+
+            cells.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell.value;
+                td.setAttribute('data-label', cell.label);
+                row.appendChild(td);
+            });
+
+            // Add action buttons cell (without data-label)
+            const actionTd = document.createElement('td');
+            actionTd.innerHTML = `
+                <button class="btn btn-edit" onclick="editRecord(${record.ID})">编辑</button>
+                <button class="btn btn-delete" onclick="deleteRecord(${record.ID})">删除</button>
             `;
+            row.appendChild(actionTd);
             
             recordsTableBody.appendChild(row);
         });

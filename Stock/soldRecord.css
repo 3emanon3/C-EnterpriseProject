@@ -307,6 +307,7 @@ tr:hover {
         height: auto;
         padding: 15px;
         position: relative; /* Change from fixed to allow content flow */
+        margin-bottom: 10px;
     }
     
 
