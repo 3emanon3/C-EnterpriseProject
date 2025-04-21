@@ -98,10 +98,13 @@ document.addEventListener('DOMContentLoaded', function() {
         } 
     });
 
+
+
     // 模态框搜索功能 - 增强版，支持实时搜索
     function performModalSearch(page = 1) {
         const searchTerm = modalSearchInput.value.trim();
-         
+        
+ 
         currentSearchTerm = searchTerm;
         currentPage = page;
         
@@ -128,10 +131,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     displayModalResults(members);
                     totalItems = data.total || members.length;
                     updateModalPagination();
-                    const modalBody = document.querySelector('.modal-body');
-                if (modalBody) {
-                    modalBody.scrollTop = 0;
-                }
                 } else {
                     console.warn('No results found or invalid structure');
                     modalNoResults.style.display = 'block';
@@ -143,22 +142,33 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('搜索会员时出错: ' + error.message);
             });
     }
+
+    function highlightSearchTerm(text, searchTerm) {
+        if (!searchTerm || !text) return text;
+        
+        // Escape special regex characters in the search term
+        const escapedSearchTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        
+        // Create a regex that matches the search term (case insensitive)
+        const regex = new RegExp(`(${escapedSearchTerm})`, 'gi');
+        
+        // Replace matches with highlighted version
+        return text.toString().replace(regex, '<span class="highlight-term">$1</span>');
+    }
     
     // 显示模态框搜索结果
     function displayModalResults(members) {
         modalResultsBody.innerHTML = '';
-        
-        const scrollContainer = document.createElement('div');
-        scrollContainer.className = 'modal-results-scroll';
 
+        const searchTerm = currentSearchTerm;
         
         members.forEach(member => {
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${member.membersID || ''}</td>
-                <td>${member.Name || member.CName || '未知'}</td>
-                <td>${member.componyName || member.companyName || '未提供'}</td>
-                <td>${member.phone_number || '未提供'}</td>
+            <td>${highlightSearchTerm(member.membersID || '', searchTerm)}</td>
+            <td>${highlightSearchTerm(member.Name || member.CName || '未知', searchTerm)}</td>
+            <td>${highlightSearchTerm(member.componyName || member.companyName || '未提供', searchTerm)}</td>
+            <td>${highlightSearchTerm(member.phone_number || '未提供', searchTerm)}</td>
             `;
             
             // 添加点击事件来选择此会员
@@ -191,8 +201,67 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // 如果会员同时拥有姓名和公司名称，弹出选择框
         if (companyName && companyName.trim() !== '' && memberName && memberName.trim() !== '') {
-            const useCompanyName = confirm('检测到该会员同时拥有姓名和公司名称：\n\n姓名：' + memberName + '\n公司名称：' + companyName + '\n\n点击"确定"使用公司名称，点击"取消"使用姓名');
-            document.getElementById('nameCompany').value = useCompanyName ? companyName : memberName;
+         // Create a custom modal for name selection
+        const nameSelectionModal = document.createElement('div');
+        nameSelectionModal.className = 'modal';
+        nameSelectionModal.style.display = 'block';
+        nameSelectionModal.style.position = 'fixed';
+        nameSelectionModal.style.zIndex = '1000';
+        nameSelectionModal.style.left = '0';
+        nameSelectionModal.style.top = '0';
+        nameSelectionModal.style.width = '100%';
+        nameSelectionModal.style.height = '100%';
+        nameSelectionModal.style.backgroundColor = 'rgba(0,0,0,0.4)';
+        
+        const modalContent = document.createElement('div');
+        modalContent.style.backgroundColor = '#fefefe';
+        modalContent.style.margin = '15% auto';
+        modalContent.style.padding = '20px';
+        modalContent.style.border = '1px solid #888';
+        modalContent.style.width = '50%';
+        modalContent.style.maxWidth = '500px';
+        modalContent.style.borderRadius = '5px';
+        
+        modalContent.innerHTML = `
+            <h3 style="margin-top: 0;">请选择要使用的名称</h3>
+            <p>该会员同时拥有姓名和公司名称:</p>
+            <p><strong>姓名:</strong> ${memberName}</p>
+            <p><strong>公司名称:</strong> ${companyName}</p>
+            <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+                <button id="usePersonalName" style="padding: 8px 16px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">使用姓名</button>
+                <button id="useCompanyName" style="padding: 8px 16px; background-color: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;">使用公司名称</button>
+                <button id="cancelSelection" style="padding: 8px 16px; background-color: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer;">取消选择</button>
+            </div>
+        `;
+        
+        nameSelectionModal.appendChild(modalContent);
+        document.body.appendChild(nameSelectionModal);
+        
+        // Add event listeners for the buttons
+        document.getElementById('usePersonalName').addEventListener('click', function() {
+            document.getElementById('nameCompany').value = memberName;
+            completeSelection(memberId);
+            document.body.removeChild(nameSelectionModal);
+        });
+        
+        document.getElementById('useCompanyName').addEventListener('click', function() {
+            document.getElementById('nameCompany').value = companyName;
+            completeSelection(memberId);
+            document.body.removeChild(nameSelectionModal);
+        });
+        
+        document.getElementById('cancelSelection').addEventListener('click', function() {
+            document.body.removeChild(nameSelectionModal);
+            memberSearchModal.style.display = 'none';
+            
+            // Reset any partially applied selections
+            // If the membership was already changed to this member, reset it back
+            if (membershipSelect.value === memberId) {
+                // Reset back to default selection (likely the first option)
+                membershipSelect.selectedIndex = 0;
+            }
+        });
+        return;
         } else if (companyName && companyName.trim() !== '') {
             document.getElementById('nameCompany').value = companyName;
         } else {
@@ -243,6 +312,54 @@ document.addEventListener('DOMContentLoaded', function() {
         membershipSelect.value = memberId;
         
         // 关闭模态框
+        memberSearchModal.style.display = 'none';
+    }
+
+    function completeSelection(memberId) {
+        // Ensure selectedMemberId field exists
+        let selectedMemberIdField = document.getElementById('selectedMemberId');
+        if (!selectedMemberIdField) {
+            selectedMemberIdField = document.createElement('input');
+            selectedMemberIdField.type = 'hidden';
+            selectedMemberIdField.id = 'selectedMemberId';
+            selectedMemberIdField.name = 'memberId';
+            donationForm.appendChild(selectedMemberIdField);
+        }
+        
+        // Store member ID to hidden field - maintain original format
+        selectedMemberIdField.value = memberId;
+        console.log('设置会员ID为:', memberId);
+        
+        // Check if this member already exists in dropdown
+        let memberExists = false;
+        for (let i = 0; i < membershipSelect.options.length; i++) {
+            if (membershipSelect.options[i].value === memberId) {
+                memberExists = true;
+                break;
+            }
+        }
+        
+        if (!memberExists) {
+            // Create new option for this member
+            const newOption = document.createElement('option');
+            newOption.value = memberId; // Use original membersID without conversion
+            newOption.textContent = `${memberName || '未知'} (ID: ${memberId})`;
+            
+            // Add option before any separator or special options
+            const specialIndex = Array.from(membershipSelect.options).findIndex(opt => 
+                opt.value === '1' || opt.value === '2' || opt.disabled);
+            
+            if (specialIndex !== -1) {
+                membershipSelect.insertBefore(newOption, membershipSelect.options[specialIndex]);
+            } else {
+                membershipSelect.appendChild(newOption);
+            }
+        }
+        
+        // Select this member in dropdown
+        membershipSelect.value = memberId;
+        
+        // Close original modal
         memberSearchModal.style.display = 'none';
     }
     

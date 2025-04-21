@@ -384,6 +384,13 @@ textarea {
     cursor: pointer;
 }
 
+.highlight-term {
+    background-color: yellow;
+    font-weight: bold;
+    padding: 1px 2px;
+    border-radius: 2px;
+}
+
 /* Make inputs and selects take up available space but allow room for buttons */
 .form-group input,
 .form-group select {
