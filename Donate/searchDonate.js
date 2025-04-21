@@ -1050,6 +1050,7 @@ if (resetColumnWidthBtn) {
     // --- Column Resizing ---
     // ... (keep existing resizing functions: initializeResizableColumns, saveColumnWidths, loadColumnWidths)
     function initializeResizableColumns() {
+        let isResizing = false;
         let currentResizer = null;
         let startX, startWidth, thBeingResized;
         let initialWidths = new Map();
@@ -1070,20 +1071,30 @@ if (resetColumnWidthBtn) {
                 th.appendChild(resizer);
             }
 
+            resizer.addEventListener('mousedown', (e) => {
+                e.stopPropagation();
+                isResizing = true;
+                currentResizer = e.target;
+                thBeingResized = currentResizer.parentElement;
+                startX = e.pageX;
+                startWidth = thBeingResized.offsetWidth;
+                
+                // Add resizing class to table container
+                table.closest('.table-container')?.classList.add('resizing');
+                
+                document.addEventListener('mousemove', handleMouseMove);
+                document.addEventListener('mouseup', handleMouseUp);
+            });
+
             resizer.addEventListener('dblclick', (e) => {
                 e.stopPropagation();
                 autoResizeColumn(th);
             });
 
-            resizer.addEventListener('mousedown', (e) => {
-                e.stopPropagation(); // Prevent sorting
-                currentResizer = e.target;
-                thBeingResized = currentResizer.parentElement;
-                startX = e.pageX;
-                startWidth = thBeingResized.offsetWidth;
-                table.closest('.table-container')?.classList.add('resizing');
-                document.addEventListener('mousemove', handleMouseMove);
-                document.addEventListener('mouseup', handleMouseUp);
+            th.addEventListener('click', (e) => {
+                if (!isResizing && !e.target.classList.contains('resizer')) {
+                    handleSortClick(th.dataset.column);
+                }
             });
         });
 
@@ -1135,14 +1146,18 @@ if (resetColumnWidthBtn) {
         }
 
         function handleMouseUp() {
-            if (!currentResizer) return;
+            if (!isResizing) return;
+        
+            isResizing = false;
             table.closest('.table-container')?.classList.remove('resizing');
-            currentResizer.classList.remove('active');
+            currentResizer = null;
+            thBeingResized = null;
+            
             saveColumnWidths();
+            
             document.removeEventListener('mousemove', handleMouseMove);
             document.removeEventListener('mouseup', handleMouseUp);
-            currentResizer = null; 
-            thBeingResized = null;
+        
         }
         loadColumnWidths(); // Load saved widths on init
     }

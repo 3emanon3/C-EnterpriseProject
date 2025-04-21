@@ -263,11 +263,12 @@ tr:hover {
     position: absolute;
     right: 0;
     top: 0;
-    height: 100%;
-    width: 5px;
-    background: rgba(0, 0, 0, 0.05);
+    bottom: 0;
+    width: 8px; /* Increased width for easier grabbing */
     cursor: col-resize;
-    z-index: 1; /* Ensure resizer is clickable */
+    user-select: none;
+    background: transparent;
+    transition: background 0.2s;
 }
 
 .resizer:hover,

@@ -377,6 +377,8 @@ th {
     color: var(--primary-color);
     font-weight: 600;
     cursor: pointer;
+    position: relative;
+    padding-right: 15px;
 }
 
 th i {
@@ -535,6 +537,14 @@ tr:hover {
     border: none;
     border-radius: 4px;
     cursor: pointer;
+}
+
+.th-content {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    padding-right: 15px; /* Make room for resizer */
 }
 
 .items-per-page {
