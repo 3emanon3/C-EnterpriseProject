@@ -562,11 +562,11 @@ tr:hover {
 .system-nav {
     position: static;
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 8px;
     justify-content: flex-end;
     margin-top: 10px;
-    width: 80%;
+    width: 85%;
     margin-left: auto;
 }
 
