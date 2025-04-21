@@ -141,10 +141,15 @@ document.addEventListener("DOMContentLoaded", function () {
             // Add action buttons cell (without data-label)
             const actionTd = document.createElement('td');
             actionTd.innerHTML = `
-                <button class="btn btn-edit" onclick="editRecord(${record.ID})">编辑</button>
-                <button class="btn btn-delete" onclick="deleteRecord(${record.ID})">删除</button>
+                <div class="action-cell">
+                    <button class="btn btn-edit" onclick="editRecord(${record.ID})" title="编辑">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-delete" onclick="deleteRecord(${record.ID})" title="删除">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
             `;
-            actionTd.classList.add('action-cell');
             row.appendChild(actionTd);
             
             recordsTableBody.appendChild(row);

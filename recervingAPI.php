@@ -55,8 +55,7 @@ class DatabaseAPI {
 
     // Table mappings
     private $tableToView = [
-        // Example: 'users' => 'v_users_with_profile'
-        // No mappings defined in the original code, keeping it empty.
+        
     ];
 
     // Special conditions that need processing through the original tables
@@ -82,12 +81,6 @@ class DatabaseAPI {
                 'conditions'=>['`expired_date` BETWEEN ? AND ?'],
                 'param' => ['startDate', 'endDate'],
                 'paramTypes' => 'ss'
-            ],
-        ],
-        'soldrecord' => [
-            'Date' => [ // Assuming 'Date' here means "this month" based on original code
-                'conditions'=>['MONTH(Date) = MONTH(CURDATE()) AND YEAR(Date) = YEAR(CURDATE())'], // Made more specific
-                 // No params needed for CURDATE()
             ],
         ],
         'donation_details' => [
@@ -125,6 +118,18 @@ class DatabaseAPI {
             'priceRange' => [
                 'conditions' => ['`price` BETWEEN ? AND ?'],
                 'param' => ['startPrice','endPrice'],
+                'paramTypes' => 'dd'
+            ]
+        ],
+        'stock' => [
+            'quantityRange' => [
+                'conditions' => ['`stock` BETWEEN ? AND ?'],
+                'param' => ['startQuantity', 'endQuantity'],
+                'paramTypes' => 'ii'
+            ],
+            'priceRange' => [
+                'conditions' => ['`Price` BETWEEN ? AND ?'],
+                'param' => ['startPrice', 'endPrice'],
                 'paramTypes' => 'dd'
             ]
         ]
