@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const resizer = document.createElement('div');
             resizer.className = 'resizer';
             th.appendChild(resizer);
-            th.style.position = 'relative';
+            
     
             let isResizing = false;
             let startX, startWidth;
@@ -113,6 +113,7 @@ document.addEventListener("DOMContentLoaded", function () {
     
             resizer.addEventListener('mousedown', function(e) {
                 console.log(`Resizer mousedown on column ${index}`);
+                e.stopPropagation();
                 isResizing = true;
                 startX = e.pageX;
                 startWidth = th.offsetWidth;
@@ -198,10 +199,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentStartPrice = "";
     let currentEndPrice = "";
 
-   
-
   
-
     if (priceFilterButton) {
         priceFilterButton.addEventListener('click', function() {
             const filterModal = document.createElement('div');
@@ -1096,11 +1094,13 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    document.querySelectorAll('th[data-column]').forEach(th => {
-        th.addEventListener('click', function() {
-            handleSortClick(this.dataset.column);
+    document.querySelectorAll('th[data-column] .th-content').forEach(thContent => {
+        thContent.addEventListener('click', function(e) {
+            const th = this.closest('th');
+            handleSortClick(th.dataset.column);
         });
     });
+    
 
     prevPageButton.addEventListener("click", function () {
         if (currentPage > 1) {

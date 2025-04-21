@@ -41,7 +41,7 @@ body {
 }
 
 .container {
-    max-width: 2200px;
+    max-width: 2500px;
     margin: 0 auto;
     padding: 20px;
     min-height: 95vh;
@@ -53,7 +53,7 @@ header {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 15px 20px;
+    padding: 14px 19px;
     border-bottom: 2px solid var(--border-color);
     background-color: var(--background-color);
     position: fixed;
@@ -82,14 +82,16 @@ h1 {
 .button-container {
     display: flex;
     gap: 10px;
-    flex-wrap: wrap; /* Allow buttons to wrap */
-    width: 100%; 
-    justify-content: right; /* Align buttons to the right */
+    flex-wrap: nowrap; /* Allow buttons to wrap */
+    width: 250%; 
+    justify-content: flex-end; /* Align buttons to the right */
+    padding: 4px 6px;
+  
 }
 
 /* Button Styles */
 .btn {
-    padding: 8px 16px;
+    padding: 7px 14px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -135,6 +137,10 @@ h1 {
     background-color: var(--secondary-color); /* Darker blue when active */
     font-weight: bold;
     box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.btn-column{
+    background-color: #5bc0de;
 }
 
 /* Search Container Styles */
@@ -263,11 +269,12 @@ tr:hover {
     position: absolute;
     right: 0;
     top: 0;
-    height: 100%;
-    width: 5px;
-    background: rgba(0, 0, 0, 0.05);
+    bottom: 0;
+    width: 8px; /* Increased width for easier grabbing */
     cursor: col-resize;
-    z-index: 1; /* Ensure resizer is clickable */
+    user-select: none;
+    background: transparent;
+    transition: background 0.2s;
 }
 
 .resizer:hover,
@@ -684,14 +691,15 @@ tr:hover {
 }
 
 .bank-table-container {
-    max-height: 400px;
+    max-height: 300px;
     overflow-y: auto;
     border: 1px solid #ddd;
     border-radius: 4px;
+    margin-bottom: 20px;
 }
 
 .bank-table {
-    width: 100%;
+    width: 90%;
     border-collapse: collapse;
 }
 
@@ -887,9 +895,10 @@ tr:hover {
     }
 
     .container {
-        padding: 10px;
-        margin-top: 20px; /* Reduced margin since header is not fixed */
-        width: 100%; /* Full width on mobile */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* or center if you want them centered */
+  gap: 1px;
     }
 
     .search-input-group {
@@ -913,7 +922,8 @@ tr:hover {
     .btn {
         padding: 6px 12px;
         font-size: 0.9rem;
-        width: calc(50% - 4px); /* Two buttons per row with gap */
+        width: 100; /* Two buttons per row with gap */
+        margin-bottom: 5px;
     }
 
     .table-container {

@@ -25,7 +25,7 @@ body {
 
 .container {
     max-width: 800px;
-    margin: 2rem auto;
+    margin: 1rem auto;
     padding: 20px;
     min-height: 95vh;
 }
@@ -34,7 +34,8 @@ body {
 .header-actions {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
+    margin-top: -0.5rem;
 }
 
 h1 {
@@ -239,12 +240,14 @@ textarea {
 
 .modal-content {
     background-color: #fff;
-    margin: 15% auto;
+    margin: 5% auto;
     padding: 20px;
     border-radius: 5px;
     width: 80%;
     max-width: 500px;
+    
     position: relative;
+    margin-top: -0.5rem;
 }
 
 .modal-header {

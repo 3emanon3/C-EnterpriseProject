@@ -90900,3 +90900,9920 @@ pes
     [METHOD] => GET
 )
 
+2025-04-21 04:43:33: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 04:43:33: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 04:45:45: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+            [sort] => status
+            [order] => ASC
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+            [sort] => status
+            [order] => ASC
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true&sort=status&order=ASC
+    [METHOD] => GET
+)
+
+2025-04-21 04:45:58: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+            [sort] => end_time
+            [order] => ASC
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+            [sort] => end_time
+            [order] => ASC
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true&sort=end_time&order=ASC
+    [METHOD] => GET
+)
+
+2025-04-21 04:45:59: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 04:45:59: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 04:46:00: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+            [sort] => end_time
+            [order] => ASC
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+            [sort] => end_time
+            [order] => ASC
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true&sort=end_time&order=ASC
+    [METHOD] => GET
+)
+
+2025-04-21 04:46:01: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+            [sort] => end_time
+            [order] => DESC
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+            [sort] => end_time
+            [order] => DESC
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true&sort=end_time&order=DESC
+    [METHOD] => GET
+)
+
+2025-04-21 04:47:34: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 04:47:34: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 04:47:40: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 04:47:40: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 04:47:40: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 04:48:35: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+            [sort] => donationTypes
+            [order] => ASC
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+            [sort] => donationTypes
+            [order] => ASC
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10&sort=donationTypes&order=ASC
+    [METHOD] => GET
+)
+
+2025-04-21 04:55:21: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 04:55:21: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 04:55:21: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 04:55:23: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+            [sort] => donationTypes
+            [order] => ASC
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+            [sort] => donationTypes
+            [order] => ASC
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10&sort=donationTypes&order=ASC
+    [METHOD] => GET
+)
+
+2025-04-21 04:55:23: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+            [sort] => donationTypes
+            [order] => DESC
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+            [sort] => donationTypes
+            [order] => DESC
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10&sort=donationTypes&order=DESC
+    [METHOD] => GET
+)
+
+2025-04-21 04:55:45: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 04:55:45: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 04:55:45: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 04:55:50: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 04:55:50: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 05:03:29: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 05:03:30: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 05:04:22: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 05:04:24: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 05:04:24: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 05:04:24: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 05:04:25: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+pes
+    [METHOD] => GET
+)
+
+2025-04-21 05:04:25: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 05:05:09: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 05:05:09: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 05:05:09: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 05:05:16: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 05:05:16: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 05:05:24: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 05:05:24: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 05:05:24: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 05:05:29: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+pes
+    [METHOD] => GET
+)
+
+2025-04-21 05:05:29: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 05:05:34: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 05:05:34: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 05:05:34: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 05:06:28: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 05:06:28: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 05:06:28: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 05:06:42: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+pes
+    [METHOD] => GET
+)
+
+2025-04-21 05:06:42: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 05:06:43: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 05:06:43: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 05:06:49: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 05:06:49: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 05:07:25: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+pes
+    [METHOD] => GET
+)
+
+2025-04-21 05:07:25: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 05:07:37: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 05:07:37: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 05:07:37: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 05:10:28: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 05:10:28: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 05:10:28: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 05:10:28: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 05:10:28: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 05:10:28: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 05:11:59: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 05:11:59: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 05:11:59: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 05:12:00: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 05:12:00: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 05:12:00: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 05:12:10: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 05:12:10: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 05:12:18: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+pes
+    [METHOD] => GET
+)
+
+2025-04-21 05:12:18: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 05:17:37: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 05:17:37: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 05:17:41: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 05:17:41: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 05:17:41: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 05:17:42: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+pes
+    [METHOD] => GET
+)
+
+2025-04-21 05:17:42: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 05:18:29: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 05:18:29: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 05:18:29: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 05:18:36: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 05:18:36: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 05:18:41: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 05:18:41: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 05:18:41: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 05:19:03: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 05:19:03: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 05:19:03: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 05:19:24: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+pes
+    [METHOD] => GET
+)
+
+2025-04-21 05:19:24: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 05:19:31: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 05:19:31: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 05:19:31: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 05:27:32: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 05:27:32: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 05:27:32: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 05:27:50: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 05:27:50: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 05:27:50: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 05:27:56: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 05:27:56: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 05:27:56: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 05:37:20: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 05:37:20: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 05:37:20: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 05:37:39: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 05:37:39: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 05:37:39: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 05:37:47: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 05:37:47: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 05:38:57: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+pes
+    [METHOD] => GET
+)
+
+2025-04-21 05:38:57: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 05:39:06: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 05:39:06: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 05:39:19: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+pes
+    [METHOD] => GET
+)
+
+2025-04-21 05:39:19: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 05:39:40: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 05:39:40: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 05:39:40: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 05:40:08: Array
+(
+    [GET] => Array
+        (
+            [table] => applicants_types
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => applicants_types
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=applicants_types
+    [METHOD] => GET
+)
+
+2025-04-21 05:40:08: Array
+(
+    [GET] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members_with_applicant_designation&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-04-21 05:40:12: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 05:40:12: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 05:41:20: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 05:41:20: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 05:41:58: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 05:41:59: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 05:42:27: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 05:42:27: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 05:43:09: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 05:43:10: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 05:43:39: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 05:43:39: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 05:43:52: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 05:43:52: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 05:44:33: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 05:44:34: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 05:45:17: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 05:45:17: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 05:45:48: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 05:45:48: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 05:45:55: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 05:45:55: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 05:46:00: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 05:46:00: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 05:46:10: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 05:46:10: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 05:46:17: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 05:46:17: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 05:46:22: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 05:46:22: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 05:46:27: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 05:46:27: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 05:46:33: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 05:46:33: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:04:34: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:04:35: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:04:44: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:04:44: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:07:46: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:07:47: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:07:58: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:07:58: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:08:19: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:08:19: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:09:06: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:09:06: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:09:13: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:09:13: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:13:37: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:13:37: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:14:20: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 06:14:20: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 06:14:20: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 06:14:22: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:14:22: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:14:58: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:14:58: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:15:30: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:15:30: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:15:42: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:15:42: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:16:11: Array
+(
+    [GET] => Array
+        (
+            [table] => applicants_types
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => applicants_types
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=applicants_types
+    [METHOD] => GET
+)
+
+2025-04-21 06:16:11: Array
+(
+    [GET] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members_with_applicant_designation&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-04-21 06:16:22: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-04-21 06:17:02: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:17:02: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:17:04: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 06:17:04: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 06:17:04: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 06:17:07: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+pes
+    [METHOD] => GET
+)
+
+2025-04-21 06:17:07: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 06:17:40: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 06:17:40: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 06:17:40: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 06:18:29: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 06:18:29: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 06:18:29: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 06:18:49: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:18:49: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:18:53: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 06:18:53: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 06:18:53: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 06:19:00: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-04-21 06:19:06: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:19:06: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:19:20: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+            [startDate] => 2025-04-15
+            [endDate] => 2025-04-17
+            [startDateRange] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+            [startDate] => 2025-04-15
+            [endDate] => 2025-04-17
+            [startDateRange] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true&startDate=2025-04-15&endDate=2025-04-17&startDateRange=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:19:24: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:19:48: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:19:48: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:19:51: Array
+(
+    [GET] => Array
+        (
+            [table] => applicants_types
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => applicants_types
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=applicants_types
+    [METHOD] => GET
+)
+
+2025-04-21 06:19:51: Array
+(
+    [GET] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members_with_applicant_designation&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-04-21 06:19:52: Array
+(
+    [GET] => Array
+        (
+            [table] => applicants_types
+            [limit] => 100
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => applicants_types
+            [limit] => 100
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=applicants_types&limit=100
+    [METHOD] => GET
+)
+
+2025-04-21 06:19:54: Array
+(
+    [GET] => Array
+        (
+            [table] => applicants_types
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => applicants_types
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=applicants_types
+    [METHOD] => GET
+)
+
+2025-04-21 06:19:54: Array
+(
+    [GET] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members_with_applicant_designation&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-04-21 06:19:56: Array
+(
+    [GET] => Array
+        (
+            [table] => applicants_types
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => applicants_types
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=applicants_types
+    [METHOD] => GET
+)
+
+2025-04-21 06:19:56: Array
+(
+    [GET] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members_with_applicant_designation&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-04-21 06:19:57: Array
+(
+    [GET] => Array
+        (
+            [table] => applicants_types
+            [limit] => 100
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => applicants_types
+            [limit] => 100
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=applicants_types&limit=100
+    [METHOD] => GET
+)
+
+2025-04-21 06:19:59: Array
+(
+    [GET] => Array
+        (
+            [table] => applicants_types
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => applicants_types
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=applicants_types
+    [METHOD] => GET
+)
+
+2025-04-21 06:19:59: Array
+(
+    [GET] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members_with_applicant_designation&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-04-21 06:20:06: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:20:06: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:20:16: Array
+(
+    [GET] => Array
+        (
+            [table] => applicants_types
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => applicants_types
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=applicants_types
+    [METHOD] => GET
+)
+
+2025-04-21 06:20:16: Array
+(
+    [GET] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members_with_applicant_designation&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-04-21 06:20:22: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-04-21 06:23:25: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:23:25: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:23:26: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:23:26: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:25:05: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:25:44: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-04-21 06:25:44: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:25:47: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:25:47: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:27:59: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:27:59: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:28:29: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:28:29: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:28:41: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:28:41: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:28:50: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:28:51: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:28:57: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:28:57: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:29:12: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:29:12: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:42:55: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:42:56: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:42:58: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:42:59: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:43:10: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:43:10: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:43:18: Array
+(
+    [GET] => Array
+        (
+            [table] => applicants_types
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => applicants_types
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=applicants_types
+    [METHOD] => GET
+)
+
+2025-04-21 06:43:18: Array
+(
+    [GET] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members_with_applicant_designation&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-04-21 06:43:22: Array
+(
+    [GET] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => stock
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=stock&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-04-21 06:43:26: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 06:43:26: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 06:43:26: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 06:43:33: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 4
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 4
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=4&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 06:43:36: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 50
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 50
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=50
+    [METHOD] => GET
+)
+
+2025-04-21 06:43:41: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 06:43:57: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 06:44:01: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 06:44:13: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+            [priceRange] => true
+            [startPrice] => 50
+            [endPrice] => 500
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+            [priceRange] => true
+            [startPrice] => 50
+            [endPrice] => 500
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10&priceRange=true&startPrice=50&endPrice=500&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:44:17: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 06:50:29: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 06:50:29: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 06:50:29: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 06:50:44: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+            [dateRange] => true
+            [startDate] => 2025-04-01
+            [endDate] => 2025-04-30
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+            [dateRange] => true
+            [startDate] => 2025-04-01
+            [endDate] => 2025-04-30
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10&dateRange=true&startDate=2025-04-01&endDate=2025-04-30&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:50:48: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 06:51:15: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+            [dateRange] => true
+            [startDate] => 2024-01-01
+            [endDate] => 2024-03-21
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+            [dateRange] => true
+            [startDate] => 2024-01-01
+            [endDate] => 2024-03-21
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10&dateRange=true&startDate=2024-01-01&endDate=2024-03-21&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 06:51:20: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 06:54:15: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 06:54:15: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 06:54:15: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 06:54:17: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 06:54:20: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 06:54:27: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 06:55:00: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 06:55:03: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 06:55:10: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 06:55:10: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 06:55:11: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 06:55:11: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 06:55:12: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 06:55:35: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 06:56:23: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 06:56:23: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 06:56:23: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 06:56:24: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 06:57:05: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 06:57:05: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 06:57:05: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 06:57:06: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 06:57:06: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 06:57:07: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 06:57:07: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 06:57:08: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 06:57:55: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 06:59:53: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 06:59:53: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 06:59:53: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 06:59:55: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 07:00:49: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 07:00:49: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 07:00:49: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 07:00:50: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 07:01:07: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+pes
+    [METHOD] => GET
+)
+
+2025-04-21 07:01:07: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 07:01:09: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 07:01:16: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 07:01:16: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 07:01:17: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 07:01:17: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 07:01:18: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 07:01:18: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 07:01:18: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 07:01:19: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 07:01:34: Array
+(
+    [GET] => Array
+        (
+            [table] => applicants_types
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => applicants_types
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=applicants_types
+    [METHOD] => GET
+)
+
+2025-04-21 07:01:34: Array
+(
+    [GET] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members_with_applicant_designation&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-04-21 07:01:44: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 07:01:44: Array
+(
+    [GET] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => event
+            [limit] => 10
+            [page] => 1
+            [search] => true
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=event&limit=10&page=1&search=true
+    [METHOD] => GET
+)
+
+2025-04-21 07:01:48: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 07:01:48: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 07:01:50: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 07:01:50: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 07:05:31: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 07:05:31: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 07:05:43: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [search] => 3
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [search] => 3
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&search=3&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 07:09:18: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 07:09:18: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 07:09:19: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [search] => 
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [search] => 
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&search=&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 07:10:33: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 07:10:33: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 07:10:38: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [search] => 
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [search] => 
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&search=&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 08:24:48: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 08:24:48: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 08:24:50: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [search] => 
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [search] => 
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&search=&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 08:25:03: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [search] => 
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [search] => 
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&search=&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 08:25:44: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 08:25:44: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 08:25:46: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [search] => 
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [search] => 
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&search=&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 08:32:11: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 08:32:11: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 08:32:14: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [search] => 
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [search] => 
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&search=&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 08:32:24: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 08:32:24: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 08:32:25: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [search] => 
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [search] => 
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&search=&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 08:35:18: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 08:35:18: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 08:35:20: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [search] => 
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [search] => 
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&search=&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 08:35:24: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [search] => 
+            [page] => 3
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [search] => 
+            [page] => 3
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&search=&page=3&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 08:35:25: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [search] => 
+            [page] => 4
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [search] => 
+            [page] => 4
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&search=&page=4&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 08:35:26: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [search] => 
+            [page] => 2
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [search] => 
+            [page] => 2
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&search=&page=2&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 08:35:27: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [search] => 
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [search] => 
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&search=&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 08:39:43: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 08:39:43: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 08:39:46: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [search] => 
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [search] => 
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&search=&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 08:39:58: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 08:39:58: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 08:40:00: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [search] => 
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [search] => 
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&search=&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 08:40:12: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [search] => 
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [search] => 
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&search=&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 08:40:19: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 08:40:19: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 08:41:37: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [search] => 
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [search] => 
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&search=&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 08:41:42: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 08:41:42: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 08:41:42: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 08:41:45: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 08:41:45: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 08:41:45: Array
+(
+    [GET] => Array
+        (
+            [table] => donation
+            [search] => true
+            [ID] => 35
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation
+            [search] => true
+            [ID] => 35
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation&search=true&ID=35
+    [METHOD] => GET
+)
+
+2025-04-21 08:41:48: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 08:41:48: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 08:41:48: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 08:41:49: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 08:41:49: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 08:42:04: Array
+(
+    [GET] => Array
+        (
+            [table] => donation
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => Array
+        (
+            [action] => add_donation
+            [Name/Company_Name] => 是
+            [donationTypes] => 2
+            [Bank] => 2
+            [membership] => 
+            [paymentDate] => 2025-04-21
+            [official_receipt_no] => 121212
+            [amount] => 1
+            [Remarks] => 21212
+            [membershipType] => non_member
+        )
+
+    [DELETE] => Array
+        (
+            [table] => donation
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation
+    [METHOD] => POST
+)
+
+2025-04-21 08:42:05: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank
+    [METHOD] => GET
+)
+
+2025-04-21 08:42:05: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes
+    [METHOD] => GET
+)
+
+2025-04-21 08:42:05: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 08:42:07: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 27
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 27
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=27&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 08:42:12: Array
+(
+    [GET] => Array
+        (
+            [table] => donation
+            [ID] => 305
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => Array
+        (
+            [table] => donation_details
+            [ID] => 305
+        )
+
+    [DELETE] => Array
+        (
+            [table] => donation
+            [ID] => 305
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation&ID=305
+    [METHOD] => DELETE
+)
+
+2025-04-21 08:42:12: Array
+(
+    [GET] => Array
+        (
+            [table] => donation_details
+            [page] => 27
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donation_details
+            [page] => 27
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donation_details&page=27&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 08:42:54: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 08:42:54: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 08:42:55: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 08:42:55: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 08:42:56: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 08:42:56: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 08:43:03: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [search] => 
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [search] => 
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&search=&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 08:43:17: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 08:43:18: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 08:43:19: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [search] => 
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [search] => 
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&search=&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 08:43:40: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 08:43:40: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 08:43:47: Array
+(
+    [GET] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => donationtypes
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=donationtypes&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 08:43:47: Array
+(
+    [GET] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => bank
+            [limit] => 999
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=bank&limit=999
+    [METHOD] => GET
+)
+
+2025-04-21 08:43:49: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [search] => 
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [search] => 
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&search=&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 08:43:53: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [search] => r
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [search] => r
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&search=r&page=1&limit=10
+    [METHOD] => GET
+)
+
+2025-04-21 08:44:38: Array
+(
+    [GET] => Array
+        (
+            [table] => members
+            [search] => 
+            [page] => 1
+            [limit] => 10
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members
+            [search] => 
+            [page] => 1
+            [limit] => 10
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members&search=&page=1&limit=10
+    [METHOD] => GET
+)
+
