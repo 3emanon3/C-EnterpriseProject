@@ -50,35 +50,108 @@ document.addEventListener('DOMContentLoaded', function() {
          searchContainer.parentNode.insertBefore(modalControlPanel, searchContainer.nextSibling);
      }
      
-     // Add event listeners for control panel buttons
+     
      const selectAllBtn = document.getElementById('selectAllBtn');
      const deselectAllBtn = document.getElementById('deselectAllBtn');
      const addSelectedMembersBtn = document.getElementById('addSelectedMembersBtn');
      const selectedMemberCount = document.getElementById('selectedMemberCount');
      
-// Add this after the DOM element references section
+  
+
+
+const headerActions = document.querySelector('.header-actions');
 const exportTableBtn = document.createElement('button');
 exportTableBtn.id = 'exportTableBtn';
 exportTableBtn.className = 'btn btn-success';
 exportTableBtn.innerHTML = '<i class="fas fa-file-export"></i> 导出名单';
 exportTableBtn.title = '导出参与者名单';
+headerActions.appendChild(exportTableBtn);
 
-// Add the export button to the page
-const headerActions = document.querySelector('.header-actions');
-if (headerActions) {
-    headerActions.appendChild(exportTableBtn);
-}
 
-// Add click event listener for export button
+
 if (exportTableBtn) {
     exportTableBtn.addEventListener('click', async () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const eventId = urlParams.get('id');
-        if (eventId) {
-            await exportParticipantsList(eventId);
-        } else {
-            showError('无法获取活动ID');
-        }
+        // Create and show format selection modal
+        const formatModal = document.createElement('div');
+        formatModal.className = 'modal';
+        formatModal.style.display = 'block';
+        formatModal.innerHTML = `
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>选择要导出的数据列</h3>
+                    <span class="close">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="export-format">
+                        <p>选择导出格式:</p>
+                        <label>
+                            <input type="radio" name="exportFormat" value="xlsx" checked> XLSX (Excel)
+                        </label>
+                        <label>
+                            <input type="radio" name="exportFormat" value="csv"> CSV
+                        </label>
+                    </div>
+                    <div class="column-selection">
+                        <div class="select-actions">
+                            <button class="btn btn-secondary" id="selectAll">全选</button>
+                            <button class="btn btn-secondary" id="deselectAll">取消全选</button>
+                        </div>
+                        <div class="columns-grid">
+                            <label><input type="checkbox" value="序号" checked> 序号</label>
+                            <label><input type="checkbox" value="会员ID" checked> 会员ID</label>
+                            <label><input type="checkbox" value="英文名" checked> 英文名</label>
+                            <label><input type="checkbox" value="中文名" checked> 中文名</label>
+                            <label><input type="checkbox" value="电话" checked> 电话</label>
+                            <label><input type="checkbox" value="邮箱" checked> 邮箱</label>
+                            <label><input type="checkbox" value="身份证号" checked> 身份证号</label>
+                            <label><input type="checkbox" value="活动ID" checked> 活动ID</label>
+                            <label><input type="checkbox" value="加入时间" checked> 加入时间</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" id="confirmExport">导出</button>
+                    <button class="btn btn-secondary" id="cancelExport">取消</button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(formatModal);
+
+        // Add event listeners for the modal
+        const closeBtn = formatModal.querySelector('.close');
+        const selectAllBtn = formatModal.querySelector('#selectAll');
+        const deselectAllBtn = formatModal.querySelector('#deselectAll');
+        const confirmBtn = formatModal.querySelector('#confirmExport');
+        const cancelBtn = formatModal.querySelector('#cancelExport');
+        const checkboxes = formatModal.querySelectorAll('.columns-grid input[type="checkbox"]');
+
+        closeBtn.onclick = () => document.body.removeChild(formatModal);
+        cancelBtn.onclick = () => document.body.removeChild(formatModal);
+
+        selectAllBtn.onclick = () => checkboxes.forEach(cb => cb.checked = true);
+        deselectAllBtn.onclick = () => checkboxes.forEach(cb => cb.checked = false);
+
+        confirmBtn.onclick = async () => {
+            const format = formatModal.querySelector('input[name="exportFormat"]:checked').value;
+            const selectedColumns = Array.from(checkboxes)
+                .filter(cb => cb.checked)
+                .map(cb => cb.value);
+
+            if (selectedColumns.length === 0) {
+                alert('请至少选择一个导出列');
+                return;
+            }
+
+            document.body.removeChild(formatModal);
+            const urlParams = new URLSearchParams(window.location.search);
+            const eventId = urlParams.get('id');
+            if (eventId) {
+                await exportParticipantsList(eventId, format, selectedColumns);
+            } else {
+                showError('无法获取活动ID');
+            }
+        };
     });
 }
 
@@ -894,133 +967,255 @@ if (exportTableBtn) {
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#39;');
     }
-    async function exportParticipantsList(eventId) {
-        showLoading();
+
+    async function exportParticipantsList(eventId, format, selectedColumns) {
         try {
-            console.log("Starting export for event ID:", eventId);
-            // First get event details for the title
-            const eventResponse = await fetch(`${API_BASE_URL}?table=event&search=true&ID=${eventId}`);
-            const eventData = await eventResponse.json();
-            const eventTitle = eventData.data?.[0]?.title || '活动';
+            showLoading();
+            console.log("Starting export process...");
+            console.log("Event ID:", eventId);
+            console.log("Format:", format);
+            console.log("Selected columns:", selectedColumns);
+            
+            // Check for XLSX library if Excel format is selected
+            if (format === 'xlsx') {
+                if (typeof XLSX === 'undefined') {
+                    alert('Excel导出库未加载。请添加SheetJS库或选择CSV格式。');
+                    console.error("XLSX library not found");
+                    format = 'csv'; // Fallback to CSV
+                } else {
+                    console.log("XLSX library found and ready");
+                }
+            }
     
-            // Fetch all participants data using vparticipants view
+            // Fetch participants data
+            console.log(`Fetching participants for event ID: ${eventId}`);
             const response = await fetch(`${API_BASE_URL}?table=vparticipants&search=true&eventID=${eventId}&limit=100000`);
             if (!response.ok) {
-                throw new Error(`Loading failed: ${response.status}`);
+                throw new Error(`API request failed: ${response.status}`);
             }
             
             const data = await response.json();
-            console.log("Fetched participants data:", data);
-
-            let participantsToExport = [];
+            console.log("API response:", data);
             
-            if (data.data && data.data.length > 0) {
-                // Filter participants for this event
-                participantsToExport = data.data.filter(participant => participant.eventID == eventId);
-                console.log(`Filtered ${participantsToExport.length} participants for event ID ${eventId}`);
+            if (!data.data) {
+                console.error("Invalid API response format:", data);
+                throw new Error('API返回数据格式无效');
+            }
+            
+            // Check raw data from API
+            console.log("All participants from API:", data.data);
+            
+            // Try different filters to identify the issue
+            if (Array.isArray(data.data)) {
+                // Check if we have any participants at all
+                console.log(`Total participants in API response: ${data.data.length}`);
                 
-                // Sort by member ID or sequence number
-                participantsToExport.sort((a, b) => {
-                    const aId = a.membersID || a.memberID || a.ID;
-                    const bId = b.membersID || b.memberID || b.ID;
-                    return aId - bId;
-                });
-            } else {
-                 // Try the original participants table as fallback - same as in fetchParticipants function
-            console.log("No data in vparticipants, trying participants table");
-            const fallbackResponse = await fetch(`${API_BASE_URL}?table=participants&search=true&eventID=${eventId}&limit=100000`);
-            if (fallbackResponse.ok) {
-                const fallbackData = await fallbackResponse.json();
-                console.log("Fallback data from participants table:", fallbackData);
+                // Check different formats of eventID
+                const eventIdAsString = String(eventId);
+                const eventIdAsNumber = Number(eventId);
                 
-                if (fallbackData.data && fallbackData.data.length > 0) {
-                    // Need to fetch member info for each participant - similar to the table display logic
-                    const participantsWithMemberInfo = await Promise.all(
-                        fallbackData.data.map(async (participant) => {
-                            if (participant.memberID) {
-                                try {
-                                    const memberResponse = await fetch(`${API_BASE_URL}?table=members&search=true&ID=${participant.memberID}`);
-                                    if (memberResponse.ok) {
-                                        const memberData = await memberResponse.json();
-                                        if (memberData.data && memberData.data.length > 0) {
-                                            return { ...participant, ...memberData.data[0] };
+                const byStringMatch = data.data.filter(p => String(p.eventID) === eventIdAsString);
+                const byNumberMatch = data.data.filter(p => Number(p.eventID) === eventIdAsNumber);
+                
+                console.log(`Participants matching eventID as string (${eventIdAsString}): ${byStringMatch.length}`);
+                console.log(`Participants matching eventID as number (${eventIdAsNumber}): ${byNumberMatch.length}`);
+                
+                // Check for any eventID values in the data
+                const uniqueEventIds = [...new Set(data.data.map(p => p.eventID))];
+                console.log("Unique event IDs in data:", uniqueEventIds);
+                
+                // Use the match that works
+                const eventParticipants = byStringMatch.length > 0 ? byStringMatch : 
+                                          byNumberMatch.length > 0 ? byNumberMatch : [];
+                
+                console.log(`Final participants count for this event: ${eventParticipants.length}`);
+                
+                if (eventParticipants.length === 0) {
+                    // Try to get participants from regular participants table as fallback
+                    console.log("Attempting to fetch from participants table as fallback");
+                    const fallbackResponse = await fetch(`${API_BASE_URL}?table=participants&search=true&eventID=${eventId}&limit=100000`);
+                    const fallbackData = await fallbackResponse.json();
+                    console.log("Fallback API response:", fallbackData);
+                    
+                    if (fallbackData.data && fallbackData.data.length > 0) {
+                        // Process participants with incomplete data
+                        console.log(`Found ${fallbackData.data.length} participants in fallback table`);
+                        
+                        // Enrich with member data if possible
+                        const participantsWithMemberInfo = await Promise.all(
+                            fallbackData.data.map(async (participant) => {
+                                if (participant.memberID) {
+                                    try {
+                                        const memberResponse = await fetch(`${API_BASE_URL}?table=members&search=true&ID=${participant.memberID}`);
+                                        if (memberResponse.ok) {
+                                            const memberData = await memberResponse.json();
+                                            if (memberData.data && memberData.data.length > 0) {
+                                                return { ...participant, ...memberData.data[0] };
+                                            }
                                         }
+                                    } catch (error) {
+                                        console.error(`Error fetching member data:`, error);
                                     }
-                                } catch (error) {
-                                    console.error(`Error fetching member data:`, error);
                                 }
-                            }
-                            return participant;
-                        })
-                    );
-                    participantsToExport = participantsWithMemberInfo;
-                    console.log(`Assembled ${participantsToExport.length} participants with member info`);
+                                return participant;
+                            })
+                        );
+                        
+                        // Use this data instead
+                        console.log("Enriched participants data:", participantsWithMemberInfo);
+                        prepareAndExportData(participantsWithMemberInfo, eventId, format, selectedColumns);
+                        return;
+                    } else {
+                        throw new Error('未找到此活动的参与者');
+                    }
+                } else {
+                    // Proceed with export
+                    prepareAndExportData(eventParticipants, eventId, format, selectedColumns);
                 }
+            } else {
+                throw new Error('API返回的数据不是有效的数组');
             }
-        }
-
-            if (participantsToExport.length === 0) {
-                showError('没有可导出的参与者数据');
-                return;
-            }
-
-            console.log(`Exporting ${participantsToExport.length} participants:`, participantsToExport);
-    
-            // Create CSV content with BOM for Excel
-            let csvContent = '\uFEFF';
-            
-            // Add headers
-            csvContent += '序号,会员ID,英文姓名,中文姓名,电话号码,电子邮件,身份证号码,活动ID,加入时间\n';
-            
-            // Add data rows with row numbers
-            participantsToExport.forEach((participant, index) => {
-                const rowData = [
-                    (index + 1), // Add row number
-                    participant.membersID || participant.memberID || 'N/A',
-                    participant.Name || 'N/A',
-                    participant.CName || 'N/A',
-                    participant.phone_number || 'N/A',
-                    participant.email || 'N/A',
-                    participant.IC || 'N/A',
-                    participant.eventID || 'N/A',
-                    formatDate(participant.joined_at)
-                ].map(field => {
-                    // Properly escape fields for CSV
-                    const escaped = String(field)
-                        .replace(/"/g, '""')
-                        .replace(/\n/g, ' '); // Replace newlines with spaces
-                    return `"${escaped}"`;
-                });
-                
-                csvContent += rowData.join(',') + '\n';
-            });
-    
-            // Create and trigger download
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
-            const url = window.URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            
-            // Generate filename with timestamp
-            const timestamp = new Date().toISOString().slice(0, 19).replace(/[:-]/g, '');
-            const filename = `${eventTitle}_参与者名单_${timestamp}.csv`;
-            
-            link.setAttribute('href', url);
-            link.setAttribute('download', filename);
-            document.body.appendChild(link);
-            link.click();
-            
-            // Cleanup
-            document.body.removeChild(link);
-            window.URL.revokeObjectURL(url);
-            
-            showError(`成功导出 ${participantsToExport.length} 位参与者数据！`);
         } catch (error) {
             console.error('Export error:', error);
-            showError('导出失败: ' + error.message);
+            showError(`导出失败: ${error.message}`);
         } finally {
             hideLoading();
         }
+    
+        // Helper function to prepare and export data
+        async function prepareAndExportData(participants, eventId, format, selectedColumns) {
+            try {
+                // Create array for export with proper column mapping
+                const exportData = [];
+                
+                // Add each participant as a row in the export data
+                participants.forEach((participant, index) => {
+                    const row = {};
+                    
+                    // Map the selected columns to participant data
+                    selectedColumns.forEach(column => {
+                        switch(column) {
+                            case '序号':
+                                row[column] = index + 1;
+                                break;
+                            case '会员ID':
+                                row[column] = participant.membersID || participant.memberID || '';
+                                break;
+                            case '英文名':
+                                row[column] = participant.Name || '';
+                                break;
+                            case '中文名':
+                                row[column] = participant.CName || '';
+                                break;
+                            case '电话':
+                                row[column] = participant.phone_number || '';
+                                break;
+                            case '邮箱':
+                                row[column] = participant.email || '';
+                                break;
+                            case '身份证号':
+                                row[column] = participant.IC || '';
+                                break;
+                            case '活动ID':
+                                row[column] = participant.eventID || '';
+                                break;
+                            case '加入时间':
+                                row[column] = participant.joined_at ? formatDateTime(participant.joined_at) : '';
+                                break;
+                            default:
+                                row[column] = '';
+                        }
+                    });
+                    exportData.push(row);
+                });
+                
+                console.log("Prepared export data:", exportData);
+        
+                // Get event title for filename
+                const eventResponse = await fetch(`${API_BASE_URL}?table=event&search=true&ID=${eventId}`);
+                const eventData = await eventResponse.json();
+                const eventTitle = eventData.data?.[0]?.title || 'event';
+                
+                // Generate filename with sanitized event title (remove special characters)
+                const safeTitle = eventTitle.replace(/[^\w\u4e00-\u9fa5]/g, '_');
+                const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+                const filename = `${safeTitle}_participants_${timestamp}`;
+        
+                if (format === 'xlsx' && typeof XLSX !== 'undefined') {
+                    // Excel export
+                    console.log("Starting Excel export...");
+                    
+                    try {
+                        // Create workbook and worksheet
+                        const wb = XLSX.utils.book_new();
+                        
+                        // Convert JSON to worksheet
+                        console.log("Converting data to worksheet format");
+                        const ws = XLSX.utils.json_to_sheet(exportData);
+                        
+                        // Add worksheet to workbook
+                        XLSX.utils.book_append_sheet(wb, ws, "Participants");
+                        
+                        console.log("Writing Excel file:", filename);
+                        XLSX.writeFile(wb, `${filename}.xlsx`);
+                        
+                        console.log("Excel export completed successfully");
+                        showError('Excel导出成功');
+                    } catch (xlsxError) {
+                        console.error("Excel export error:", xlsxError);
+                        throw new Error(`Excel导出失败: ${xlsxError.message}`);
+                    }
+                } else {
+                    // CSV export
+                    console.log("Starting CSV export...");
+                    
+                    try {
+                        // Create CSV content
+                        let csvContent = '';
+                        
+                        // Add header row
+                        csvContent += selectedColumns.join(',') + '\n';
+                        
+                        // Add data rows
+                        exportData.forEach(row => {
+                            const csvRow = selectedColumns.map(column => {
+                                let cellValue = row[column] || '';
+                                // Escape quotes and wrap in quotes
+                                cellValue = String(cellValue).replace(/"/g, '""');
+                                return `"${cellValue}"`;
+                            });
+                            csvContent += csvRow.join(',') + '\n';
+                        });
+                        
+                        // Create blob with BOM for UTF-8
+                        const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csvContent], 
+                            { type: 'text/csv;charset=utf-8' });
+                        
+                        // Create download link
+                        const link = document.createElement('a');
+                        link.href = URL.createObjectURL(blob);
+                        link.download = `${filename}.csv`;
+                        
+                        console.log("Starting CSV download");
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        URL.revokeObjectURL(link.href);
+                        
+                        console.log("CSV export completed successfully");
+                        showError('CSV导出成功');
+                    } catch (csvError) {
+                        console.error("CSV export error:", csvError);
+                        throw new Error(`CSV导出失败: ${csvError.message}`);
+                    }
+                }
+            } catch (error) {
+                throw error;
+            }
+        }
+    
     }
+
 });
 
     
