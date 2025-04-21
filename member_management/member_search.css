@@ -26,7 +26,8 @@ body{
     background: var(--clr-bg-main);
     color:#2d3436;
     line-height:1.6;
-    min-width:320px;
+    overflow-x: auto;
+    min-width: fit-content;
 }
 
 /* =======================================================================
@@ -39,6 +40,7 @@ body{
     background:var(--clr-bg-main);
     box-shadow:var(--shadow-s);
     margin-top:80px;
+    width: fit-content;
 }
 
 header{
@@ -163,18 +165,15 @@ header h1{
     margin-bottom: 30px;
     position: relative;
     width: fit-content;
-    width: 100%;
-    overflow-x: auto;
 }
 
 .table-responsive {
     width: fit-content;
     min-width: 100%;
-    overflow-x: auto;
 }
 
 table {
-    width: 100%;
+    width: fit-content;
     min-width: 100%;
     border-collapse: collapse;
     margin-bottom: 20px;

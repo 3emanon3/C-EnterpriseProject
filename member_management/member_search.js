@@ -175,7 +175,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
     
-        // Now update each active filter’s position:
+        // Now update each active filter's position:
         // The first in the activeFilters array will be at the bottom (baseBottom), 
         // the second is shifted up by spacing, and the third even higher.
         const baseBottom = 20;  // starting offset from the bottom in px
@@ -732,6 +732,21 @@ document.addEventListener("DOMContentLoaded", function () {
             updateFilterButtonStates();
         });
 
+        // Add paste event handler to clear the search input before pasting
+        searchInput?.addEventListener("paste", function(e) {
+            // Prevent the default paste behavior
+            e.preventDefault();
+            
+            // Get the clipboard data as text
+            const clipboardData = e.clipboardData || window.clipboardData;
+            const pastedText = clipboardData.getData('text');
+            
+            // Clear the current value and set the new value
+            this.value = pastedText;
+            
+            // Trigger the input event to activate search
+            this.dispatchEvent(new Event('input'));
+        });
 
         thead?.addEventListener('click', function (event) {
             const header = event.target.closest('th[data-column]');
