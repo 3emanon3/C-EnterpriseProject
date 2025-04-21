@@ -45,7 +45,7 @@ class DatabaseAPI {
         'donation_details' => ['ID', 'Name/Company_Name', 'donationTypes', 'Bank', 'membership', 'paymentDate', 'official_receipt_no', 'amount', 'Remarks'],
         'stock' => ['ID', 'Product_ID', 'Name', 'stock', 'Price', 'Publisher', 'Remarks', 'Picture'],
         'soldrecord' => ['ID', 'Book', 'membership', 'Name/Company_Name', 'quantity_in', 'quantity_out', 'InvoiceNo', 'Date', 'price', 'Remarks'],
-        'vsoldrecord' => ['ID', 'Book', 'membership', 'Name/Company_Name', 'quantity_in', 'quantity_out', 'InvoiceNo', 'Date', 'price', 'Remarks'],
+        'vsoldrecord' => ['ID', 'BookID','Book', 'membership', 'Name/Company_Name', 'quantity_in', 'quantity_out', 'InvoiceNo', 'Date', 'price', 'Remarks'],
         'event' => ['ID', 'title', 'status', 'start_time', 'end_time', 'created_at', 'location', 'description', 'max_participant', 'registration_deadline', 'price', 'online_link'],
         'participants' => ['ID', 'eventID', 'memberID', 'joined_at'],
         'vparticipants' => ['ID', 'memberID', 'Name', 'CName', 'phone_number', 'email', 'IC', 'eventID', 'joined_at'],
@@ -90,7 +90,6 @@ class DatabaseAPI {
                  // No params needed for CURDATE()
             ],
         ],
-        // --- START MODIFICATION ---
         'donation_details' => [
             'dateRange' => [
                 // Condition to check if 'paymentDate' is between start and end dates
@@ -129,7 +128,6 @@ class DatabaseAPI {
                 'paramTypes' => 'dd'
             ]
         ]
-        // --- END MODIFICATION ---
     ];
 
     // Response status constants
@@ -213,25 +211,16 @@ class DatabaseAPI {
      */
     private function handleSearchRequest($table, $params) {
         $searchTerm = $params['search'] === 'true' ? '' : $params['search'];
-
-        // Simple ID search
-        if ($params['search'] === 'true' && isset($params['ID']) && !isset($params['dateRange']) && count(array_diff_key($params, array_flip(['table', 'search', 'ID', 'page', 'limit', 'sort', 'order']))) === 0) {
-             $queryTable = $this->getViewTable($table);
-             $baseQuery = "SELECT * FROM `$queryTable` WHERE ID = ?";
-             $countQuery = "SELECT COUNT(*) as total FROM `$queryTable` WHERE ID = ?";
-             $this->executeQuery($table, $baseQuery, $countQuery, [$params['ID']], 'i');
-             return;
-        }
-
+        $isDirect = isset($params['direct']) && $params['direct'] === 'true';
 
         // Extract search parameters
-        $knownParams = ['table', 'search', 'page', 'limit', 'sort', 'order'];
+        $knownParams = ['table', 'search', 'page', 'limit', 'sort', 'order', 'direct'];
         $specificParams = array_diff_key($params, array_flip($knownParams));
 
         if (!empty($specificParams)) {
-            $this->handleParameterizedSearch($table, $specificParams, $params);
+            $this->handleParameterizedSearch($table, $specificParams, $params, $isDirect);
         } else if (!empty($searchTerm)) {
-            $this->handleGeneralSearch($table, $searchTerm);
+            $this->handleGeneralSearch($table, $searchTerm, $isDirect);
         } else {
             // If search=true but no specific params or search term, get all records
             $this->getAllRecords($table, $params);
@@ -241,7 +230,7 @@ class DatabaseAPI {
     /**
      * Handle search with specific parameters including special conditions
      */
-    private function handleParameterizedSearch($table, $specificParams, $allGetParams) {
+    private function handleParameterizedSearch($table, $specificParams, $allGetParams, $isDirect = false) {
         // error_log('Specific Params: ' . print_r($specificParams, true));
         // error_log('All GET Params: ' . print_r($allGetParams, true));
 
@@ -295,7 +284,7 @@ class DatabaseAPI {
 
         // Construct base and count queries for normal parameters
         list($baseQuery, $countQuery, $normalParamsValues, $normalTypes) =
-            $this->buildSearchQueries($queryTable, $searchColumns); // Pass $queryTable (view or table)
+            $this->buildSearchQueries($queryTable, $searchColumns, $isDirect); // Pass $isDirect parameter
 
         // Add condition for IDs from special parameters if they exist
         if (!empty($idParams)) {
@@ -340,13 +329,12 @@ class DatabaseAPI {
         return array_unique($paramNames);
     }
 
-
     /**
      * Handle general search across all allowed columns
      */
-    private function handleGeneralSearch($table, $searchTerm) {
+    private function handleGeneralSearch($table, $searchTerm, $isDirect = false) {
         $queryTable = $this->getViewTable($table);
-        $conditions = $this->buildSearchConditions($queryTable, $searchTerm); // Pass $queryTable
+        $conditions = $this->buildSearchConditions($queryTable, $searchTerm, $isDirect); // Pass $isDirect parameter
 
         if ($conditions['sql'] === '1=1') {
              // Avoid "WHERE 1=1" if no searchable columns found
@@ -433,7 +421,7 @@ class DatabaseAPI {
     /**
      * Build search queries for column-specific searches
      */
-    private function buildSearchQueries($queryTable, $searchColumns) {
+    private function buildSearchQueries($queryTable, $searchColumns, $isDirect = false) {
         $conditions = [];
         $params = [];
         $types = '';
@@ -447,8 +435,13 @@ class DatabaseAPI {
             if ($value !== '' && $value !== null) { // Check for non-empty value
                 // Check if the column actually exists in the target query table (view or base table)
                  if ($this->columnExistsInTable($queryTable, $column)) {
-                    $conditions[] = "`$column` LIKE ?"; // Use LIKE for broader matching
-                    $params[] = "%" . $value . "%"; // Add wildcards
+                    if ($isDirect) {
+                        $conditions[] = "`$column` = ?"; // Use exact matching
+                        $params[] = $value; // No wildcards for exact matching
+                    } else {
+                        $conditions[] = "`$column` LIKE ?"; // Use LIKE for broader matching
+                        $params[] = "%" . $value . "%"; // Add wildcards
+                    }
                     // Determine type based on original value - simplistic check
                     $types .= is_numeric($value) && !is_string($value) ? 'd' : 's'; // Use 'd' for numbers, 's' for others/strings
                  } else {
@@ -914,9 +907,9 @@ class DatabaseAPI {
     }
 
     /**
-     * Build search conditions for general search (LIKE %term%)
+     * Build search conditions for general search (LIKE %term% or exact match)
      */
-    private function buildSearchConditions($queryTable, $searchTerm) {
+    private function buildSearchConditions($queryTable, $searchTerm, $isDirect = false) {
         $conditions = [];
         $params = [];
         $types = '';
@@ -946,8 +939,13 @@ class DatabaseAPI {
                 // Simple heuristic: search string-like columns. Adapt if needed.
                  // This check is basic; a more robust approach might involve checking actual column types from DESCRIBE/SHOW COLUMNS
                  // For now, assume most text-based columns in allowedTables are searchable strings.
-                 $conditions[] = "`$column` LIKE ?";
-                 $params[] = "%" . $searchTerm . "%";
+                 if ($isDirect) {
+                     $conditions[] = "`$column` = ?"; // Use exact matching
+                     $params[] = $searchTerm; // No wildcards
+                 } else {
+                     $conditions[] = "`$column` LIKE ?"; // Use pattern matching
+                     $params[] = "%" . $searchTerm . "%"; // Add wildcards
+                 }
                  $types .= 's';
             }
         }

@@ -219,7 +219,7 @@ async function saveChanges() {
 
 async function fetchSoldRecords(stockId, limit = 10) {
     try {
-        const response = await fetch(`${API_BASE_URL}?table=soldrecord&search=true&Book=${stockId}&limit=${limit}`);
+        const response = await fetch(`${API_BASE_URL}?table=vsoldrecord&search=true&direct=true&BookID=${stockId}&limit=${limit}`);
         const data = await response.json();
         return data.data || [];
     } catch (error) {
@@ -270,8 +270,8 @@ async function printData() {
             soldRecordsHtml += `
                 <tr>
                     <td>${record.Date || '-'}</td>
-                    <td>${record["Name/Company Name"] || '-'}</td>
-                    <td>${record.membership || '-'}</td>
+                    <td>${record["Name/Company_Name"] || '-'}</td>
+                    <td>${record.membership_display || '-'}</td>
                     <td>${record.quantity_in || '-'}</td>
                     <td>${record.quantity_out || '-'}</td>
                     <td>${record.InvoiceNo || '-'}</td>
