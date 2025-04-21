@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let MemberId;
     
     if (!memberId) {
-        showError("错误：未提供会员ID");
+        showError("错误：未提供塾员ID");
         return;
     }
     
@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const printButton = document.createElement('button');
         printButton.id = 'printButton';
         printButton.className = 'btn btn-print';
-        printButton.innerHTML = '<i class="fas fa-print"></i> 打印会员资料';
+        printButton.innerHTML = '<i class="fas fa-print"></i> 打印塾员资料';
         actionsDiv.appendChild(printButton);
         
         // Add event listener for print button
@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <html lang="zh">
                 <head>
                     <meta charset="UTF-8">
-                    <title>会员详细信息 - ${cname || name}</title>
+                    <title>塾员详细信息 - ${cname || name}</title>
                     <style>
                         body {
                             font-family: Arial, sans-serif;
@@ -220,14 +220,14 @@ document.addEventListener("DOMContentLoaded", function () {
                     <div class="logo-container">
                         <img src="${fullLogoUrl}" alt="SEIWAJYUKU MALAYSIA">
                     </div>
-                        <h1>会员详细信息</h1>
+                        <h1>塾员详细信息</h1>
                     </div>
                     
                     <div class="detail-section">
                         <h2>基本信息</h2>
                         <div class="detail-grid">
                             <div class="detail-item">
-                                <label>会员ID:</label>
+                                <label>塾员ID:</label>
                                 <span>${memberId}</span>
                             </div>
                             <div class="detail-item">
@@ -239,7 +239,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 <span>${cname}</span>
                             </div>
                             <div class="detail-item">
-                                <label>会员类型:</label>
+                                <label>塾员类型:</label>
                                 <span>${designation}</span>
                             </div>
                             <div class="detail-item full-width">
@@ -298,7 +298,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     </div>
                     
                     <div class="detail-section">
-                        <h2>会员状态</h2>
+                        <h2>塾员状态</h2>
                         <div class="detail-grid">
                             <div class="detail-item">
                                 <label>到期日期:</label>
@@ -403,7 +403,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     if (!memberId) {
-        showError("错误：未提供会员ID");
+        showError("错误：未提供塾员ID");
         return;
     }
     
@@ -421,7 +421,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <div class="error-message">
                 <i class="fas fa-exclamation-triangle"></i>
                 <p>${message}</p>
-                <button onclick="window.location.href='member_search.html'" class="btn">返回会员列表</button>
+                <button onclick="window.location.href='member_search.html'" class="btn">返回塾员列表</button>
             </div>
         `;
     }
@@ -488,7 +488,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const data = await response.json();
             
             if (!data || !data.data || data.data.length === 0) {
-                throw new Error("未找到会员数据");
+                throw new Error("未找到塾员数据");
             }
             
             const member = data.data[0];
@@ -502,7 +502,7 @@ document.addEventListener("DOMContentLoaded", function () {
             
         } catch (error) {
             console.error("Error fetching member details:", error);
-            showError(`获取会员数据失败: ${error.message}`);
+            showError(`获取塾员数据失败: ${error.message}`);
         } finally {
             loader.style.display = "none";
         }
