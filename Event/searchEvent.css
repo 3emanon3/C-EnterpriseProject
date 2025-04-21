@@ -567,6 +567,7 @@ tr:hover {
     justify-content: flex-end;
     margin-top: 10px;
     width: 80%;
+    margin-left: auto;
 }
 
 /* Add this to your CSS file */

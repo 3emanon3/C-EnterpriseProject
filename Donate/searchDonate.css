@@ -41,7 +41,7 @@ body {
 }
 
 .container {
-    max-width: 2200px;
+    max-width: 2500px;
     margin: 0 auto;
     padding: 20px;
     min-height: 95vh;
@@ -53,7 +53,7 @@ header {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 15px 20px;
+    padding: 14px 19px;
     border-bottom: 2px solid var(--border-color);
     background-color: var(--background-color);
     position: fixed;
@@ -82,14 +82,16 @@ h1 {
 .button-container {
     display: flex;
     gap: 10px;
-    flex-wrap: wrap; /* Allow buttons to wrap */
-    width: 100%; 
-    justify-content: right; /* Align buttons to the right */
+    flex-wrap: nowrap; /* Allow buttons to wrap */
+    width: 250%; 
+    justify-content: flex-end; /* Align buttons to the right */
+    padding: 4px 6px;
+  
 }
 
 /* Button Styles */
 .btn {
-    padding: 8px 16px;
+    padding: 7px 14px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -888,9 +890,10 @@ tr:hover {
     }
 
     .container {
-        padding: 10px;
-        margin-top: 20px; /* Reduced margin since header is not fixed */
-        width: 100%; /* Full width on mobile */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* or center if you want them centered */
+  gap: 1px;
     }
 
     .search-input-group {
@@ -914,7 +917,8 @@ tr:hover {
     .btn {
         padding: 6px 12px;
         font-size: 0.9rem;
-        width: calc(50% - 4px); /* Two buttons per row with gap */
+        width: 100; /* Two buttons per row with gap */
+        margin-bottom: 5px;
     }
 
     .table-container {
