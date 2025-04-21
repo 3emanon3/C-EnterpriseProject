@@ -199,10 +199,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentStartPrice = "";
     let currentEndPrice = "";
 
-   
-
   
-
     if (priceFilterButton) {
         priceFilterButton.addEventListener('click', function() {
             const filterModal = document.createElement('div');

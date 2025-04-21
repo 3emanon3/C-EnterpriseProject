@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function() {
             modalNoResults.style.display = 'none';
             modalPagination.innerHTML = '';
 
-       
+            performModalSearch();
         } else if (this.value === '2') { // Non Member
             // Clear any previously selected member ID
             if (document.getElementById('selectedMemberId')) {
@@ -101,14 +101,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 模态框搜索功能 - 增强版，支持实时搜索
     function performModalSearch(page = 1) {
         const searchTerm = modalSearchInput.value.trim();
-        if (!searchTerm) {
-            // 清空结果但不显示警告
-            modalResultsBody.innerHTML = '';
-            modalNoResults.style.display = 'none';
-            modalPagination.innerHTML = '';
-            return;
-        }
-        
+         
         currentSearchTerm = searchTerm;
         currentPage = page;
         
@@ -131,10 +124,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 const members = data.data; // API返回的数据结构是data.data
                 
                 if (members && data.total > 0) {
+                    console.log('First member structure:', members[0]);
                     displayModalResults(members);
                     totalItems = data.total || members.length;
                     updateModalPagination();
+                    const modalBody = document.querySelector('.modal-body');
+                if (modalBody) {
+                    modalBody.scrollTop = 0;
+                }
                 } else {
+                    console.warn('No results found or invalid structure');
                     modalNoResults.style.display = 'block';
                 }
             })
@@ -148,6 +147,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // 显示模态框搜索结果
     function displayModalResults(members) {
         modalResultsBody.innerHTML = '';
+        
+        const scrollContainer = document.createElement('div');
+        scrollContainer.className = 'modal-results-scroll';
+
         
         members.forEach(member => {
             const row = document.createElement('tr');
