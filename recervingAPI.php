@@ -45,7 +45,7 @@ class DatabaseAPI {
         'donation_details' => ['ID', 'Name/Company_Name', 'donationTypes', 'Bank', 'membership', 'paymentDate', 'official_receipt_no', 'amount', 'Remarks'],
         'stock' => ['ID', 'Product_ID', 'Name', 'stock', 'Price', 'Publisher', 'Remarks', 'Picture'],
         'soldrecord' => ['ID', 'Book', 'membership', 'Name/Company_Name', 'quantity_in', 'quantity_out', 'InvoiceNo', 'Date', 'price', 'Remarks'],
-        'vsoldrecord' => ['ID', 'BookID','Book', 'membership', 'Name/Company_Name', 'quantity_in', 'quantity_out', 'InvoiceNo', 'Date', 'price', 'Remarks'],
+        'vsoldrecord' => ['ID', 'BookID', 'Book', 'memberID', 'membership', 'Name/Company_Name', 'quantity_in', 'quantity_out', 'InvoiceNo', 'Date', 'price', 'Remarks'],
         'event' => ['ID', 'title', 'status', 'start_time', 'end_time', 'created_at', 'location', 'description', 'max_participant', 'registration_deadline', 'price', 'online_link'],
         'participants' => ['ID', 'eventID', 'memberID', 'joined_at'],
         'vparticipants' => ['ID', 'memberID', 'Name', 'CName', 'phone_number', 'email', 'IC', 'eventID', 'joined_at'],

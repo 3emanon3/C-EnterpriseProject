@@ -724,35 +724,25 @@ document.addEventListener("DOMContentLoaded", function () {
     
     // Fetch purchase history
     async function fetchStockHistory() {
-      
-        const memberCName = document.getElementById('CName')?.textContent || '';
-
-       // const idFieldOptions = ['membership', 'membersID', 'memberID'];
+        stockTable.innerHTML = `<tr><td colspan="9" class="loading-message">正在加载购买记录...</td></tr>`;
         
-        let success = false;
-        
-        if (memberCName) {
+        try {
+            const response = await fetch(`${API_BASE_URL}?table=vsoldrecord&search=true&direct=true&memberID=${memberId}`);
             
-            try {
-                const encodedName = encodeURIComponent(memberCName);
-                const response = await fetch(`${API_BASE_URL}?table=vsoldrecord&search=true&Name/Company_Name=${encodedName}`);
+            if (response.ok) {
+                const data = await response.json();
                 
-                if (response.ok) {
-                    const data = await response.json();
-                    
-                    if (data && data.data && data.data.length > 0) {
-                        displayPurchaseHistory(data.data);
-                        success = true;
-                    }
+                if (data && data.data && data.data.length > 0) {
+                    displayPurchaseHistory(data.data);
+                } else {
+                    stockTable.innerHTML = `<tr><td colspan="9" class="no-results">没有购买记录</td></tr>`;
                 }
-                
-            } catch (error) {
-                console.error(`Error fetching stock data with ${option.field}:`, error);
+            } else {
+                throw new Error(`服务器返回错误: ${response.status}`);
             }
-        }
-        
-        if (!success) {
-            stockTable.innerHTML = `<tr><td colspan="9" class="no-results">没有购买记录</td></tr>`;
+        } catch (error) {
+            console.error("Error fetching stock data:", error);
+            stockTable.innerHTML = `<tr><td colspan="9" class="error-message">获取购买记录失败: ${error.message}</td></tr>`;
         }
     }
     

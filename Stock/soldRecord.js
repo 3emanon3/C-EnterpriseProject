@@ -44,8 +44,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 const uniqueBooks = data.data;
                 uniqueBooks.forEach(item => {
                     const option = document.createElement("option");
-                    option.value = item.Name;
-                    option.textContent = `${item.Name} (${item.Price})`;
+                    option.value = item.ID;
+                    option.textContent = `${item.Name} (RM${item.Price})`;
                     bookFilter.appendChild(option);
                 });
             }
@@ -334,7 +334,15 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Event listener for search input
-    searchInput.addEventListener("input", handleSearch);
+    searchInput.addEventListener("input", function() {
+        // Clear book filter when search is used
+        if (searchInput.value.trim() !== "" && bookFilter.value !== "") {
+            bookFilter.value = "";
+            activeFilter = null;
+        }
+        
+        handleSearch();
+    });
 
     // Event listeners for sorting
     document.querySelectorAll('th[data-column]').forEach(th => {
@@ -349,7 +357,13 @@ document.addEventListener("DOMContentLoaded", function () {
         activeFilter = selectedID;
         currentPage = 1;
         
-        const filterParams = selectedID ? { Book: selectedID, search: "true" } : {};
+        // Clear search input when filter is used
+        if (selectedID !== "" && searchInput.value.trim() !== "") {
+            searchInput.value = "";
+            searchTerm = "";
+        }
+        
+        const filterParams = selectedID ? { BookID: selectedID, search: "true", direct: true } : {};
         fetchRecords(filterParams);
     });
 
