@@ -6,7 +6,7 @@ class EventManager {
         this.form = document.getElementById('eventForm');
         this.errorMessages = document.getElementById('errorMessages');
         this.loadingIndicator = document.getElementById('loadingIndicator');
-        // Remove the delete button reference
+       
 
         this.initializeEventListeners();
         if (this.eventId) {

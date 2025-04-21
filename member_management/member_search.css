@@ -42,15 +42,22 @@ body{
 }
 
 header{
-    position:fixed;inset-block-start:0;inset-inline:0;
+    position:fixed;
+    inset-block-start:0;
+    inset-inline:0;
     z-index:100;
-    display:flex;justify-content:space-between;align-items:center;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
     height:80px;
     padding:15px 20px;
     background:var(--clr-bg-main);
     border-block-end:2px solid var(--clr-border);
 }
-header h1{color:var(--clr-header-txt);font-size:2rem}
+header h1{
+    color:var(--clr-header-txt);
+    font-size:2rem
+}
 
 /* =======================================================================
    Buttons
@@ -61,7 +68,7 @@ header h1{color:var(--clr-header-txt);font-size:2rem}
     --btn-shadow-h: var(--shadow-l);  /* unified hover shadow            */
 
     display:inline-flex;align-items:center;gap:.5rem;
-    padding:8px 16px;
+    padding:7px 15px;
     font-size:.875rem;
     border:1px solid rgba(0,0,0,.1);
     border-radius:4px;
@@ -392,8 +399,12 @@ tr:hover {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    justify-content: center;
+    justify-content: flex-end;
     margin-top: 10px;
+}
+
+.system-nav .btn {
+    margin: 0; /* Remove default margins */
 }
 
 
@@ -636,7 +647,7 @@ tr:hover {
         flex-direction: column;
         align-items: center; /* Align items to start */
         height: auto; /* Allow header to grow */
-        padding: 10px 15px;
+        padding: 12px;
         position: relative; /* Change from fixed for simplicity */
     }
 
