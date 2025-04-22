@@ -100,33 +100,35 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Modal search input handler
-    if (modalSearchInput) {
-        modalSearchInput.addEventListener('input', function() {
-            // Debounce search to avoid too many requests
-            clearTimeout(this.searchTimeout);
-            this.searchTimeout = setTimeout(() => {
-                performModalSearch(1);
-            }, 300);
-        });
-    }
+   
 
 // Debounce search function
 function debounce(func, delay) {
-  let timeoutId;
-  return function() {
-    const context = this;
-    const args = arguments;
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => {
-      func.apply(context, args);
-    }, delay);
-  };
+    let timeoutId;
+    return function(...args) {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        func.apply(this, args);
+      }, delay);
+    };
+  }
+
+
+if (modalSearchInput) {
+    // Create the debounced search function with the correct parameter
+    const debouncedSearch = debounce(() => performModalSearch(1), 300); 
+    // Add a single event listener
+    modalSearchInput.addEventListener('input', debouncedSearch);
+    console.log('Modal search input listener attached');
+  }else {
+    console.error('Modal search input element not found');
 }
 
-// Example usage
-modalSearchInput.addEventListener('input', 
-  debounce(performModalSearch, 300)
-);
+if (document.getElementById('modalSearchButton')) {
+    document.getElementById('modalSearchButton').addEventListener('click', function() {
+        performModalSearch(1);
+    });
+}
 
     // Membership selection event - updated with new values
     membershipSelect.addEventListener('change', async function() {
@@ -399,7 +401,7 @@ function populateForm(donation) {
                 
                 setTimeout(() => {
                     window.location.href = returnUrl;
-                }, 1000);
+                }, 300);
             } else {
                 throw new Error(responseData.message || 'Donation update failed');
             }
@@ -424,162 +426,114 @@ function populateForm(donation) {
 
     // Modal search functionality
 // Modal search functionality
-function performModalSearch(page = 1) {
-    const searchTerm = modalSearchInput.value.trim();
-    currentSearchTerm = searchTerm;
-    currentPage = page;
-    
-    // Show loading indicator
-    modalLoadingIndicator.style.display = 'block';
-    modalNoResults.style.display = 'none';
-    modalResultsBody.innerHTML = '';
-    
-    // Get data from API - adding console logs to debug
-    console.log(`Searching members with term: "${searchTerm}"`);
-    
-    // Modified API URL - ensure search parameter is properly formatted
-    const apiUrl = `${API_BASE_URL}?table=members&search=true&query=${encodeURIComponent(searchTerm)}&page=${page}&limit=${itemsPerPage}`;
-    console.log('API URL:', apiUrl);
-    
-    fetch(apiUrl)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`Search failed: ${response.status} - ${response.statusText}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            modalLoadingIndicator.style.display = 'none';
-            console.log('Search response:', data);
-
-            if (data.data && data.data.length > 0) {
-                console.log('First member fields:', Object.keys(data.data[0]));
-                console.log('First member ID fields:', {
-                    ID: data.data[0].ID,
-                    membersID: data.data[0].membersID,
-                    id: data.data[0].id
-                });
-            }
+async function performModalSearch(page = 1) {
+    showLoading();
+    try {
+        const searchTerm = modalSearchInput.value.trim();
+        currentPage = page;
+        
+        const response = await fetch(`${API_BASE_URL}?table=members&search=${encodeURIComponent(searchTerm)}&page=${page}&limit=${itemsPerPage}`);
+        if (!response.ok) {
+            throw new Error(`Search failed: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        const members = data.data || [];
+        
+        modalResultsBody.innerHTML = '';
+        
+        if (members.length > 0) {
+            members.forEach(member => {
+                const row = document.createElement('tr');
+                const memberId = escapeHTML(member.membersID || '');
+                const memberName = escapeHTML(member.Name || member.CName || '');
+                const companyName = escapeHTML(member.componyName || '');
+                const phoneNumber = escapeHTML(member.phone_number || '');
+                row.innerHTML = `
+                     <td>${memberId}</td>
+                    <td>${memberName}</td>
+                    <td>${companyName}</td>
+                    <td>${phoneNumber}</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" onclick="selectMember('${memberId}', '${memberName}')">Select Name</button>
+                        <button class="btn btn-sm btn-secondary" onclick="selectMember('${memberId}', '${companyName}')" ${!companyName ? 'disabled' : ''}>Select Company</button>
+                    </td>
+                `;
+                modalResultsBody.appendChild(row);
+            });
             
-            // Check if data has the expected structure
-            const members = data.data || [];
-            
-            if (members && members.length > 0) {
-                displayModalResults(members);
-                totalItems = data.total || members.length;
-                updateModalPagination();
-            } else {
-                modalNoResults.style.display = 'block';
-            }
-        })
-        .catch(error => {
-            modalLoadingIndicator.style.display = 'none';
-            console.error('Member search error:', error);
-            alert('Error searching members: ' + error.message);
-        });
+            // Update pagination
+            const totalPages = Math.ceil(data.total / itemsPerPage);
+            updateModalPagination(totalPages);
+            modalNoResults.style.display = 'none';
+            memberSearchModal.style.display = 'block';
+        } else {
+            modalNoResults.style.display = 'block';
+            modalNoResults.textContent = '未找到匹配的会员';
+        }
+    } catch (error) {
+        console.error('Search error:', error);
+        modalNoResults.style.display = 'block';
+        modalNoResults.textContent = `搜索出错: ${error.message}`;
+    } finally {
+        hideLoading();
+    }
 }
-
-    // Display modal search results
-  // Modify your displayModalResults function to match the actual response structure
-function displayModalResults(members) {
-    modalResultsBody.innerHTML = '';
-    
-    members.forEach(member => {
-        const row = document.createElement('tr');
-        // Update these lines to match the actual property names from the response
-        const memberName = escapeHTML(member.Name || '');
-        const companyName = escapeHTML(member.componyName || '');
-        row.innerHTML = `
-            <td>${escapeHTML(member.membersID || '')}</td>
-            <td>${memberName}</td>
-            <td>${companyName}</td>
-            <td>${escapeHTML(member.phone_number || '')}</td>
-              <td>
-                <button class="btn btn-sm btn-primary select-name">Select Name</button>
-                <button class="btn btn-sm btn-secondary select-company" ${!companyName ? 'disabled' : ''}>Select Company</button>
-            </td>
-        `;
-
-        modalResultsBody.appendChild(row);
-        
-        // Add click events for the two selection buttons
-        const selectNameBtn = row.querySelector('.select-name');
-        const selectCompanyBtn = row.querySelector('.select-company');
-        
-        selectNameBtn.addEventListener('click', function(e) {
-            e.stopPropagation(); // Prevent row click event
-            selectMember(member, 'name');
-        });
-        
-        selectCompanyBtn.addEventListener('click', function(e) {
-            e.stopPropagation(); // Prevent row click event
-            selectMember(member, 'company');
-        });
-        
-        // Add click event to select member
-        row.style.cursor = 'pointer';
-        row.addEventListener('click', function() {
-            selectMember(member);
-        });
-        
-        modalResultsBody.appendChild(row);
-    });
-    
-    // Add this line to debug - display the modal
-    memberSearchModal.style.display = 'block';
-}
-
     // Update modal pagination
-    function updateModalPagination() {
-        const totalPages = Math.ceil(totalItems / itemsPerPage);
+    function updateModalPagination(totalPages) {
+       
         modalPagination.innerHTML = '';
         
         // Only show pagination when there are multiple pages
         if (totalPages <= 1) return;
         
         // Create pagination buttons
-        for (let i = 1; i <= totalPages; i++) {
-            const pageButton = document.createElement('button');
-            pageButton.textContent = i;
-            pageButton.className = i === currentPage ? 'active' : '';
-            pageButton.addEventListener('click', () => performModalSearch(i));
-            modalPagination.appendChild(pageButton);
-        }
+        const prevBtn = document.createElement('button');
+    prevBtn.textContent = '上一页';
+    prevBtn.className = 'btn btn-pagination';
+    prevBtn.disabled = currentPage === 1;
+    prevBtn.onclick = () => performModalSearch(currentPage - 1);
+    modalPagination.appendChild(prevBtn);
+    
+    // Page numbers
+    for (let i = 1; i <= totalPages; i++) {
+        const pageBtn = document.createElement('button');
+        pageBtn.textContent = i;
+        pageBtn.className = `btn btn-pagination ${currentPage === i ? 'active' : ''}`;
+        pageBtn.onclick = () => performModalSearch(i);
+        modalPagination.appendChild(pageBtn);
+    }
+    
+    // Next page button
+    const nextBtn = document.createElement('button');
+    nextBtn.textContent = '下一页';
+    nextBtn.className = 'btn btn-pagination';
+    nextBtn.disabled = currentPage === totalPages;
+    nextBtn.onclick = () => performModalSearch(currentPage + 1);
+    modalPagination.appendChild(nextBtn);
     }
 
     // Select member
-    // Select member
-function selectMember(member,selectionType) {
-    // Debugging - Check what IDs are available
-    console.log('Member data:', member);
-    console.log('Selection type:', selectionType);
-    
-    
-    // Be more specific about which ID we're using
-    const memberId = member.membersID || member.ID;
-    console.log('Selected member ID:', memberId);
-    
-    if (!memberId) {
-        console.error('No valid member ID found!');
-        showError('Selected member has no valid ID. Please try another member.');
+function selectMember(memberId,name) {
+    if (!memberId || !name) {
+        console.error('Invalid member data:', { memberId, name });
         return;
     }
     
-    // Set member ID to hidden field
+    // Update the hidden member ID field
     document.getElementById('selectedMemberId').value = memberId;
     
-    // Set name/company name
-    const nameField = document.getElementById('nameCompany');
-    if (selectionType === 'company' && member.componyName) {
-        nameField.value = member.componyName;
-    } else {
-        // Default to name (either explicitly selected or as fallback)
-        nameField.value = member.Name || member.CName || '';
+    // Update the name/company field
+    document.getElementById('nameCompany').value = name;
+    
+    // Close the modal
+    if (memberSearchModal) {
+        memberSearchModal.style.display = 'none';
     }
     
-    // Close modal
-    memberSearchModal.style.display = 'none';
+    console.log('Member selected:', { memberId, name });
 }
+
 
     // Show error message
     function showError(message) {
@@ -590,7 +544,7 @@ function selectMember(member,selectionType) {
         // Hide error message after 5 seconds
         setTimeout(() => {
             errorMessages.style.display = 'none';
-        }, 1000);
+        },300);
     }
 
     // Show success message
