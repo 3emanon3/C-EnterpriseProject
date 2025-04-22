@@ -162,6 +162,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    if (listAllButton) {
     // Add List All button event listener
     listAllButton.addEventListener('click', function() {
         // Reset all filters
@@ -182,7 +183,18 @@ document.addEventListener("DOMContentLoaded", function () {
         
         // Fetch all events
         fetchEvents();
+
+        Swal.fire({
+            title: '已重置',
+            text: '已清除所有筛选条件，显示全部活动记录',
+            icon: 'info',
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 1000
+        });
     });
+}
 
     let currentSortColumn = null;
     let currentSortOrder = null;
@@ -423,10 +435,10 @@ document.addEventListener("DOMContentLoaded", function () {
                                 <input type="checkbox" value="not started" ${currentStatuses.includes('not started') ? 'checked' : ''}> 未开始
                             </label>
                             <label class="status-option">
-                                <input type="checkbox" value="ongoing" ${currentStatuses.includes('ongoing') ? 'checked' : ''}> 进行中
+                                <input type="checkbox" value="started" ${currentStatuses.includes('started') ? 'checked' : ''}> 进行中
                             </label>
                             <label class="status-option">
-                                <input type="checkbox" value="completed" ${currentStatuses.includes('completed') ? 'checked' : ''}> 已结束
+                                <input type="checkbox" value="ended" ${currentStatuses.includes('ended') ? 'checked' : ''}> 已结束
                             </label>
                             <label class="status-option">
                                 <input type="checkbox" value="cancelled" ${currentStatuses.includes('cancelled') ? 'checked' : ''}> 已取消
@@ -434,6 +446,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         </div>
                     </div>
                     <div class="modal-footer">
+                      <button class="btn btn-secondary" id="clearStatusFilter">清除筛选</button>
                         <button class="btn btn-primary" id="applyStatusFilter">应用</button>
                         <button class="btn btn-secondary" id="cancelStatusFilter">取消</button>
                     </div>
@@ -446,14 +459,28 @@ document.addEventListener("DOMContentLoaded", function () {
             const closeBtn = filterModal.querySelector('.close');
             const cancelBtn = filterModal.querySelector('#cancelStatusFilter');
             const applyBtn = filterModal.querySelector('#applyStatusFilter');
+            const clearBtn = filterModal.querySelector('#clearStatusFilter');
+
 
             closeBtn.onclick = () => document.body.removeChild(filterModal);
             cancelBtn.onclick = () => document.body.removeChild(filterModal);
+
+            clearBtn.onclick = () => {
+                currentStatuses = [];
+                document.body.removeChild(filterModal);
+                currentPage = 1;
+                fetchEvents(currentSearchQuery, currentStatuses);
+            };
 
             applyBtn.onclick = () => {
                 const selectedStatuses = Array.from(filterModal.querySelectorAll('input[type="checkbox"]:checked'))
                     .map(cb => cb.value);
                 
+                    if (selectedStatuses.length === 0) {
+                        alert('请至少选择一个状态');
+                        return;
+                    }
+
                 // Update the currentStatuses array with the selected values
                 currentStatuses = selectedStatuses;
                 
@@ -465,7 +492,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
    
-    // Add export button event listener
      // Add export button event listener if the button exists
      if (exportButton) {
         exportButton.addEventListener('click', async function() {
@@ -693,6 +719,7 @@ document.addEventListener("DOMContentLoaded", function () {
         
         if (statuses && statuses.length > 0) {
             params.append("status", statuses[0]); // API expects single status value
+            params.append("exact_status_match", "true"); 
             console.log("Filtering by status:", statuses[0]);
         }
 
@@ -793,10 +820,32 @@ document.addEventListener("DOMContentLoaded", function () {
                 data = await response.json();
             }
             
+            if (statuses && statuses.length > 0) {
+                console.log("Status filter active:", statuses);
+    console.log("Before filtering, data has", data.data.length, "events");
+    
+    // Debug output to see what status values actually exist in the data
+    const uniqueStatuses = [...new Set(data.data.map(event => event.status))];
+    console.log("Unique status values in data:", uniqueStatuses);
+    
+    // Filter the data to match exactly the requested statuses - case insensitive matching
+    const filteredData = data.data.filter(event => {
+        const eventStatus = (event.status || "").trim().toLowerCase();
+        // Check for exact matching against each requested status (case insensitive)
+        return statuses.some(status => status.toLowerCase() === eventStatus);
+    });
+    
+    console.log("After filtering, found", filteredData.length, "matching events");
+    eventData = filteredData;
+    totalEvents.textContent = filteredData.length;
+    totalPages = Math.ceil(filteredData.length / itemsPerPage);
+            } else {
+                eventData = data.data;
+                totalEvents.textContent = data.total || 0;
+                totalPages = Math.ceil((data.total || eventData.length) / itemsPerPage);
+            }
           
-            eventData = data.data;
-            totalEvents.textContent = data.total || 0;
-            totalPages = Math.ceil((data.total || eventData.length) / itemsPerPage);
+           
             displayEvents(eventData);
             updatePagination();
             updatePageInputMax();
