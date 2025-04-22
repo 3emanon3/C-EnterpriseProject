@@ -81,6 +81,10 @@ header h1{
 }
 
 .btn i{margin-inline-end:.25rem}
+/* Remove margin from edit icon */
+.btn .fas.fa-edit{margin-inline-end:0}
+.btn .fas.fa-trash{margin-inline-end:0}
+.btn .fas.fa-check{margin-inline-end:0}
 
 /* Variant background colours ------------------------------------------- */
 .btn-primary   {--btn-bg: var(--clr-primary)}

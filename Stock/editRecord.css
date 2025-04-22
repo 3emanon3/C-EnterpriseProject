@@ -1,29 +1,34 @@
 .edit-container {
     display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
     gap: 20px;
-    margin-top: 20px;
-    max-width: 1200px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    margin: 20px 0;
+    max-width: 800px;
     margin-left: auto;
     margin-right: auto;
 }
 
 .edit-form {
     flex: 1;
+    min-width: 300px;
     background-color: #fff;
+    padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    max-width: 50%;
 }
 
 .membersearch {
     flex: 1;
+    min-width: 300px;
     background-color: #fff;
+    padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    display: none;
-    max-width: 50%;
 }
 
 .form-group {
@@ -57,8 +62,14 @@
 }
 
 .quantity-input-group input {
-    width: 100px;
+    flex: 1;
     text-align: center;
+    margin: 0 5px;
+}
+
+.quantity-input-group input[type=number]::-webkit-inner-spin-button, 
+.quantity-input-group input[type=number]::-webkit-outer-spin-button {  
+    opacity: 0;
 }
 
 .quantity-btn {
@@ -67,44 +78,77 @@
     background-color: #f8f9fa;
     border-radius: 4px;
     cursor: pointer;
+    width: 50px;
 }
 
 .quantity-btn:hover {
     background-color: #e9ecef;
 }
 
-.member-result {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
+.search-results ul {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+    max-height: 300px;
+    overflow-y: auto;
     border: 1px solid #ddd;
-    margin-bottom: 5px;
     border-radius: 4px;
 }
 
-.member-info {
-    display: flex;
-    flex-direction: column;
+.search-results li {
+    padding: 8px 12px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
 }
 
-.member-name {
-    font-weight: 500;
-}
-
-.member-details {
-    font-size: 0.9em;
-    color: #666;
+.search-results li:hover {
+    background-color: #f8f9fa;
 }
 
 .selected-member {
+    margin-top: 15px;
     padding: 10px;
-    background-color: #e9ecef;
+    background-color: #e9f7ef;
     border-radius: 4px;
-    margin-top: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    border: 1px solid #28a745;
+}
+
+.selected-member p {
+    margin: 5px 0;
+}
+
+.btn-sm {
+    padding: 5px 10px;
+    font-size: 0.875rem;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .edit-container {
+        padding: 20px;
+        margin: 10px;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .form-actions button {
+        width: 100%;
+    }
+    
+    .quantity-input-group {
+        flex-wrap: wrap;
+    }
+    
+    .quantity-input-group input {
+        width: 50%;
+        flex: initial;
+    }
+    
+    .quantity-input-group button {
+        width: 25%;
+    }
 }
 
 /* Override container width from other CSS files */
@@ -112,4 +156,124 @@
     width: 100% !important;
     max-width: 1400px !important;
     margin: 0 auto !important;
+}
+
+/* Loader */
+.loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.spinner {
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #3498db;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal.show {
+    opacity: 1;
+}
+
+.modal-content {
+    background-color: white;
+    border-radius: 8px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    transform: scale(0.8);
+    transition: transform 0.3s ease;
+    max-width: 400px;
+    width: 90%;
+}
+
+.modal.show .modal-content {
+    transform: scale(1);
+}
+
+.success-icon, .confirm-icon {
+    font-size: 60px;
+    margin-bottom: 20px;
+    animation: scaleUp 0.5s ease-out;
+}
+
+.success-icon {
+    color: #28a745;
+}
+
+.confirm-icon {
+    color: #ffc107;
+}
+
+.confirm-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+@keyframes scaleUp {
+    0% {
+        transform: scale(0);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.modal h3 {
+    margin: 0 0 10px;
+    color: #333;
+    font-size: 24px;
+}
+
+.modal p {
+    margin: 0;
+    color: #666;
+    font-size: 16px;
 }

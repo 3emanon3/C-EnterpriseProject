@@ -31,10 +31,11 @@
             <div class="edit-form">
                 <h3>编辑记录</h3>
                 <div class="form-group">
-                    <label for="membership">塾员类型</label>
+                    <label for="membership">从</label>
                     <select id="membership" onchange="updateMemberSection()">
-                        <option value="1">新人</option>
-                        <option value="2">旧人</option>
+                        <option value="1">未在记录之人</option>
+                        <option value="2">已在记录之人</option>
+                        <option value="0">无</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -181,19 +182,45 @@
                         <input type="text" id="remarks">
                     </div>
                 </div>
-                <div class="existing-member-section" style="display: none;">
-                    <h3>选择现有塾员</h3>
+                <div class="search-member-section" style="display: none;">
+                    <h3>搜索塾员</h3>
                     <div class="form-group">
-                        <label for="memberSearch">搜索塾员:</label>
-                        <input type="text" id="memberSearch" placeholder="输入塾员姓名或ID搜索">
+                        <label for="searchMember">搜索塾员姓名/ID:</label>
+                        <input type="text" id="searchMember" oninput="searchMembers()"> 
                     </div>
-                    <div class="member-results">
-                        <!-- Search results will be displayed here -->
+                    <div class="search-results" id="searchResults">
+                        
                     </div>
                 </div>
             </div>
         </section>
     </div>
     <script src="editRecord.js"></script>
+    
+    <!-- Confirm Modal -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <div class="confirm-icon">
+                <i class="fas fa-question-circle"></i>
+            </div>
+            <h3>确认</h3>
+            <p>确定要取消吗？您所作的更改将不会保存。</p>
+            <div class="confirm-actions">
+                <button class="btn btn-danger" id="confirmLeave">确认</button>
+                <button class="btn btn-secondary" id="cancelLeave">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3>成功!</h3>
+            <p>库存记录已成功更新</p>
+        </div>
+    </div>
 </body>
 </html>

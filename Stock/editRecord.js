@@ -1,19 +1,121 @@
 const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
 let isLeaving = false;
 let selectedMemberId = null;
+let formChanged = false; // Track if the user has made any changes
+let navigateDestination = ''; // Store destination URL for navigation
 
 window.addEventListener('beforeunload', function (e) {
-    if (!isLeaving) {
+    if (!isLeaving && formChanged) {
         e.returnValue = '确定要取消吗？您的更改可能不会被保。';
     }
 });
 
 function confirmCancel() {
-    if (confirm('确定要取消吗，您所作的更改将不会保存。')) {
+    if (formChanged) {
+        navigateDestination = 'soldRecord.html';
+        showConfirmModal();
+    } else {
         isLeaving = true;
         window.location.href = 'soldRecord.html';
     }
 }
+
+// Function to show confirm modal with animation
+function showConfirmModal() {
+    const modal = document.getElementById('confirmModal');
+    
+    // Show the modal
+    modal.style.display = 'flex';
+    
+    // Trigger animation
+    setTimeout(() => {
+        modal.classList.add('show');
+    }, 10);
+}
+
+// Function to hide confirm modal
+function hideConfirmModal() {
+    const modal = document.getElementById('confirmModal');
+    modal.classList.remove('show');
+    
+    // Wait for animation to complete before hiding
+    setTimeout(() => {
+        modal.style.display = 'none';
+    }, 300);
+}
+
+// Function to confirm and redirect
+function confirmRedirect() {
+    hideConfirmModal();
+    
+    // Wait for modal to close before redirecting
+    setTimeout(() => {
+        isLeaving = true;
+        formChanged = false;
+        
+        if (navigateDestination === 'back') {
+            history.back();
+        } else if (navigateDestination) {
+            window.location.href = navigateDestination;
+        } else {
+            window.location.href = 'soldRecord.html';
+        }
+    }, 300);
+}
+
+// Setup modal event listeners
+function setupModalListeners() {
+    // Set up confirm modal buttons
+    const confirmLeaveBtn = document.getElementById('confirmLeave');
+    if (confirmLeaveBtn) {
+        confirmLeaveBtn.addEventListener('click', confirmRedirect);
+    }
+    
+    const cancelLeaveBtn = document.getElementById('cancelLeave');
+    if (cancelLeaveBtn) {
+        cancelLeaveBtn.addEventListener('click', hideConfirmModal);
+    }
+    
+    // Close modals when clicking outside
+    const modals = document.querySelectorAll('.modal');
+    modals.forEach(modal => {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                if (modal.id === 'confirmModal') {
+                    hideConfirmModal();
+                }
+            }
+        });
+    });
+}
+
+// Add listener for browser's back button
+window.addEventListener('popstate', function(e) {
+    if (formChanged) {
+        // This doesn't actually prevent navigation in all browsers
+        // but we can use it to show our confirmation modal
+        navigateDestination = 'back';
+        showConfirmModal();
+    }
+});
+
+// Intercept links and buttons that might navigate away
+document.addEventListener('click', function(e) {
+    // Find closest anchor or button
+    const link = e.target.closest('a, button');
+    
+    if (link && link.getAttribute('href') && formChanged) {
+        // Check if it's not a javascript function and not our action buttons
+        const href = link.getAttribute('href');
+        if (href && href !== '#' && !href.startsWith('javascript:')) {
+            e.preventDefault();
+            
+            // Store the destination for later navigation
+            navigateDestination = href;
+            showConfirmModal();
+        }
+    }
+});
 
 async function loadRecordData() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -33,8 +135,8 @@ async function loadRecordData() {
             const record = data.data[0];
             
             // Set form values
-            document.getElementById('membership').value = '2'; //set to two because 
-            document.getElementById('Name/Company Name').value = record['Name/Company Name'] || '';
+            document.getElementById('membership').value = record.membership ? '2' : '0'; // Set to existing member if there's a membership ID, otherwise 'none'
+            document.getElementById('Name/Company Name').value = record['Name/Company_Name'] || '';
             document.getElementById('quantity_in').value = record.quantity_in || 0;
             document.getElementById('quantity_out').value = record.quantity_out || 0;
             document.getElementById('InvoiceNo').value = record.InvoiceNo || '';
@@ -59,6 +161,25 @@ async function loadRecordData() {
         console.error('Error loading record:', error);
         alert('加载记录失败');
     }
+}
+
+// Function to show success modal
+function showSuccessModal() {
+    const modal = document.getElementById('successModal');
+    
+    // Show the modal
+    modal.style.display = 'flex';
+    
+    // Trigger animation
+    setTimeout(() => {
+        modal.classList.add('show');
+    }, 10);
+    
+    // Redirect after 1.5 seconds
+    setTimeout(() => {
+        isLeaving = true;
+        window.location.href = 'soldRecord.html';
+    }, 1500);
 }
 
 async function saveChanges() {
@@ -204,7 +325,7 @@ async function saveChanges() {
         // Prepare record data
         const recordData = {
             ID: recordId,
-            'Name/Company Name': companyName,
+            'Name/Company_Name': companyName,
             quantity_in: quantityIn > 0 ? quantityIn : null,
             quantity_out: quantityOut > 0 ? quantityOut : null,
             InvoiceNo: invoiceNo,
@@ -226,9 +347,8 @@ async function saveChanges() {
         const result = await response.json();
 
         if (result.status === 'success') {
-            alert('记录更新成功！');
-            isLeaving = true;
-            window.location.href = 'soldRecord.html';
+            formChanged = false; // Reset changes flag
+            showSuccessModal(); // Show success modal instead of alert
         } else {
             alert('更新记录失败: ' + (result.message || '未知错误'));
         }
@@ -240,25 +360,34 @@ async function saveChanges() {
 
 function updateMemberSection() {
     const membershipType = document.getElementById('membership').value;
-    const memberSearch = document.querySelector('.membersearch');
     const newMemberSection = document.querySelector('.new-member-section');
-    const existingMemberSection = document.querySelector('.existing-member-section');
+    const searchMemberSection = document.querySelector('.search-member-section');
 
-    memberSearch.style.display = 'block';
-
-    if (membershipType === '1') {
+    if (membershipType === '1') { // 未在记录之人 - New member
         newMemberSection.style.display = 'block';
-        existingMemberSection.style.display = 'none';
-        loadApplicantTypes();
-    } else {
+        searchMemberSection.style.display = 'none';
+        selectedMemberId = null; // Reset selected member ID when switching
+        
+        // Add "4 - 专门买书的人" to the others field
+        const othersField = document.getElementById('others');
+        if (othersField && !othersField.value) {
+            othersField.value = "4 - 专门买书的人";
+        }
+        
+        loadApplicantTypes(); // Load applicant types for the dropdown
+    } else if (membershipType === '2') { // 已在记录之人 - Existing member
         newMemberSection.style.display = 'none';
-        existingMemberSection.style.display = 'block';
+        searchMemberSection.style.display = 'block';
+    } else if (membershipType === '0') { // 无 - Display no sections
+        newMemberSection.style.display = 'none';
+        searchMemberSection.style.display = 'none';
+        selectedMemberId = null;
     }
 }
 
 async function loadApplicantTypes() {
     try {
-        const response = await fetch(`${API_BASE_URL}?table=applicants%20types`);
+        const response = await fetch(`${API_BASE_URL}?table=applicants_types&limit=100`);
         const data = await response.json();
         
         const applicantTypeFilter = document.getElementById('applicantTypeFilter');
@@ -268,20 +397,20 @@ async function loadApplicantTypes() {
             applicantTypeFilter.remove(1);
         }
         
-        // Add option to create new type
-        const newOption = document.createElement('option');
-        newOption.value = 'new';
-        newOption.textContent = '+ 创建新种类';
-        applicantTypeFilter.appendChild(newOption);
-        
         // Add existing types
         if (data && data.data) {
-            data.data.forEach(type => {
+            data.data.forEach(item => {
                 const option = document.createElement('option');
-                option.value = type.ID;
-                option.textContent = type['designation of applicant'];
+                option.value = item.ID;
+                option.textContent = `${item["designation_of_applicant"]}`;
                 applicantTypeFilter.appendChild(option);
             });
+            
+            // Add the "Add New Type" option at the end
+            const newTypeOption = document.createElement("option");
+            newTypeOption.value = "new";
+            newTypeOption.textContent = "添加新种类";
+            applicantTypeFilter.appendChild(newTypeOption);
         }
     } catch (error) {
         console.error('Error loading applicant types:', error);
@@ -329,6 +458,18 @@ function updateExpirationFields() {
 // Add event listeners for quantity buttons
 document.addEventListener('DOMContentLoaded', function() {
     const quantityButtons = document.querySelectorAll('.quantity-btn');
+    
+    // Track form changes
+    const formInputs = document.querySelectorAll('input, textarea, select');
+    formInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            formChanged = true;
+        });
+        input.addEventListener('input', function() {
+            formChanged = true;
+        });
+    });
+    
     quantityButtons.forEach(button => {
         button.addEventListener('click', function() {
             const change = parseInt(this.dataset.change);
@@ -337,6 +478,7 @@ document.addEventListener('DOMContentLoaded', function() {
             let value = parseInt(input.value) || 0;
             value = Math.max(0, value + change);
             input.value = value;
+            formChanged = true;
         });
     });
 
@@ -350,82 +492,166 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Load record data when page loads
     loadRecordData();
-
-    // Set up member search functionality
-    const memberSearch = document.getElementById('memberSearch');
-    if (memberSearch) {
-        memberSearch.addEventListener('input', debounce(searchMembers, 300));
+    
+    // Handle applicant type change
+    const applicantType = document.getElementById("applicantTypeFilter");
+    if (applicantType) {
+        applicantType.addEventListener('change', handleApplicantTypeChange);
     }
+    
+    // Setup modal event listeners
+    setupModalListeners();
+    
+    // After setting default values, reset formChanged flag
+    formChanged = false;
 });
 
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
+function handleApplicantTypeChange() {
+    const applicantTypeSelect = document.getElementById("applicantTypeFilter");
+    const selectedValue = applicantTypeSelect.value;
+    
+    // If "Add New Type" is selected
+    if (selectedValue === "new") {
+        // Show a prompt to enter new type
+        const newTypeName = prompt("请输入新的塾员种类名称:");
+        
+        // If user entered a value and didn't cancel
+        if (newTypeName && newTypeName.trim() !== "") {
+            // Reset the dropdown to the first option temporarily
+            applicantTypeSelect.value = "";
+            
+            // Create and add the new type
+            createNewApplicantType(newTypeName.trim());
+        } else {
+            // If user cancelled or entered empty string, reset to default
+            applicantTypeSelect.value = "";
+        }
+    }
+}
+
+async function createNewApplicantType(typeName) {
+    try {
+        // Create the new applicant type object
+        const newType = {
+            "designation_of_applicant": typeName
         };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
+        
+        // Send request to create new applicant type
+        const response = await fetch(`${API_BASE_URL}?table=applicants_types`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newType)
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to create new applicant type');
+        }
+        
+        const data = await response.json();
+        
+        if (data && data.ids && data.ids.length > 0) {
+            const newTypeId = data.ids[0];
+            
+            // Refresh the applicant types dropdown
+            await loadApplicantTypes();
+            
+            // Set the dropdown to the newly created type
+            const applicantTypeSelect = document.getElementById("applicantTypeFilter");
+            applicantTypeSelect.value = newTypeId;
+            
+            alert(`新种类 "${typeName}" 已成功添加!`);
+        } else {
+            throw new Error('Failed to get ID of new applicant type');
+        }
+    } catch (error) {
+        console.error('Error creating new applicant type:', error);
+        alert(`创建新种类失败: ${error.message}`);
+    }
 }
 
 async function searchMembers() {
-    const searchTerm = document.getElementById('memberSearch').value;
-    const resultsContainer = document.querySelector('.member-results');
+    const searchTerm = document.getElementById('searchMember').value;
+    const searchResultsDiv = document.getElementById('searchResults');
+
+    // Clear previous search results
+    searchResultsDiv.innerHTML = '搜索中...';
 
     if (!searchTerm) {
-        resultsContainer.innerHTML = '';
+        searchResultsDiv.innerHTML = ''; // Clear results if search term is empty
         return;
     }
 
     try {
-        const response = await fetch(`${API_BASE_URL}?table=members&search=${encodeURIComponent(searchTerm)}`);
-        const data = await response.json();
-
-        resultsContainer.innerHTML = '';
-
-        if (data && data.data && data.data.length > 0) {
-            data.data.forEach(member => {
-                const memberDiv = document.createElement('div');
-                memberDiv.className = 'member-result';
-                memberDiv.innerHTML = `
-                    <div class="member-info">
-                        <span class="member-name">${member.Name || ''} (${member.CName || ''})</span>
-                        <span class="member-details">塾员ID: ${member.membersID || 'N/A'}</span>
-                    </div>
-                    <button class="btn btn-primary select-member" data-id="${member.ID}">选择</button>
-                `;
-
-                memberDiv.querySelector('.select-member').addEventListener('click', () => {
-                    selectedMemberId = member.ID;
-                    document.getElementById('Name/Company Name').value = member.componyName || '';
-                    resultsContainer.innerHTML = `
-                        <div class="selected-member">
-                            已选择: ${member.Name || ''} (${member.CName || ''})
-                            <button class="btn btn-small btn-danger" onclick="clearSelectedMember()">清除</button>
-                        </div>
-                    `;
-                });
-
-                resultsContainer.appendChild(memberDiv);
-            });
-        } else {
-            resultsContainer.innerHTML = '<div class="no-results">没有找到塾员</div>';
+        // Call the API to search for members
+        const searchResponse = await fetch(`${API_BASE_URL}?table=members&search=${encodeURIComponent(searchTerm)}`);
+        if (!searchResponse.ok) {
+            throw new Error(`Search failed: ${searchResponse.status} - ${searchResponse.statusText}`);
         }
+
+        const data = await searchResponse.json();
+        const members = data.data; // API returns JSON array of members
+
+        searchResultsDiv.innerHTML = ''; // Clear "Searching..." message
+
+        if (members && data.total > 0) {
+            const ul = document.createElement('ul');
+            members.forEach(member => {
+                const li = document.createElement('li');
+                // Display member name and memberID (not database ID)
+                li.textContent = `${member.Name || ''} ${member.CName || ''} (塾员ID: ${member.membersID || 'N/A'})`;
+                li.addEventListener('click', function() {
+                    // Pass the member ID and name to the selectMember function
+                    selectMember(member.ID, member.Name, member.CName, member.membersID);
+                });
+                ul.appendChild(li);
+            });
+            searchResultsDiv.appendChild(ul);
+        } else {
+            searchResultsDiv.textContent = '未找到塾员。'; // Display message if no members found
+        }
+
     } catch (error) {
-        console.error('Error searching members:', error);
-        resultsContainer.innerHTML = '<div class="error">搜索塾员时出错</div>';
+        console.error('Member search error:', error);
+        searchResultsDiv.textContent = '搜索塾员时出错。'; // Display error message to user
     }
 }
 
-function clearSelectedMember() {
-    selectedMemberId = null;
-    document.getElementById('Name/Company Name').value = '';
-    document.querySelector('.member-results').innerHTML = '';
-    document.getElementById('memberSearch').value = '';
+function selectMember(memberId, memberName, memberCName, membersID) {
+    // Store the selected member ID in the global variable
+    selectedMemberId = memberId;
+    
+    // Update the search results div to show the selected member
+    const searchResultsDiv = document.getElementById('searchResults');
+    const displayName = memberCName ? `${memberName} (${memberCName})` : memberName;
+    
+    searchResultsDiv.innerHTML = `
+        <div class="selected-member">
+            <p><strong>已选择塾员:</strong> ${displayName}</p>
+            <p><strong>塾员ID:</strong> ${membersID || 'N/A'}</p>
+            <button class="btn btn-sm btn-primary" onclick="clearSelectedMember()">重新选择</button>
+        </div>
+    `;
+    
+    // Optionally update the company name field with the member name
+    const companyNameField = document.getElementById('Name/Company Name');
+    if (companyNameField && !companyNameField.value) {
+        companyNameField.value = displayName;
+    }
+    
+    formChanged = true;
 }
 
+function clearSelectedMember() {
+    // Clear the selected member
+    selectedMemberId = null;
+    document.getElementById('searchResults').innerHTML = '';
+    document.getElementById('searchMember').value = '';
+    // Focus on the search field
+    document.getElementById('searchMember').focus();
+    formChanged = true;
+}
 
 async function fetchAndDisplayMemberInfo(memberId) {
     try {
@@ -436,12 +662,15 @@ async function fetchAndDisplayMemberInfo(memberId) {
         if (data && data.data && data.data.length > 0) {
             const member = data.data[0];
             
-            // Display the selected member in the member-results container
-            const resultsContainer = document.querySelector('.member-results');
-            resultsContainer.innerHTML = `
+            // Display the selected member in the search results container
+            const searchResultsDiv = document.getElementById('searchResults');
+            const displayName = member.CName ? `${member.Name} (${member.CName})` : member.Name;
+            
+            searchResultsDiv.innerHTML = `
                 <div class="selected-member">
-                    已选择塾员: ${member.Name || ''} (${member.CName || ''})
-                    <button class="btn btn-small btn-danger" onclick="clearSelectedMember()">清除</button>
+                    <p><strong>已选择塾员:</strong> ${displayName}</p>
+                    <p><strong>塾员ID:</strong> ${member.membersID || 'N/A'}</p>
+                    <button class="btn btn-sm btn-primary" onclick="clearSelectedMember()">重新选择</button>
                 </div>
             `;
             
