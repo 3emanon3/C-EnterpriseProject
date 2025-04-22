@@ -31,7 +31,7 @@
             <div class="edit-form">
                 <h3>编辑记录</h3>
                 <div class="form-group">
-                    <label for="membership">会员类型</label>
+                    <label for="membership">塾员类型</label>
                     <select id="membership" onchange="updateMemberSection()">
                         <option value="1">新人</option>
                         <option value="2">旧人</option>
@@ -88,19 +88,19 @@
             </div>
             <div class="membersearch">
                 <div class="new-member-section"> 
-                    <h3>新会员信息</h3>
+                    <h3>新塾员信息</h3>
                     <div class="form-group">
-                        <label for="newMemberName">会员姓名:</label>
+                        <label for="newMemberName">塾员姓名:</label>
                         <input type="text" id="Name">
                     </div>
                     <div class="form-group">
-                        <label for="newMemberCName">会员中文姓名:</label>
+                        <label for="newMemberCName">塾员中文姓名:</label>
                         <input type="text" id="CName">
                     </div>
                     <div class="form-group">
                         <label for="applicantTypeFilter">种类:</label>
                         <select id="applicantTypeFilter">
-                            <option value="">选择新会员种类</option>
+                            <option value="">选择新塾员种类</option>
                             <!-- Options will be populated dynamically -->
                         </select>
                     </div>
@@ -142,7 +142,7 @@
                         <input type="text" id="MonthofBirth">
                     </div>
                     <div class="form-group">
-                        <label for="expirationType">会员期限:</label>
+                        <label for="expirationType">塾员期限:</label>
                         <select id="expirationType" onchange="updateExpirationFields()">
                             <option value="none">无</option>
                             <option value="1year">1年</option>
@@ -182,10 +182,10 @@
                     </div>
                 </div>
                 <div class="existing-member-section" style="display: none;">
-                    <h3>选择现有会员</h3>
+                    <h3>选择现有塾员</h3>
                     <div class="form-group">
-                        <label for="memberSearch">搜索会员:</label>
-                        <input type="text" id="memberSearch" placeholder="输入会员姓名或ID搜索">
+                        <label for="memberSearch">搜索塾员:</label>
+                        <input type="text" id="memberSearch" placeholder="输入塾员姓名或ID搜索">
                     </div>
                     <div class="member-results">
                         <!-- Search results will be displayed here -->

@@ -76,19 +76,19 @@
             </div>
             <div class="membersearch">
                 <div class="new-member-section"> 
-                    <h3>新会员信息</h3>
+                    <h3>新塾员信息</h3>
                     <div class="form-group">
-                        <label for="newMemberName">会员姓名:</label>
+                        <label for="newMemberName">塾员姓名:</label>
                         <input type="text" id="Name">
                     </div>
                     <div class="form-group">
-                        <label for="newMemberCName">会员中文姓名:</label>
+                        <label for="newMemberCName">塾员中文姓名:</label>
                         <input type="text" id="CName">
                     </div>
                     <div class="form-group">
                         <label for="applicantTypeFilter">种类:</label>
                         <select id="applicantTypeFilter">
-                            <option value="">选择新会员种类</option>
+                            <option value="">选择新塾员种类</option>
                             <!-- Options will be populated dynamically -->
                         </select>
                     </div>
@@ -129,7 +129,7 @@
                         <input type="number" id="MonthofBirth">
                     </div>
                     <div class="form-group">
-                        <label for="expirationType">会员期限:</label>
+                        <label for="expirationType">塾员期限:</label>
                         <select id="expirationType" onchange="updateExpirationFields()">
                             <option value="none">无</option>
                             <option value="1year">1年</option>
@@ -169,9 +169,9 @@
                     </div>
                 </div>
                 <div class="search-member-section"> 
-                    <h3>搜索会员</h3>
+                    <h3>搜索塾员</h3>
                     <div class="form-group">
-                        <label for="searchMember">搜索会员姓名/ID:</label>
+                        <label for="searchMember">搜索塾员姓名/ID:</label>
                         <input type="text" id="searchMember" oninput="searchMembers()"> 
                     </div>
                     <div class="search-results" id="searchResults">

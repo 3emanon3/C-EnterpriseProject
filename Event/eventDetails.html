@@ -15,7 +15,7 @@
                 <i class="fas fa-arrow-left"></i> 返回
             </button>
             <button class="btn btn-success" id="addMemberBtn">
-                <i class="fas fa-user-plus"></i> 增加会员
+                <i class="fas fa-user-plus"></i> 增加塾员
             </button>
             
         </div>
@@ -24,7 +24,7 @@
         <thead>
           <tr>
             <th>ID</th>
-            <th>会员ID</th>
+            <th>塾员ID</th>
             <th>英文名</th>
             <th>中文名</th>
             <th>电话</th>
@@ -44,16 +44,16 @@
     <div id="memberSearchModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>搜索会员</h2>
+                <h2>搜索塾员</h2>
                 <span class="close">&times;</span>
             </div>
             <div class="modal-body">
                 <div class="search-container">
-                    <input type="text" id="modalSearchInput" placeholder="输入会员姓名、ID或公司名称搜索..." autofocus>
+                    <input type="text" id="modalSearchInput" placeholder="输入塾员姓名、ID或公司名称搜索..." autofocus>
                     <button id="modalSearchButton"><i class="fas fa-search"></i> 搜索</button>
                 </div>
                 <div id="modalLoadingIndicator" class="loading" style="display: none;">正在加载...</div>
-                <div id="modalNoResults" class="no-results" style="display: none;">没有找到匹配的会员</div>
+                <div id="modalNoResults" class="no-results" style="display: none;">没有找到匹配的塾员</div>
                 <div class="results-container">
                     <table id="modalResultsTable">
                         <thead>

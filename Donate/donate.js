@@ -138,8 +138,8 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(error => {
                 modalLoadingIndicator.style.display = 'none';
-                console.error('会员搜索错误:', error);
-                alert('搜索会员时出错: ' + error.message);
+                console.error('塾员搜索错误:', error);
+                alert('搜索塾员时出错: ' + error.message);
             });
     }
 
@@ -189,13 +189,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const memberName = member.Name || member.CName;
         const memberId = member.membersID;
         
-        console.log('选择会员:', member);
-        console.log('会员ID:', memberId);
+        console.log('选择塾员:', member);
+        console.log('塾员ID:', memberId);
         
         // 检查会员ID是否有效
         if (!memberId) {
-            console.error('无效的会员ID:', memberId);
-            alert('选择的会员ID无效，请重新选择');
+            console.error('无效的塾员ID:', memberId);
+            alert('选择的塾员ID无效，请重新选择');
             return;
         }
         
@@ -224,7 +224,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         modalContent.innerHTML = `
             <h3 style="margin-top: 0;">请选择要使用的名称</h3>
-            <p>该会员同时拥有姓名和公司名称:</p>
+            <p>该塾员同时拥有姓名和公司名称:</p>
             <p><strong>姓名:</strong> ${memberName}</p>
             <p><strong>公司名称:</strong> ${companyName}</p>
             <div style="display: flex; justify-content: space-between; margin-top: 20px;">
@@ -265,7 +265,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (companyName && companyName.trim() !== '') {
             document.getElementById('nameCompany').value = companyName;
         } else {
-            document.getElementById('nameCompany').value = memberName || `会员 ID: ${memberId}`;
+            document.getElementById('nameCompany').value = memberName || `塾员 ID: ${memberId}`;
         }
         
         // 确保selectedMemberId字段存在
@@ -280,7 +280,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // 存储会员ID到隐藏字段 - 保留原始格式，不再转换为数字
         selectedMemberIdField.value = memberId;
-        console.log('设置会员ID为:', memberId);
+        console.log('设置塾员ID为:', memberId);
         
         // 将此会员添加为下拉列表中的选项（如果尚不存在）
         let memberExists = false;
@@ -328,7 +328,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Store member ID to hidden field - maintain original format
         selectedMemberIdField.value = memberId;
-        console.log('设置会员ID为:', memberId);
+        console.log('设置塾员ID为:', memberId);
         
         // Check if this member already exists in dropdown
         let memberExists = false;
@@ -484,11 +484,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Handle returned from member page with new member ID
     function handleReturnedNewMember(memberId) {
-        console.log('处理返回的会员ID:', memberId);
+        console.log('处理返回的塾员ID:', memberId);
         
         // 检查memberId是否为undefined或'null'字符串
         if (memberId === undefined || memberId === 'null' || memberId === null) {
-            console.log('会员ID为null或undefined，设置为非会员');
+            console.log('塾员ID为null或undefined，设置为非塾员');
             // 只恢复表单数据，不设置会员
             restoreFormDataFromSession();
             // 选择'Non Member'选项
@@ -498,7 +498,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // 检查memberId是否为有效值（不再转换为数字）
         if (!memberId || memberId.trim() === '') {
-            console.log('无效的会员ID，设置为非会员');
+            console.log('无效的塾员ID，设置为非塾员');
             restoreFormDataFromSession();
             membershipSelect.value = '2';
             return;
@@ -531,10 +531,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 return response.json();
             })
             .then(data => {
-                console.log('获取到会员详情:', data);
+                console.log('获取到塾员详情:', data);
                 if (data.status === 'success' && data.member) {
-                    const memberName = data.member.Name || data.member.CName || `会员 ID: ${memberId}`;
-                    console.log('会员名称:', memberName);
+                    const memberName = data.member.Name || data.member.CName || `塾员 ID: ${memberId}`;
+                    console.log('塾员名称:', memberName);
                     
                     // 检查是否已存在此会员的选项
                     let existingOption = null;
@@ -568,13 +568,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         console.log('更新姓名字段为:', memberName);
                     }
                 } else {
-                    console.error('API返回错误或无会员数据:', data);
-                    showError('无法获取会员详情');
+                    console.error('API返回错误或无塾员数据:', data);
+                    showError('无法获取塾员详情');
                 }
             })
             .catch(error => {
-                console.error('获取会员详情失败:', error);
-                showError('获取会员详情出错: ' + error.message);
+                console.error('获取塾员详情失败:', error);
+                showError('获取塾员详情出错: ' + error.message);
             });
     }
 
@@ -625,7 +625,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Handle membership value from select
         const membershipValue = membershipSelect.value;
-        console.log('提交表单时的会员选择值:', membershipValue);
+        console.log('提交表单时的塾员选择值:', membershipValue);
         
         // Add this inside submitForm() function just before the fetch call
 console.log('Remarks value before sending:', document.getElementById('remarks').value);
@@ -780,7 +780,7 @@ console.log('Remarks value before sending:', document.getElementById('remarks').
                 // 如果没有，创建一个新选项
                 memberOption = document.createElement('option');
                 memberOption.value = membershipId;
-                memberOption.textContent = `会员 ID: ${membershipId}`;
+                memberOption.textContent = `塾员 ID: ${membershipId}`;
                 
                 // 在预设选项之前添加
                 const specialIndex = Array.from(membershipSelect.options).findIndex(opt => 
@@ -801,11 +801,11 @@ console.log('Remarks value before sending:', document.getElementById('remarks').
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === 'success' && data.member) {
-                        const memberName = data.member.Name || data.member.CName || `会员 ID: ${membershipId}`;
+                        const memberName = data.member.Name || data.member.CName || `塾员 ID: ${membershipId}`;
                         document.getElementById('nameCompany').value = memberName;
                     }
                 })
-                .catch(error => console.error('获取会员详情失败:', error));
+                .catch(error => console.error('获取塾员详情失败:', error));
         } 
 
         // Format payment date if needed

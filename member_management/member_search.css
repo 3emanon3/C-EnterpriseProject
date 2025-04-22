@@ -292,7 +292,7 @@ tr:hover {
     align-items: center;
     padding-top: 20px;
     border-top: 1px solid var(--clr-border);
-    justify-content: space-between; /* Space out elements */
+    justify-content: flex-start; /* Change from space-between to flex-start to align left */
     gap: 10px; /* Add gap between elements */
 }
 
@@ -301,7 +301,7 @@ tr:hover {
     gap: 5px;
     flex-wrap: wrap; /* Allow page numbers to wrap */
     justify-content: center; /* Center page numbers if they wrap */
-    flex-grow: 1; /* Allow pagination to take available space */
+    flex-grow: 0; /* Change from 1 to 0 to prevent pagination from taking up extra space */
 }
 
 .pagination-container .btn-primary {
@@ -384,7 +384,7 @@ tr:hover {
     align-items: center;
     gap: 10px;
     font-size: 14px;
-    margin-left: auto; /* Push to the right */
+    margin-left: 0; /* Remove auto margin to prevent pushing to the right */
 }
 
 #itemsPerPage {
@@ -740,13 +740,15 @@ tr:hover {
     }
 
     .pagination-container {
-        flex-direction: column;
-        align-items: stretch; /* Stretch items full width */
+        flex-direction: row; /* Keep horizontal layout */
+        align-items: center;
+        justify-content: flex-start; /* Ensure left alignment on mobile */
+        flex-wrap: wrap;
         gap: 15px;
     }
     .pagination {
-        justify-content: center; /* Center page numbers */
-        order: 2; /* Change order */
+        order: 0; /* Reset order */
+        justify-content: flex-start; /* Align left */
     }
     .pagination-container .btn-primary {
         width: 48%; /* Make prev/next buttons roughly half width */
@@ -757,15 +759,14 @@ tr:hover {
     #nextPage { order: 1; }
 
     .pagination-info {
-        order: 3; /* Change order */
-        justify-content: center;
-        width: 100%;
+        order: 0; /* Reset order */
+        flex-direction: row;
+        text-align: left;
     }
     .items-per-page {
-        order: 4; /* Change order */
-        margin-left: 0; /* Remove auto margin */
-        justify-content: center; /* Center items per page */
-        width: 100%;
+        order: 0; /* Reset order */
+        justify-content: flex-start; /* Align left */
+        margin-left: 0; /* Ensure no auto margin */
     }
 
     .modal {
@@ -1062,28 +1063,28 @@ tr:hover {
 
     /* Adjust pagination for mobile */
     .pagination-container {
-        flex-direction: column;
+        flex-direction: row; /* Keep horizontal layout */
         align-items: center;
+        justify-content: flex-start; /* Ensure left alignment on mobile */
+        flex-wrap: wrap;
         gap: 15px;
     }
 
     .pagination {
-        order: 1;
-        justify-content: center;
-        width: 100%;
+        order: 0; /* Reset order */
+        justify-content: flex-start; /* Align left */
     }
 
     .pagination-info {
-        order: 2;
-        flex-direction: column;
-        width: 100%;
-        text-align: center;
+        order: 0; /* Reset order */
+        flex-direction: row;
+        text-align: left;
     }
 
     .items-per-page {
-        order: 3;
-        justify-content: center;
-        width: 100%;
+        order: 0; /* Reset order */
+        justify-content: flex-start; /* Align left */
+        margin-left: 0; /* Ensure no auto margin */
     }
 
     /* Modal adjustments for mobile */

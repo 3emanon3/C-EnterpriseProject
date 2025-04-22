@@ -36,11 +36,11 @@ document.addEventListener('DOMContentLoaded', function() {
      const modalControlPanel = document.createElement('div');
      modalControlPanel.className = 'modal-control-panel';
      modalControlPanel.innerHTML = `
-         <div class="selected-count">已选择: <span id="selectedMemberCount">0</span> 位会员</div>
+         <div class="selected-count">已选择: <span id="selectedMemberCount">0</span> 位塾员</div>
          <div class="control-buttons">
              <button id="selectAllBtn" class="btn">全选</button>
              <button id="deselectAllBtn" class="btn">取消全选</button>
-             <button id="addSelectedMembersBtn" class="btn btn-success" disabled>添加所选会员</button>
+             <button id="addSelectedMembersBtn" class="btn btn-success" disabled>添加所选塾员</button>
          </div>
      `;
      
@@ -98,7 +98,7 @@ if (exportTableBtn) {
                         </div>
                         <div class="columns-grid">
                             <label><input type="checkbox" value="序号" checked> 序号</label>
-                            <label><input type="checkbox" value="会员ID" checked> 会员ID</label>
+                            <label><input type="checkbox" value="塾员ID" checked> 塾员ID</label>
                             <label><input type="checkbox" value="英文名" checked> 英文名</label>
                             <label><input type="checkbox" value="中文名" checked> 中文名</label>
                             <label><input type="checkbox" value="电话" checked> 电话</label>
@@ -260,11 +260,11 @@ if (exportTableBtn) {
     // 添加选中的会员
     async function addSelectedMembers() {
         if (selectedMembers.size === 0) {
-            alert('请至少选择一位会员');
+            alert('请至少选择一位塾员');
             return;
         }
         
-        const confirmAdd = confirm(`确定要将选中的 ${selectedMembers.size} 位会员添加到此活动吗？`);
+        const confirmAdd = confirm(`确定要将选中的 ${selectedMembers.size} 位塾员添加到此活动吗？`);
         if (!confirmAdd) return;
         
         showLoading();
@@ -289,7 +289,7 @@ if (exportTableBtn) {
                     const checkData = await checkResponse.json();
                     
                     if (checkData.data && checkData.data.length > 0) {
-                        console.log(`会员 ${memberName} (ID: ${memberId}) 已经添加到此活动中`);
+                        console.log(`塾员 ${memberName} (ID: ${memberId}) 已经添加到此活动中`);
                         errorCount++;
                         continue;
                     }
@@ -314,10 +314,10 @@ if (exportTableBtn) {
                     if (response.ok && result.status === 'success') {
                         successCount++;
                     } else {
-                        throw new Error(result.message || '添加会员失败');
+                        throw new Error(result.message || '添加塾员失败');
                     }
                 } catch (error) {
-                    console.error(`添加会员 ${memberName} 时出错:`, error);
+                    console.error(`添加塾员 ${memberName} 时出错:`, error);
                     errorCount++;
                 }
             }
@@ -332,17 +332,17 @@ if (exportTableBtn) {
             // Show success/error message
             let message = '';
             if (successCount > 0) {
-                message += `成功添加 ${successCount} 位会员`;
+                message += `成功添加 ${successCount} 位塾员`;
             }
             if (errorCount > 0) {
-                message += message ? `, ${errorCount} 位会员添加失败` : `${errorCount} 位会员添加失败`;
+                message += message ? `, ${errorCount} 位塾员添加失败` : `${errorCount} 位塾员添加失败`;
             }
             
             showError(message);
             
         } catch (error) {
             console.error('Error adding members:', error);
-            showError(`添加会员失败: ${error.message}`);
+            showError(`添加塾员失败: ${error.message}`);
         } finally {
             hideLoading();
         }
@@ -691,7 +691,7 @@ if (exportTableBtn) {
         }
     
         // Confirm deletion with user
-        const confirmDelete = confirm(`确定要删除该参与者吗？\n会员ID: ${displayMemberId}\n会员姓名: ${memberName}`);
+        const confirmDelete = confirm(`确定要删除该参与者吗？\n塾员ID: ${displayMemberId}\n塾员姓名: ${memberName}`);
         
         if (!confirmDelete) return;
         
@@ -1098,7 +1098,7 @@ if (exportTableBtn) {
                             case '序号':
                                 row[column] = index + 1;
                                 break;
-                            case '会员ID':
+                            case '塾员ID':
                                 row[column] = participant.membersID || participant.memberID || '';
                                 break;
                             case '英文名':
