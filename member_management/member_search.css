@@ -39,8 +39,9 @@ body{
     min-height:95vh;
     background:var(--clr-bg-main);
     box-shadow:var(--shadow-s);
-    margin-top:80px;
+    margin-top:auto;
     width: fit-content;
+    padding-top: 130px;
 }
 
 header{
@@ -51,10 +52,12 @@ header{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    height:80px;
+    min-height:80px;
+    height: auto;
     padding:15px 20px;
     background:var(--clr-bg-main);
     border-block-end:2px solid var(--clr-border);
+    flex-wrap: wrap;
 }
 header h1{
     color:var(--clr-header-txt);
@@ -398,7 +401,7 @@ tr:hover {
 }
 
 .system-nav {
-    position: static;
+    max-width: 50%;
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
@@ -458,7 +461,7 @@ tr:hover {
     border-radius: 6px;
     padding: 8px;
     position: absolute;
-    z-index: 1000;
+    z-index: 9999;
     top: 125%; /* Position above the button */
     left: 50%;
     margin-left: -200px; /* Center tooltip (width/2) */
@@ -488,6 +491,7 @@ tr:hover {
 .tooltip:hover .tooltip-text {
     visibility: visible;
     opacity: 1;
+    z-index: 9999;
 }
 
 /* Modal Styles */
@@ -1008,9 +1012,9 @@ tr:hover {
 @media (max-width: 768px) {
     header {
         flex-direction: column;
-        height: auto;
+        align-items: flex-start;
         padding: 10px;
-        position: relative; /* Change from fixed to allow content flow */
+        /* position is already fixed from main styles */
     }
 
     h1 {
@@ -1018,11 +1022,15 @@ tr:hover {
         font-size: 1.5rem; /* Smaller font size for mobile */
     }
 
-    
     .container {
         padding: 10px;
-        margin-top: 20px; /* Reduced margin since header is not fixed */
+        padding-top: 130px; /* Consistent with desktop padding-top */
         width: 100%; /* Full width on mobile */
+    }
+
+    .system-nav {
+        width: 100%;
+        justify-content: center;
     }
 
     .search-input-group {
@@ -1139,6 +1147,10 @@ tr:hover {
 }
 /* Additional fix for the very small viewport shown in screenshot */
 @media (max-width: 480px) {
+    .container {
+        padding-top: 160px; /* Increase top padding for smaller screens */
+    }
+    
     header h1 {
         font-size: 1.2rem;
     }
