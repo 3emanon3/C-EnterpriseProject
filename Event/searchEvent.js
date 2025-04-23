@@ -1,5 +1,4 @@
 const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
-document.head.innerHTML += '<script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>';
 
 const EventManager = {
     init() {
@@ -432,16 +431,16 @@ document.addEventListener("DOMContentLoaded", function () {
                     <div class="modal-body">
                         <div class="status-selection">
                             <label class="status-option">
-                                <input type="checkbox" value="not started" ${currentStatuses.includes('not started') ? 'checked' : ''}> 未开始
+                                <input type="radio" name="eventStatus" value="not started" ${currentStatuses.includes('not started') ? 'checked' : ''}> 未开始
                             </label>
                             <label class="status-option">
-                                <input type="checkbox" value="started" ${currentStatuses.includes('started') ? 'checked' : ''}> 进行中
+                                <input type="radio" name="eventStatus" value="started" ${currentStatuses.includes('started') ? 'checked' : ''}> 进行中
                             </label>
                             <label class="status-option">
-                                <input type="checkbox" value="ended" ${currentStatuses.includes('ended') ? 'checked' : ''}> 已结束
+                                <input type="radio" name="eventStatus" value="ended" ${currentStatuses.includes('ended') ? 'checked' : ''}> 已结束
                             </label>
                             <label class="status-option">
-                                <input type="checkbox" value="cancelled" ${currentStatuses.includes('cancelled') ? 'checked' : ''}> 已取消
+                                <input type="radio" name="eventStatus" value="cancelled" ${currentStatuses.includes('cancelled') ? 'checked' : ''}> 已取消
                             </label>
                         </div>
                     </div>
@@ -473,16 +472,15 @@ document.addEventListener("DOMContentLoaded", function () {
             };
 
             applyBtn.onclick = () => {
-                const selectedStatuses = Array.from(filterModal.querySelectorAll('input[type="checkbox"]:checked'))
-                    .map(cb => cb.value);
+                const selectedStatus = filterModal.querySelector('input[name="eventStatus"]:checked');
                 
-                    if (selectedStatuses.length === 0) {
-                        alert('请至少选择一个状态');
-                        return;
-                    }
+                if (!selectedStatus) {
+                    alert('请选择一个状态');
+                    return;
+                }
 
-                // Update the currentStatuses array with the selected values
-                currentStatuses = selectedStatuses;
+                // Update the currentStatuses array with only the selected value
+                currentStatuses = [selectedStatus.value];
                 
                 document.body.removeChild(filterModal);
                 currentPage = 1;
