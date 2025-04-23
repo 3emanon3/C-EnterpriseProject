@@ -130,6 +130,7 @@ document.addEventListener("DOMContentLoaded", function () {
         loadColumnWidths();
         fetchMembers();
         setupFilterButtonsAnimation();
+        initializeTooltipPositioning();
     }
 
     // ===== FILTER BUTTON ANIMATION =====
@@ -155,7 +156,8 @@ document.addEventListener("DOMContentLoaded", function () {
         // First, remove the active class and clear any inline bottom position on all filter buttons.
         document.querySelectorAll('.filter-button').forEach(btn => {
             btn.classList.remove('active');
-            btn.style.bottom = '';  // clear any inline bottom setting
+            btn.style.bottom = '';
+            btn.style.zIndex   = '';  // clear any inline bottom setting
         });
     
         // Only activate filter buttons if a general search is not in progress.
@@ -1381,6 +1383,65 @@ document.addEventListener("DOMContentLoaded", function () {
             alert("删除类别出错: " + error.message);
         }
     };
+
+    function initializeTooltipPositioning() {
+        document.querySelectorAll('.tooltip').forEach(button => {
+            const tooltipText = button.querySelector('.tooltip-text');
+            if (!tooltipText) return;
+    
+            button.addEventListener('mouseenter', () => {
+                // Make tooltip temporarily visible but transparent to measure
+                tooltipText.style.visibility = 'visible';
+                tooltipText.style.opacity = '0';
+                // Ensure transform is reset initially if needed, depending on CSS
+                tooltipText.style.transform = 'translateX(-50%)'; // Default centering
+                tooltipText.style.left = '50%';
+                tooltipText.style.right = 'auto';
+    
+    
+                const buttonRect = button.getBoundingClientRect();
+                const tooltipRect = tooltipText.getBoundingClientRect();
+                const viewportWidth = window.innerWidth;
+    
+                // Calculate where the right edge *would* be if centered
+                // buttonRect.left is position relative to viewport
+                // buttonRect.width / 2 is button's center
+                // tooltipRect.width is tooltip's width
+                const centeredTooltipLeft = buttonRect.left + (buttonRect.width / 2) - (tooltipRect.width / 2);
+                const centeredTooltipRight = centeredTooltipLeft + tooltipRect.width;
+    
+                const padding = 10; // Space from the edge
+    
+                // Check for overflow
+                if (centeredTooltipRight > (viewportWidth - padding)) {
+                    // --- Overflow detected! Align to the right ---
+                    tooltipText.style.left = 'auto'; // Unset left
+                    tooltipText.style.right = '0'; // Align tooltip's right edge with button's right edge
+                    tooltipText.style.transform = 'translateX(0)'; // Remove centering transform
+                    tooltipText.classList.add("align-right");
+                } else {
+                     // --- No overflow, use default centering ---
+                    tooltipText.style.left = '50%'; // Default
+                    tooltipText.style.right = 'auto'; // Ensure right is auto
+                    tooltipText.style.transform = 'translateX(-50%)'; // Default centering
+                    tooltipText.classList.remove("align-right");
+                }
+    
+                // Now make it fully visible
+                tooltipText.style.opacity = '1';
+    
+            }, { passive: true }); // Use passive listener for performance if scroll/touch isn't needed
+    
+            button.addEventListener('mouseleave', () => {
+                tooltipText.style.opacity = '0';
+                // Allow transition to finish before hiding completely
+                setTimeout(() => {
+                     if (button.matches(':hover')) return; // Check if mouse re-entered quickly
+                     tooltipText.style.visibility = 'hidden';
+                }, 300); // Match transition duration
+            });
+        });
+    }
 
     // ===== INITIALIZE PAGE =====
     initializePage();

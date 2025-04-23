@@ -112,6 +112,8 @@ header h1{
     filter: var(--btn-bg-h);
     transform:translateY(-2px);
     box-shadow:var(--btn-shadow-h);
+    position: relative;
+    z-index: 10;
 }
 .btn:active{
     transform:translateY(1px);
@@ -464,7 +466,7 @@ tr:hover {
     z-index: 9999;
     top: 125%; /* Position above the button */
     left: 50%;
-    margin-left: -200px; /* Center tooltip (width/2) */
+    transform: translateX(-50%);
     opacity: 0;
     transition: opacity 0.3s;
     font-size: 14px; /* Slightly smaller tooltip text */
@@ -480,13 +482,20 @@ tr:hover {
 .tooltip .tooltip-text::after {
     content: "";
     position: absolute;
-    top: 100%; /* Arrow at the bottom */
+    bottom: 100%; 
     left: 50%;
+    transform: translateX(-50%);
     margin-left: -5px;
     border-width: 5px;
     border-style: solid;
-    border-color: #333 transparent transparent transparent; /* Pointing down */
+    border-color:  transparent transparent #333 transparent; /* Pointing down */
 }
+
+.tooltip .tooltip-text.align-right::after {
+    left: auto;
+    right: 10px;       /* tweak this so the point lines up with the button */
+    transform: none;   /* no horizontal translation */
+  }
 
 .tooltip:hover .tooltip-text {
     visibility: visible;
