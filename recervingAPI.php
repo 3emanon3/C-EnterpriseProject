@@ -594,7 +594,7 @@ class DatabaseAPI {
             if (in_array($sortColumnInput, $this->allowedTables[$table])) {
                  // Use backticks for safety, handle special case for membersID
                  $sortColumn = $sortColumnInput === 'membersID'
-                     ? "CAST(REPLACE(membersID, '-', '') AS UNSIGNED)"
+                     ? $this->numericMembersIdExpr() 
                      : "`" . $sortColumnInput . "`";
             } else {
                 error_log("Warning: Invalid sort column requested: '$sortColumnInput'. Defaulting to ID.");
@@ -883,6 +883,24 @@ class DatabaseAPI {
 
     private function validateSortOrder($order) {
         return in_array(strtoupper($order), ['ASC', 'DESC']) ? strtoupper($order) : 'ASC';
+    }
+
+    /**
+     * Normalises a membersID so it can be cast safely.
+     * Example:  OS2021-000123  →  2021000123
+     */
+    private function numericMembersIdExpr(string $column = 'membersID'): string
+    {
+        // MySQL ≥ 8 has REGEXP_REPLACE; fall back to nested REPLACEs if you are on 5.7
+        $supportsRegexpReplace = version_compare($this->dsn->server_info, '8.0.0', '>=');
+        if ($supportsRegexpReplace) {
+            // Strip everything that is not 0-9 in a single pass
+            return "CAST(REGEXP_REPLACE($column, '[^0-9]', '') AS UNSIGNED)";
+        } else {
+            // MySQL 5.7: get rid of the known “OS” prefix first, then the hyphen
+            // add more REPLACE() calls here if new alpha prefixes appear later
+            return "CAST(REPLACE(REPLACE($column, 'OS', ''), '-', '') AS UNSIGNED)";
+        }
     }
 
     private function getPaginationInfo($page, $limit, $totalRecords) {
