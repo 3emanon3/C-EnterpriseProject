@@ -37,6 +37,8 @@ document.addEventListener('DOMContentLoaded', function() {
      const deselectAllBtn = document.getElementById('deselectAllBtn');
      const addSelectedMembersBtn = document.getElementById('addSelectedMembersBtn');
 
+     const modalControlPanel = document.createElement('div');
+     modalControlPanel.id = 'modalControlPanel';
      modalControlPanel.className = 'modal-control-panel';
      
      
@@ -969,7 +971,8 @@ if (searchPlaceholder) {
                 </td>
             `;
             
-            // Add checkbox event listener
+            
+      
             const checkbox = row.querySelector('.member-checkbox');
             checkbox.addEventListener('change', function() {
                 const memberId = this.getAttribute('data-id');
@@ -980,29 +983,13 @@ if (searchPlaceholder) {
                 } else {
                     selectedMembers.delete(memberId);
                 }
-                updateSelectedCount();
-            });
-            
-            modalResultsBody.appendChild(row);
-        });
-        const checkboxes = document.querySelectorAll('#modalResultsBody input[type="checkbox"]');
-        checkboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', function() {
-                const memberId = this.getAttribute('data-id');
-                const memberName = this.getAttribute('data-name');
-                
-                if (this.checked) {
-                    selectedMembers.set(memberId, memberName);
-                } else {
-                    selectedMembers.delete(memberId);
-                }
                 
                 updateSelectedCount();
             });
-             
+            modalResultsBody.appendChild(row); 
         });
         updateSelectedCount();
-    }
+}
  
     function updateSelectedCount() {
         const selectedMemberCount = document.getElementById('selectedMemberCount');
