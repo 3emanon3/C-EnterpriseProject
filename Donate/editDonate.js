@@ -1,5 +1,25 @@
 const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
 
+function selectMember(memberId,name) {
+    if (!memberId || !name) {
+        console.error('Invalid member data:', { memberId, name });
+        return;
+    }
+    
+    // Update the hidden member ID field
+    document.getElementById('selectedMemberId').value = memberId;
+    
+    // Update the name/company field
+    document.getElementById('nameCompany').value = name;
+    
+    // Close the modal
+    if (memberSearchModal) {
+        memberSearchModal.style.display = 'none';
+    }
+    
+    console.log('Member selected:', { memberId, name });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // DOM element references
     const donationForm = document.getElementById('donationForm');
@@ -514,25 +534,7 @@ async function performModalSearch(page = 1) {
     }
 
     // Select member
-function selectMember(memberId,name) {
-    if (!memberId || !name) {
-        console.error('Invalid member data:', { memberId, name });
-        return;
-    }
-    
-    // Update the hidden member ID field
-    document.getElementById('selectedMemberId').value = memberId;
-    
-    // Update the name/company field
-    document.getElementById('nameCompany').value = name;
-    
-    // Close the modal
-    if (memberSearchModal) {
-        memberSearchModal.style.display = 'none';
-    }
-    
-    console.log('Member selected:', { memberId, name });
-}
+
 
 
     // Show error message
