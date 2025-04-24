@@ -248,13 +248,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // --- Add your specific field validations here ---
         const emailField = document.getElementById('email');
-        if (emailField && emailField.value && !isValidEmail(emailField.value)) {
-            isValid = false; errors.push('邮箱格式不正确'); emailField.classList.add('error');
-        }
+    
         const phoneField = document.getElementById('phone_number');
-        if (phoneField && phoneField.value && !isValidPhone(phoneField.value)) {
-            isValid = false; errors.push('手机号码格式不正确'); phoneField.classList.add('error');
-        }
+        
         const expiredDateField = document.getElementById('expiredDate');
         // Validate expired date only if it's visible and has a value
         if (expiredDateField && expiredDateField.style.display !== 'none' && expiredDateField.value) {
@@ -500,7 +496,7 @@ document.addEventListener('DOMContentLoaded', function() {
     /**
      * Validates email format.
      */
-    function isValidEmail(email) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
+
     /**
      * Validates phone number format (basic).
      */

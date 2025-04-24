@@ -503,6 +503,12 @@ tr:hover {
     z-index: 9999;
 }
 
+.filter-button.active:hover .tooltip-text {
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
 /* Modal Styles */
 .modal-overlay {
     display: none; /* Hidden by default */
