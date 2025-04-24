@@ -240,13 +240,13 @@ document.addEventListener('DOMContentLoaded', function() {
         // Add event listeners for the buttons
         document.getElementById('usePersonalName').addEventListener('click', function() {
             document.getElementById('nameCompany').value = memberName;
-            completeSelection(memberId);
+            completeSelection(memberId, memberName, companyName); 
             document.body.removeChild(nameSelectionModal);
         });
         
         document.getElementById('useCompanyName').addEventListener('click', function() {
             document.getElementById('nameCompany').value = companyName;
-            completeSelection(memberId);
+            completeSelection(memberId, memberName, companyName);
             document.body.removeChild(nameSelectionModal);
         });
         
@@ -315,7 +315,7 @@ document.addEventListener('DOMContentLoaded', function() {
         memberSearchModal.style.display = 'none';
     }
 
-    function completeSelection(memberId) {
+    function completeSelection(memberId, memberName, companyName) {
         // Ensure selectedMemberId field exists
         let selectedMemberIdField = document.getElementById('selectedMemberId');
         if (!selectedMemberIdField) {
