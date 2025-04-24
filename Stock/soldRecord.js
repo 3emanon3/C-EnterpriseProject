@@ -458,11 +458,41 @@ document.addEventListener("DOMContentLoaded", function () {
     window.editRecord = function(id) {
         window.location.href = `editRecord.html?ID=${id}`;
     };
-
-    window.deleteRecord = async function(id) {
-        if (confirm("确定要删除这条记录吗？")) {
+    
+    // Variables for delete modal
+    let recordIdToDelete = null;
+    const deleteModal = document.getElementById('deleteModal');
+    const closeModalBtn = document.querySelector('.close-modal');
+    const cancelDeleteBtn = document.getElementById('cancelDelete');
+    const confirmDeleteBtn = document.getElementById('confirmDelete');
+    
+    // Function to close delete modal
+    function closeDeleteModal() {
+        deleteModal.style.display = 'none';
+    }
+    
+    // Event listeners for delete modal
+    closeModalBtn.addEventListener('click', closeDeleteModal);
+    cancelDeleteBtn.addEventListener('click', closeDeleteModal);
+    window.addEventListener('click', (event) => {
+        if (event.target === deleteModal) {
+            closeDeleteModal();
+        }
+    });
+    
+    // Updated delete record function to use modal
+    window.deleteRecord = function(id) {
+        recordIdToDelete = id;
+        deleteModal.style.display = 'block';
+    };
+    
+    // Event listener for confirm delete button
+    confirmDeleteBtn.addEventListener('click', async function() {
+        closeDeleteModal();
+        
+        if (recordIdToDelete) {
             try {
-                const response = await fetch(`${API_BASE_URL}?table=soldrecord&ID=${id}`, { 
+                const response = await fetch(`${API_BASE_URL}?table=soldrecord&ID=${recordIdToDelete}`, { 
                     method: "DELETE" 
                 });
                 
@@ -477,8 +507,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.error("Error deleting record:", error);
                 showNotification(false, "删除操作发生错误。");
             }
+            
+            recordIdToDelete = null;
         }
-    };
+    });
 
     // Initialize the page
     fetchBookOptions();
