@@ -317,6 +317,92 @@ legend {
     cursor: not-allowed;
 }
 
+.btn.tooltip {
+    position: relative;
+    background-color: #19136e;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+}
+
+.btn.tooltip:hover {
+    background-color: #000001;
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltip-text {
+    visibility: hidden;
+    width: 400px;
+    background-color: #333;
+    color: #fff;
+    text-align: left;
+    border-radius: 6px;
+    padding: 8px;
+    position: absolute;
+    z-index: 1000;
+    top: 125%; /* Position above the button */
+    left: 50%;
+    margin-left: -200px; /* Center tooltip (width/2) */
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 14px; /* Slightly smaller tooltip text */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    line-height: 1.4; /* Adjust line height in tooltip */
+}
+
+@media print {
+    .form-actions {
+        display: none !important;  /* Hide all buttons in form actions */
+    }
+    
+    .btn {
+        display: none !important;  /* Hide all buttons */
+    }
+    
+    #editArea {
+        box-shadow: none;  /* Remove shadows when printing */
+        padding: 0;  /* Remove padding when printing */
+    }
+    
+    body {
+        background-color: white;  /* Force white background when printing */
+        color: black;  /* Force black text when printing */
+    }
+    
+    fieldset {
+        border: 1px solid #000;  /* Ensure borders are visible in print */
+        margin: 0;
+        padding: 10px;
+    }
+    
+    .form-group {
+        page-break-inside: avoid;  /* Prevent form fields from breaking across pages */
+    }
+    
+    /* Ensure good contrast for printed content */
+    .form-group label {
+        color: black;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        border: 1px solid #ccc;
+        background: white;
+        color: black;
+    }
+}
 
 @media (max-width: 600px) {
     .search-container {

@@ -1,5 +1,7 @@
 const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
 
+
+
 function selectMember(memberId,name) {
     if (!memberId || !name) {
         console.error('Invalid member data:', { memberId, name });
@@ -29,6 +31,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const loadingIndicator = document.getElementById('loadingIndicator');
     const donationId = new URLSearchParams(window.location.search).get('id');
     const membershipSelect = document.getElementById('membership');
+    const printTableBtn = document.getElementById("printTableBtn");
+    
     
      // Get URL parameters for return navigation
  const urlParams = new URLSearchParams(window.location.search);
@@ -36,7 +40,15 @@ document.addEventListener('DOMContentLoaded', function() {
  const queryParam = urlParams.get('query') || '';
  const donationTypeParam = urlParams.get('donationType') || '';
 
+
  
+ if (printTableBtn) {
+        printTableBtn.addEventListener('click', () => {
+            console.log("Print button clicked. Triggering window.print().");
+            // The @media print CSS rules will handle the layout automatically
+            window.print();
+        });
+    }
  // Function to build return URL - centralized for consistency
  function buildReturnUrl() {
     let returnUrl = 'searchDonate.html';

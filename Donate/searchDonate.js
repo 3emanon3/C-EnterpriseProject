@@ -24,10 +24,7 @@ if (bankSearchBtn) bankSearchBtn.addEventListener('click', openBankFilterModal);
 if (donationTypeFilterBtn) donationTypeFilterBtn.addEventListener('click', openDonationTypeFilterModal);
 if (dateRangeFilterBtn) dateRangeFilterBtn.addEventListener('click', openDateRangeModal);
 if (amountRangeFilterBtn) amountRangeFilterBtn.addEventListener('click', openAmountRangeModal);
-if (printTableBtn) printTableBtn.addEventListener('click', () => {
-    console.log("Print button clicked. Triggering window.print().");
-    window.print();
-});
+
 
 // Add Bank Management button listener
 const mamageCustomBankBtn = document.getElementById("mamageCustomBankBtn");

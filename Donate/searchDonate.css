@@ -208,7 +208,7 @@ h1 {
 }
 
 table {
-    width: 100%;
+   
     border-collapse: collapse;
     margin-bottom: 20px;
     table-layout: fixed ; /* Important for resizing */
@@ -478,7 +478,7 @@ tr:hover {
 
 .modal-content {
     width: 600px;
-    max-width: 90%;
+    max-width: 100%;
     background-color: var(--modal-bg);
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -699,7 +699,7 @@ tr:hover {
 }
 
 .bank-table {
-    width: 90%;
+  
     border-collapse: collapse;
 }
 
