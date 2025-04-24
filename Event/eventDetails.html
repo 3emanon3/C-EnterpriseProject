@@ -20,10 +20,12 @@
             
         </div>
     <h1>Members List</h1>
+    <div id="search-container-placeholder"></div>
     <table>
         <thead>
           <tr>
-            <th>ID</th>
+           
+            <th>序号</th>
             <th>塾员ID</th>
             <th>英文名</th>
             <th>中文名</th>
@@ -33,6 +35,8 @@
             <th>活动ID</th>
             <th>加入日期</th>
             <th>操作</th>
+            
+           
           </tr>
         </thead>
         <tbody>
@@ -52,6 +56,16 @@
                     <input type="text" id="modalSearchInput" placeholder="输入塾员姓名、ID或公司名称搜索..." autofocus>
                     <button id="modalSearchButton"><i class="fas fa-search"></i> 搜索</button>
                 </div>
+
+                <div 
+                class="selected-count">已选择: <span id="selectedMemberCount">0</span> 位塾员
+                </div>
+                <div class="control-buttons">
+                    <button id="selectAllBtn" class="btn">全选</button>
+                    <button id="deselectAllBtn" class="btn">取消全选</button>
+                    <button id="addSelectedMembersBtn" class="btn btn-success">添加所选塾员</button>
+                </div>
+                
                 <div id="modalLoadingIndicator" class="loading" style="display: none;">正在加载...</div>
                 <div id="modalNoResults" class="no-results" style="display: none;">没有找到匹配的塾员</div>
                 <div class="results-container">

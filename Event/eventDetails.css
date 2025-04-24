@@ -96,8 +96,8 @@ tr:hover {
     margin: 15% auto;
     padding: 20px;
     border: 1px solid #888;
-    width: 80%;
-    max-width: 500px;
+    width: 100%;
+    max-width: 1000px;
 }
 
 .modal-header {
@@ -212,6 +212,8 @@ tr:hover {
     color: #aaa;
     cursor: not-allowed;
 }
+
+
 
 .select-btn {
     background-color: #28a745;
@@ -818,4 +820,209 @@ h1 {
     background-color: #007bff;
     color: white;
     border-color: #007bff;
+}
+
+/* Modern Search Container */
+.participant-search-container {
+    margin: 20px 0;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+}
+
+/* Search Input Styling */
+.search-input-wrapper {
+    position: relative;
+    margin-bottom: 15px;
+}
+
+#participantSearchInput {
+    width: 90%;
+    height: 23px;
+    padding: 10px 15px 10px 45px;
+    font-size: 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    transition: all 0.2s ease-in-out;
+    box-shadow: none;
+}
+
+#participantSearchInput:focus {
+    border-color: #4a89dc;
+    box-shadow: 0 0 0 3px rgba(74, 137, 220, 0.15);
+    outline: none;
+}
+
+.search-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9e9e9e;
+    font-size: 18px;
+}
+
+/* Clear Button Styling */
+#clearSearchBtn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #9e9e9e;
+    cursor: pointer;
+    padding: 5px;
+    font-size: 14px;
+    border-radius: 50%;
+    transition: all 0.2s;
+}
+
+#clearSearchBtn:hover {
+    background-color: #f1f1f1;
+    color: #616161;
+}
+
+/* Filter Options Container */
+.filter-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+/* Modern Checkbox Design */
+.filter-checkbox {
+    display: flex;
+    align-items: center;
+    margin-right: 12px;
+    margin-bottom: 8px;
+}
+
+.filter-checkbox input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.checkbox-custom {
+    position: relative;
+    height: 9px;
+    width: 18px;
+    background-color: #fff;
+    border: 2px solid #ddd;
+    border-radius: 3px;
+    margin-right: 8px;
+    transition: all 0.2s;
+}
+
+.filter-checkbox:hover input ~ .checkbox-custom {
+    border-color: #4a89dc;
+}
+
+.filter-checkbox input:checked ~ .checkbox-custom {
+    background-color: #4a89dc;
+    border-color: #4a89dc;
+}
+
+.checkbox-custom:after {
+    content: "";
+    position: absolute;
+    display: none;
+    left: 5px;
+    top: 1px;
+    width: 6px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.filter-checkbox input:checked ~ .checkbox-custom:after {
+    display: block;
+}
+
+.filter-checkbox label {
+    font-size: 0.9rem;
+    color: #424242;
+    cursor: pointer;
+    user-select: none;
+}
+
+/* Results Table Styling */
+.participant-results-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.05);
+}
+
+.participant-results-table thead th {
+    background-color: #f7f9fc;
+    color: #4a5568;
+    font-weight: 600;
+    padding: 14px 12px;
+    text-align: left;
+    border-bottom: 2px solid #edf2f7;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.participant-results-table tbody td {
+    padding: 14px 12px;
+    border-bottom: 1px solid #edf2f7;
+    color: #2d3748;
+    transition: background-color 0.2s;
+}
+
+.participant-results-table tbody tr:hover td {
+    background-color: #f8fafc;
+}
+
+.participant-results-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Highlight search matches */
+.highlight-match {
+    background-color: rgba(255, 220, 40, 0.25);
+    padding: 1px 3px;
+    border-radius: 3px;
+    font-weight: 500;
+}
+
+/* No results styling */
+#noResultsRow td {
+    padding: 24px;
+    text-align: center;
+    color: #7f1d1d;
+    background-color: #fef2f2;
+    border-bottom: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .filter-options {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .filter-checkbox {
+        margin-right: 0;
+        margin-bottom: 12px;
+    }
+    
+    #participantSearchInput {
+        height: 42px;
+    }
 }

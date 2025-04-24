@@ -27,34 +27,147 @@ document.addEventListener('DOMContentLoaded', function() {
     const modalNoResults = document.getElementById('modalNoResults');
     const modalPagination = document.getElementById('modalPagination');
     const addMemberBtn = document.getElementById('addMemberBtn');
-    
+    const selectedMemberCount = document.getElementById('selectedMemberCount');
 
      // Store selected members
      const selectedMembers = new Map();
     
-     // Create Multi-select control panel
-     const modalControlPanel = document.createElement('div');
+  
+     const selectAllBtn = document.getElementById('selectAllBtn');
+     const deselectAllBtn = document.getElementById('deselectAllBtn');
+     const addSelectedMembersBtn = document.getElementById('addSelectedMembersBtn');
+
      modalControlPanel.className = 'modal-control-panel';
-     modalControlPanel.innerHTML = `
-         <div class="selected-count">已选择: <span id="selectedMemberCount">0</span> 位塾员</div>
-         <div class="control-buttons">
-             <button id="selectAllBtn" class="btn">全选</button>
-             <button id="deselectAllBtn" class="btn">取消全选</button>
-             <button id="addSelectedMembersBtn" class="btn btn-success" disabled>添加所选塾员</button>
+     
+     
+     const tableContainer = document.querySelector('.table-responsive') || document.querySelector('table').parentNode;
+     const searchContainer = document.createElement('div');
+     searchContainer.className = 'participant-search-container mb-3';
+     searchContainer.innerHTML = `
+         <div class="input-group">
+             <input type="text" id="participantSearchInput" class="form-control" placeholder="搜索塾员 (ID、姓名、电话、邮箱等)">
+             <div class="input-group-append">
+                 <button class="btn btn-outline-secondary" type="button" id="clearSearchBtn">
+                     <i class="fas fa-times"></i> 清除
+                 </button>
+             </div>
+         </div>
+         <div class="mt-2">
+             <div class="form-check form-check-inline">
+                 <input class="form-check-input" type="checkbox" id="searchId" value="member-id" checked>
+                 <label class="form-check-label" for="searchId">塾员ID</label>
+             </div>
+             <div class="form-check form-check-inline">
+                 <input class="form-check-input" type="checkbox" id="searchName" value="member-name" checked>
+                 <label class="form-check-label" for="searchName">英文名</label>
+             </div>
+             <div class="form-check form-check-inline">
+                 <input class="form-check-input" type="checkbox" id="searchCName" value="member-cname" checked>
+                 <label class="form-check-label" for="searchCName">中文名</label>
+             </div>
+             <div class="form-check form-check-inline">
+                 <input class="form-check-input" type="checkbox" id="searchPhone" value="member-phone" checked>
+                 <label class="form-check-label" for="searchPhone">电话</label>
+             </div>
+             <div class="form-check form-check-inline">
+                 <input class="form-check-input" type="checkbox" id="searchEmail" value="member-email" checked>
+                 <label class="form-check-label" for="searchEmail">邮箱</label>
+             </div>
+             <div class="form-check form-check-inline">
+                 <input class="form-check-input" type="checkbox" id="searchIc" value="member-ic" checked>
+                 <label class="form-check-label" for="searchIc">身份证号</label>
+             </div>
          </div>
      `;
+ 
+     // Insert the search container before the table
+     tableContainer.parentNode.insertBefore(searchContainer, tableContainer);
+ 
+     // Get references to elements
+     const searchInput = document.getElementById('participantSearchInput');
+     const clearButton = document.getElementById('clearSearchBtn');
+    
+     const noResultsRow = document.createElement('tr');
+     noResultsRow.id = 'noResultsRow';
+     noResultsRow.innerHTML = '<td colspan="10" class="text-center">没有找到匹配的记录</td>';
+     noResultsRow.style.display = 'none';
+     tableBody.appendChild(noResultsRow);
+ 
+     // Add event listeners
+     searchInput.addEventListener('input', performSearch);
+     clearButton.addEventListener('click', clearSearch);
      
+     // Get all filter checkboxes
+     const filterCheckboxes = document.querySelectorAll('.form-check-input');
+     filterCheckboxes.forEach(checkbox => {
+         checkbox.addEventListener('change', performSearch);
+     });
+ 
+     // Function to perform search
+     function performSearch() {
+         const searchTerm = searchInput.value.trim().toLowerCase();
+         const rows = tableBody.querySelectorAll('tr:not(#noResultsRow)');
+         let hasVisibleRows = false;
+ 
+         // Get selected search fields
+         const selectedFields = Array.from(filterCheckboxes)
+             .filter(checkbox => checkbox.checked)
+             .map(checkbox => checkbox.value);
+ 
+         // If no fields are selected, show all rows
+         if (selectedFields.length === 0) {
+             rows.forEach(row => row.style.display = '');
+             noResultsRow.style.display = 'none';
+             return;
+         }
+ 
+         rows.forEach(row => {
+             if (row.classList.contains('no-data')) {
+                 row.style.display = searchTerm ? 'none' : '';
+                 return;
+             }
+ 
+             let matchFound = false;
+             if (searchTerm === '') {
+                 matchFound = true;
+             } else {
+                 // Check each selected field for matches
+                 selectedFields.forEach(field => {
+                     const cell = row.querySelector(`.${field}`);
+                     if (cell && cell.textContent.toLowerCase().includes(searchTerm)) {
+                         matchFound = true;
+                     }
+                 });
+             }
+ 
+             // Show or hide the row based on the match
+             row.style.display = matchFound ? '' : 'none';
+             
+             if (matchFound) {
+                 hasVisibleRows = true;
+             }
+         });
+ 
+         // Show or hide the "no results" message
+         noResultsRow.style.display = (hasVisibleRows || searchTerm === '') ? 'none' : '';
+     }
+ 
+     // Function to clear search
+     function clearSearch() {
+         searchInput.value = '';
+         performSearch();
+         searchInput.focus();
+     }
+
      // Insert control panel after search container
-     const searchContainer = document.querySelector('.search-container');
+    
      if (searchContainer) {
          searchContainer.parentNode.insertBefore(modalControlPanel, searchContainer.nextSibling);
      }
      
      
-     const selectAllBtn = document.getElementById('selectAllBtn');
-     const deselectAllBtn = document.getElementById('deselectAllBtn');
-     const addSelectedMembersBtn = document.getElementById('addSelectedMembersBtn');
-     const selectedMemberCount = document.getElementById('selectedMemberCount');
+   
+     
      
   
 
@@ -153,6 +266,13 @@ if (exportTableBtn) {
             }
         };
     });
+}
+const searchPlaceholder = document.getElementById('search-container-placeholder');
+if (searchPlaceholder) {
+    searchPlaceholder.appendChild(searchContainer);
+} else {
+    // Fallback to original location
+    tableContainer.parentNode.insertBefore(searchContainer, tableContainer);
 }
 
      if (selectAllBtn) {
@@ -835,27 +955,33 @@ if (exportTableBtn) {
         modalResultsBody.innerHTML = '';
         
         members.forEach(member => {
-            const memberId = member.ID || '';
-            const displayId = member.membersID || memberId;
-            const memberName = member.Name || member.CName || 'Unknown';
-            const isSelected = selectedMembers.has(memberId);
-
             const row = document.createElement('tr');
+            const isSelected = selectedMembers.has(member.ID);
+            
             row.innerHTML = `
-                <td>${escapeHTML(displayId || '')}</td>
-                <td>${escapeHTML(member.Name || '')}</td>
-                <td>${escapeHTML(member.CName || '')}</td>
-                <td>${escapeHTML(member.phone_number || '')}</td>
+                <td>${member.ID || '-'}</td>
+                <td>${member.Name || '-'}</td>
+                <td>${member.CName || '-'}</td>
+                <td>${member.phone_number || '-'}</td>
                 <td>
-                    <label class="checkbox-container">
-                    <input type="checkbox" 
-                           data-id="${memberId}" 
-                           data-name="${escapeHTML(memberName)}" 
-                           ${isSelected ? 'checked' : ''}>
-                    <span class="checkmark"></span>
-                </label>
+                  <input type="checkbox" class="member-checkbox" data-id="${member.ID}" data-name="${member.Name}" 
+                        ${isSelected ? 'checked' : ''}>
                 </td>
-            `; 
+            `;
+            
+            // Add checkbox event listener
+            const checkbox = row.querySelector('.member-checkbox');
+            checkbox.addEventListener('change', function() {
+                const memberId = this.getAttribute('data-id');
+                const memberName = this.getAttribute('data-name');
+                
+                if (this.checked) {
+                    selectedMembers.set(memberId, memberName);
+                } else {
+                    selectedMembers.delete(memberId);
+                }
+                updateSelectedCount();
+            });
             
             modalResultsBody.appendChild(row);
         });
@@ -873,9 +999,23 @@ if (exportTableBtn) {
                 
                 updateSelectedCount();
             });
+             
         });
+        updateSelectedCount();
     }
  
+    function updateSelectedCount() {
+        const selectedMemberCount = document.getElementById('selectedMemberCount');
+        if (selectedMemberCount) {
+            selectedMemberCount.textContent = selectedMembers.size;
+            
+            // Enable/disable the add button based on selection
+            const addSelectedMembersBtn = document.getElementById('addSelectedMembersBtn');
+            if (addSelectedMembersBtn) {
+                addSelectedMembersBtn.disabled = selectedMembers.size === 0;
+            }
+        }
+    }
 
     // 防抖函数
     function debounce(func, wait) {
