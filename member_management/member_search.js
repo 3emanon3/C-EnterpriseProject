@@ -1278,7 +1278,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!container) return;
         container.innerHTML = '<p>加载中……</p>';
         try {
-            const response = await fetch(`${API_BASE_URL}?table=applicants_types`);
+            const response = await fetch(`${API_BASE_URL}?table=applicants_types&limit=10000`);
             if (!response.ok) throw new Error("获取申请人类别失败。");
             const data = await response.json();
             const types = data.data || [];
