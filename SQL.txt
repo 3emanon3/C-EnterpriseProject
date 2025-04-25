@@ -1,0 +1,53 @@
+/*————————————————————————————
+  Event 2 ─ update_event_status
+  ————————————————————————————*/
+CREATE DEFINER=`root`@`localhost`
+EVENT `update_event_status`
+    ON SCHEDULE EVERY 1 MINUTE
+        STARTS '2025-03-12 14:42:00'
+    ON COMPLETION NOT PRESERVE
+    ENABLE
+DO
+BEGIN
+    -- mark events whose end_time has passed
+    UPDATE event
+    SET    status = 'ended'
+    WHERE  status   = 'started'
+      AND  end_time IS NOT NULL
+      AND  end_time <= NOW();
+
+    -- mark events whose start_time has arrived
+    UPDATE event
+    SET    status = 'started'
+    WHERE  status     = 'not started'
+      AND  start_time IS NOT NULL
+      AND  start_time <= NOW()
+      AND (end_time IS NULL OR end_time > NOW());
+END;
+
+
+/*————————————————————————————
+  Stored procedure ─ UpdateDesignation
+  ————————————————————————————*/
+CREATE DEFINER=`root`@`localhost`
+PROCEDURE `UpdateDesignation`()
+BEGIN
+    UPDATE members
+    SET   `Designation of Applicant` = '5'
+    WHERE (YEAR(`expired date`) <  YEAR(CURDATE()))
+       OR (YEAR(`expired date`) =  YEAR(CURDATE())
+           AND MONTH(`expired date`) <= MONTH(CURDATE()));
+END;
+
+
+/*————————————————————————————
+  Event 1 ─ CallUpdateDesignation
+  ————————————————————————————*/
+CREATE DEFINER=`root`@`localhost`
+EVENT `CallUpdateDesignation`
+    ON SCHEDULE EVERY 1 DAY
+        STARTS '2025-03-06 00:00:00'
+    ON COMPLETION NOT PRESERVE
+    ENABLE
+DO
+    CALL UpdateDesignation();
