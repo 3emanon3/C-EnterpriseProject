@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 25, 2025 at 05:10 AM
+-- Generation Time: Apr 25, 2025 at 11:37 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -2865,7 +2865,8 @@ DELIMITER ;
 --
 CREATE TABLE `vparticipants` (
 `ID` int(11)
-,`membersID` varchar(255)
+,`membersID` int(255)
+,`memberId` varchar(255)
 ,`Name` varchar(255)
 ,`CName` varchar(255)
 ,`phone_number` varchar(255)
@@ -2921,7 +2922,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `vparticipants`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vparticipants`  AS SELECT `participants`.`ID` AS `ID`, `members`.`membersID` AS `membersID`, `members`.`Name` AS `Name`, `members`.`CName` AS `CName`, `members`.`phone_number` AS `phone_number`, `members`.`email` AS `email`, `members`.`IC` AS `IC`, `event`.`title` AS `eventID`, `participants`.`joined_at` AS `joined_at` FROM ((`participants` join `members` on(`participants`.`memberID` = `members`.`ID`)) join `event` on(`participants`.`eventID` = `event`.`ID`)) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vparticipants`  AS SELECT `participants`.`ID` AS `ID`, `members`.`ID` AS `membersID`, `members`.`membersID` AS `memberId`, `members`.`Name` AS `Name`, `members`.`CName` AS `CName`, `members`.`phone_number` AS `phone_number`, `members`.`email` AS `email`, `members`.`IC` AS `IC`, `event`.`title` AS `eventID`, `participants`.`joined_at` AS `joined_at` FROM ((`participants` join `members` on(`participants`.`memberID` = `members`.`ID`)) join `event` on(`participants`.`eventID` = `event`.`ID`)) ;
 
 -- --------------------------------------------------------
 
