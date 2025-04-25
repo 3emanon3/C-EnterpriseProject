@@ -48,7 +48,7 @@ class DatabaseAPI {
         'vsoldrecord' => ['ID', 'BookID', 'Book', 'memberID', 'membership', 'Name/Company_Name', 'quantity_in', 'quantity_out', 'InvoiceNo', 'Date', 'price', 'Remarks'],
         'event' => ['ID', 'title', 'status', 'start_time', 'end_time', 'created_at', 'location', 'description', 'max_participant', 'registration_deadline', 'price', 'online_link'],
         'participants' => ['ID', 'eventID', 'memberID', 'joined_at'],
-        'vparticipants' => ['ID', 'membersID',memberId, 'Name', 'CName', 'phone_number', 'email', 'IC', 'eventID', 'joined_at'],
+        'vparticipants' => ['ID', 'membersID', 'memberId', 'Name', 'CName', 'phone_number', 'email', 'IC', 'eventID', 'joined_at'],
         'bank'=>['ID','Bank'],
         'donationtypes'=>['ID','donationTypes'],
     ];
