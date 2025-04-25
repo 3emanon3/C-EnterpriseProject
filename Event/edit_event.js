@@ -27,6 +27,22 @@ document.addEventListener('DOMContentLoaded', function() {
     const urlParams = new URLSearchParams(window.location.search);
     const eventId = urlParams.get('id');
     
+    let formChanged = false;
+    const formInputs = document.querySelectorAll('input, select, textarea');
+    formInputs.forEach(input => {
+        input.addEventListener('change', () => {
+            formChanged = true;
+        });
+    });
+
+    // Add navigation warning
+    window.addEventListener('beforeunload', (e) => {
+        if (formChanged) {
+            e.preventDefault();
+            e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+        }
+    });
+
     // 如果有事件ID，则加载事件详情
     if (eventId) {
         loadEventDetails(eventId);
@@ -35,6 +51,8 @@ document.addEventListener('DOMContentLoaded', function() {
         alert('未指定事件ID，无法编辑事件。');
         goBack();
     }
+    
+
     
     // 设置表单提交事件
     const eventForm = document.getElementById('eventForm');
@@ -102,6 +120,11 @@ function populateForm(event) {
 
 // 保存事件
 async function saveEvent(eventId) {
+    const loadingIndicator = document.createElement('div');
+    loadingIndicator.className = 'loading-indicator';
+    loadingIndicator.textContent = 'Saving...';
+    document.body.appendChild(loadingIndicator);
+
     try {
         // 收集表单数据
         const formData = new FormData(document.getElementById('eventForm'));
@@ -132,15 +155,14 @@ async function saveEvent(eventId) {
             },
             body: JSON.stringify(eventData)
         });
+        const data = await response.json();
+        console.log('保存结果:', data);
         
         if (!response.ok) {
             const errorText = await response.text();
             throw new Error(`服务器响应错误: ${response.status}, ${errorText}`);
         }
-        
-        const data = await response.json();
-        console.log('保存结果:', data);
-        
+
         if (data.status === 'success' || data.success) {
             alert('事件保存成功！');
             window.location.href = 'searchEvent.html';
@@ -160,21 +182,36 @@ function validateForm() {
     const endTime = new Date(document.getElementById('eventEndTime').value);
     const registrationDeadline = new Date(document.getElementById('eventRegistrationDeadline').value);
     const maxParticipants = parseInt(document.getElementById('eventMaxParticipant').value);
+    const now = new Date();
     
     // 验证日期
+    if (!title) {
+        alert('Please enter an event title.');
+        return false;
+    }
+    
+    if (isNaN(startTime.getTime())) {
+        alert('Please enter a valid start time.');
+        return false;
+    }
+
+    if (isNaN(endTime.getTime())) {
+        alert('Please enter a valid end time.');
+        return false;
+    }
+
     if (endTime <= startTime) {
-        alert('结束时间必须在开始时间之后。');
+        alert('End time must be after start time.');
         return false;
     }
     
-    if (registrationDeadline > startTime) {
-        alert('报名截止日期必须在活动开始前。');
+    if (!isNaN(registrationDeadline.getTime()) && registrationDeadline > startTime) {
+        alert('Registration deadline must be before the event starts.');
         return false;
     }
     
-    // 验证其他字段
-    if (maxParticipants <= 0) {
-        alert('最大参与者数量必须大于0。');
+    if (isNaN(maxParticipants) || maxParticipants <= 0) {
+        alert('Maximum participants must be greater than 0.');
         return false;
     }
     

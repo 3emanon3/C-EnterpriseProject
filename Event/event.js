@@ -29,14 +29,7 @@ class EventManager {
         const startTimeInput = document.getElementById('eventStartTime');
         const endTimeInput = document.getElementById('eventEndTime');
         const registrationDeadlineInput = document.getElementById('eventRegistrationDeadline');
-        
-        const today = new Date();
-        today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
-        const todayStr = today.toISOString().slice(0, 16);
-        
-        startTimeInput.min = todayStr;
-        endTimeInput.min = todayStr;
-        registrationDeadlineInput.min = todayStr;
+     
         
         // Ensure end time is after start time
         startTimeInput.addEventListener('change', () => {
@@ -72,11 +65,11 @@ class EventManager {
             if (data.status === 'success') {
                 this.populateForm(data.event);
             } else {
-                this.showError('Failed to load event details.');
+                this.showError('加载活动详情失败');
             }
         } catch (error) {
             console.error('Error loading event details:', error);
-            this.showError('Failed to connect to the server.');
+            this.showError('连接服务器失败');
         } finally {
             this.hideLoading();
         }
@@ -145,10 +138,10 @@ class EventManager {
             const data = await response.json();
     
             if (data.status === 'success') {
-                alert('Event saved successfully!');
+                alert('活动保存成功!');
                 window.location.href = 'searchEvent.html';
             } else {
-                this.showError(data.message || 'Failed to save event.');
+                this.showError(data.message || '活动保存失败.');
             }
         } catch (error) {
             console.error('Error saving event:', error);
@@ -168,25 +161,21 @@ class EventManager {
         const maxParticipants = parseInt(document.getElementById('eventMaxParticipant').value);
         const now = new Date();
 
-        // Validate dates
-        if (startTime < now) {
-            this.showError('Start time cannot be in the past.');
-            return false;
-        }
+       
 
         if (endTime <= startTime) {
-            this.showError('End time must be after start time.');
+            this.showError('结束时间必须晚于开始时间');
             return false;
         }
 
         if (registrationDeadline > startTime) {
-            this.showError('Registration deadline must be before the event starts.');
+            this.showError('报名截止时间必须早于活动开始时间。');
             return false;
         }
 
         // Validate other fields
         if (maxParticipants <= 0) {
-            this.showError('Maximum participants must be greater than 0.');
+            this.showError('参与人数上限必须大于 0');
             return false;
         }
 
