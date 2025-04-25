@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
     // --- Element References ---
-    const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
+    const API_BASE_URL = '../recervingAPI.php';
     const searchInput = document.getElementById("searchInput");
     const totalDonations = document.getElementById("totalDonations");
     const loader = document.querySelector(".loader");

@@ -1,7 +1,7 @@
 // member_management.js
 document.addEventListener('DOMContentLoaded', function() {
     // API endpoint configuration
-    const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
+    const API_BASE_URL = '../recervingAPI.php';
     let isLeaving = false;
     let formChanged = false; // Track if the user has made any changes
 

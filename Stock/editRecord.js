@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
+const API_BASE_URL = '../recervingAPI.php';
 let isLeaving = false;
 let selectedMemberId = null;
 let formChanged = false; // Track if the user has made any changes

@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
+const API_BASE_URL = '../recervingAPI.php';
 let isLeaving = false;
 let selectedMemberId = null;
 let productUnitPrice = 0; // Store the unit price of the product

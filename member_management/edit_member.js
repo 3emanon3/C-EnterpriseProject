@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.log('DOM fully loaded. Initializing edit_member page...');
 
     // API endpoint configuration (Keep your existing one)
-    const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
+    const API_BASE_URL = '../recervingAPI.php';
 
     // --- Selectors for elements based on NEW HTML structure ---
     const memberForm = document.getElementById('memberForm');

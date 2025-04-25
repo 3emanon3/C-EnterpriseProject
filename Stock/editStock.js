@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
+const API_BASE_URL = '../recervingAPI.php';
 let isLeaving = false;
 let currentBase64Image = ''; // Store the current image
 let hasChanges = false; // Track if user has made changes

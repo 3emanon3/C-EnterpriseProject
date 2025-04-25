@@ -1,5 +1,4 @@
-const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
-
+const API_BASE_URL = '../recervingAPI.php';
 class EventManager {
     constructor() {
         this.eventId = new URLSearchParams(window.location.search).get('id');

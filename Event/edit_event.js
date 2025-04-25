@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
+const API_BASE_URL = '../recervingAPI.php';
 
 // 实用函数
 function formatDateTime(dateTimeStr) {
