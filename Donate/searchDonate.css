@@ -194,6 +194,7 @@ h1 {
 
 /* Table Styles */
 .table-container {
+
     background: var(--modal-bg); /* White background */
     border-radius: 8px;
     box-shadow: var(--shadow);
@@ -212,7 +213,8 @@ table {
     border-collapse: collapse;
     margin-bottom: 20px;
     table-layout: fixed ; /* Important for resizing */
-    min-width: 1200px
+    width: 100%; 
+    min-width: 1200px;
 }
 
 

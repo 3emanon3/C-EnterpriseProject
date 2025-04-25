@@ -14,11 +14,10 @@
     --success-color: #27ae60;        /* Green */
   }
   
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
+  .required {
+    color: #e74c3c;  /* Red color for the asterisk */
+    margin-left: 4px;
+}
   
   body {
     font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', Oxygen, Ubuntu, Cantarell, sans-serif;

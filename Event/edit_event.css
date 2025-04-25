@@ -3,6 +3,11 @@
     max-width: 100%;
 }
 
+.required {
+    color: #e74c3c;  /* Red color for the asterisk */
+    margin-left: 4px;
+}
+
 h1 {
     color: white;
     margin-bottom: 20px;
