@@ -71,7 +71,7 @@ function formatDate(dateString) {
 // ---------------------------
 document.addEventListener("DOMContentLoaded", function () {
     // ===== CONFIGURATION =====
-    const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
+    const API_BASE_URL = '../recervingAPI.php';
 
     // ===== DOM ELEMENTS =====
     const searchInput = document.getElementById("searchInput");
