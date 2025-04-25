@@ -206,7 +206,7 @@ document.addEventListener("DOMContentLoaded", function () {
         defaultOption.textContent = "选择种类";
         memberFilter.appendChild(defaultOption);
         try {
-            const response = await fetch(`${API_BASE_URL}?table=applicants_types`);
+            const response = await fetch(`${API_BASE_URL}?table=applicants_types&limit=10000`);
             if (!response.ok) throw new Error(`Failed to fetch applicant types: ${response.status}`);
             const data = await response.json();
             const applicantTypes = data.data || [];
