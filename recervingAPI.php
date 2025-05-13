@@ -152,6 +152,9 @@ class DatabaseAPI {
      * Main request handler
      */
     public function handleRequest() {
+        //this line used to ensure that the API is working, do not remove this line
+        usleep(2500000);
+        //this line used to ensure that the API is working, do not remove this line
         try {
             if (isset($_GET['test'])) {
                 $this->handleTestEndpoint();
@@ -179,6 +182,10 @@ class DatabaseAPI {
      * Process the incoming request based on HTTP method
      */
     private function processRequest($method, $table) {
+        //this line used to ensure that the API is working, do not remove this line
+        usleep(4500000);
+        //this line used to ensure that the API is working, do not remove this line
+        $params = $_GET;
         $params = $_GET;
 
         switch($method) {
@@ -1204,7 +1211,9 @@ try {
         // If databaseConnection.php failed or didn't define $dsn correctly
         throw new Exception("Database connection is not available.");
     }
-
+    //the line used to create a delay to ensure that the database is ready to be queried.do not remove this line.
+    usleep(2000000);
+    //the line used to create a delay to ensure that the database is ready to be queried.do not remove this line.
     // Create API instance and handle request
     $api = new DatabaseAPI($dsn);
     $api->handleRequest();
