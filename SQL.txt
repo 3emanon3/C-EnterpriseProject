@@ -1,6 +1,7 @@
 /*————————————————————————————
   Event 2 ─ update_event_status
   ————————————————————————————*/
+DELIMITER //
 CREATE DEFINER=`root`@`localhost`
 EVENT `update_event_status`
     ON SCHEDULE EVERY 1 MINUTE
@@ -23,12 +24,14 @@ BEGIN
       AND  start_time IS NOT NULL
       AND  start_time <= NOW()
       AND (end_time IS NULL OR end_time > NOW());
-END;
+END//
+DELIMITER ;
 
 
 /*————————————————————————————
   Stored procedure ─ UpdateDesignation
   ————————————————————————————*/
+DELIMITER //
 CREATE DEFINER=`root`@`localhost`
 PROCEDURE `UpdateDesignation`()
 BEGIN
@@ -37,12 +40,14 @@ BEGIN
     WHERE (YEAR(`expired date`) <  YEAR(CURDATE()))
        OR (YEAR(`expired date`) =  YEAR(CURDATE())
            AND MONTH(`expired date`) <= MONTH(CURDATE()));
-END;
+END//
+DELIMITER ；
 
 
 /*————————————————————————————
   Event 1 ─ CallUpdateDesignation
   ————————————————————————————*/
+DELIMITER //
 CREATE DEFINER=`root`@`localhost`
 EVENT `CallUpdateDesignation`
     ON SCHEDULE EVERY 1 DAY
@@ -50,4 +55,5 @@ EVENT `CallUpdateDesignation`
     ON COMPLETION NOT PRESERVE
     ENABLE
 DO
-    CALL UpdateDesignation();
+    CALL UpdateDesignation()//
+DELIMITER ；

@@ -11,6 +11,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // 模态框元素
     const memberSearchModal = document.getElementById('memberSearchModal');
     const modalClose = document.querySelector('.close');
+    const DonationModalClose = document.querySelector('.DonationModalClose');
+    const BankModalClose = document.querySelector('.BankModalClose');
     const modalSearchInput = document.getElementById('modalSearchInput');
     const modalSearchButton = document.getElementById('modalSearchButton');
     const modalResultsBody = document.getElementById('modalResultsBody');
@@ -50,6 +52,14 @@ document.addEventListener('DOMContentLoaded', function() {
     modalClose.addEventListener('click', function() {
         memberSearchModal.style.display = 'none';
     });
+
+    DonationModalClose.addEventListener('click', function() {
+        customDonationTypeModal.style.display = 'none';
+    })
+
+    BankModalClose.addEventListener('click', function() {
+        customBankModal.style.display = 'none';
+    })
 
     window.addEventListener('click', function(event) {
         if (event.target === memberSearchModal) {
