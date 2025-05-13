@@ -132,6 +132,13 @@ class DatabaseAPI {
                 'param' => ['startPrice', 'endPrice'],
                 'paramTypes' => 'dd'
             ]
+        ],
+        'soldrecord' => [
+            'dateRange' => [
+                'conditions' => ['`Date` BETWEEN ? AND ?'],
+                'param' => ['startDate', 'endDate'],
+                'paramTypes' =>'ss'
+            ],
         ]
     ];
 
