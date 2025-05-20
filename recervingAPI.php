@@ -113,7 +113,7 @@ class DatabaseAPI {
             'createDateRange' => [
                 'conditions' => ['`created_at` BETWEEN ? AND ?'],
                 'param' => ['startDate', 'endDate'],
-                'paramTypes' =>'ss'
+                'paramTypes' => 'ss'
             ],
             'priceRange' => [
                 'conditions' => ['`price` BETWEEN ? AND ?'],
@@ -133,11 +133,11 @@ class DatabaseAPI {
                 'paramTypes' => 'dd'
             ]
         ],
-        'soldrecord' => [
+        'vsoldrecord' => [
             'dateRange' => [
                 'conditions' => ['`Date` BETWEEN ? AND ?'],
                 'param' => ['startDate', 'endDate'],
-                'paramTypes' =>'ss'
+                'paramTypes' => 'ss'
             ],
         ]
     ];

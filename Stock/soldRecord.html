@@ -15,6 +15,9 @@
                 <button class="btn btn-primary" onclick="resetColumnWidths()">
                     <i class="fas fa-arrows-alt-h"></i> 重置列宽
                 </button>
+                <button id="searchDate" class="btn btn-search-date" onclick="openSearchDateModal()">
+                    <i class="fas fa-calendar-alt"></i> 按日期搜索
+                </button>
                 <button class="btn btn-primary" onclick="location.href='searchStock.html'">
                     <i class="fas fa-undo"></i> 返回
                 </button>
@@ -102,7 +105,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2>确认删除</h2>
-                <span class="close-modal">&times;</span>
+                <span class="close-modal" id="closeDeleteModalBtn">×</span>
             </div>
             <div class="modal-body">
                 <p>确定要删除这条记录吗？此操作无法撤销。</p>
@@ -110,6 +113,63 @@
             <div class="modal-footer">
                 <button id="cancelDelete" class="btn btn-secondary">取消</button>
                 <button id="confirmDelete" class="btn btn-danger">删除</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Date Modal -->
+    <div id="searchDateModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>选择查询的日期范围</h2>
+                <span class="close-modal" id="closeSearchDateModalBtn">×</span>
+            </div>
+            <div class="modal-body">
+                <p>查找在指定日期范围（包括开始和结束日期）内的记录。</p>
+                <div class="modal-form modal-form-grid">
+                    <fieldset class="date-range-group">
+                        <legend>开始日期</legend>
+                        <div class="date-inputs">
+                            <label for="searchDateStartYearInput">年:</label>
+                            <input type="number" id="searchDateStartYearInput" placeholder="YYYY" min="1900" max="2100">
+
+                            <label for="searchDateStartMonthInput">月:</label>
+                            <select id="searchDateStartMonthInput">
+                                <option value="">--月--</option>
+                                <option value="1">1</option> <option value="2">2</option> <option value="3">3</option>
+                                <option value="4">4</option> <option value="5">5</option> <option value="6">6</option>
+                                <option value="7">7</option> <option value="8">8</option> <option value="9">9</option>
+                                <option value="10">10</option> <option value="11">11</option> <option value="12">12</option>
+                            </select>
+
+                            <label for="searchDateStartDayInput">日:</label>
+                            <input type="number" id="searchDateStartDayInput" placeholder="DD" min="1" max="31">
+                        </div>
+                    </fieldset>
+                     <fieldset class="date-range-group">
+                        <legend>结束日期</legend>
+                         <div class="date-inputs">
+                            <label for="searchDateEndYearInput">年:</label>
+                            <input type="number" id="searchDateEndYearInput" placeholder="YYYY" min="1900" max="2100">
+
+                            <label for="searchDateEndMonthInput">月:</label>
+                            <select id="searchDateEndMonthInput">
+                                <option value="">--月--</option>
+                                <option value="1">1</option> <option value="2">2</option> <option value="3">3</option>
+                                <option value="4">4</option> <option value="5">5</option> <option value="6">6</option>
+                                <option value="7">7</option> <option value="8">8</option> <option value="9">9</option>
+                                <option value="10">10</option> <option value="11">11</option> <option value="12">12</option>
+                            </select>
+
+                            <label for="searchDateEndDayInput">日:</label>
+                            <input type="number" id="searchDateEndDayInput" placeholder="DD" min="1" max="31">
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="cancelSearchDate" class="btn btn-secondary">取消</button>
+                <button id="confirmSearchDate" class="btn btn-success">查询</button>
             </div>
         </div>
     </div>
