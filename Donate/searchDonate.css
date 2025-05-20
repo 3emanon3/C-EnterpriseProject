@@ -1030,100 +1030,131 @@ tr:hover {
 }
 
 
-
-
-
 @media print {
     /* --- Print Specific Styles --- */
 
-    /* Hide everything by default */
+    @page {
+        margin: 10mm; /* Standard margin for A4 */
+        size: A4;
+    }
+
+    html, body {
+        height: auto !important;
+        min-height: auto !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: none !important;
+        font-size: 9pt !important; /* Base font size for print */
+        color: #000 !important;
+    }
+
     body * {
         visibility: hidden;
-        background: transparent !important; /* Ensure no background colors print */
-        color: #000 !important; /* Ensure black text */
-        box-shadow: none !important; /* Remove shadows */
+        background: transparent !important;
+        color: #000 !important;
+        box-shadow: none !important;
         text-shadow: none !important;
     }
 
-    /* Make the table container and its contents visible */
-    .table-container, .table-container * {
-        visibility: visible;
+    .table-container,
+    .table-container *,
+    .table-responsive,
+    .table-responsive *,
+    #donationTable,
+    #donationTable * {
+        visibility: visible !important;
     }
 
-    /* Position the table container at the top-left for printing */
     .table-container {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%; /* Use full width */
-        margin: 0;
-        padding: 10px; /* Add minimal padding */
-        border: none; /* Remove container border for print */
-        box-shadow: none; /* Remove container shadow */
-        background: none; /* Remove background */
+        position: static !important; /* Allow natural flow for printing */
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        background: none !important;
+        overflow: visible !important;
     }
 
-    /* Style the table for printing */
+    .table-responsive {
+        overflow: visible !important; /* CRITICAL: Remove scrollbars for print */
+        width: 100% !important;
+    }
+
     #donationTable {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 10pt; /* Adjust font size for A4 readability */
-        margin: 0; /* Remove margin */
-        table-layout: auto; /* Allow browser to adjust column widths based on content */
+        width: 100% !important;
+        min-width: 0 !important; /* Override screen min-width */
+        border-collapse: collapse !important;
+        font-size: inherit !important; /* Inherit from body or set specifically e.g. 9pt */
+        margin: 0 !important;
+        table-layout: auto !important; /* CRITICAL: Allow browser to adjust column widths */
+        page-break-inside: auto;
     }
 
-    /* Repeat table header on each printed page */
     #donationTable thead {
-        display: table-header-group;
-        background-color: #eee !important; /* Optional: light grey header background */
-        -webkit-print-color-adjust: exact; /* Try to force background color printing */
-        print-color-adjust: exact;
+        display: table-header-group !important;
+        background-color: #f0f0f0 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
     }
 
-    /* Style table cells for printing */
-    #donationTable th, #donationTable td {
-        border: 1px solid #ccc !important; /* Simple border for clarity */
-        padding: 5px 8px; /* Reduce padding for print */
-        visibility: visible; /* Ensure cells are visible */
-        white-space: normal; /* Allow text wrapping in all cells */
-        word-wrap: break-word; /* Break long words */
-        color: #000 !important; /* Ensure black text */
-        background: none !important; /* Ensure no background */
+    #donationTable tr {
+        page-break-inside: avoid !important;
+    }
+
+    #donationTable th,
+    #donationTable td {
+        width: auto !important; /* Override inline styles from resizer */
+        min-width: auto !important; /* Allow columns to shrink/expand */
+        max-width: none !important;
+        border: 1px solid #ccc !important;
+        padding: 4px 6px !important; /* Reduced padding */
+        white-space: normal !important; /* CRITICAL: Allow text wrapping */
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
+        overflow: visible !important; /* Ensure cell content is not clipped */
+        text-align: left !important; /* Ensure consistent alignment */
     }
 
     #donationTable th {
-        font-weight: bold;
-        text-align: left;
+        font-weight: bold !important;
+        background-color: #f0f0f0 !important; /* Ensure header cells have bg */
+         -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    
+    #donationTable td[style*="text-align: right"] { /* Preserve right alignment for amount if set by JS */
+        text-align: right !important;
     }
 
-    /* Hide elements not needed for printing */
+
     header,
     .search-container,
+    .search-wrapper,
+    .search-stats,
     .pagination-container,
     .loader,
- 
-    #donationTable .resizer,      /* Hide column resizers */
-    #donationTable th i.fas,      /* Hide sort icons */
-    .btn, /* Hide all buttons (including filter/add/etc.) */
-    .modal-overlay /* Hide any open modals */
-    {
-        display: none !important; /* Use display: none for complete removal */
-        visibility: hidden !important; /* Double ensure */
+    #donationTable .resizer,
+    #donationTable th i.fas,
+    .btn, /* Hides all general buttons */
+    .tooltip,
+    .tooltip-text,
+    .modal-overlay,
+    #resetColumnWidthBtn,
+    .items-per-page /* Hide items per page selector */
+     {
+        display: none !important;
+        visibility: hidden !important;
     }
 
-    /* Prevent table rows from breaking across pages */
-    tr {
-        page-break-inside: avoid;
-    }
-
-    /* Remove hyperlink underlines for cleaner print */
     a, a:visited {
-        text-decoration: none;
+        text-decoration: none !important;
         color: #000 !important;
     }
 
     a[href]:after {
-        content: " (" attr(href) ")";
+        content: "" !important; /* Do not print (URL) after links */
     }
-    
 }
