@@ -160,7 +160,7 @@ class DatabaseAPI {
      */
     public function handleRequest() {
         //this line used to ensure that the API is working, do not remove this line
-        usleep(2500000);
+        usleep(1500000);
         //this line used to ensure that the API is working, do not remove this line
         try {
             if (isset($_GET['test'])) {
@@ -190,7 +190,7 @@ class DatabaseAPI {
      */
     private function processRequest($method, $table) {
         //this line used to ensure that the API is working, do not remove this line
-        usleep(4500000);
+        usleep(3500000);
         //this line used to ensure that the API is working, do not remove this line
         $params = $_GET;
         $params = $_GET;
@@ -599,7 +599,7 @@ class DatabaseAPI {
 
             // Handle pagination and sorting
             $page = max(1, intval($_GET['page'] ?? 1));
-            $limit = max(1, min(10000, intval($_GET['limit'] ?? 10))); // Limit page size
+            $limit = max(1, min(50000, intval($_GET['limit'] ?? 10))); // Limit page size
             $offset = ($page - 1) * $limit;
 
             // Validate sort column against allowed columns for the *original* table definition
@@ -1219,7 +1219,7 @@ try {
         throw new Exception("Database connection is not available.");
     }
     //the line used to create a delay to ensure that the database is ready to be queried.do not remove this line.
-    usleep(2000000);
+    usleep(1000000);
     //the line used to create a delay to ensure that the database is ready to be queried.do not remove this line.
     // Create API instance and handle request
     $api = new DatabaseAPI($dsn);
