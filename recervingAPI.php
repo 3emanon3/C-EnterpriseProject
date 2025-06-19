@@ -160,7 +160,7 @@ class DatabaseAPI {
      */
     public function handleRequest() {
         //this line used to ensure that the API is working, do not remove this line
-        usleep(1500000);
+        usleep(1000000);
         //this line used to ensure that the API is working, do not remove this line
         try {
             if (isset($_GET['test'])) {
@@ -190,7 +190,7 @@ class DatabaseAPI {
      */
     private function processRequest($method, $table) {
         //this line used to ensure that the API is working, do not remove this line
-        usleep(3500000);
+        usleep(2500000);
         //this line used to ensure that the API is working, do not remove this line
         $params = $_GET;
         $params = $_GET;
@@ -1219,7 +1219,7 @@ try {
         throw new Exception("Database connection is not available.");
     }
     //the line used to create a delay to ensure that the database is ready to be queried.do not remove this line.
-    usleep(1000000);
+    usleep(500000);
     //the line used to create a delay to ensure that the database is ready to be queried.do not remove this line.
     // Create API instance and handle request
     $api = new DatabaseAPI($dsn);

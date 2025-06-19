@@ -487,92 +487,92 @@ document.addEventListener('DOMContentLoaded', async () => {
     /**
      * Handles the form submission (Update Member).
      */
-async function handleSubmit(event) {
-    event.preventDefault();
-    console.log('Form submission initiated...');
+    async function handleSubmit(event) {
+        event.preventDefault();
+        console.log('Form submission initiated...');
 
-    if (!validateForm()) {
-         console.log("Form validation failed.");
-         return;
-    }
+        if (!validateForm()) {
+             console.log("Form validation failed.");
+             return;
+        }
 
-    const realDbId = memberIdField.dataset.realId; // Get the REAL ID stored in the data attribute
+        const realDbId = memberIdField.dataset.realId; // Get the REAL ID stored in the data attribute
 
-    if (!realDbId) {
-        alert('错误：无法获取有效的塾员数据库ID，无法保存。');
-        console.error("Submission aborted: Missing realDbId in dataset.");
-        return;
-    }
+        if (!realDbId) {
+            alert('错误：无法获取有效的塾员数据库ID，无法保存。');
+            console.error("Submission aborted: Missing realDbId in dataset.");
+            return;
+        }
 
-    // Prevent accidental creation attempt (shouldn't happen with loadMemberData logic, but good check)
-    if (memberIdField.value.startsWith('NEW-')) {
-         alert('错误：此页面仅用于编辑，不能创建新塾员。');
-         return;
-    }
+        // Prevent accidental creation attempt (shouldn't happen with loadMemberData logic, but good check)
+        if (memberIdField.value.startsWith('NEW-')) {
+             alert('错误：此页面仅用于编辑，不能创建新塾员。');
+             return;
+        }
 
-    const formData = new FormData(memberForm);
-    const memberData = {};
 
-    // Map form data to API keys, handling nulls/empties
-    formData.forEach((value, key) => {
-         // Use trim() for strings, handle empty strings as null for API? (Depends on API)
-         const trimmedValue = (typeof value === 'string') ? value.trim() : value;
-         // Send null if empty, otherwise send the value. Adjust if API expects empty strings.
-         memberData[key] = (trimmedValue === '') ? null : trimmedValue;
-    });
+        const formData = new FormData(memberForm);
+        const memberData = {};
 
-    // **IMPORTANT MODIFICATION: Map memberId to membersID for API**
-    if (memberData.hasOwnProperty('memberId')) {
-        memberData.membersID = memberData.memberId; // Map to API expected key
-        delete memberData.memberId; // Remove the original key to avoid confusion
-    }
-
-    // Ensure expired_date is correctly formatted or null
-    if (memberData['expired_date'] && !isValidDateFormat(memberData['expired_date'])) {
-         console.warn("Invalid date format detected again before submit, setting to null.");
-         memberData['expired_date'] = null;
-    } else if (!memberData['expired_date']) {
-         memberData['expired_date'] = null; // Explicitly null if empty
-    }
-
-    // Add the action for the API
-    memberData.action = 'update_member'; // Or whatever your API expects for updates
-
-    console.log('Submitting update for DB ID:', realDbId);
-    console.log('Payload:', JSON.stringify(memberData, null, 2));
-    showLoading(loadingIndicator);
-
-    try {
-        // Use PUT method for updates, targeting the specific member ID
-        const url = `${API_BASE_URL}?table=members&ID=${encodeURIComponent(realDbId)}`;
-        const response = await fetch(url, {
-            method: 'PUT', // Use PUT for updating existing resource
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(memberData) // Send the mapped data
+        // Map form data to API keys, handling nulls/empties
+        formData.forEach((value, key) => {
+             // Use trim() for strings, handle empty strings as null for API? (Depends on API)
+             const trimmedValue = (typeof value === 'string') ? value.trim() : value;
+             // Send null if empty, otherwise send the value. Adjust if API expects empty strings.
+             memberData[key] = (trimmedValue === '') ? null : trimmedValue;
         });
 
-        const responseData = await handleApiResponse(response); // Use refined handler
-        console.log('API update response:', responseData);
-
-        if (responseData.status === 'success' || response.ok) { // Check status or response.ok
-            alert('塾员信息更新成功！');
-            // Optionally redirect or just stay on the page
-            // window.location.href = 'member_search.html'; // Example redirect
-             window.history.back(); // Go back to previous page (likely search results)
-        } else {
-            // Error message should be parsed by handleApiResponse
-            throw new Error(responseData.message || '保存失败，请重试。');
+        if (memberData.hasOwnProperty('memberId')) {
+            memberData.membersID = memberData.memberId;
+            delete memberData.memberId;
         }
-    } catch (error) {
-        console.error('Error during submission:', error);
-        // Show error on the main form
-        showError(`更新失败: ${error.message}`);
-    } finally {
-        hideLoading(loadingIndicator);
+
+        // Ensure expired_date is correctly formatted or null
+        if (memberData['expired_date'] && !isValidDateFormat(memberData['expired_date'])) {
+             console.warn("Invalid date format detected again before submit, setting to null.");
+             memberData['expired_date'] = null;
+        } else if (!memberData['expired_date']) {
+             memberData['expired_date'] = null; // Explicitly null if empty
+        }
+
+        // Add the action for the API
+        memberData.action = 'update_member'; // Or whatever your API expects for updates
+
+        console.log('Submitting update for DB ID:', realDbId);
+        console.log('Payload:', JSON.stringify(memberData, null, 2));
+        showLoading(loadingIndicator);
+
+        try {
+            // Use PUT method for updates, targeting the specific member ID
+            const url = `${API_BASE_URL}?table=members&ID=${encodeURIComponent(realDbId)}`;
+            const response = await fetch(url, {
+                method: 'PUT', // Use PUT for updating existing resource
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(memberData) // Send the mapped data
+            });
+
+            const responseData = await handleApiResponse(response); // Use refined handler
+            console.log('API update response:', responseData);
+
+            if (responseData.status === 'success' || response.ok) { // Check status or response.ok
+                alert('塾员信息更新成功！');
+                // Optionally redirect or just stay on the page
+                // window.location.href = 'member_search.html'; // Example redirect
+                 window.history.back(); // Go back to previous page (likely search results)
+            } else {
+                // Error message should be parsed by handleApiResponse
+                throw new Error(responseData.message || '保存失败，请重试。');
+            }
+        } catch (error) {
+            console.error('Error during submission:', error);
+            // Show error on the main form
+            showError(`更新失败: ${error.message}`);
+        } finally {
+            hideLoading(loadingIndicator);
+        }
     }
-}
 
 
     /**
