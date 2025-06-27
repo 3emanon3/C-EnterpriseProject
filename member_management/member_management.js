@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const loadingIndicator = document.getElementById('loadingIndicator');
     const designation_of_applicant = document.getElementById('designation_of_applicant');
     const expiredDateOptions = document.getElementById('expiredDateOptions');
+    const paymentDateInput = document.getElementById('payment_date');
 
     // Modal elements for adding applicant type
     const addTypeModal = document.getElementById('addTypeModal'); // The overlay
@@ -52,6 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Event listeners
     addMemberForm.addEventListener('submit', handleMainFormSubmit);
     expiredDateOptions.addEventListener('change', handleExpiryOptionChange);
+    paymentDateInput.addEventListener('change', handleExpiryOptionChange);
 
     // --- Event Listeners for Modal ---
     // Add listener to the '+' button to open the modal
@@ -252,6 +254,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const phoneField = document.getElementById('phone_number');
         
         const expiredDateField = document.getElementById('expiredDate');
+        
+        const expiredOption = document.getElementById('expiredDateOptions').value;
+        if ((expiredOption === '1year' || expiredOption === '2year' || expiredOption === '3years') && !paymentDateInput.value) {
+            isValid = false;
+            errors.push('选择了到期年限后，汇款日期是必填项');
+            paymentDateInput.classList.add('error');
+        }
+
         // Validate expired date only if it's visible and has a value
         if (expiredDateField && expiredDateField.style.display !== 'none' && expiredDateField.value) {
             const expiredDate = new Date(expiredDateField.value);
@@ -459,37 +469,46 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- Helper Functions ---
 
     /**
-     * Handles changes in the expiry date duration selection.
+     * Handles changes in the expiry date duration selection, based on payment date.
      */
     function handleExpiryOptionChange() {
         const selectedOption = expiredDateOptions.value;
         const dateInput = document.getElementById('expiredDate');
-        const today = new Date();
-        const todayString = today.toISOString().split('T')[0]; // YYYY-MM-DD format
-
-        dateInput.min = todayString; // Set min date for custom and calculated dates
+        const paymentDateValue = paymentDateInput.value;
 
         if (selectedOption === 'custom') {
             dateInput.style.display = 'block';
-            dateInput.value = '';
+            // Set min date to payment date if available, otherwise today
+            if (paymentDateValue) {
+                dateInput.min = paymentDateValue;
+            } else {
+                const todayString = new Date().toISOString().split('T')[0];
+                dateInput.min = todayString;
+            }
         } else if (selectedOption === '') {
             dateInput.style.display = 'none';
             dateInput.value = '';
-        } else {
-            let expiryDate = new Date(today);
-            if (selectedOption === '1year') expiryDate.setFullYear(today.getFullYear() + 1);
-            else if (selectedOption === '2year') expiryDate.setFullYear(today.getFullYear() + 2);
-            else if (selectedOption === '3years') expiryDate.setFullYear(today.getFullYear() + 3);
+        } else { // For '1year', '2year', '3years'
+            dateInput.style.display = 'block'; // Ensure it's visible
 
-            expiryDate.setDate(expiryDate.getDate() - 1); // One day less for exact duration
+            if (paymentDateValue) {
+                // Use a specific time to avoid timezone issues with new Date(string)
+                const baseDate = new Date(paymentDateValue + 'T00:00:00');
+                let expiryDate = new Date(baseDate);
 
-             // Ensure calculated date is not in the past (edge case for end of month/year)
-             if (expiryDate < today) {
-                 expiryDate = today; // Default to today if calculation goes wrong
-             }
+                if (selectedOption === '1year') expiryDate.setFullYear(baseDate.getFullYear() + 1);
+                else if (selectedOption === '2year') expiryDate.setFullYear(baseDate.getFullYear() + 2);
+                else if (selectedOption === '3years') expiryDate.setFullYear(baseDate.getFullYear() + 3);
 
-            dateInput.value = expiryDate.toISOString().split('T')[0]; // Set YYYY-MM-DD
-            dateInput.style.display = 'block';
+                expiryDate.setDate(expiryDate.getDate() - 1); // One day less for exact duration
+
+                dateInput.value = expiryDate.toISOString().split('T')[0]; // Set YYYY-MM-DD
+                dateInput.min = paymentDateValue;
+            } else {
+                // If no payment date is set, clear the expiry date.
+                // The form validation will catch this on submit.
+                dateInput.value = '';
+            }
         }
     }
 

@@ -156,6 +156,16 @@
                         </select>
                     </div>
 
+                    <div class="form-group">
+                        <label for="payment_date">汇款日期</label>
+                        <input type="date" id="payment_date" name="payment_date" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="invoice_number">发票号码</label>
+                        <input type="text" id="invoice_number" name="Invoice_number" class="form-control">
+                    </div>
+
                     <!-- Expiry Date Field - Copied structure from member_management -->
                     <div class="form-group">
                         <label>到期日期 (YYYY-MM-DD):</label>
@@ -249,6 +259,8 @@
          <div class="print-item"><strong>公司名字:</strong> {{companyName}}</div>
          <div class="print-item"><strong>职位:</strong> {{position}}</div>
          <div class="print-item"><strong>生日月份:</strong> {{birthday}}</div>
+         <div class="print-item"><strong>汇款日期:</strong> {{paymentDate}}</div>
+         <div class="print-item"><strong>发票号码:</strong> {{invoiceNumber}}</div>
          <div class="print-item"><strong>到期日期:</strong> {{expiredDate}}</div>
          <div class="print-item"><strong>出生地点:</strong> {{birthplace}}</div>
          <div class="print-item"><strong>其他:</strong> {{others}}</div>
