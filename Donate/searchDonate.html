@@ -16,10 +16,10 @@
                 <h1>乐捐管理系统</h1>
                 <div class="button-container">
                     <button id="resetColumnWidthBtn" class="btn btn-column" title="重置列宽">
-                        <i class="fas fa-arrows-alt-h"></i> 重置列宽
+                        <i class="fas fa-arrows-alt-h"></i> 重置列宽 Reset Column Width
                     </button>
                     <button class="btn btn-primary tooltip" onclick="location.href='../index.html'">
-                        <i class="fas fa-home"></i> 返回
+                        <i class="fas fa-home"></i> 返回 Return
                         <span class="tooltip-text">
                             功能:返回到主项目页面
                             <br>
@@ -31,7 +31,7 @@
                         </span>
                     </button>
                     <button class="btn btn-success tooltip" onclick="location.href='donate.html'">
-                        <i class="fas fa-hand-holding-heart"></i> 添加新乐捐
+                        <i class="fas fa-hand-holding-heart"></i> 添加新乐捐 Add New Donation
                         <span class="tooltip-text">
                             功能:打开表单添加新的活动记录
                             <br>
@@ -43,7 +43,7 @@
                         </span>
                     </button>
                     <button class="btn btn-info tooltip" type="button" id="mamageCustomBankBtn">
-                        <i class="fas fa-users"></i> 银行管理
+                        <i class="fas fa-users"></i> 银行管理 Manage Banks Types
                         <span class="tooltip-text">
                             功能: 管理捐款银行类型
                             <br>
@@ -57,7 +57,7 @@
 
                     <!-- Button for Bank Filter -->
                     <button class="btn btn-warning tooltip" type="button" id="bankSearchBtn">
-                        <i class="fas fa-university"></i> 银行筛选
+                        <i class="fas fa-university"></i> 银行筛选 Bank Filter
                         <span class="tooltip-text">
                             功能:根据银行类型过滤点击记录
                             <br>
@@ -71,7 +71,7 @@
 
                    <!-- Add the new Type Management button here -->
                     <button class="btn btn-primary tooltip" type="button" id="manageTypeBtn">
-                        <i class="fas fa-tags"></i> 类型管理
+                        <i class="fas fa-tags"></i> 类型管理 Manage Donation Types
                          <span class="tooltip-text">
                             功能: 管理乐捐类型
                             <br>
@@ -84,7 +84,7 @@
                     </button>
                     <!-- Button for Donation Type Filter -->
                     <button class="btn btn-danger tooltip" type="button" id="donationTypeFilterBtn">
-                        <i class="fas fa-tags"></i> 类型筛选
+                        <i class="fas fa-tags"></i> 类型筛选 Donation Type Filter
                         <span class="tooltip-text">
                             功能:点击类型过滤记录
                             <br>
@@ -99,7 +99,7 @@
                     </button>
                     <!-- New Button for Date Range Filter -->
                     <button class="btn btn-info tooltip" type="button" id="dateRangeFilterBtn">
-                        <i class="fas fa-calendar-alt"></i> 日期范围筛选
+                        <i class="fas fa-calendar-alt"></i> 日期范围筛选 Date Range Filter
                         <span class="tooltip-text">
                             功能:根据日期范围过滤记录
                             <br>
@@ -112,7 +112,7 @@
                     </button>
                     <!-- New Button for Amount Range Filter -->
                     <button class="btn btn-purple tooltip" type="button" id="amountRangeFilterBtn">
-                        <i class="fas fa-dollar-sign"></i> 金额范围筛选
+                        <i class="fas fa-dollar-sign"></i> 金额范围筛选 Amount Range Filter
                         <span class="tooltip-text">
                             功能:根据捐款金额范围过滤记录
                             <br>
@@ -127,7 +127,7 @@
                     </button>
                     <!-- New Button for Printing -->
                     <button class="btn btn-dark tooltip" type="button" id="printTableBtn">
-                        <i class="fas fa-print"></i> 打印表格
+                        <i class="fas fa-print"></i> 打印表格 Print Table
                         <span class="tooltip-text">
                             功能:打印捐款记录表格
                             <br>
@@ -138,7 +138,7 @@
                     </button>
                     <!-- Button for List All -->
                     <button class="btn btn-secondary tooltip" type="button" id="listAllBtn">
-                    <i class="fas fa-list-ul"></i> 显示全部
+                    <i class="fas fa-list-ul"></i> 显示全部 List All
                     <span class="tooltip-text">
                         功能:显示所有记录
                         <br>
@@ -185,16 +185,16 @@
                     <thead>
                         <tr>
                             <!-- Table headers remain the same -->
-                            <th data-column="id">编号 <i class="fas fa-sort"></i><div class="resizer"></div></th>
-                            <th data-column="donor_name">姓名/公司名称 <i class="fas fa-sort"></i><div class="resizer"></div></th>
-                            <th data-column="donationTypes">乐捐类型 <i class="fas fa-sort"></i><div class="resizer"></div></th>
-                            <th data-column="Bank">银行 <i class="fas fa-sort"></i><div class="resizer"></div></th>
-                            <th data-column="membership">捐款人身份 <i class="fas fa-sort"></i><div class="resizer"></div></th>
-                            <th data-column="payment_date">支付日期 <i class="fas fa-sort"></i><div class="resizer"></div></th>
-                            <th data-column="receipt_no">收据编号 (officer receipt) <i class="fas fa-sort"></i><div class="resizer"></div></th>
-                            <th data-column="amount">金额 <i class="fas fa-sort"></i><div class="resizer"></div></th>
-                            <th data-column="Remarks">备注 <i class="fas fa-sort"></i><div class="resizer"></div></th>
-                            <th>操作</th>
+                            <th data-column="id">编号 ID <i class="fas fa-sort"></i><div class="resizer"></div></th>
+                            <th data-column="donor_name">姓名/公司名称 Name/Company Name<i class="fas fa-sort"></i><div class="resizer"></div></th>
+                            <th data-column="donationTypes">乐捐类型 Donation Types<i class="fas fa-sort"></i><div class="resizer"></div></th>
+                            <th data-column="Bank">银行 Banks<i class="fas fa-sort"></i><div class="resizer"></div></th>
+                            <th data-column="membership">捐款人身份 Donation Person ID<i class="fas fa-sort"></i><div class="resizer"></div></th>
+                            <th data-column="payment_date">支付日期 Payment Date<i class="fas fa-sort"></i><div class="resizer"></div></th>
+                            <th data-column="receipt_no">收据编号 officer receipt <i class="fas fa-sort"></i><div class="resizer"></div></th>
+                            <th data-column="amount">金额 Amount<i class="fas fa-sort"></i><div class="resizer"></div></th>
+                            <th data-column="Remarks">备注 Remarks<i class="fas fa-sort"></i><div class="resizer"></div></th>
+                            <th>操作 Action</th>
                         </tr>
                     </thead>
                     <tbody>

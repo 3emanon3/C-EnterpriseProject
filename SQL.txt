@@ -36,10 +36,10 @@ CREATE DEFINER=`root`@`localhost`
 PROCEDURE `UpdateDesignation`()
 BEGIN
     UPDATE members
-    SET   `Designation of Applicant` = '5'
-    WHERE (YEAR(`expired date`) <  YEAR(CURDATE()))
-       OR (YEAR(`expired date`) =  YEAR(CURDATE())
-           AND MONTH(`expired date`) <= MONTH(CURDATE()));
+    SET   `Designation_of_Applicant` = '5'
+    WHERE (YEAR(`expired_date`) <  YEAR(CURDATE()))
+       OR (YEAR(`expired_date`) =  YEAR(CURDATE())
+           AND MONTH(`expired_date`) <= MONTH(CURDATE()));
 END//
 DELIMITER ；
 

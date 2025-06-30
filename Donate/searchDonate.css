@@ -41,11 +41,10 @@ body {
 }
 
 .container {
-    max-width: 2500px;
+    width: fit-content;
     margin: 0 auto;
     padding: 20px;
     min-height: 95vh;
-    padding-top: 100px; /* Adjust if header height changes */
 }
 
 /* Header Styles */
@@ -56,13 +55,7 @@ header {
     padding: 14px 19px;
     border-bottom: 2px solid var(--border-color);
     background-color: var(--background-color);
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 100;
     min-height: 60px; /* Use min-height for flexibility */
-
 }
 
 .header-container {
@@ -82,11 +75,10 @@ h1 {
 .button-container {
     display: flex;
     gap: 10px;
-    flex-wrap: nowrap; /* Allow buttons to wrap */
-    width: 250%; 
-    justify-content: flex-end; /* Align buttons to the right */
+    flex-wrap: wrap;
+    flex-grow: 1;
+    justify-content: flex-end;
     padding: 4px 6px;
-  
 }
 
 /* Button Styles */
@@ -145,6 +137,7 @@ h1 {
 
 /* Search Container Styles */
 .search-container {
+    width: 100%;
     margin-bottom: 10px;
     position: relative;
     z-index: 50; /* Ensure it's below header */
@@ -194,7 +187,7 @@ h1 {
 
 /* Table Styles */
 .table-container {
-
+    width:fit-content;
     background: var(--modal-bg); /* White background */
     border-radius: 8px;
     box-shadow: var(--shadow);
@@ -204,7 +197,6 @@ h1 {
 }
 
 .table-responsive {
-    overflow-x: auto;
     width: 100%;
 }
 
