@@ -957,6 +957,52 @@ tr:hover {
     font-size: 0.9rem;
 }
 
+/* Import Modal Styles */
+#importFileInput {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0 20px;
+    border: 1px dashed var(--clr-border);
+    border-radius: 4px;
+    background-color: #f8f9fa;
+    cursor: pointer;
+}
+
+#importFileInput:hover {
+    border-color: var(--clr-primary);
+}
+
+#importStatus {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 4px;
+    display: none; /* Hidden by default */
+    text-align: left;
+    max-height: 150px;
+    overflow-y: auto;
+    line-height: 1.5;
+    font-size: 0.9rem;
+}
+
+#importStatus.status-info {
+    background-color: #e2f3fe;
+    border: 1px solid #b6e0fe;
+    color: #0c5460;
+}
+
+#importStatus.status-success {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
+
+#importStatus.status-error {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}
+
 /* Styles for Applicant Types Management Modal */
 #applicantTypesContainer .applicant-type-item {
     display: flex;

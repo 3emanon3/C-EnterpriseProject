@@ -106,6 +106,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const confirmBirthdaySearchButton = document.getElementById('confirmBirthdaySearch');
     const closeBirthdayButton = birthdayModal?.querySelector('.close-button');
 
+    // --- Import Modal Elements ---
+    const importModal = document.getElementById('importModal');
+    const importFileInput = document.getElementById('importFileInput');
+    const importStatus = document.getElementById('importStatus');
+    const confirmImportButton = document.getElementById('confirmImport');
+    const closeImportButton = importModal?.querySelector('.close-button');
+
     // --- Shared Modal Overlay ---
     const modalOverlay = document.getElementById('modalOverlay');
 
@@ -115,12 +122,11 @@ document.addEventListener("DOMContentLoaded", function () {
     let sortColumn = '';
     let sortDirection = '';
     let totalPages = 0;
-    // let currentSearchType = 'all'; // 'all', 'search', 'Birthday', 'expired' - Replaced by checking individual filter states
-    // let currentFilterValue = ''; // Use memberFilter.value directly
     let membersData = [];
     let targetStartDate = null; // For expiry search (YYYY-MM-DD)
     let targetEndDate = null;
     let targetBirthdayMonth = null;
+    let dataToImport = [];
 
     // ===== INITIALIZATION =====
     function initializePage() {
@@ -794,12 +800,18 @@ document.addEventListener("DOMContentLoaded", function () {
         confirmBirthdaySearchButton?.addEventListener('click', handleConfirmBirthdaySearch);
         closeBirthdayButton?.addEventListener('click', closeBirthdayModal);
 
+        // Import Modal Listeners
+        closeImportButton?.addEventListener('click', closeImportModal);
+        importFileInput?.addEventListener('change', handleFileSelect);
+        confirmImportButton?.addEventListener('click', performImport);
+
         modalOverlay?.addEventListener('click', () => {
             // Close any open modal when clicking overlay
             if (expiryModal?.style.display === 'block') closeExpiryModal();
             if (birthdayModal?.style.display === 'block') closeBirthdayModal();
             if (exportModal?.style.display === 'block') closeExportModal();
             if (applicantTypesModal?.style.display === 'block') closeApplicantTypesModal();
+            if (importModal?.style.display === 'block') closeImportModal();
         });
     }
 
@@ -1223,6 +1235,193 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     confirmExportButton?.addEventListener('click', exportData);
+
+    // ===== Import Data Functions =====
+    window.openImportModal = function() {
+        if (importModal && modalOverlay) {
+            // Reset state
+            dataToImport = [];
+            if (importFileInput) importFileInput.value = ''; // Clear file selection
+            if (importStatus) {
+                importStatus.style.display = 'none';
+                importStatus.textContent = '';
+                importStatus.className = '';
+            }
+            if (confirmImportButton) confirmImportButton.disabled = true;
+
+            importModal.style.display = 'block';
+            modalOverlay.style.display = 'block';
+        } else {
+            alert("无法打开导入窗口。");
+        }
+    };
+
+    window.closeImportModal = function() {
+        if (importModal && modalOverlay) {
+            importModal.style.display = 'none';
+            if (document.querySelectorAll('.modal[style*="display: block"]').length === 0) {
+                modalOverlay.style.display = 'none';
+            }
+        }
+    };
+
+    function showImportStatus(message, type = 'info') {
+        if (!importStatus) return;
+        importStatus.textContent = message;
+        importStatus.className = `status-${type}`;
+        importStatus.style.display = 'block';
+    }
+
+    function handleFileSelect(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        dataToImport = [];
+        confirmImportButton.disabled = true;
+        showImportStatus('正在读取文件...', 'info');
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const data = e.target.result;
+            try {
+                const workbook = XLSX.read(data, { type: 'binary', cellDates: true });
+                const sheetName = workbook.SheetNames[0];
+                const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+                processAndValidateFile(jsonData);
+            } catch (error) {
+                console.error("Error reading or parsing file:", error);
+                showImportStatus(`文件处理失败: ${error.message}`, 'error');
+            }
+        };
+        reader.onerror = function(error) {
+            console.error("FileReader error:", error);
+            showImportStatus(`读取文件时出错: ${error.message}`, 'error');
+        };
+        reader.readAsBinaryString(file);
+    }
+
+    async function getApplicantTypeMap() {
+        const typeMap = new Map();
+        try {
+            const response = await fetch(`${API_BASE_URL}?table=applicants_types&limit=10000`);
+            if (!response.ok) throw new Error(`Failed to fetch applicant types: ${response.status}`);
+            const data = await response.json();
+            const applicantTypes = data.data || [];
+            applicantTypes.forEach(item => {
+                if (item.designation_of_applicant && item.ID) {
+                    typeMap.set(item.designation_of_applicant.trim(), item.ID);
+                }
+            });
+            return typeMap;
+        } catch (error) {
+            console.error("Error fetching applicant types for validation:", error);
+            throw new Error("无法获取用于验证的申请人种类列表。");
+        }
+    }
+
+    async function processAndValidateFile(jsonData) {
+        if (!jsonData || jsonData.length === 0) {
+            showImportStatus('文件为空或格式不正确，没有找到数据。', 'error');
+            return;
+        }
+
+        showImportStatus('正在验证数据...', 'info');
+
+        const REQUIRED_COLUMNS = [
+            'membersID', 'Name', 'CName', 'Designation_of_Applicant', 'Address',
+            'phone_number', 'email', 'IC', 'oldIC', 'gender', 'componyName',
+            'Birthday', 'expired_date', 'place_of_birth', 'position', 'others', 'remarks'
+        ];
+
+        const fileHeaders = Object.keys(jsonData[0]);
+        const missingHeaders = REQUIRED_COLUMNS.filter(col => !fileHeaders.includes(col));
+
+        if (missingHeaders.length > 0) {
+            showImportStatus(`文件缺少必需的列: ${missingHeaders.join(', ')}`, 'error');
+            return;
+        }
+
+        try {
+            const applicantTypeMap = await getApplicantTypeMap();
+            const processedData = [];
+
+            for (let i = 0; i < jsonData.length; i++) {
+                const row = jsonData[i];
+                const newRecord = {};
+
+                for (const col of REQUIRED_COLUMNS) {
+                    let value = row[col];
+
+                    if (col === 'Designation_of_Applicant') {
+                        if (value !== null && value !== undefined && String(value).trim() !== '') {
+                            const trimmedValue = String(value).trim();
+                            if (applicantTypeMap.has(trimmedValue)) {
+                                newRecord[col] = applicantTypeMap.get(trimmedValue);
+                            } else {
+                                throw new Error(`第 ${i + 2} 行错误: 'Designation_of_Applicant' 的值 "${trimmedValue}" 无效。`);
+                            }
+                        } else {
+                            newRecord[col] = null;
+                        }
+                    } else if (col === 'expired_date' && value instanceof Date) {
+                        const year = value.getFullYear();
+                        const month = String(value.getMonth() + 1).padStart(2, '0');
+                        const day = String(value.getDate()).padStart(2, '0');
+                        newRecord[col] = `${year}-${month}-${day}`;
+                    } else {
+                        newRecord[col] = value ?? null;
+                    }
+                }
+                processedData.push(newRecord);
+            }
+
+            dataToImport = processedData;
+            confirmImportButton.disabled = false;
+            showImportStatus(`验证成功! ${dataToImport.length} 条记录准备就绪。`, 'success');
+
+        } catch (error) {
+            dataToImport = [];
+            confirmImportButton.disabled = true;
+            showImportStatus(error.message, 'error');
+        }
+    }
+
+    async function performImport() {
+        if (dataToImport.length === 0) {
+            alert("没有可导入的数据。");
+            return;
+        }
+
+        confirmImportButton.disabled = true;
+        showImportStatus(`正在导入 ${dataToImport.length} 条记录...`, 'info');
+
+        try {
+            const response = await fetch(`${API_BASE_URL}?table=members`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dataToImport)
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.message || `服务器错误 (Status: ${response.status})`);
+            }
+
+            showImportStatus(result.message || '导入成功!', 'success');
+            setTimeout(() => {
+                closeImportModal();
+                fetchMembers();
+            }, 2000);
+
+        } catch (error) {
+            console.error("Import failed:", error);
+            showImportStatus(`导入失败: ${error.message}`, 'error');
+            confirmImportButton.disabled = false;
+        }
+    }
 
     // Global click listener for closing modals via overlay
     window.addEventListener('click', function (event) {

@@ -15,7 +15,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const donationTypeFilterBtn = document.getElementById("donationTypeFilterBtn");
     const dateRangeFilterBtn = document.getElementById("dateRangeFilterBtn");
     const amountRangeFilterBtn = document.getElementById("amountRangeFilterBtn");
-    const printTableBtn = document.getElementById("printTableBtn"); // Get reference to the new print button
+    const printTableBtn = document.getElementById("printTableBtn");
+    const exportExcelBtn = document.getElementById("exportExcelBtn"); // Get reference to the new export button
     const listAllBtn = document.getElementById('listAllBtn');
     const resetColumnWidthBtn = document.getElementById("resetColumnWidthBtn");
 
@@ -24,6 +25,7 @@ if (bankSearchBtn) bankSearchBtn.addEventListener('click', openBankFilterModal);
 if (donationTypeFilterBtn) donationTypeFilterBtn.addEventListener('click', openDonationTypeFilterModal);
 if (dateRangeFilterBtn) dateRangeFilterBtn.addEventListener('click', openDateRangeModal);
 if (amountRangeFilterBtn) amountRangeFilterBtn.addEventListener('click', openAmountRangeModal);
+if (exportExcelBtn) exportExcelBtn.addEventListener('click', openExportModal);
 
 
 // Add Bank Management button listener
@@ -215,7 +217,7 @@ if (resetColumnWidthBtn) {
     // --- Data Fetching for Filters (Bank/Type) ---
     // ... (keep existing filter fetching functions: fetchFilterData, initializeFilters)
     async function fetchFilterData(type) {
-        const url = `${API_BASE_URL}?table=${type}`;
+        const url = `${API_BASE_URL}?table=${type}&limit=10000`;
         try {
             const response = await fetch(url);
             if (!response.ok) throw new Error(`Failed to fetch ${type} data: ${response.status}`);
@@ -685,6 +687,265 @@ if (resetColumnWidthBtn) {
             contentSpan.innerHTML = `<i class="fas fa-dollar-sign"></i> 金额范围筛选`;
             amountRangeFilterBtn.title = '';
             amountRangeFilterBtn.classList.remove('active-filter');
+        }
+    }
+
+    // --- Excel Export ---
+    function openExportModal() {
+        const modalId = 'exportExcelModal';
+        const existingModal = document.getElementById(modalId);
+        if (existingModal) existingModal.remove();
+
+        const modalOverlay = document.createElement('div');
+        modalOverlay.className = 'modal-overlay';
+        modalOverlay.id = modalId;
+
+        const modalContent = document.createElement('div');
+        modalContent.className = 'modal-content export-modal-content';
+
+        // Build Bank options
+        let bankOptions = '<option value="">所有银行</option>';
+        Object.entries(BANKS).forEach(([id, name]) => {
+            bankOptions += `<option value="${escapeHTML(name)}">${escapeHTML(name)}</option>`;
+        });
+
+        // Build Type options
+        let typeOptions = '<option value="">所有类型</option>';
+        Object.entries(DONATION_TYPES).forEach(([id, name]) => {
+            typeOptions += `<option value="${escapeHTML(name)}">${escapeHTML(name)}</option>`;
+        });
+
+        let columnsHtml = '';
+        tableHeaders.forEach(th => {
+            const columnKey = th.dataset.column;
+            // Use the header text content, but remove the sort icon text if present
+            const headerText = th.cloneNode(true);
+            headerText.querySelectorAll('i, .resizer').forEach(el => el.remove());
+            const cleanHeaderText = headerText.textContent.trim();
+
+            if (columnKey) { // Skip 'Action' column
+                columnsHtml += `
+                    <div class="column-item">
+                        <input type="checkbox" id="col-${columnKey}" data-column-key="${columnKey}" checked>
+                        <label for="col-${columnKey}">${escapeHTML(cleanHeaderText)}</label>
+                    </div>
+                `;
+            }
+        });
+
+        modalContent.innerHTML = `
+            <div class="modal-header">
+                <h3>导出到 Excel</h3>
+                <button class="close-btn" aria-label="关闭">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="export-filters-container">
+                    <h4>筛选导出数据 (当前筛选条件已应用)</h4>
+                    <div class="filter-grid">
+                        <div class="input-group">
+                            <label for="exportBankFilter">银行:</label>
+                            <select id="exportBankFilter">${bankOptions}</select>
+                        </div>
+                        <div class="input-group">
+                            <label for="exportTypeFilter">乐捐类型:</label>
+                            <select id="exportTypeFilter">${typeOptions}</select>
+                        </div>
+                        <div class="input-group">
+                            <label for="exportStartDate">开始日期:</label>
+                            <input type="date" id="exportStartDate">
+                        </div>
+                        <div class="input-group">
+                            <label for="exportEndDate">结束日期:</label>
+                            <input type="date" id="exportEndDate">
+                        </div>
+                        <div class="input-group">
+                            <label for="exportStartAmount">最低金额 (RM):</label>
+                            <input type="number" id="exportStartAmount" placeholder="例如 50.00" min="0" step="0.01">
+                        </div>
+                        <div class="input-group">
+                            <label for="exportEndAmount">最高金额 (RM):</label>
+                            <input type="number" id="exportEndAmount" placeholder="例如 500.00" min="0" step="0.01">
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <h4>选择导出列</h4>
+                <div class="export-actions">
+                    <button class="btn btn-sm btn-info" id="selectAllColsBtn">全选</button>
+                    <button class="btn btn-sm btn-warning" id="deselectAllColsBtn">取消全选</button>
+                </div>
+                <div class="export-columns-container">
+                    <div class="columns-grid">
+                        ${columnsHtml}
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary cancel-export-btn">取消</button>
+                <button class="btn btn-excel" id="confirmExportBtn">
+                    <i class="fas fa-file-excel"></i> 导出
+                </button>
+            </div>
+        `;
+
+        document.body.appendChild(modalOverlay);
+        modalOverlay.appendChild(modalContent);
+
+        // Set initial values for the new filter inputs based on current page filters
+        document.getElementById('exportBankFilter').value = currentBankFilter || '';
+        document.getElementById('exportTypeFilter').value = currentDonationTypeFilter || '';
+        document.getElementById('exportStartDate').value = formatDateForInput(currentStartDate);
+        document.getElementById('exportEndDate').value = formatDateForInput(currentEndDate);
+        document.getElementById('exportStartAmount').value = currentStartPrice !== null ? currentStartPrice : '';
+        document.getElementById('exportEndAmount').value = currentEndPrice !== null ? currentEndPrice : '';
+
+        requestAnimationFrame(() => {
+            modalOverlay.classList.add('visible');
+        });
+
+        const closeModal = () => {
+            modalOverlay.classList.remove('visible');
+            modalOverlay.addEventListener('transitionend', () => modalOverlay.remove(), { once: true });
+        };
+
+        // Event Listeners
+        modalContent.querySelector('.close-btn').addEventListener('click', closeModal);
+        modalContent.querySelector('.cancel-export-btn').addEventListener('click', closeModal);
+        modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(); });
+
+        const checkboxes = modalContent.querySelectorAll('.columns-grid input[type="checkbox"]');
+        modalContent.querySelector('#selectAllColsBtn').addEventListener('click', () => {
+            checkboxes.forEach(cb => cb.checked = true);
+        });
+        modalContent.querySelector('#deselectAllColsBtn').addEventListener('click', () => {
+            checkboxes.forEach(cb => cb.checked = false);
+        });
+        modalContent.querySelector('#confirmExportBtn').addEventListener('click', () => {
+            handleExport(closeModal);
+        });
+    }
+
+    async function handleExport(closeModalCallback) {
+        const selectedColumns = Array.from(document.querySelectorAll('#exportExcelModal .columns-grid input:checked'))
+            .map(cb => cb.dataset.columnKey);
+
+        if (selectedColumns.length === 0) {
+            Swal.fire('无选择', '请至少选择一列以进行导出。', 'warning');
+            return;
+        }
+
+        Swal.fire({
+            title: '正在准备导出...',
+            text: '正在从服务器获取所有匹配的记录。',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        // --- Build URL to fetch ALL data based on the MODAL's filters ---
+        const params = new URLSearchParams();
+        params.append('table', 'donation_details');
+        params.append('limit', '50000'); // Fetch all records
+
+        // Read values from the export modal's inputs
+        const exportBank = document.getElementById('exportBankFilter').value;
+        const exportType = document.getElementById('exportTypeFilter').value;
+        const exportStartDate = document.getElementById('exportStartDate').value;
+        const exportEndDate = document.getElementById('exportEndDate').value;
+        const exportStartAmount = document.getElementById('exportStartAmount').value;
+        const exportEndAmount = document.getElementById('exportEndAmount').value;
+
+        // Get search term from main page input, as that's not in the modal
+        const searchTerm = searchInput.value.trim();
+        if (searchTerm) params.append("search", searchTerm);
+
+        // Apply filters from the modal
+        if (exportBank) params.append("Bank", exportBank);
+        if (exportType) params.append("donationTypes", exportType);
+        if (exportStartDate || exportEndDate) {
+            params.append("dateRange", "true");
+            if (exportStartDate) params.append("startDate", exportStartDate);
+            if (exportEndDate) params.append("endDate", exportEndDate);
+        }
+        const startPrice = exportStartAmount ? parseFloat(exportStartAmount) : null;
+        const endPrice = exportEndAmount ? parseFloat(exportEndAmount) : null;
+        if (startPrice !== null || endPrice !== null) {
+            params.append("priceRange", "true");
+            if (startPrice !== null) params.append("startPrice", startPrice.toString());
+            if (endPrice !== null) params.append("endPrice", endPrice.toString());
+        }
+
+        // Sorting should still come from the main page's state
+        if (currentSortColumn) {
+            params.append("sort", mapColumnNameToApi(currentSortColumn));
+            params.append("order", currentSortOrder || 'ASC');
+        }
+
+        const url = `${API_BASE_URL}?${params.toString()}`;
+
+        try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`服务器错误: ${response.status}`);
+            const result = await response.json();
+            const allDonations = result.data || [];
+
+            if (allDonations.length === 0) {
+                Swal.fire('无数据', '没有找到符合当前筛选条件的记录可供导出。', 'info');
+                return;
+            }
+
+            // --- Prepare data for SheetJS ---
+            const columnMap = {};
+            tableHeaders.forEach(th => {
+                const columnKey = th.dataset.column;
+                const headerText = th.cloneNode(true);
+                headerText.querySelectorAll('i, .resizer').forEach(el => el.remove());
+                if (columnKey) {
+                    columnMap[columnKey] = {
+                        header: headerText.textContent.trim(),
+                        apiKey: mapColumnNameToApi(columnKey)
+                    };
+                }
+            });
+
+            const dataToExport = allDonations.map((donation, index) => {
+                const row = {};
+                selectedColumns.forEach(key => {
+                    const headerText = columnMap[key].header;
+                    const apiKey = columnMap[key].apiKey;
+                    let value = (key === 'id') ? index + 1 : (donation[apiKey] || '');
+
+                    // Apply formatting for specific columns
+                    if (key === 'payment_date') {
+                        value = formatDateTime(value) || '';
+                    } else if (key === 'amount') {
+                        const num = parseFloat(value);
+                        value = isNaN(num) ? '' : num; // Export as a number for Excel calculations
+                    }
+                    row[headerText] = value;
+                });
+                return row;
+            });
+
+            // --- Create and download the Excel file ---
+            const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Donations");
+
+            // Auto-fit columns
+            const max_width = dataToExport.reduce((w, r) => Math.max(w, ...Object.values(r).map(val => String(val).length)), 10);
+            worksheet["!cols"] = selectedColumns.map(key => ({ wch: max_width }));
+
+            const today = new Date().toISOString().slice(0, 10);
+            XLSX.writeFile(workbook, `Donations_Export_${today}.xlsx`);
+
+            Swal.close();
+            closeModalCallback(); // Close the modal on success
+
+        } catch (error) {
+            console.error("Export failed:", error);
+            Swal.fire('导出失败', `无法获取数据进行导出: ${error.message}`, 'error');
         }
     }
 

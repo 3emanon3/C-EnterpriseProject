@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="searchDonate.css">
     <!-- Optional: Add SweetAlert for nicer alerts/confirmations -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Add SheetJS library for Excel export -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -134,6 +136,17 @@
                             使用方法:单击按钮后，将当前捐款记录表格打印出来
                             <br>
                             适用情况:当需要打印捐款记录表格时使用
+                        </span>
+                    </button>
+                    <!-- New Button for Exporting to Excel -->
+                    <button class="btn btn-excel tooltip" type="button" id="exportExcelBtn">
+                        <i class="fas fa-file-excel"></i> 导出到 Excel
+                        <span class="tooltip-text">
+                            功能: 将当前筛选的捐款记录导出为 Excel 文件
+                            <br>
+                            使用方法: 点击按钮后，选择要导出的列，然后点击导出
+                            <br>
+                            适用情况: 需要将数据用于离线分析或存档时使用
                         </span>
                     </button>
                     <!-- Button for List All -->

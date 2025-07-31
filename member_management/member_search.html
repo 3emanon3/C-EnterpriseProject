@@ -6,6 +6,7 @@
     <title>Members Management System - Search</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="member_search.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -76,9 +77,6 @@
                 </button>
                 
 
-                <!-- 添加导出数据按钮 -->
-                
-
                 <select id="memberFilter" class="btn btn-light tooltip filter-button">
                     <!-- Options will be populated by JavaScript -->
                     <span class="tooltip-text">
@@ -95,6 +93,20 @@
                         <strong>种类 (Category/Type)：</strong> 指用于标识和区分名单中人员身份、状态或归属的标签。例如，“塾员”通常指正式注册的学员，“逾期”指缴费或状态过期的学员，“非塾员”则包括潜在客户、其他联系人等。具体的种类及其含义由系统设定或数据录入者决定。
                     </span>
                 </select>
+
+                <button id="importDataBtn" class="btn btn-success tooltip" onclick="openImportModal()">
+                    <i class="fas fa-file-upload"></i> 导入数据
+                    <span class="tooltip-text">
+                        <strong>核心功能：</strong> 从 .xlsx 或 .csv 文件批量导入塾员数据。
+                        <br>
+                        <strong>使用须知：</strong><br>
+                        1. <strong>文件格式：</strong> 文件必须是 .xlsx 或 .csv 格式。
+                        <br>
+                        2. <strong>列名要求：</strong> 文件的第一行必须包含所有必需的列标题，且名称需完全匹配系统字段。
+                        <br>
+                        3. <strong>数据验证：</strong> 系统将验证数据，特别是“种类”字段必须与系统中已有的类别匹配。
+                    </span>
+                </button>
 
                 <button id="exportData" class="btn btn-primary tooltip btn-export" onclick="openExportModal()">
                     <i class="fas fa-file-export"></i> 导出数据
@@ -277,7 +289,7 @@
         </div>
     </div>
 
-    <!-- Modal Overlay (Shared by both modals) -->
+    <!-- Modal Overlay (Shared by all modals) -->
     <div id="modalOverlay" class="modal-overlay"></div>
 
     <!-- Export Data Modal -->
@@ -307,6 +319,23 @@
             <div class="modal-actions">
                 <button id="confirmExport" class="btn btn-success">导出</button>
                 <button type="button" class="btn btn-secondary" onclick="closeExportModal()">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Data Modal -->
+    <div id="importModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeImportModal()">×</span>
+            <h2>从文件导入数据</h2>
+            <p>选择一个 .xlsx 或 .csv 文件进行导入。文件的第一行必须是列标题。</p>
+            <div class="modal-form">
+                <input type="file" id="importFileInput" accept=".xlsx, .csv">
+                <div id="importStatus"></div>
+            </div>
+            <div class="modal-actions">
+                <button id="confirmImport" class="btn btn-success" disabled>导入</button>
+                <button type="button" class="btn btn-secondary" onclick="closeImportModal()">取消</button>
             </div>
         </div>
     </div>

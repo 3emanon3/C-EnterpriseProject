@@ -1,10 +1,11 @@
 <?php
 $host = 'localhost';
-$db   = 'entreprise_test';
+$db   = 'enterprise_test';
 $user = 'root';
-$pass = '';
+$pass = 'admin';
+$port = 3307;
 $charset = 'utf8mb4';
 
 // Create connection
-$dsn = new mysqli($host, $user, $pass, $db);
+$dsn = new mysqli($host, $user, $pass, $db, $port);
 ?>
