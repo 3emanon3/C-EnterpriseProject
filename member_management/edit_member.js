@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const expiredDateInput = document.getElementById('expiredDate'); // Expiry date input
     const memberIdField = document.getElementById('memberId'); // Member ID input
     const printButton = document.getElementById('printButton'); // Print button
-    const paymentDateInput = document.getElementById('payment_date'); // Payment Date input
 
     // Modal elements (copied from member_management.js)
     const addTypeModal = document.getElementById('addTypeModal');
@@ -27,7 +26,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const modalLoadingIndicator = document.getElementById('modalLoadingIndicator'); // Modal loading
 
     // --- Crucial Check: Ensure elements are found ---
-    if (!memberForm || !errorMessages || !loadingIndicator || !designationSelect || !expiredDateOptions || !expiredDateInput || !memberIdField || !paymentDateInput) {
+    if (!memberForm || !errorMessages || !loadingIndicator || !designationSelect || !expiredDateOptions || !expiredDateInput || !memberIdField) {
         console.error("FATAL: One or more essential form elements not found!");
         alert("页面加载错误：缺少必要的表单元素。请刷新或联系管理员。");
         return; // Stop script execution
@@ -299,31 +298,30 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     /**
      * Handles changes in the expiry date duration selection.
-     * Calculation is now based on the 'payment_date' field.
+     * Calculation is based on the existing expiry date, or today's date if none is set.
      */
     function handleExpiryOptionChange() {
         const selectedOption = expiredDateOptions.value;
-        const paymentDateValue = paymentDateInput.value;
+        const existingExpiryDateValue = expiredDateInput.value;
 
-        // If a duration (1/2/3 years) is selected but there's no payment date, clear the expiry date and stop.
-        if (selectedOption.includes('year') && !paymentDateValue) {
-            expiredDateInput.value = ''; // Clear expiry date
-            console.warn("Expiry calculation skipped: Payment date is not set.");
-            // Optionally, you could show a brief, non-blocking message to the user.
-            return;
+        // Determine the base date for calculation.
+        // Use the existing expiry date if it's valid, otherwise use today's date.
+        let baseDate;
+        if (existingExpiryDateValue && /^\d{4}-\d{2}-\d{2}$/.test(existingExpiryDateValue)) {
+            // Use UTC to avoid timezone issues with date parsing
+            baseDate = new Date(existingExpiryDateValue + 'T00:00:00Z');
+        } else {
+            baseDate = new Date(); // Today's date
         }
-
-        // Base the calculation ONLY on the payment date
-        const baseDate = paymentDateValue ? new Date(paymentDateValue + 'T00:00:00Z') : null;
 
         if (selectedOption === 'custom') {
             expiredDateInput.style.display = 'block';
             // Don't change the value, let the user edit it.
-        } else if (selectedOption === '' || !baseDate) {
-            // If "Please select" is chosen or there's no base date for calculation, do nothing to the input.
+        } else if (selectedOption === '') {
+            // If "Please select" is chosen, do nothing to the input.
             expiredDateInput.style.display = 'block';
         } else {
-            // Calculate new date based on the selected duration FROM the payment date
+            // Calculate new date based on the selected duration FROM the base date
             let expiryDate = new Date(baseDate);
             if (selectedOption === '1year') expiryDate.setUTCFullYear(baseDate.getUTCFullYear() + 1);
             else if (selectedOption === '2year') expiryDate.setUTCFullYear(baseDate.getUTCFullYear() + 2);
@@ -411,8 +409,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             'company': ['componyName'],
             'position': ['position', 'Position'], // Add fallbacks if needed
             'birthday': ['Birthday'], // Expecting month number (1-12)
-            'payment_date': ['payment_date'],
-            'invoice_number': ['Invoice_number'],
             'expiredDate': ['expired_date'], // Expecting YYYY-MM-DD or similar
             'birthplace': ['place_of_birth'],
             'others': ['others'],
@@ -473,9 +469,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (expiredDateField && expiredDateField.value && !isValidDateFormat(expiredDateField.value)) {
             isValid = false; errors.push('到期日期格式无效 (应为 YYYY-MM-DD)'); expiredDateField.classList.add('error');
         }
-        if (paymentDateInput && paymentDateInput.value && !isValidDateFormat(paymentDateInput.value)) {
-            isValid = false; errors.push('汇款日期格式无效 (应为 YYYY-MM-DD)'); paymentDateInput.classList.add('error');
-        }
 
         if (!isValid) {
             showError(errors.join('<br>')); // Display errors using the helper
@@ -529,7 +522,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         // Ensure date fields are correctly formatted or null
-        ['expired_date', 'payment_date'].forEach(dateKey => {
+        ['expired_date'].forEach(dateKey => {
             if (memberData[dateKey] && !isValidDateFormat(memberData[dateKey])) {
                 console.warn(`Invalid date format for ${dateKey} detected before submit, setting to null.`);
                 memberData[dateKey] = null;
@@ -674,8 +667,6 @@ document.addEventListener('DOMContentLoaded', async () => {
          const position = document.getElementById('position')?.value || '';
          const birthdaySelect = document.getElementById('birthday');
          const birthdayMonthText = birthdaySelect.selectedOptions.length > 0 ? birthdaySelect.selectedOptions[0].text : '';
-         const paymentDate = document.getElementById('payment_date')?.value || '';
-         const invoiceNumber = document.getElementById('invoice_number')?.value || '';
          const expired = document.getElementById('expiredDate')?.value || ''; // Get from date input
          const birthplace = document.getElementById('birthplace')?.value || '';
          const others = document.getElementById('others')?.value || '';
@@ -698,8 +689,6 @@ document.addEventListener('DOMContentLoaded', async () => {
              '{{companyName}}': company,
              '{{position}}': position,
              '{{birthday}}': birthdayMonthText,
-             '{{paymentDate}}': paymentDate,
-             '{{invoiceNumber}}': invoiceNumber,
              '{{expiredDate}}': expired,
              '{{birthplace}}': birthplace,
              '{{others}}': others,
@@ -780,14 +769,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         console.log('Modal listeners attached.');
 
-        // Expiry and Payment Date Listeners
+        // Expiry Date Listener
         if (expiredDateOptions) {
             expiredDateOptions.addEventListener('change', handleExpiryOptionChange);
             console.log('Expiry dropdown listener attached.');
-        }
-        if (paymentDateInput) {
-            paymentDateInput.addEventListener('change', handleExpiryOptionChange);
-            console.log('Payment date listener attached.');
         }
 
 

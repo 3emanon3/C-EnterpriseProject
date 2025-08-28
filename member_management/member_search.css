@@ -106,6 +106,7 @@ header h1{
 .btn-edit                   {--btn-bg:#4caf50}
 .btn-delete                 {--btn-bg:#f44336}
 .btn-check                  {--btn-bg:#2196f3}
+.btn-renewal-term           {--btn-bg:#8e44ad}
 
 /* Universal hover & active states -------------------------------------- */
 .btn:hover{
@@ -244,6 +245,10 @@ th {
 
 th.Action {
     width: 200px; /* Fixed width for action column */
+}
+
+th.Renewals {
+    width: 100px; /* Fixed width for renewal column */
 }
 
 .resizer {
@@ -660,6 +665,48 @@ tr:hover {
     color: #777;
     font-style: italic;
     padding: 20px;
+}
+
+/* Renewal Details Styles */
+.renewal-details-row {
+    background-color: #f0f8ff; /* AliceBlue, a light, distinct color */
+}
+.renewal-details-row > td {
+    padding: 0 !important; /* Remove padding from the cell itself */
+    border-bottom: 1px solid var(--clr-border);
+}
+.renewal-details-content {
+    padding: 15px 25px;
+    text-align: center;
+}
+.renewal-history-table {
+    width: 100%;
+    max-width: 900px; /* Limit max width for readability */
+    margin: 0 auto;
+    border-collapse: collapse;
+    background-color: #fff;
+    box-shadow: var(--shadow-s);
+    border-radius: 4px;
+    overflow: hidden; /* For border-radius */
+}
+.renewal-history-table th,
+.renewal-history-table td {
+    border: 1px solid var(--clr-border);
+    padding: 10px;
+    text-align: left;
+    white-space: nowrap;
+    font-size: 0.9rem;
+}
+.renewal-history-table th {
+    background-color: #e9ecef; /* A light grey for sub-table header */
+    color: var(--clr-dark);
+}
+.renewal-history-table tr:hover {
+    background-color: #fdfdfe; /* Very subtle hover */
+}
+.btn-expand {
+    padding: 5px 10px;
+    font-size: 0.8rem;
 }
 
 

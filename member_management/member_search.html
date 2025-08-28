@@ -76,6 +76,19 @@
                     </span>
                 </button>
                 
+                <button id="searchRenewalTerm" class="btn btn-primary tooltip filter-button btn-renewal-term" onclick="openRenewalTermModal()">
+                    <i class="fas fa-history"></i> 按续费时长查询
+                    <span class="tooltip-text">
+                        <strong>核心功能：</strong> 查找在续费记录中，有过特定续费时长的塾员。
+                        <br>
+                        <strong>使用须知：</strong><br>
+                        1.  <strong>输入时长：</strong> 点击此按钮后，您需要输入一个续费时长（以月为单位）。
+                        <br>
+                        2.  <strong>筛选逻辑：</strong> 系统将查找所有在其续费历史中，至少有一条记录的“续费时长”与您输入的数字完全匹配的塾员。
+                        <br>
+                        3.  <strong>数据依赖：</strong> 依赖于塾员续费记录中准确的“续费时长 (月)”信息。
+                    </span>
+                </button>
 
                 <select id="memberFilter" class="btn btn-light tooltip filter-button">
                     <!-- Options will be populated by JavaScript -->
@@ -170,6 +183,7 @@
                             <th data-column="position">职位<div class="resizer"></div></th>
                             <th data-column="others">其他<div class="resizer"></div></th>
                             <th data-column="remarks">备注<div class="resizer"></div></th>
+                            <th class="Renewals">续费记录</th>
                             <th class="Action">操作</th>
                         </tr>
                     </thead>
@@ -285,6 +299,23 @@
             <div class="modal-actions">
                 <button id="confirmBirthdaySearch" class="btn btn-success">查询</button>
                 <button type="button" class="btn btn-secondary" onclick="closeBirthdayModal()">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Renewal Term Search Modal -->
+    <div id="renewalTermModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeRenewalTermModal()">×</span>
+            <h2>输入查询的续费时长</h2>
+            <p>查找有过特定续费时长的塾员（单位：月）。</p>
+            <div class="modal-form">
+                <label for="renewalTermInput">续费时长 (月):</label>
+                <input type="number" id="renewalTermInput" placeholder="例如: 12" min="1">
+            </div>
+            <div class="modal-actions">
+                <button id="confirmRenewalTermSearch" class="btn btn-success">查询</button>
+                <button type="button" class="btn btn-secondary" onclick="closeRenewalTermModal()">取消</button>
             </div>
         </div>
     </div>

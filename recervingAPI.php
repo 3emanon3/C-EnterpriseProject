@@ -51,6 +51,7 @@ class DatabaseAPI {
         'vparticipants' => ['ID', 'membersID', 'memberId', 'Name', 'CName', 'phone_number', 'email', 'IC', 'eventID', 'joined_at'],
         'bank'=>['ID','Bank'],
         'donationtypes'=>['ID','donationTypes'],
+        'member_renewals'=>['id','member_id','renewed_at','previous_end','new_end','term_months','recorded_at','is_first_time'],
     ];
 
     // Table mappings
@@ -81,6 +82,11 @@ class DatabaseAPI {
                 'conditions'=>['`expired_date` BETWEEN ? AND ?'],
                 'param' => ['startDate', 'endDate'],
                 'paramTypes' => 'ss'
+            ],
+            'renewalTerm' => [
+                'conditions' => ['ID IN (SELECT DISTINCT member_id FROM member_renewals WHERE term_months = ?)'],
+                'param' => ['termMonths'],
+                'paramTypes' => 'i'
             ],
         ],
         'donation_details' => [
@@ -139,7 +145,7 @@ class DatabaseAPI {
                 'param' => ['startDate', 'endDate'],
                 'paramTypes' => 'ss'
             ],
-        ]
+        ],
     ];
 
     // Response status constants
@@ -159,9 +165,6 @@ class DatabaseAPI {
      * Main request handler
      */
     public function handleRequest() {
-        //this line used to ensure that the API is working, do not remove this line
-        usleep(1000000);
-        //this line used to ensure that the API is working, do not remove this line
         try {
             if (isset($_GET['test'])) {
                 $this->handleTestEndpoint();
@@ -189,9 +192,6 @@ class DatabaseAPI {
      * Process the incoming request based on HTTP method
      */
     private function processRequest($method, $table) {
-        //this line used to ensure that the API is working, do not remove this line
-        usleep(500000);
-        //this line used to ensure that the API is working, do not remove this line
         $params = $_GET;
         $params = $_GET;
 
@@ -1218,9 +1218,6 @@ try {
         // If databaseConnection.php failed or didn't define $dsn correctly
         throw new Exception("Database connection is not available.");
     }
-    //the line used to create a delay to ensure that the database is ready to be queried.do not remove this line.
-    usleep(500000);
-    //the line used to create a delay to ensure that the database is ready to be queried.do not remove this line.
     // Create API instance and handle request
     $api = new DatabaseAPI($dsn);
     $api->handleRequest();
