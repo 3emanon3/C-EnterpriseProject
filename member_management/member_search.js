@@ -84,8 +84,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const birthdayButton = document.getElementById("searchBirthday");
     const expiredButton = document.getElementById("searchExpiry");
     const renewalTermButton = document.getElementById("searchRenewalTerm");
+    const renewalDateButton = document.getElementById("searchRenewalDate");
     const listAllMembersButton = document.getElementById("listAllMembers");
     const memberFilter = document.getElementById("memberFilter");
+    const madedPaymentFilter = document.getElementById("madedPaymentFilter");
     const table = document.getElementById('memberTable');
     const thead = table?.querySelector('thead');
     const paginationContainer = document.querySelector('.pagination');
@@ -113,6 +115,17 @@ document.addEventListener("DOMContentLoaded", function () {
     const confirmRenewalTermSearchButton = document.getElementById('confirmRenewalTermSearch');
     const closeRenewalTermButton = renewalTermModal?.querySelector('.close-button');
 
+    // --- Renewal Date Modal Elements ---
+    const renewalDateModal = document.getElementById('renewalDateModal');
+    const renewalStartDateYearInput = document.getElementById('renewalStartDateYearInput');
+    const renewalStartDateMonthInput = document.getElementById('renewalStartDateMonthInput');
+    const renewalStartDateDayInput = document.getElementById('renewalStartDateDayInput');
+    const renewalEndDateYearInput = document.getElementById('renewalEndDateYearInput');
+    const renewalEndDateMonthInput = document.getElementById('renewalEndDateMonthInput');
+    const renewalEndDateDayInput = document.getElementById('renewalEndDateDayInput');
+    const confirmRenewalDateSearchButton = document.getElementById('confirmRenewalDateSearch');
+    const closeRenewalDateButton = renewalDateModal?.querySelector('.close-button');
+
     // --- Import Modal Elements ---
     const importModal = document.getElementById('importModal');
     const importFileInput = document.getElementById('importFileInput');
@@ -134,6 +147,10 @@ document.addEventListener("DOMContentLoaded", function () {
     let targetEndDate = null;
     let targetBirthdayMonth = null;
     let targetRenewalTerm = null;
+    let targetRenewalStartDate = null;
+    let targetRenewalEndDate = null;
+    let targetRenewalType = null;
+    let targetMadedPayment = null;
     let dataToImport = [];
 
     // ===== INITIALIZATION =====
@@ -159,8 +176,14 @@ document.addEventListener("DOMContentLoaded", function () {
         if (renewalTermButton) {
             renewalTermButton.classList.add('filter-button');
         }
+        if (renewalDateButton) {
+            renewalDateButton.classList.add('filter-button');
+        }
         if (memberFilter) {
             memberFilter.classList.add('filter-button');
+        }
+        if (madedPaymentFilter) {
+            madedPaymentFilter.classList.add('filter-button');
         }
     }
 
@@ -192,9 +215,17 @@ document.addEventListener("DOMContentLoaded", function () {
                 renewalTermButton?.classList.add('active');
                 activeFilters.push(renewalTermButton);
             }
+            if (targetRenewalStartDate && targetRenewalEndDate) {
+                renewalDateButton?.classList.add('active');
+                activeFilters.push(renewalDateButton);
+            }
             if (memberFilter && memberFilter.value) {
                 memberFilter.classList.add('active');
                 activeFilters.push(memberFilter);
+            }
+            if (madedPaymentFilter && madedPaymentFilter.value) {
+                madedPaymentFilter.classList.add('active');
+                activeFilters.push(madedPaymentFilter);
             }
         }
     
@@ -269,7 +300,12 @@ document.addEventListener("DOMContentLoaded", function () {
             targetStartDate = null;
             targetEndDate = null;
             targetRenewalTerm = null;
+            targetRenewalStartDate = null;
+            targetRenewalEndDate = null;
+            targetRenewalType = null;
+            targetMadedPayment = null;
             if (memberFilter) memberFilter.value = '';
+            if (madedPaymentFilter) madedPaymentFilter.value = '';
         }
         // --- Specific Filters (Applied only if general search is inactive) ---
         else {
@@ -298,11 +334,29 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.log(`Filtering for members with renewal term of ${targetRenewalTerm} months`);
             }
 
+            // Renewal Date Range Filter
+            if (targetRenewalStartDate && targetRenewalEndDate && targetRenewalType) {
+                params.append("renewalDateRange", "true");
+                params.append("startDate", targetRenewalStartDate);
+                params.append("endDate", targetRenewalEndDate);
+                params.append("renewalType", targetRenewalType);
+                isAnyFilterActive = true;
+                console.log(`Filtering for renewals between ${targetRenewalStartDate} and ${targetRenewalEndDate} (Type: ${targetRenewalType})`);
+            }
+
             // Applicant Type Filter
             if (memberFilter && memberFilter.value) {
                 params.append("designation_of_applicant", memberFilter.value);
                 isAnyFilterActive = true;
                 console.log("Filtering by applicant type:", memberFilter.value);
+            }
+
+            // Maded Payment Filter
+            if (targetMadedPayment !== null && targetMadedPayment !== '') {
+                params.append("maded_payment", targetMadedPayment);
+                params.append("direct", "true")
+                isAnyFilterActive = true;
+                console.log("Filtering by maded payment status:", targetMadedPayment);
             }
 
             // Add search=true if any specific filter is active
@@ -321,7 +375,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 'phone_number': 'phone_number', 'email': 'email', 'IC': 'IC', 'oldIC': 'oldIC',
                 'gender': 'gender', 'componyName': 'componyName', 'Birthday': 'Birthday',
                 'expired_date': 'expired_date', 'place_of_birth': 'place_of_birth',
-                'position': 'position', 'others': 'others', 'remarks': 'remarks'
+                'position': 'position', 'others': 'others', 'remarks': 'remarks',
+                'maded_payment': 'maded_payment'
             };
             dbSortColumn = columnMap[sortColumn] || sortColumn;
             params.append("sort", dbSortColumn);
@@ -357,7 +412,7 @@ document.addEventListener("DOMContentLoaded", function () {
         } catch (error) {
             console.error("Error fetching members:", error);
             if (memberTableBody) {
-                const colspan = table?.querySelector('thead tr')?.cells.length || 19;
+                const colspan = table?.querySelector('thead tr')?.cells.length || 20;
                 memberTableBody.innerHTML = `<tr><td colspan="${colspan}" class="no-results">加载失败: ${error.message}</td></tr>`;
             }
             membersData = [];
@@ -386,22 +441,26 @@ document.addEventListener("DOMContentLoaded", function () {
         const isBirthdayFilterActive = !!targetBirthdayMonth;
         const isExpiryFilterActive = !!(targetStartDate && targetEndDate);
         const isRenewalTermFilterActive = !!targetRenewalTerm;
+        const isRenewalDateFilterActive = !!(targetRenewalStartDate && targetRenewalEndDate);
         const isTypeFilterActive = !!(memberFilter && memberFilter.value);
+        const isPaymentFilterActive = !!(madedPaymentFilter && madedPaymentFilter.value);
 
         if (members.length === 0) {
             if (generalSearchQuery) {
                 message = `没有找到匹配 "${generalSearchQuery}" 的记录`;
-            } else if (isBirthdayFilterActive || isExpiryFilterActive || isTypeFilterActive || isRenewalTermFilterActive) {
+            } else if (isBirthdayFilterActive || isExpiryFilterActive || isTypeFilterActive || isRenewalTermFilterActive || isRenewalDateFilterActive || isPaymentFilterActive) {
                 let filterDescriptions = [];
                 if (isTypeFilterActive) filterDescriptions.push(`种类 "${memberFilter.value}"`);
+                if (isPaymentFilterActive) filterDescriptions.push(`付款状态 "${madedPaymentFilter.options[madedPaymentFilter.selectedIndex].text}"`);
                 if (isBirthdayFilterActive) filterDescriptions.push(`${targetBirthdayMonth}月生日`);
                 if (isExpiryFilterActive) filterDescriptions.push(`到期日期 ${targetStartDate} 至 ${targetEndDate}`);
                 if (isRenewalTermFilterActive) filterDescriptions.push(`续费时长 ${targetRenewalTerm}个月`);
+                if (isRenewalDateFilterActive) filterDescriptions.push(`续费日期 ${targetRenewalStartDate} 至 ${targetRenewalEndDate}`);
                 message = `没有找到符合条件 (${filterDescriptions.join(', ')}) 的记录`;
             }
             // Default message '暂无记录' remains if no search/filter is active
 
-            const colspan = table?.querySelector('thead tr')?.cells.length || 19;
+            const colspan = table?.querySelector('thead tr')?.cells.length || 20;
             memberTableBody.innerHTML = `<tr><td colspan="${colspan}" class="no-results">${message}</td></tr>`;
             return;
         }
@@ -428,6 +487,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const companyName = formatData(member['componyName'] || member['companyName']);
             const memberId = formatData(member['membersID']);
             const rawId = member.ID || member.id || ''; // Use the actual primary key ID
+            const isPaid = member.maded_payment == '1';
 
             const row = document.createElement("tr");
             row.innerHTML = `
@@ -448,6 +508,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 <td>${position}</td>
                 <td>${formatData(member.others)}</td>
                 <td>${formatData(member.remarks)}</td>
+                <td class="payment-status-cell">
+                    <div class="payment-checkbox ${isPaid ? 'checked' : ''}" onclick="toggleMadedPayment(this, '${rawId}', ${isPaid ? 0 : 1})" title="点击切换付款状态"></div>
+                </td>
                 <td class="renewal-cell">
                     <button class="btn btn-info btn-expand" onclick="toggleRenewalDetails(this, '${rawId}')" title="查看续费记录">
                         <i class="fas fa-plus"></i>
@@ -472,7 +535,7 @@ document.addEventListener("DOMContentLoaded", function () {
             detailsRow.id = `renewal-details-${rawId}`;
             detailsRow.className = 'renewal-details-row';
             detailsRow.style.display = 'none';
-            const colspan = table?.querySelector('thead tr')?.cells.length || 19;
+            const colspan = table?.querySelector('thead tr')?.cells.length || 20;
             detailsRow.innerHTML = `<td colspan="${colspan}"><div class="renewal-details-content"></div></td>`;
             memberTableBody.appendChild(detailsRow);
         });
@@ -727,6 +790,7 @@ document.addEventListener("DOMContentLoaded", function () {
             case 'position': defaultWidth = '120px'; break;
             case 'others': defaultWidth = '150px'; break;
             case 'remarks': defaultWidth = '250px'; needsNormalWhitespace = true; minWidth = '150px'; break;
+            case 'maded_payment': defaultWidth = '80px'; break;
         }
         header.style.width = defaultWidth;
         header.style.minWidth = minWidth;
@@ -769,12 +833,18 @@ document.addEventListener("DOMContentLoaded", function () {
                 targetStartDate = null;
                 targetEndDate = null;
                 targetRenewalTerm = null;
+                targetRenewalStartDate = null;
+                targetRenewalEndDate = null;
+                targetRenewalType = null;
+                targetMadedPayment = null;
                 if (memberFilter) memberFilter.value = '';
+                if (madedPaymentFilter) madedPaymentFilter.value = '';
 
                 // Close modals if open
                 if (birthdayModal && birthdayModal.style.display === 'block') closeBirthdayModal();
                 if (expiryModal && expiryModal.style.display === 'block') closeExpiryModal();
                 if (renewalTermModal && renewalTermModal.style.display === 'block') closeRenewalTermModal();
+                if (renewalDateModal && renewalDateModal.style.display === 'block') closeRenewalDateModal();
             }
              // Always trigger debounced search on input
             debouncedSearch();
@@ -815,7 +885,12 @@ document.addEventListener("DOMContentLoaded", function () {
             targetEndDate = null;
             targetBirthdayMonth = null;
             targetRenewalTerm = null;
+            targetRenewalStartDate = null;
+            targetRenewalEndDate = null;
+            targetRenewalType = null;
+            targetMadedPayment = null;
             if (memberFilter) memberFilter.value = '';
+            if (madedPaymentFilter) madedPaymentFilter.value = '';
             if (searchInput) searchInput.value = '';
             fetchMembers();
             // No need to call updateFilterButtonStates here, fetchMembers does it
@@ -828,6 +903,14 @@ document.addEventListener("DOMContentLoaded", function () {
             currentPage = 1;
             fetchMembers();
             // No need to call updateFilterButtonStates here, fetchMembers does it
+        });
+
+        madedPaymentFilter?.addEventListener('change', function () {
+            console.log("Maded payment filter changed to:", this.value);
+            if (searchInput) searchInput.value = '';
+            currentPage = 1;
+            targetMadedPayment = this.value; // Set the state
+            fetchMembers();
         });
 
         itemsPerPageSelect?.addEventListener("change", function () {
@@ -846,6 +929,9 @@ document.addEventListener("DOMContentLoaded", function () {
         confirmRenewalTermSearchButton?.addEventListener('click', handleConfirmRenewalTermSearch);
         closeRenewalTermButton?.addEventListener('click', closeRenewalTermModal);
 
+        confirmRenewalDateSearchButton?.addEventListener('click', handleConfirmRenewalDateSearch);
+        closeRenewalDateButton?.addEventListener('click', closeRenewalDateModal);
+
         // Import Modal Listeners
         closeImportButton?.addEventListener('click', closeImportModal);
         importFileInput?.addEventListener('change', handleFileSelect);
@@ -856,6 +942,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (expiryModal?.style.display === 'block') closeExpiryModal();
             if (birthdayModal?.style.display === 'block') closeBirthdayModal();
             if (renewalTermModal?.style.display === 'block') closeRenewalTermModal();
+            if (renewalDateModal?.style.display === 'block') closeRenewalDateModal();
             if (exportModal?.style.display === 'block') closeExportModal();
             if (applicantTypesModal?.style.display === 'block') closeApplicantTypesModal();
             if (importModal?.style.display === 'block') closeImportModal();
@@ -950,6 +1037,50 @@ document.addEventListener("DOMContentLoaded", function () {
         closeRenewalTermModal();
     }
 
+    function handleConfirmRenewalDateSearch() {
+        const startYear = renewalStartDateYearInput?.value.trim();
+        const startMonth = renewalStartDateMonthInput?.value;
+        const startDay = renewalStartDateDayInput?.value.trim();
+        const endYear = renewalEndDateYearInput?.value.trim();
+        const endMonth = renewalEndDateMonthInput?.value;
+        const endDay = renewalEndDateDayInput?.value.trim();
+        const renewalType = document.querySelector('input[name="renewalType"]:checked')?.value;
+
+        if (!startYear || !startMonth || !startDay || !endYear || !endMonth || !endDay) {
+            alert("请完整填写开始日期和结束日期的年、月、日。");
+            return;
+        }
+        const startDateStr = `${startYear}-${padStart(startMonth)}-${padStart(startDay)}`;
+        const endDateStr = `${endYear}-${padStart(endMonth)}-${padStart(endDay)}`;
+
+        if (!isValidDateString(startDateStr)) {
+            alert(`开始日期无效: ${startDateStr}。请检查年月日是否正确。`);
+            renewalStartDateDayInput?.focus();
+            return;
+        }
+        if (!isValidDateString(endDateStr)) {
+            alert(`结束日期无效: ${endDateStr}。请检查年月日是否正确。`);
+            renewalEndDateDayInput?.focus();
+            return;
+        }
+        const startDate = new Date(startDateStr);
+        const endDate = new Date(endDateStr);
+        if (startDate > endDate) {
+            alert("开始日期不能晚于结束日期。");
+            return;
+        }
+
+        console.log(`Applying renewal date filter: ${startDateStr} to ${endDateStr} with type ${renewalType}`);
+        targetRenewalStartDate = startDateStr;
+        targetRenewalEndDate = endDateStr;
+        targetRenewalType = renewalType;
+        
+        if (searchInput) searchInput.value = '';
+        currentPage = 1;
+        fetchMembers();
+        closeRenewalDateModal();
+    }
+
 
     // ===== Action Button Handlers (No changes needed) =====
     window.editMember = function (id) {
@@ -1001,6 +1132,40 @@ document.addEventListener("DOMContentLoaded", function () {
         window.location.href = `check_details.html?id=${id}`;
     };
 
+    window.toggleMadedPayment = async function(element, memberId, newStatus) {
+        // Prevent multiple clicks while processing
+        if (element.classList.contains('processing')) return;
+        element.classList.add('processing');
+
+        console.log(`Updating maded_payment for member ID ${memberId} to ${newStatus}`);
+
+        try {
+            const updateUrl = `${API_BASE_URL}?table=members&ID=${encodeURIComponent(memberId)}`;
+            const response = await fetch(updateUrl, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ maded_payment: newStatus })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ message: '更新失败，无法解析服务器响应。' }));
+                throw new Error(errorData.message || `更新失败 (Status: ${response.status})`);
+            }
+
+            // Success: Update UI
+            element.classList.toggle('checked', newStatus === 1);
+            // Update the onclick attribute for the next toggle
+            element.setAttribute('onclick', `toggleMadedPayment(this, '${memberId}', ${newStatus === 1 ? 0 : 1})`);
+
+        } catch (error) {
+            console.error("Error updating maded_payment:", error);
+            alert(`更新付款状态失败: ${error.message}`);
+            // Revert UI on failure? For now, we just show an alert.
+        } finally {
+            element.classList.remove('processing');
+        }
+    };
+
     // ===== Renewal Details Handlers =====
     window.toggleRenewalDetails = async function(button, memberId) {
         const detailsRow = document.getElementById(`renewal-details-${memberId}`);
@@ -1031,7 +1196,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     detailsContent.innerHTML = '<span><i class="fas fa-spinner fa-spin"></i> 正在加载续费记录...</span>';
                     try {
                         const renewals = await fetchRenewalData(memberId);
-                        displayRenewalData(detailsContent, renewals);
+                        displayRenewalData(detailsContent, renewals, memberId);
                         detailsRow.dataset.loaded = 'true';
                     } catch (error) {
                         detailsContent.innerHTML = `<span style="color: red;">加载失败: ${error.message}</span>`;
@@ -1055,7 +1220,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return data.data || []; // Assuming API returns { "data": [...] }
     }
 
-    function displayRenewalData(container, renewals) {
+    function displayRenewalData(container, renewals, memberId) {
         if (!renewals || renewals.length === 0) {
             container.innerHTML = '此塾员还未有续费记录';
             return;
@@ -1071,6 +1236,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         <th>续费时长 (月)</th>
                         <th>首次续费（记录此条记录是否是首次续费记录）</th>
                         <th>记录时间（此条记录记录时间）</th>
+                        <th>操作</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -1080,6 +1246,7 @@ document.addEventListener("DOMContentLoaded", function () {
         renewals.sort((a, b) => new Date(b.renewed_at) - new Date(a.renewed_at));
 
         renewals.forEach(renewal => {
+            const renewalId = renewal.ID || renewal.id;
             tableHTML += `
                 <tr>
                     <td>${formatDate(renewal.renewed_at)}</td>
@@ -1088,6 +1255,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     <td>${renewal.term_months || ''}</td>
                     <td>${renewal.is_first_time == '1' ? '是' : '否'}</td>
                     <td>${renewal.recorded_at || ''}</td>
+                    <td>
+                        <button class="btn btn-delete btn-delete-renewal" onclick="deleteRenewalRecord('${renewalId}', '${memberId}')" title="删除此条记录">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
                 </tr>
             `;
         });
@@ -1095,6 +1267,48 @@ document.addEventListener("DOMContentLoaded", function () {
         tableHTML += `</tbody></table>`;
         container.innerHTML = tableHTML;
     }
+
+    async function reloadRenewalDetails(memberId) {
+        const detailsRow = document.getElementById(`renewal-details-${memberId}`);
+        if (!detailsRow) return;
+        const detailsContent = detailsRow.querySelector('.renewal-details-content');
+        if (!detailsContent) return;
+
+        detailsContent.innerHTML = '<span><i class="fas fa-spinner fa-spin"></i> 正在刷新...</span>';
+        try {
+            const renewals = await fetchRenewalData(memberId);
+            displayRenewalData(detailsContent, renewals, memberId);
+        } catch (error) {
+            detailsContent.innerHTML = `<span style="color: red;">刷新失败: ${error.message}</span>`;
+        }
+    }
+
+    window.deleteRenewalRecord = async function(renewalId, memberId) {
+        if (!renewalId || !memberId) {
+            alert("删除错误：缺少必要ID。");
+            return;
+        }
+        if (!confirm('确定要删除这条续费记录吗？此操作无法撤销。')) {
+            return;
+        }
+
+        try {
+            const deleteUrl = `${API_BASE_URL}?table=member_renewals&ID=${renewalId}`;
+            const response = await fetch(deleteUrl, { method: 'DELETE' });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ message: '删除失败，无法解析服务器响应。' }));
+                throw new Error(errorData.message || `删除失败 (Status: ${response.status})`);
+            }
+
+            alert("续费记录删除成功！");
+            reloadRenewalDetails(memberId); // Refresh the list for this member
+
+        } catch (error) {
+            console.error("Error deleting renewal record:", error);
+            alert(`删除失败: ${error.message}`);
+        }
+    };
 
 
     // ===== Pagination Handlers (No changes needed) =====
@@ -1191,6 +1405,38 @@ document.addEventListener("DOMContentLoaded", function () {
     window.closeRenewalTermModal = function () {
         if (renewalTermModal && modalOverlay) {
             renewalTermModal.style.display = 'none';
+            if (document.querySelectorAll('.modal[style*="display: block"]').length === 0) {
+                modalOverlay.style.display = 'none';
+            }
+        }
+    };
+
+    window.openRenewalDateModal = function () {
+        if (renewalDateModal && modalOverlay) {
+            const now = new Date();
+            if (renewalStartDateYearInput) renewalStartDateYearInput.value = now.getFullYear();
+            if (renewalStartDateMonthInput) renewalStartDateMonthInput.value = now.getMonth() + 1;
+            if (renewalStartDateDayInput) renewalStartDateDayInput.value = '1';
+            if (renewalEndDateYearInput) renewalEndDateYearInput.value = now.getFullYear();
+            if (renewalEndDateMonthInput) renewalEndDateMonthInput.value = now.getMonth() + 1;
+            const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+            if (renewalEndDateDayInput) renewalEndDateDayInput.value = lastDay;
+            // Reset radio button to default
+            const defaultRadio = document.querySelector('input[name="renewalType"][value="all"]');
+            if (defaultRadio) defaultRadio.checked = true;
+
+            renewalDateModal.style.display = 'block';
+            modalOverlay.style.display = 'block';
+            renewalStartDateYearInput?.focus();
+        } else {
+            console.error("Renewal Date modal or overlay element not found.");
+            alert("无法打开续费日期查询窗口。");
+        }
+    };
+
+    window.closeRenewalDateModal = function () {
+        if (renewalDateModal && modalOverlay) {
+            renewalDateModal.style.display = 'none';
             if (document.querySelectorAll('.modal[style*="display: block"]').length === 0) {
                 modalOverlay.style.display = 'none';
             }
@@ -1510,7 +1756,8 @@ document.addEventListener("DOMContentLoaded", function () {
         const REQUIRED_COLUMNS = [
             'membersID', 'Name', 'CName', 'Designation_of_Applicant', 'Address',
             'phone_number', 'email', 'IC', 'oldIC', 'gender', 'componyName',
-            'Birthday', 'expired_date', 'place_of_birth', 'position', 'others', 'remarks'
+            'Birthday', 'expired_date', 'place_of_birth', 'position', 'others', 'remarks',
+            'maded_payment'
         ];
 
         const fileHeaders = Object.keys(jsonData[0]);
@@ -1543,6 +1790,9 @@ document.addEventListener("DOMContentLoaded", function () {
                         } else {
                             newRecord[col] = null;
                         }
+                    } else if (col === 'maded_payment') {
+                        // Coerce to 1 or 0, default to 0 if invalid/empty
+                        newRecord[col] = (value == '1' || String(value).toLowerCase() === 'true') ? 1 : 0;
                     } else if (col === 'expired_date' && value instanceof Date) {
                         const year = value.getFullYear();
                         const month = String(value.getMonth() + 1).padStart(2, '0');

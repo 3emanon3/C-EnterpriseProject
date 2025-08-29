@@ -8,7 +8,7 @@
     <!-- Link to the SAME CSS as member_management.html -->
     <link rel="stylesheet" href="member_management.css">
     <!-- We will remove the link to edit_member.css -->
-    <!-- <link rel="stylesheet" href="edit_member.css"> -->
+    <link rel="stylesheet" href="edit_member.css">
 </head>
 <body>
     <div class="container">
@@ -93,13 +93,13 @@
                     <div class="form-group">
                         <label for="phone">手机号码</label>
                         <!-- Changed name, added form-control class -->
-                        <input type="tel" id="phone" name="phone_number" class="form-control">
+                        <input type="text" id="phone" name="phone_number" class="form-control">
                     </div>
 
                     <div class="form-group">
                         <label for="email">邮箱（email）</label>
                         <!-- Added form-control class -->
-                        <input type="email" id="email" name="email" class="form-control">
+                        <input type="text" id="email" name="email" class="form-control">
                     </div>
 
                     <div class="form-group">
@@ -192,6 +192,57 @@
                     </div>
 
                 </div> <!-- End of form-container -->
+
+                <!-- Renewal Logging Section -->
+                <div class="form-group" style="margin-top: 20px;">
+                    <label>续会记录方式:</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="renewalLogMethod" value="auto" checked> 自动记录 (默认)</label>
+                        <label><input type="radio" name="renewalLogMethod" value="manual"> 手动指定续会信息</label>
+                    </div>
+                    <small class="form-text">当“到期日期”延长时，系统将自动生成一条续会记录。此选项让您可以手动覆盖所有信息。</small>
+                </div>
+
+                <div id="manualRenewalSection" class="renewal-details-box" style="display: none;">
+                    <label class="group-label">手动续会信息</label>
+                    
+                    <div class="form-group">
+                        <label for="renewalDate">续会日期 (renewed_at):</label>
+                        <input type="date" id="renewalDate" name="renewalDate" class="form-control">
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="renewalPreviousEnd">旧到期日 (previous_end):</label>
+                        <input type="date" id="renewalPreviousEnd" name="renewalPreviousEnd" class="form-control">
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="renewalNewEnd">新到期日 (new_end):</label>
+                        <input type="date" id="renewalNewEnd" name="renewalNewEnd" class="form-control">
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="renewalTerm">续会时长 (月) (term_months):</label>
+                        <input type="number" id="renewalTerm" name="renewalTerm" class="form-control" min="0" placeholder="例如: 12">
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="renewalRecordedAt">记录日期 (recorded_at):</label>
+                        <input type="date" id="renewalRecordedAt" name="renewalRecordedAt" class="form-control">
+                    </div>
+                
+                    <div class="form-group">
+                        <label>是否首次续会 (is_first_time):</label>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="renewalIsFirstTime" name="renewalIsFirstTime">
+                            <label for="renewalIsFirstTime">是</label>
+                        </div>
+                    </div>
+
+                    <small class="form-text">如果留空，系统将根据“到期日期”的变化自动计算并填充默认值。</small>
+                </div>
+                <!-- End Renewal Logging Section -->
+
 
                 <!-- Form Actions / Submit Button Area - Adapted from member_management -->
                 <div style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px;">

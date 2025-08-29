@@ -38,9 +38,9 @@ class DatabaseAPI {
 
     // Table configuration
     private $allowedTables = [
-        'members' => ['ID', 'membersID', 'Name', 'CName', 'Designation_of_Applicant', 'Address', 'phone_number', 'email', 'IC', 'oldIC', 'gender', 'componyName', 'Birthday', 'expired_date', 'place_of_birth', 'position', 'others', 'remarks', 'payment_date', 'Invoice_number','payment_fee'],
+        'members' => ['ID', 'membersID', 'Name', 'CName', 'Designation_of_Applicant', 'Address', 'phone_number', 'email', 'IC', 'oldIC', 'gender', 'componyName', 'Birthday', 'expired_date', 'place_of_birth', 'position', 'others', 'remarks', 'payment_date', 'Invoice_number','payment_fee', 'maded_payment'],
         'applicants_types' => ['ID', 'designation_of_applicant'],
-        'members_with_applicant_designation' => ['ID', 'membersID', 'Name', 'CName', 'designation_of_applicant', 'Address', 'phone_number', 'email', 'IC', 'oldIC', 'gender', 'componyName', 'Birthday', 'expired_date', 'place_of_birth', 'position', 'others', 'remarks', 'payment_date', 'Invoice_number', 'payment_fee'],
+        'members_with_applicant_designation' => ['ID', 'membersID', 'Name', 'CName', 'designation_of_applicant', 'Address', 'phone_number', 'email', 'IC', 'oldIC', 'gender', 'componyName', 'Birthday', 'expired_date', 'place_of_birth', 'position', 'others', 'remarks', 'payment_date', 'Invoice_number', 'payment_fee', 'maded_payment'],
         'donation' => ['ID', 'Name/Company_Name', 'donationTypes', 'Bank', 'membership', 'paymentDate', 'official_receipt_no', 'amount', 'Remarks'],
         'donation_details' => ['ID', 'Name/Company_Name', 'donationTypes', 'Bank', 'membership', 'paymentDate', 'official_receipt_no', 'amount', 'Remarks'],
         'stock' => ['ID', 'Product_ID', 'Name', 'stock', 'Price', 'Publisher', 'Remarks', 'Picture'],
@@ -87,6 +87,11 @@ class DatabaseAPI {
                 'conditions' => ['ID IN (SELECT DISTINCT member_id FROM member_renewals WHERE term_months = ?)'],
                 'param' => ['termMonths'],
                 'paramTypes' => 'i'
+            ],
+            'renewalDateRange' => [
+                'conditions' => ['ID IN (SUBQUERY_PLACEHOLDER)'],
+                'param' => ['startDate', 'endDate'],
+                'paramTypes' => 'ss'
             ],
         ],
         'donation_details' => [
@@ -378,35 +383,52 @@ class DatabaseAPI {
 
         // Process only the active special conditions passed in $activeSpecialConditions
         foreach ($activeSpecialConditions as $key => $condition) {
-            // $key is the condition name (e.g., 'expired', 'dateRange')
-            // $condition is the array with 'conditions', 'param', 'paramTypes'
+            $conditionSql = $condition['conditions'][0];
 
-            $conditions[] = $condition['conditions'][0]; // Assuming one condition string per key
+            if ($key === 'renewalDateRange') {
+                $renewalType = $allGetParams['renewalType'] ?? 'all';
+                $baseSubquery = "FROM member_renewals WHERE renewed_at BETWEEN ? AND ?";
+                $subquery = "";
+
+                switch ($renewalType) {
+                    case 'both':
+                        // Members who have at least one of each type (is_first_time = 1 and 0)
+                        $subquery = "SELECT member_id $baseSubquery GROUP BY member_id HAVING COUNT(DISTINCT is_first_time) = 2";
+                        break;
+                    case 'first_only':
+                        // Members where all records in range are is_first_time = 1
+                        $subquery = "SELECT member_id $baseSubquery GROUP BY member_id HAVING MIN(is_first_time) = 1";
+                        break;
+                    case 'subsequent_only':
+                        // Members where all records in range are is_first_time = 0
+                        $subquery = "SELECT member_id $baseSubquery GROUP BY member_id HAVING MAX(is_first_time) = 0";
+                        break;
+                    case 'all':
+                    default:
+                        $subquery = "SELECT DISTINCT member_id $baseSubquery";
+                        break;
+                }
+                $conditionSql = str_replace('SUBQUERY_PLACEHOLDER', $subquery, $conditionSql);
+            }
+
+            $conditions[] = $conditionSql;
 
             if (isset($condition['param'])) {
                 foreach ($condition['param'] as $paramName) {
                     if (!isset($allGetParams[$paramName])) {
-                        // It's crucial that the required parameters for the active condition are present
                         throw new Exception("Missing required parameter '{$paramName}' for condition '{$key}'.");
                     }
-                    $paramValue = $allGetParams[$paramName];
-                    // Removed the generic is_numeric check - specific validation might be needed per type
-                    // For dates ('ss'), we pass them as strings. For 'iii', they should be numeric.
-                    // Basic validation could be added here if needed based on $condition['paramTypes']
-                    $specialConditionParamsValues[] = $paramValue;
+                    $specialConditionParamsValues[] = $allGetParams[$paramName];
                 }
                 $specialConditionTypes .= $condition['paramTypes'];
             }
-             // No else block needed if a condition has no parameters (like the original 'Birthday' one)
         }
 
 
         if (empty($conditions)) {
-            // No active special conditions resulted in SQL clauses
-            return []; // Return empty array, signifying no filtering based on special conditions
+            return [];
         }
 
-        // Use the original table name for querying IDs
         $whereClause = implode(' AND ', $conditions);
         $idQuery = "SELECT ID FROM `$table` WHERE $whereClause";
 
@@ -419,19 +441,16 @@ class DatabaseAPI {
             $result = $stmt->get_result();
 
             if (!$result) {
-                // Log the specific MySQL error
                  error_log("MySQL Error in getIdsFromSpecialConditions: " . $this->dsn->error);
                 throw new Exception("Failed to get result for special condition query.");
             }
 
             $ids = array_column($result->fetch_all(MYSQLI_ASSOC), 'ID');
-            $stmt->close(); // Close the statement
+            $stmt->close();
             return $ids;
 
         } catch (Exception $e) {
-            // Log the exception during prepare/execute
             error_log("Exception during special condition query execution: " . $e->getMessage());
-            // Re-throw to be caught by the calling function
             throw new Exception("Error processing special conditions: " . $e->getMessage());
         }
     }
@@ -719,17 +738,28 @@ class DatabaseAPI {
     }
 
     /**
-     * Update an existing record
+     * Routes PUT requests to the appropriate handler.
      */
     private function handlePutRequest($table) {
+        if ($table === 'members') {
+            $this->handleMemberUpdateRequest();
+        } else {
+            $this->handleGenericPutRequest($table);
+        }
+    }
+
+    /**
+     * Update an existing record (generic handler).
+     */
+    private function handleGenericPutRequest($table) {
         $conn = $this->dsn;
         try {
             $id = $_GET["ID"] ?? null;
-            if ($id === null || !is_numeric($id) || $id <= 0) { // Basic ID validation
+            if ($id === null || !is_numeric($id) || $id <= 0) {
                 $this->sendError('Missing or invalid ID parameter', self::HTTP_BAD_REQUEST);
                 return;
             }
-            $id = intval($id); // Sanitize ID
+            $id = intval($id);
 
             if (!$this->recordExists($table, $id)) {
                 $this->sendError("Record not found with ID $id in table '$table'", self::HTTP_NOT_FOUND);
@@ -743,35 +773,22 @@ class DatabaseAPI {
                 $this->sendError('Invalid JSON data: ' . json_last_error_msg(), self::HTTP_BAD_REQUEST);
                 return;
             }
-             if (empty($data)) {
-                 $this->sendError('No data provided for update.', self::HTTP_BAD_REQUEST);
-                 return;
+            if (empty($data) || !is_array($data)) {
+                $this->sendError('Invalid or empty data provided for update.', self::HTTP_BAD_REQUEST);
+                return;
             }
-             if (!is_array($data)) {
-                 $this->sendError('Invalid data format. Expected an object/associative array.', self::HTTP_BAD_REQUEST);
-                 return;
-             }
-
 
             $filteredData = $this->filterAllowedFields($table, $data);
-             if (empty($filteredData)) {
-                 $this->sendError('No valid fields provided for update after filtering.', self::HTTP_BAD_REQUEST);
-                 return;
-             }
-
-             // Optional: Prevent updating the primary key itself if 'ID' is passed in the body
-             unset($filteredData['ID']);
-             if (empty($filteredData)) {
-                 $this->sendError('No updatable fields provided.', self::HTTP_BAD_REQUEST);
-                 return;
-             }
-
+            unset($filteredData['ID']); // Prevent updating primary key
+            if (empty($filteredData)) {
+                $this->sendError('No updatable fields provided.', self::HTTP_BAD_REQUEST);
+                return;
+            }
 
             $conn->begin_transaction();
             try {
                 $this->updateRecord($table, $id, $filteredData);
                 $conn->commit();
-
                 $this->sendResponse([
                     'status' => 'success',
                     'message' => "Record with ID $id updated successfully",
@@ -783,8 +800,98 @@ class DatabaseAPI {
                 $this->sendError('Failed to update record: ' . $e->getMessage());
             }
         } catch (Exception $e) {
-             error_log("Error in handlePutRequest for table '$table': " . $e->getMessage());
+            error_log("Error in handleGenericPutRequest for table '$table': " . $e->getMessage());
             $this->sendError('An error occurred processing the update request.');
+        }
+    }
+
+    /**
+     * Handles updating a member and automatically logging a renewal record.
+     * This logic replaces the database trigger.
+     */
+    private function handleMemberUpdateRequest() {
+        $conn = $this->dsn;
+        try {
+            $id = $_GET["ID"] ?? null;
+            if ($id === null || !is_numeric($id) || $id <= 0) {
+                $this->sendError('Missing or invalid member ID', self::HTTP_BAD_REQUEST);
+                return;
+            }
+            $id = intval($id);
+
+            $rawData = file_get_contents('php://input');
+            $data = json_decode($rawData, true);
+            if (empty($data) || !is_array($data)) {
+                $this->sendError('Invalid or empty data provided for member update.', self::HTTP_BAD_REQUEST);
+                return;
+            }
+
+            $conn->begin_transaction();
+            try {
+                // 1. Fetch old expired_date before update
+                $old_date_stmt = $this->prepareAndExecute("SELECT expired_date FROM members WHERE ID = ? LIMIT 1", [$id], 'i');
+                $result = $old_date_stmt->get_result();
+                if ($result->num_rows === 0) {
+                    throw new Exception("Member with ID $id not found.", self::HTTP_NOT_FOUND);
+                }
+                $old_expired_date = $result->fetch_assoc()['expired_date'] ?? null;
+                $old_date_stmt->close();
+
+                // 2. Filter and update the main member record
+                $filteredMemberData = $this->filterAllowedFields('members', $data);
+                unset($filteredMemberData['ID']);
+                if (!empty($filteredMemberData)) {
+                    $this->updateRecord('members', $id, $filteredMemberData);
+                }
+
+                // 3. Check if a renewal needs to be logged
+                $new_expired_date = $filteredMemberData['expired_date'] ?? null;
+                if ($new_expired_date && ($old_expired_date === null || $new_expired_date > $old_expired_date)) {
+                    
+                    $renewalData = [];
+                    $renewalData['member_id'] = $id;
+    
+                    // Check for manual override from payload
+                    if (isset($data['renewal']) && is_array($data['renewal'])) {
+                        $manual = $data['renewal'];
+                        // Use manual values, falling back to calculated/default values if a specific manual value is null/empty
+                        $renewalData['renewed_at'] = !empty($manual['renewed_at']) ? $manual['renewed_at'] : date('Y-m-d');
+                        $renewalData['previous_end'] = !empty($manual['previous_end']) ? $manual['previous_end'] : $old_expired_date;
+                        $renewalData['new_end'] = !empty($manual['new_end']) ? $manual['new_end'] : $new_expired_date;
+                        $renewalData['term_months'] = !empty($manual['term_months']) ? $manual['term_months'] : $this->calculateMonthDiff($renewalData['previous_end'], $renewalData['new_end']);
+                        $renewalData['recorded_at'] = !empty($manual['recorded_at']) ? $manual['recorded_at'] : date('Y-m-d');
+                        // is_first_time is a bit different, 0 is a valid value. So check if it's set.
+                        $renewalData['is_first_time'] = isset($manual['is_first_time']) ? $manual['is_first_time'] : $this->isFirstRenewal($id);
+    
+                    } else {
+                        // Default logic if no 'renewal' object is sent
+                        $renewalData['renewed_at'] = date('Y-m-d');
+                        $renewalData['previous_end'] = $old_expired_date;
+                        $renewalData['new_end'] = $new_expired_date;
+                        $renewalData['term_months'] = $this->calculateMonthDiff($old_expired_date, $new_expired_date);
+                        $renewalData['recorded_at'] = date('Y-m-d');
+                        $renewalData['is_first_time'] = $this->isFirstRenewal($id);
+                    }
+    
+                    // 5. Insert the renewal record
+                    $this->insertRecord('member_renewals', $renewalData);
+                }
+
+                $conn->commit();
+                $this->sendResponse([
+                    'status' => 'success',
+                    'message' => "Member with ID $id updated successfully",
+                    'id' => $id
+                ]);
+
+            } catch (Exception $e) {
+                $conn->rollback();
+                error_log("Error during member update transaction for ID '$id': " . $e->getMessage());
+                $this->sendError('Failed to update member: ' . $e->getMessage(), $e->getCode() ?: self::HTTP_SERVER_ERROR);
+            }
+        } catch (Exception $e) {
+            error_log("Error in handleMemberUpdateRequest: " . $e->getMessage());
+            $this->sendError('An error occurred processing the member update request.');
         }
     }
 
@@ -1158,6 +1265,36 @@ class DatabaseAPI {
         // No return value needed, throws exception on failure
     }
 
+    /**
+     * Calculates the difference in full months between two dates, similar to MySQL's TIMESTAMPDIFF(MONTH, ...).
+     */
+    private function calculateMonthDiff($date1, $date2) {
+        // Coalesce null old date to the new date for calculation, as per trigger logic
+        $d1_str = $date1 ?? $date2;
+        if (!$d1_str || !$date2) {
+            return 0;
+        }
+        try {
+            $d1 = new DateTime($d1_str);
+            $d2 = new DateTime($date2);
+            $interval = $d1->diff($d2);
+            return ($interval->y * 12) + $interval->m;
+        } catch (Exception $e) {
+            error_log("Error calculating month difference between '$date1' and '$date2': " . $e->getMessage());
+            return 0;
+        }
+    }
+
+    /**
+     * Checks if a member has any prior renewal records.
+     */
+    private function isFirstRenewal($memberId) {
+        $stmt = $this->prepareAndExecute("SELECT 1 FROM member_renewals WHERE member_id = ? LIMIT 1", [$memberId], 'i');
+        $is_first = $stmt->get_result()->num_rows === 0 ? 1 : 0;
+        $stmt->close();
+        return $is_first;
+    }
+
 
     private function sendResponse($data, $statusCode = self::HTTP_OK) {
         if (!headers_sent()) {
@@ -1232,7 +1369,7 @@ try {
     error_log("Critical API Failure: " . $e->getMessage());
     // Attempt to send a generic server error response if headers not already sent
     if (!headers_sent()) {
-        http_response_code(DatabaseAPI::HTTP_SERVER_ERROR); // Use constant if accessible, otherwise 500
+        http_response_code(500); // Use constant if accessible, otherwise 500
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode(['error' => true, 'message' => 'A critical server error occurred.']);
     }

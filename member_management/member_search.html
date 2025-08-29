@@ -90,6 +90,18 @@
                     </span>
                 </button>
 
+                <button id="searchRenewalDate" class="btn btn-renewal-date tooltip filter-button" onclick="openRenewalDateModal()">
+                    <i class="fas fa-calendar-check"></i> 按续费日期查询
+                    <span class="tooltip-text">
+                        <strong>核心功能：</strong> 查找在指定日期范围内有过续费记录的塾员。
+                        <br>
+                        <strong>使用须知：</strong><br>
+                        1.  <strong>选择日期范围：</strong> 您需要指定一个开始和结束日期。
+                        <br>
+                        2.  <strong>筛选类型：</strong> 您可以根据续费记录的类型（首次续费/后续续费）来进一步筛选塾员。
+                    </span>
+                </button>
+
                 <select id="memberFilter" class="btn btn-light tooltip filter-button">
                     <!-- Options will be populated by JavaScript -->
                     <span class="tooltip-text">
@@ -104,6 +116,20 @@
                         <br>
                         <strong>补充：词语解释</strong><br>
                         <strong>种类 (Category/Type)：</strong> 指用于标识和区分名单中人员身份、状态或归属的标签。例如，“塾员”通常指正式注册的学员，“逾期”指缴费或状态过期的学员，“非塾员”则包括潜在客户、其他联系人等。具体的种类及其含义由系统设定或数据录入者决定。
+                    </span>
+                </select>
+
+                <select id="madedPaymentFilter" class="btn btn-light tooltip filter-button">
+                    <option value="">所有付款状态</option>
+                    <option value="1">已付款</option>
+                    <option value="0">未付款</option>
+                    <span class="tooltip-text">
+                        <strong>核心功能：</strong> 按“付款状态”筛选名单。
+                        <br><br>
+                        <strong>使用须知：</strong><br>
+                        1.  <strong>已付款：</strong> 显示已标记为付款的塾员。
+                        <br>
+                        2.  <strong>未付款：</strong> 显示未标记为付款的塾员。
                     </span>
                 </select>
 
@@ -183,6 +209,7 @@
                             <th data-column="position">职位<div class="resizer"></div></th>
                             <th data-column="others">其他<div class="resizer"></div></th>
                             <th data-column="remarks">备注<div class="resizer"></div></th>
+                            <th data-column="maded_payment">已付款<div class="resizer"></div></th>
                             <th class="Renewals">续费记录</th>
                             <th class="Action">操作</th>
                         </tr>
@@ -316,6 +343,83 @@
             <div class="modal-actions">
                 <button id="confirmRenewalTermSearch" class="btn btn-success">查询</button>
                 <button type="button" class="btn btn-secondary" onclick="closeRenewalTermModal()">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Renewal Date Search Modal -->
+    <div id="renewalDateModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeRenewalDateModal()">×</span>
+            <h2>按续费日期范围查询</h2>
+            <p>查找在指定日期范围内有过续费记录的塾员，并可根据续费类型筛选。</p>
+            <div class="modal-form modal-form-grid">
+
+                <!-- Start Date -->
+                <fieldset class="date-range-group">
+                    <legend>开始日期</legend>
+                    <div class="date-inputs">
+                        <label for="renewalStartDateYearInput">年:</label>
+                        <input type="number" id="renewalStartDateYearInput" placeholder="YYYY" min="1900" max="2100">
+                        <label for="renewalStartDateMonthInput">月:</label>
+                        <select id="renewalStartDateMonthInput">
+                            <option value="">--月--</option>
+                            <option value="1">1</option> <option value="2">2</option> <option value="3">3</option>
+                            <option value="4">4</option> <option value="5">5</option> <option value="6">6</option>
+                            <option value="7">7</option> <option value="8">8</option> <option value="9">9</option>
+                            <option value="10">10</option> <option value="11">11</option> <option value="12">12</option>
+                        </select>
+                        <label for="renewalStartDateDayInput">日:</label>
+                        <input type="number" id="renewalStartDateDayInput" placeholder="DD" min="1" max="31">
+                    </div>
+                </fieldset>
+
+                <!-- End Date -->
+                <fieldset class="date-range-group">
+                    <legend>结束日期</legend>
+                    <div class="date-inputs">
+                        <label for="renewalEndDateYearInput">年:</label>
+                        <input type="number" id="renewalEndDateYearInput" placeholder="YYYY" min="1900" max="2100">
+                        <label for="renewalEndDateMonthInput">月:</label>
+                        <select id="renewalEndDateMonthInput">
+                            <option value="">--月--</option>
+                            <option value="1">1</option> <option value="2">2</option> <option value="3">3</option>
+                            <option value="4">4</option> <option value="5">5</option> <option value="6">6</option>
+                            <option value="7">7</option> <option value="8">8</option> <option value="9">9</option>
+                            <option value="10">10</option> <option value="11">11</option> <option value="12">12</option>
+                        </select>
+                        <label for="renewalEndDateDayInput">日:</label>
+                        <input type="number" id="renewalEndDateDayInput" placeholder="DD" min="1" max="31">
+                    </div>
+                </fieldset>
+
+                <!-- Renewal Type Filter -->
+                <fieldset class="renewal-type-group">
+                    <legend>续费类型筛选</legend>
+                    <div class="renewal-type-options">
+                        <label>
+                            <input type="radio" name="renewalType" value="all" checked>
+                            <span>不筛选</span>
+                        </label>
+                        <label>
+                            <input type="radio" name="renewalType" value="both">
+                            <span>包含首次和后续</span>
+                        </label>
+                        <label>
+                            <input type="radio" name="renewalType" value="first_only">
+                            <span>仅首次</span>
+                        </label>
+                        <label>
+                            <input type="radio" name="renewalType" value="subsequent_only">
+                            <span>仅后续</span>
+                        </label>
+                    </div>
+                </fieldset>
+
+            </div>
+            <div class="modal-actions">
+                <button id="confirmRenewalDateSearch" class="btn btn-success">查询</button>
+                <button type="button" class="btn btn-secondary" onclick="closeRenewalDateModal()">取消</button>
             </div>
         </div>
     </div>

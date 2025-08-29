@@ -16,6 +16,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const memberIdField = document.getElementById('memberId'); // Member ID input
     const printButton = document.getElementById('printButton'); // Print button
 
+    // New Renewal Section Selectors
+    const renewalMethodRadios = document.querySelectorAll('input[name="renewalLogMethod"]');
+    const manualRenewalSection = document.getElementById('manualRenewalSection');
+
     // Modal elements (copied from member_management.js)
     const addTypeModal = document.getElementById('addTypeModal');
     const addApplicantTypeBtn = document.getElementById('addApplicantTypeBtn'); // '+' button
@@ -26,7 +30,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const modalLoadingIndicator = document.getElementById('modalLoadingIndicator'); // Modal loading
 
     // --- Crucial Check: Ensure elements are found ---
-    if (!memberForm || !errorMessages || !loadingIndicator || !designationSelect || !expiredDateOptions || !expiredDateInput || !memberIdField) {
+    if (!memberForm || !errorMessages || !loadingIndicator || !designationSelect || !expiredDateOptions || !expiredDateInput || !memberIdField || !manualRenewalSection) {
         console.error("FATAL: One or more essential form elements not found!");
         alert("页面加载错误：缺少必要的表单元素。请刷新或联系管理员。");
         return; // Stop script execution
@@ -521,6 +525,20 @@ document.addEventListener('DOMContentLoaded', async () => {
             delete memberData.memberId;
         }
 
+        // Handle renewal data
+        const renewalMethod = document.querySelector('input[name="renewalLogMethod"]:checked').value;
+        if (renewalMethod === 'manual') {
+            memberData.renewal = {
+                renewed_at: document.getElementById('renewalDate').value || null,
+                term_months: document.getElementById('renewalTerm').value || null,
+                previous_end: document.getElementById('renewalPreviousEnd').value || null,
+                new_end: document.getElementById('renewalNewEnd').value || null,
+                recorded_at: document.getElementById('renewalRecordedAt').value || null,
+                is_first_time: document.getElementById('renewalIsFirstTime').checked ? 1 : 0
+            };
+        }
+
+
         // Ensure date fields are correctly formatted or null
         ['expired_date'].forEach(dateKey => {
             if (memberData[dateKey] && !isValidDateFormat(memberData[dateKey])) {
@@ -773,6 +791,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (expiredDateOptions) {
             expiredDateOptions.addEventListener('change', handleExpiryOptionChange);
             console.log('Expiry dropdown listener attached.');
+        }
+
+        // Renewal Section Listener
+        if (renewalMethodRadios) {
+            renewalMethodRadios.forEach(radio => {
+                radio.addEventListener('change', () => {
+                    if (radio.value === 'manual' && radio.checked) {
+                        manualRenewalSection.style.display = 'grid';
+                    } else {
+                        manualRenewalSection.style.display = 'none';
+                    }
+                });
+            });
+            console.log('Renewal method listeners attached.');
         }
 
 

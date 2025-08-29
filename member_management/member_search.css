@@ -107,6 +107,7 @@ header h1{
 .btn-delete                 {--btn-bg:#f44336}
 .btn-check                  {--btn-bg:#2196f3}
 .btn-renewal-term           {--btn-bg:#8e44ad}
+.btn-renewal-date           {--btn-bg:#1abc9c}
 
 /* Universal hover & active states -------------------------------------- */
 .btn:hover{
@@ -659,6 +660,39 @@ tr:hover {
     border-top: 1px solid var(--clr-border);
 }
 
+/* Styles for Renewal Date Modal Radio Buttons */
+.renewal-type-group {
+    border: 1px solid var(--clr-border);
+    padding: 15px;
+    border-radius: 6px;
+    margin-top: 10px;
+}
+.renewal-type-group legend {
+    font-weight: bold;
+    padding: 0 10px;
+    margin-left: 10px;
+    color: var(--clr-primary);
+}
+.renewal-type-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 20px; /* row-gap column-gap */
+    justify-content: flex-start;
+    padding-top: 10px;
+}
+.renewal-type-options label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+.renewal-type-options input[type="radio"] {
+    margin: 0;
+    cursor: pointer;
+}
+
+
 /* No Results Row Style */
 .no-results {
     text-align: center;
@@ -707,6 +741,52 @@ tr:hover {
 .btn-expand {
     padding: 5px 10px;
     font-size: 0.8rem;
+}
+
+.renewal-history-table .btn-delete-renewal {
+    padding: 3px 8px;
+    font-size: 0.8rem;
+}
+.renewal-history-table th:last-child,
+.renewal-history-table td:last-child {
+    text-align: center;
+    width: 80px;
+}
+
+/* Payment Status Checkbox in Table */
+.payment-status-cell {
+    text-align: center;
+}
+.payment-checkbox {
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+.payment-checkbox.checked {
+    background-color: var(--clr-success);
+    border-color: var(--clr-success);
+}
+.payment-checkbox.checked::after {
+    content: '✔';
+    color: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 14px;
+    line-height: 1;
+}
+.payment-checkbox:hover {
+    border-color: var(--clr-primary);
+}
+.payment-checkbox.processing {
+    cursor: wait;
+    opacity: 0.6;
 }
 
 
