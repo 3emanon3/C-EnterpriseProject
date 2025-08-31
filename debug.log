@@ -108626,3 +108626,32 @@ pes
     [METHOD] => GET
 )
 
+2025-08-29 07:46:53: Array
+(
+    [GET] => Array
+        (
+            [table] => member_renewals
+            [search] => true
+            [member_id] => 7516
+            [direct] => true
+            [limit] => 1000
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => member_renewals
+            [search] => true
+            [member_id] => 7516
+            [direct] => true
+            [limit] => 1000
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=member_renewals&search=true&member_id=7516&direct=true&limit=1000
+    [METHOD] => GET
+)
+

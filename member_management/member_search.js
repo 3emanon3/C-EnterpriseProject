@@ -1231,8 +1231,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 <thead>
                     <tr>
                         <th>续费日期（具体续费日期）</th>
-                        <th>旧到期日（旧的到期日期）</th>
-                        <th>新到期日（新的到期日期）</th>
+                        <th>旧的到期日期</th>
+                        <th>新的到期日期</th>
                         <th>续费时长 (月)</th>
                         <th>首次续费（记录此条记录是否是首次续费记录）</th>
                         <th>记录时间（此条记录记录时间）</th>
