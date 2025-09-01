@@ -72,6 +72,7 @@ function formatDate(dateString) {
 document.addEventListener("DOMContentLoaded", function () {
     // ===== CONFIGURATION =====
     const API_BASE_URL = '../recervingAPI.php';
+    const SESSION_STORAGE_KEY = 'memberSearchState';
 
     // ===== DOM ELEMENTS =====
     const searchInput = document.getElementById("searchInput");
@@ -133,6 +134,27 @@ document.addEventListener("DOMContentLoaded", function () {
     const confirmImportButton = document.getElementById('confirmImport');
     const closeImportButton = importModal?.querySelector('.close-button');
 
+    // --- Renewal Add/Edit Modal Elements ---
+    const renewalAddEditModal = document.getElementById('renewalAddEditModal');
+    const renewalModalTitle = document.getElementById('renewalModalTitle');
+    const renewalMemberIdInput = document.getElementById('renewalMemberId');
+    const renewalRecordIdInput = document.getElementById('renewalRecordId');
+    const renewalAtYear = document.getElementById('renewalAtYear');
+    const renewalAtMonth = document.getElementById('renewalAtMonth');
+    const renewalAtDay = document.getElementById('renewalAtDay');
+    const prevEndYear = document.getElementById('prevEndYear');
+    const prevEndMonth = document.getElementById('prevEndMonth');
+    const prevEndDay = document.getElementById('prevEndDay');
+    const newEndYear = document.getElementById('newEndYear');
+    const newEndMonth = document.getElementById('newEndMonth');
+    const newEndDay = document.getElementById('newEndDay');
+    const recordedAtYear = document.getElementById('recordedAtYear');
+    const recordedAtMonth = document.getElementById('recordedAtMonth');
+    const recordedAtDay = document.getElementById('recordedAtDay');
+    const renewalTermMonths = document.getElementById('renewalTermMonths');
+    const isFirstTime = document.getElementById('isFirstTime');
+    const saveRenewalButton = document.getElementById('saveRenewalButton');
+
     // --- Shared Modal Overlay ---
     const modalOverlay = document.getElementById('modalOverlay');
 
@@ -152,16 +174,58 @@ document.addEventListener("DOMContentLoaded", function () {
     let targetRenewalType = null;
     let targetMadedPayment = null;
     let dataToImport = [];
+    let renewalDataCache = {};
 
     // ===== INITIALIZATION =====
     function initializePage() {
+        loadStateFromSession();
         fetchApplicantType();
+        populateMonthSelects();
         initializeEventListeners();
         initializeResizableColumns();
         loadColumnWidths();
         fetchMembers();
         setupFilterButtonsAnimation();
         initializeTooltipPositioning();
+    }
+
+    // ===== SESSION STATE MANAGEMENT =====
+    function saveStateToSession() {
+        try {
+            const state = {
+                sortColumn: sortColumn,
+                sortDirection: sortDirection,
+                itemsPerPage: itemsPerPage
+            };
+            sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(state));
+        } catch (error) {
+            console.error('Failed to save state to session storage:', error);
+        }
+    }
+
+    function loadStateFromSession() {
+        try {
+            const savedStateJSON = sessionStorage.getItem(SESSION_STORAGE_KEY);
+            if (savedStateJSON) {
+                const savedState = JSON.parse(savedStateJSON);
+                console.log('Loaded state from session:', savedState);
+
+                if (savedState.sortColumn) {
+                    sortColumn = savedState.sortColumn;
+                }
+                if (savedState.sortDirection) {
+                    sortDirection = savedState.sortDirection;
+                }
+                if (savedState.itemsPerPage) {
+                    itemsPerPage = parseInt(savedState.itemsPerPage, 10);
+                    if (itemsPerPageSelect) {
+                        itemsPerPageSelect.value = itemsPerPage;
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Failed to load state from session storage:', error);
+        }
     }
 
     // ===== FILTER BUTTON ANIMATION =====
@@ -383,6 +447,9 @@ document.addEventListener("DOMContentLoaded", function () {
             params.append("order", sortDirection);
         }
 
+        // Save the current state before fetching
+        saveStateToSession();
+
         const url = `${API_BASE_URL}?${params.toString()}`;
         console.log("API URL:", url);
 
@@ -525,6 +592,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     </button>
                     <button class="btn btn-check" onclick="checkMember('${rawId}')" title="查看详情">
                         <i class="fas fa-check"></i>
+                    </button>
+                    <button class="btn btn-info" onclick="openRenewalModal('${rawId}')" title="添加续费记录">
+                        <i class="fas fa-plus-circle"></i>
                     </button>
                 </td>
             `;
@@ -937,6 +1007,9 @@ document.addEventListener("DOMContentLoaded", function () {
         importFileInput?.addEventListener('change', handleFileSelect);
         confirmImportButton?.addEventListener('click', performImport);
 
+        // Renewal Add/Edit Modal Listener
+        saveRenewalButton?.addEventListener('click', saveRenewalData);
+
         modalOverlay?.addEventListener('click', () => {
             // Close any open modal when clicking overlay
             if (expiryModal?.style.display === 'block') closeExpiryModal();
@@ -946,6 +1019,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (exportModal?.style.display === 'block') closeExportModal();
             if (applicantTypesModal?.style.display === 'block') closeApplicantTypesModal();
             if (importModal?.style.display === 'block') closeImportModal();
+            if (renewalAddEditModal?.style.display === 'block') closeRenewalModal();
         });
     }
 
@@ -1217,7 +1291,9 @@ document.addEventListener("DOMContentLoaded", function () {
             throw new Error(`服务器错误 (Status: ${response.status})`);
         }
         const data = await response.json();
-        return data.data || []; // Assuming API returns { "data": [...] }
+        const renewals = data.data || [];
+        renewalDataCache[memberId] = renewals; // Cache the data
+        return renewals;
     }
 
     function displayRenewalData(container, renewals, memberId) {
@@ -1256,6 +1332,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     <td>${renewal.is_first_time == '1' ? '是' : '否'}</td>
                     <td>${renewal.recorded_at || ''}</td>
                     <td>
+                        <button class="btn btn-edit" onclick="openRenewalModal('${memberId}', '${renewalId}')" title="编辑此条记录">
+                            <i class="fas fa-edit"></i>
+                        </button>
                         <button class="btn btn-delete btn-delete-renewal" onclick="deleteRenewalRecord('${renewalId}', '${memberId}')" title="删除此条记录">
                             <i class="fas fa-trash"></i>
                         </button>
@@ -1578,6 +1657,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     value = member[column] || member['placeOfBirth'] || '';
                 } else if (column === 'componyName') {
                     value = member[column] || member['companyName'] || '';
+                }else if (column === 'maded_payment') {
+                    value = member[column] == '1' ? '是' : '否';
                 } else {
                     value = member[column] || '';
                 }
@@ -2070,6 +2151,149 @@ document.addEventListener("DOMContentLoaded", function () {
                 }, 300); // Match transition duration
             });
         });
+    }
+
+    // ===============================
+    // Renewal Add/Edit Functions
+    // ===============================
+    function populateMonthSelects() {
+        const monthSelects = document.querySelectorAll('#renewalAtMonth, #prevEndMonth, #newEndMonth, #recordedAtMonth');
+        let optionsHTML = '<option value="">--月--</option>';
+        for (let i = 1; i <= 12; i++) {
+            optionsHTML += `<option value="${i}">${i}</option>`;
+        }
+        monthSelects.forEach(select => select.innerHTML = optionsHTML);
+    }
+
+    function setDateInputs(dateString, yearEl, monthEl, dayEl) {
+        if (dateString && isValidDateString(dateString)) {
+            const [year, month, day] = dateString.split('-').map(Number);
+            yearEl.value = year;
+            monthEl.value = month;
+            dayEl.value = day;
+        } else {
+            yearEl.value = '';
+            monthEl.value = '';
+            dayEl.value = '';
+        }
+    }
+
+    function getDateFromInputs(yearEl, monthEl, dayEl) {
+        const year = yearEl.value.trim();
+        const month = monthEl.value;
+        const day = dayEl.value.trim();
+        if (!year || !month || !day) return null;
+        const dateStr = `${year}-${padStart(month)}-${padStart(day)}`;
+        return isValidDateString(dateStr) ? dateStr : 'invalid';
+    }
+
+    window.openRenewalModal = function(memberId, renewalId = null) {
+        if (!renewalAddEditModal || !modalOverlay) {
+            alert("无法打开续费管理窗口。");
+            return;
+        }
+
+        // Reset form
+        const inputs = renewalAddEditModal.querySelectorAll('input, select');
+        inputs.forEach(input => input.value = '');
+        isFirstTime.value = '0'; // Default to 'No'
+
+        renewalMemberIdInput.value = memberId;
+
+        if (renewalId) { // EDIT MODE
+            renewalModalTitle.textContent = '编辑续费记录';
+            renewalRecordIdInput.value = renewalId;
+
+            const memberRenewals = renewalDataCache[memberId] || [];
+            const renewalData = memberRenewals.find(r => (r.ID || r.id) == renewalId);
+
+            if (renewalData) {
+                setDateInputs(renewalData.renewed_at, renewalAtYear, renewalAtMonth, renewalAtDay);
+                setDateInputs(renewalData.previous_end, prevEndYear, prevEndMonth, prevEndDay);
+                setDateInputs(renewalData.new_end, newEndYear, newEndMonth, newEndDay);
+                setDateInputs(renewalData.recorded_at, recordedAtYear, recordedAtMonth, recordedAtDay);
+                renewalTermMonths.value = renewalData.term_months || '';
+                isFirstTime.value = renewalData.is_first_time == '1' ? '1' : '0';
+            } else {
+                alert("找不到要编辑的续费记录数据。");
+                return;
+            }
+        } else { // ADD MODE
+            renewalModalTitle.textContent = '添加新的续费记录';
+            renewalRecordIdInput.value = '';
+            const today = new Date();
+            setDateInputs(formatDate(today.toISOString()), renewalAtYear, renewalAtMonth, renewalAtDay);
+            setDateInputs(formatDate(today.toISOString()), recordedAtYear, recordedAtMonth, recordedAtDay);
+        }
+
+        renewalAddEditModal.style.display = 'block';
+        modalOverlay.style.display = 'block';
+    }
+
+    window.closeRenewalModal = function() {
+        if (renewalAddEditModal && modalOverlay) {
+            renewalAddEditModal.style.display = 'none';
+            if (document.querySelectorAll('.modal[style*="display: block"]').length === 0) {
+                modalOverlay.style.display = 'none';
+            }
+        }
+    }
+
+    async function saveRenewalData() {
+        const memberId = renewalMemberIdInput.value;
+        const renewalId = renewalRecordIdInput.value;
+
+        const renewed_at = getDateFromInputs(renewalAtYear, renewalAtMonth, renewalAtDay);
+        const previous_end = getDateFromInputs(prevEndYear, prevEndMonth, prevEndDay);
+        const new_end = getDateFromInputs(newEndYear, newEndMonth, newEndDay);
+        const recorded_at = getDateFromInputs(recordedAtYear, recordedAtMonth, recordedAtDay);
+
+        if ([renewed_at, previous_end, new_end, recorded_at].includes('invalid')) {
+            alert("一个或多个日期无效。请检查年/月/日输入。");
+            return;
+        }
+        if (!renewed_at || !new_end) {
+            alert("续费日期和新的到期日期是必填项。");
+            return;
+        }
+
+        const renewalData = {
+            member_id: memberId,
+            renewed_at: renewed_at,
+            previous_end: previous_end,
+            new_end: new_end,
+            term_months: renewalTermMonths.value || null,
+            is_first_time: parseInt(isFirstTime.value, 10),
+            recorded_at: recorded_at
+        };
+
+        const isEdit = !!renewalId;
+        const url = isEdit
+            ? `${API_BASE_URL}?table=member_renewals&ID=${renewalId}`
+            : `${API_BASE_URL}?table=member_renewals`;
+        const method = isEdit ? 'PUT' : 'POST';
+
+        try {
+            const response = await fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(renewalData)
+            });
+
+            const result = await response.json();
+            if (!response.ok) {
+                throw new Error(result.message || `保存失败 (Status: ${response.status})`);
+            }
+
+            alert(result.message || "保存成功！");
+            closeRenewalModal();
+            reloadRenewalDetails(memberId);
+            fetchMembers();
+
+        } catch (error) {
+            console.error("Error saving renewal data:", error);
+            alert(`保存失败: ${error.message}`);
+        }
     }
 
     // ===== INITIALIZE PAGE =====

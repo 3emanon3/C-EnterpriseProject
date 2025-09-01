@@ -88,6 +88,8 @@ header h1{
 .btn .fas.fa-edit{margin-inline-end:0}
 .btn .fas.fa-trash{margin-inline-end:0}
 .btn .fas.fa-check{margin-inline-end:0}
+.btn .fas.fa-plus-circle{margin-inline-end:0}
+
 
 /* Variant background colours ------------------------------------------- */
 .btn-primary   {--btn-bg: var(--clr-primary)}
@@ -245,7 +247,7 @@ th {
 }
 
 th.Action {
-    width: 200px; /* Fixed width for action column */
+    width: 250px; /* Fixed width for action column */
 }
 
 th.Renewals {
@@ -750,7 +752,7 @@ tr:hover {
 .renewal-history-table th:last-child,
 .renewal-history-table td:last-child {
     text-align: center;
-    width: 80px;
+    width: 120px;
 }
 
 /* Payment Status Checkbox in Table */

@@ -494,6 +494,83 @@
         </div>
     </div>
 
+    <!-- Renewal Add/Edit Modal -->
+    <div id="renewalAddEditModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeRenewalModal()">×</span>
+            <h2 id="renewalModalTitle">管理续费记录</h2>
+            <p>在此处添加或编辑塾员的续费信息。</p>
+            <div class="modal-form modal-form-grid">
+                <input type="hidden" id="renewalMemberId">
+                <input type="hidden" id="renewalRecordId">
+
+                <fieldset class="date-range-group">
+                    <legend>续费日期</legend>
+                    <div class="date-inputs">
+                        <label for="renewalAtYear">年:</label>
+                        <input type="number" id="renewalAtYear" placeholder="YYYY" min="1900" max="2100">
+                        <label for="renewalAtMonth">月:</label>
+                        <select id="renewalAtMonth"></select>
+                        <label for="renewalAtDay">日:</label>
+                        <input type="number" id="renewalAtDay" placeholder="DD" min="1" max="31">
+                    </div>
+                </fieldset>
+
+                <fieldset class="date-range-group">
+                    <legend>旧的到期日期</legend>
+                    <div class="date-inputs">
+                        <label for="prevEndYear">年:</label>
+                        <input type="number" id="prevEndYear" placeholder="YYYY" min="1900" max="2100">
+                        <label for="prevEndMonth">月:</label>
+                        <select id="prevEndMonth"></select>
+                        <label for="prevEndDay">日:</label>
+                        <input type="number" id="prevEndDay" placeholder="DD" min="1" max="31">
+                    </div>
+                </fieldset>
+
+                <fieldset class="date-range-group">
+                    <legend>新的到期日期</legend>
+                    <div class="date-inputs">
+                        <label for="newEndYear">年:</label>
+                        <input type="number" id="newEndYear" placeholder="YYYY" min="1900" max="2100">
+                        <label for="newEndMonth">月:</label>
+                        <select id="newEndMonth"></select>
+                        <label for="newEndDay">日:</label>
+                        <input type="number" id="newEndDay" placeholder="DD" min="1" max="31">
+                    </div>
+                </fieldset>
+                
+                <fieldset class="date-range-group">
+                    <legend>记录时间</legend>
+                    <div class="date-inputs">
+                        <label for="recordedAtYear">年:</label>
+                        <input type="number" id="recordedAtYear" placeholder="YYYY" min="1900" max="2100">
+                        <label for="recordedAtMonth">月:</label>
+                        <select id="recordedAtMonth"></select>
+                        <label for="recordedAtDay">日:</label>
+                        <input type="number" id="recordedAtDay" placeholder="DD" min="1" max="31">
+                    </div>
+                </fieldset>
+
+                <div class="date-inputs" style="border: 1px solid var(--clr-border); padding: 15px; border-radius: 6px; grid-template-columns: 1fr 1fr;">
+                    <label for="renewalTermMonths">续费时长 (月):</label>
+                    <input type="number" id="renewalTermMonths" placeholder="例如: 12" min="1">
+
+                    <label for="isFirstTime">首次续费:</label>
+                    <select id="isFirstTime">
+                        <option value="0">否</option>
+                        <option value="1">是</option>
+                    </select>
+                </div>
+
+            </div>
+            <div class="modal-actions">
+                <button id="saveRenewalButton" class="btn btn-success">保存</button>
+                <button type="button" class="btn btn-secondary" onclick="closeRenewalModal()">取消</button>
+            </div>
+        </div>
+    </div>
+
     <script type="module" src="member_search.js"></script>
 
 </body>

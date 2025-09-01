@@ -108655,3 +108655,1223 @@ pes
     [METHOD] => GET
 )
 
+2025-08-31 18:15:46: Array
+(
+    [GET] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members_with_applicant_designation&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-08-31 18:15:53: Array
+(
+    [GET] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members_with_applicant_designation&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-08-31 18:15:53: Array
+(
+    [GET] => Array
+        (
+            [table] => applicants_types
+            [limit] => 10000
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => applicants_types
+            [limit] => 10000
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=applicants_types&limit=10000
+    [METHOD] => GET
+)
+
+2025-08-31 18:15:56: Array
+(
+    [GET] => Array
+        (
+            [table] => member_renewals
+            [search] => true
+            [member_id] => 7516
+            [direct] => true
+            [limit] => 1000
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => member_renewals
+            [search] => true
+            [member_id] => 7516
+            [direct] => true
+            [limit] => 1000
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=member_renewals&search=true&member_id=7516&direct=true&limit=1000
+    [METHOD] => GET
+)
+
+2025-08-31 18:16:11: Array
+(
+    [GET] => Array
+        (
+            [table] => applicants_types
+            [limit] => 10000
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => applicants_types
+            [limit] => 10000
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=applicants_types&limit=10000
+    [METHOD] => GET
+)
+
+2025-08-31 18:16:11: Array
+(
+    [GET] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members_with_applicant_designation&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-08-31 18:16:19: Array
+(
+    [GET] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+            [sort] => membersID
+            [order] => ASC
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+            [sort] => membersID
+            [order] => ASC
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members_with_applicant_designation&limit=10&page=1&sort=membersID&order=ASC
+    [METHOD] => GET
+)
+
+2025-08-31 18:34:26: Array
+(
+    [GET] => Array
+        (
+            [table] => applicants_types
+            [limit] => 10000
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => applicants_types
+            [limit] => 10000
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=applicants_types&limit=10000
+    [METHOD] => GET
+)
+
+2025-08-31 18:34:26: Array
+(
+    [GET] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members_with_applicant_designation&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-08-31 18:34:28: Array
+(
+    [GET] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+            [sort] => membersID
+            [order] => ASC
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+            [sort] => membersID
+            [order] => ASC
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members_with_applicant_designation&limit=10&page=1&sort=membersID&order=ASC
+    [METHOD] => GET
+)
+
+2025-08-31 18:34:34: Array
+(
+    [GET] => Array
+        (
+            [table] => applicants_types
+            [limit] => 10000
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => applicants_types
+            [limit] => 10000
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=applicants_types&limit=10000
+    [METHOD] => GET
+)
+
+e] => 1
+            [sort] => membersID
+            [order] => ASC
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members_with_applicant_designation&limit=10&page=1&sort=membersID&order=ASC
+    [METHOD] => GET
+)
+
+2025-08-31 18:34:40: Array
+(
+    [GET] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+            [sort] => oldIC
+            [order] => ASC
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+            [sort] => oldIC
+            [order] => ASC
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members_with_applicant_designation&limit=10&page=1&sort=oldIC&order=ASC
+    [METHOD] => GET
+)
+
+2025-08-31 18:34:48: Array
+(
+    [GET] => Array
+        (
+            [table] => applicants_types
+            [limit] => 100
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => applicants_types
+            [limit] => 100
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=applicants_types&limit=100
+    [METHOD] => GET
+)
+
+2025-08-31 18:34:50: Array
+(
+    [GET] => Array
+        (
+            [table] => applicants_types
+            [limit] => 10000
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => applicants_types
+            [limit] => 10000
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=applicants_types&limit=10000
+    [METHOD] => GET
+)
+
+> 1
+            [sort] => oldIC
+            [order] => ASC
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members_with_applicant_designation&limit=10&page=1&sort=oldIC&order=ASC
+    [METHOD] => GET
+)
+
+2025-08-31 18:35:01: Array
+(
+    [GET] => Array
+        (
+            [table] => applicants_types
+            [limit] => 10000
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => applicants_types
+            [limit] => 10000
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=applicants_types&limit=10000
+    [METHOD] => GET
+)
+
+2025-08-31 18:35:01: Array
+(
+    [GET] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members_with_applicant_designation&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-09-01 11:02:23: Array
+(
+    [GET] => Array
+        (
+            [table] => applicants_types
+            [limit] => 10000
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => applicants_types
+            [limit] => 10000
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=applicants_types&limit=10000
+    [METHOD] => GET
+)
+
+2025-09-01 11:02:23: Array
+(
+    [GET] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members_with_applicant_designation&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-09-01 11:02:30: Array
+(
+    [GET] => Array
+        (
+            [table] => member_renewals
+            [search] => true
+            [member_id] => 7516
+            [direct] => true
+            [limit] => 1000
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => member_renewals
+            [search] => true
+            [member_id] => 7516
+            [direct] => true
+            [limit] => 1000
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=member_renewals&search=true&member_id=7516&direct=true&limit=1000
+    [METHOD] => GET
+)
+
+2025-09-01 11:23:37: Array
+(
+    [GET] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members_with_applicant_designation&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-09-01 11:23:37: Array
+(
+    [GET] => Array
+        (
+            [table] => applicants_types
+            [limit] => 10000
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => applicants_types
+            [limit] => 10000
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=applicants_types&limit=10000
+    [METHOD] => GET
+)
+
+2025-09-01 11:23:56: Array
+(
+    [GET] => Array
+        (
+            [table] => member_renewals
+            [search] => true
+            [member_id] => 7516
+            [direct] => true
+            [limit] => 1000
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => member_renewals
+            [search] => true
+            [member_id] => 7516
+            [direct] => true
+            [limit] => 1000
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=member_renewals&search=true&member_id=7516&direct=true&limit=1000
+    [METHOD] => GET
+)
+
+2025-09-01 11:24:31: Array
+(
+    [GET] => Array
+        (
+            [table] => member_renewals
+            [ID] => 5
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => Array
+        (
+            [member_id] => 7516
+            [renewed_at] => 2025-08-29
+            [previous_end] => 2030-01-12
+            [new_end] => 2033-01-12
+            [term_months] => 36
+            [is_first_time] => 0
+            [recorded_at] => 2025-08-29
+        )
+
+    [DELETE] => Array
+        (
+            [table] => member_renewals
+            [ID] => 5
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=member_renewals&ID=5
+    [METHOD] => PUT
+)
+
+2025-09-01 11:24:48: Array
+(
+    [GET] => Array
+        (
+            [table] => member_renewals
+            [ID] => 5
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => Array
+        (
+            [member_id] => 7516
+            [renewed_at] => 2025-08-29
+            [previous_end] => 2030-01-12
+            [new_end] => 2033-01-12
+            [term_months] => 36
+            [is_first_time] => 0
+            [recorded_at] => 2025-08-29
+        )
+
+    [DELETE] => Array
+        (
+            [table] => member_renewals
+            [ID] => 5
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=member_renewals&ID=5
+    [METHOD] => PUT
+)
+
+2025-09-01 11:29:21: Array
+(
+    [GET] => Array
+        (
+            [table] => member_renewals
+            [ID] => 5
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => Array
+        (
+            [member_id] => 7516
+            [renewed_at] => 2025-08-29
+            [previous_end] => 2030-01-12
+            [new_end] => 2033-01-12
+            [term_months] => 36
+            [is_first_time] => 0
+            [recorded_at] => 2025-08-29
+        )
+
+    [DELETE] => Array
+        (
+            [table] => member_renewals
+            [ID] => 5
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=member_renewals&ID=5
+    [METHOD] => PUT
+)
+
+2025-09-01 12:04:56: Array
+(
+    [GET] => Array
+        (
+            [table] => applicants_types
+            [limit] => 10000
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => applicants_types
+            [limit] => 10000
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=applicants_types&limit=10000
+    [METHOD] => GET
+)
+
+2025-09-01 12:04:56: Array
+(
+    [GET] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members_with_applicant_designation&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-09-01 12:04:57: Array
+(
+    [GET] => Array
+        (
+            [table] => applicants_types
+            [limit] => 10000
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => applicants_types
+            [limit] => 10000
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=applicants_types&limit=10000
+    [METHOD] => GET
+)
+
+2025-09-01 12:04:57: Array
+(
+    [GET] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members_with_applicant_designation&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-09-01 12:09:10: Array
+(
+    [GET] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members_with_applicant_designation&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-09-01 12:09:10: Array
+(
+    [GET] => Array
+        (
+            [table] => applicants_types
+            [limit] => 10000
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => applicants_types
+            [limit] => 10000
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=applicants_types&limit=10000
+    [METHOD] => GET
+)
+
+2025-09-01 12:09:46: Array
+(
+    [GET] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members_with_applicant_designation&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-09-01 12:09:46: Array
+(
+    [GET] => Array
+        (
+            [table] => applicants_types
+            [limit] => 10000
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => applicants_types
+            [limit] => 10000
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=applicants_types&limit=10000
+    [METHOD] => GET
+)
+
+2025-09-01 12:09:57: Array
+(
+    [GET] => Array
+        (
+            [table] => member_renewals
+            [search] => true
+            [member_id] => 7516
+            [direct] => true
+            [limit] => 1000
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => member_renewals
+            [search] => true
+            [member_id] => 7516
+            [direct] => true
+            [limit] => 1000
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=member_renewals&search=true&member_id=7516&direct=true&limit=1000
+    [METHOD] => GET
+)
+
+2025-09-01 12:10:08: Array
+(
+    [GET] => Array
+        (
+            [table] => member_renewals
+            [ID] => 5
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => Array
+        (
+            [member_id] => 7516
+            [renewed_at] => 2025-08-29
+            [previous_end] => 2030-01-12
+            [new_end] => 2033-01-12
+            [term_months] => 36
+            [is_first_time] => 0
+            [recorded_at] => 2025-08-29
+        )
+
+    [DELETE] => Array
+        (
+            [table] => member_renewals
+            [ID] => 5
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=member_renewals&ID=5
+    [METHOD] => PUT
+)
+
+2025-09-01 12:10:09: Array
+(
+    [GET] => Array
+        (
+            [table] => member_renewals
+            [search] => true
+            [member_id] => 7516
+            [direct] => true
+            [limit] => 1000
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => member_renewals
+            [search] => true
+            [member_id] => 7516
+            [direct] => true
+            [limit] => 1000
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=member_renewals&search=true&member_id=7516&direct=true&limit=1000
+    [METHOD] => GET
+)
+
+2025-09-01 12:10:09: Array
+(
+    [GET] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members_with_applicant_designation&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-09-01 12:10:10: Array
+(
+    [GET] => Array
+        (
+            [table] => member_renewals
+            [search] => true
+            [member_id] => 7516
+            [direct] => true
+            [limit] => 1000
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => member_renewals
+            [search] => true
+            [member_id] => 7516
+            [direct] => true
+            [limit] => 1000
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=member_renewals&search=true&member_id=7516&direct=true&limit=1000
+    [METHOD] => GET
+)
+
+2025-09-01 12:11:02: Array
+(
+    [GET] => Array
+        (
+            [table] => member_renewals
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => Array
+        (
+            [member_id] => 7516
+            [renewed_at] => 2025-09-01
+            [previous_end] => 2026-02-23
+            [new_end] => 2029-02-11
+            [term_months] => 33
+            [is_first_time] => 0
+            [recorded_at] => 2025-09-01
+        )
+
+    [DELETE] => Array
+        (
+            [table] => member_renewals
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=member_renewals
+    [METHOD] => POST
+)
+
+2025-09-01 12:11:03: Array
+(
+    [GET] => Array
+        (
+            [table] => member_renewals
+            [search] => true
+            [member_id] => 7516
+            [direct] => true
+            [limit] => 1000
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => member_renewals
+            [search] => true
+            [member_id] => 7516
+            [direct] => true
+            [limit] => 1000
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=member_renewals&search=true&member_id=7516&direct=true&limit=1000
+    [METHOD] => GET
+)
+
+2025-09-01 12:11:03: Array
+(
+    [GET] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members_with_applicant_designation&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-09-01 12:11:04: Array
+(
+    [GET] => Array
+        (
+            [table] => member_renewals
+            [search] => true
+            [member_id] => 7516
+            [direct] => true
+            [limit] => 1000
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => member_renewals
+            [search] => true
+            [member_id] => 7516
+            [direct] => true
+            [limit] => 1000
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=member_renewals&search=true&member_id=7516&direct=true&limit=1000
+    [METHOD] => GET
+)
+
+2025-09-01 12:21:07: Array
+(
+    [GET] => Array
+        (
+            [table] => applicants_types
+            [limit] => 10000
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => applicants_types
+            [limit] => 10000
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=applicants_types&limit=10000
+    [METHOD] => GET
+)
+
+2025-09-01 12:21:07: Array
+(
+    [GET] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members_with_applicant_designation&limit=10&page=1
+    [METHOD] => GET
+)
+
+2025-09-01 12:21:08: Array
+(
+    [GET] => Array
+        (
+            [table] => applicants_types
+            [limit] => 10000
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => applicants_types
+            [limit] => 10000
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=applicants_types&limit=10000
+    [METHOD] => GET
+)
+
+2025-09-01 12:21:08: Array
+(
+    [GET] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [POST] => Array
+        (
+        )
+
+    [PUT] => 
+    [DELETE] => Array
+        (
+            [table] => members_with_applicant_designation
+            [limit] => 10
+            [page] => 1
+        )
+
+    [URI] => /projects/C-EnterpriseProject/recervingAPI.php?table=members_with_applicant_designation&limit=10&page=1
+    [METHOD] => GET
+)
+
