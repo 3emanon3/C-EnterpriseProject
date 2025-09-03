@@ -1377,6 +1377,5 @@ try {
      if (isset($dsn) && $dsn instanceof mysqli && $dsn->thread_id) {
          $dsn->close();
      }
-     usleep(100000)
 }
 ?>
