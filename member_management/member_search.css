@@ -555,6 +555,8 @@ tr:hover {
 .modal-content {
     padding: 20px 30px;
     position: relative;
+    max-height: 85vh;
+    overflow-y: auto;
 }
 
 .close-button {
