@@ -1613,6 +1613,8 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         const exportFormat = exportFormatElement.value;
         const delimiter = exportFormat === 'csv' ? ',' : ';';
+        const splitEmailsCheckbox = document.getElementById('splitEmailsCheckbox');
+        const shouldSplitEmails = splitEmailsCheckbox ? splitEmailsCheckbox.checked : true;
 
         let exportContent = '';
         const headers = selectedColumns.map(column => {
@@ -1681,22 +1683,28 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Handle email column if present
             const emailValue = member['email'] || '';
-            const emails = splitEmails(emailValue);
-
-            // Create a row for each email address
-            emails.forEach(email => {
-                const rowData = [...rowDataTemplate]; // Clone the template
-
-                // Format the email value for the current row
+            
+            if (shouldSplitEmails) {
+                const emails = splitEmails(emailValue);
+                emails.forEach(email => {
+                    const rowData = [...rowDataTemplate];
+                    if (exportFormat === 'csv') {
+                        rowData[emailColumnIndex] = `"${email.replace(/"/g, '""')}"`;
+                    } else {
+                        rowData[emailColumnIndex] = email.replace(/;/g, ',');
+                    }
+                    exportContent += rowData.join(delimiter) + '\n';
+                });
+            } else {
                 if (exportFormat === 'csv') {
-                    rowData[emailColumnIndex] = `"${email.replace(/"/g, '""')}"`;
+                    rowDataTemplate[emailColumnIndex] = `"${emailValue.replace(/"/g, '""')}"`;
                 } else {
-                    rowData[emailColumnIndex] = email.replace(/;/g, ',');
+                    rowDataTemplate[emailColumnIndex] = emailValue.replace(/;/g, ',');
                 }
-
-                exportContent += rowData.join(delimiter) + '\n';
-            });
+                exportContent += rowDataTemplate.join(delimiter) + '\n';
+            }
         });
+
 
         // Set correct MIME type
         const mimeType = exportFormat === 'csv'
