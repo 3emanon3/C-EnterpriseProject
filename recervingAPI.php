@@ -54,6 +54,23 @@ class DatabaseAPI {
         'member_renewals'=>['id','member_id','renewed_at','previous_end','new_end','term_months','recorded_at','is_first_time'],
     ];
 
+    private $secondarySortColumns = [
+        'members' => 'membersID',
+        'members_with_applicant_designation' => 'membersID',
+        'applicants_types' => 'ID',
+        'donation' => 'ID',
+        'donation_details' => 'ID',
+        'stock' => 'ID',
+        'soldrecord' => 'ID',
+        'vsoldrecord' => 'BookID',
+        'event' => 'ID',
+        'vparticipants' => 'membersID',
+        'participants' => 'ID',
+        'bank' => 'ID',
+        'donationtypes' => 'ID',
+        'member_renewals' => 'id',
+    ];
+
     // Table mappings
     private $tableToView = [
         
@@ -621,23 +638,44 @@ class DatabaseAPI {
             $limit = max(1, min(50000, intval($_GET['limit'] ?? 10))); // Limit page size
             $offset = ($page - 1) * $limit;
 
-            // Validate sort column against allowed columns for the *original* table definition
-            $sortColumnInput = $_GET['sort'] ?? 'ID';
-            $sortColumn = 'ID'; // Default sort column
-            if (in_array($sortColumnInput, $this->allowedTables[$table])) {
-                 // Use backticks for safety, handle special case for membersID
-                 $sortColumn = $sortColumnInput === 'membersID'
-                     ? $this->numericMembersIdExpr() 
-                     : "`" . $sortColumnInput . "`";
+            // --- 1. Handle Primary Sort ---
+            $primarySortColumnInput = $_GET['sort'] ?? 'ID';
+            $primarySortColumn = 'ID'; // Default primary sort column
+            $primarySortExpression = '`ID`'; // Default sort expression
+
+            if (in_array($primarySortColumnInput, $this->allowedTables[$table])) {
+                $primarySortColumn = $primarySortColumnInput;
+                // Handle the special 'membersID' case
+                $primarySortExpression = $primarySortColumn === 'membersID'
+                    ? $this->numericMembersIdExpr()
+                    : "`" . $primarySortColumn . "`";
             } else {
-                error_log("Warning: Invalid sort column requested: '$sortColumnInput'. Defaulting to ID.");
+                error_log("Warning: Invalid sort column requested: '$primarySortColumnInput'. Defaulting to ID.");
             }
-
-
+            
             $sortOrder = $this->validateSortOrder($_GET['order'] ?? 'ASC');
 
+            // --- 2. Determine the secondary sort column (tie-breaker) ---
+            // Get the secondary sort column for this table from our configuration
+            $secondarySortColumnName = $this->secondarySortColumns[$table] ?? $this->secondarySortColumns['default'];
+            $secondarySortExpression = '`' . $secondarySortColumnName . '`'; // The secondary sort order is always ASC
+
+            // If the secondary sort column is 'membersID', use the special handling function as well
+            if ($secondarySortColumnName === 'membersID') {
+                $secondarySortExpression = $this->numericMembersIdExpr($secondarySortColumnName);
+            }
+
+            // --- 3. Build the complete ORDER BY clause ---
+            $orderByClause = "ORDER BY $primarySortExpression $sortOrder";
+            
+            // Avoid redundant sorting, e.g., if the primary sort column is the same as the secondary one
+            if ($primarySortColumn !== $secondarySortColumnName) {
+                // Append the secondary sort rule, separated by a comma
+                $orderByClause .= ", $secondarySortExpression ASC"; 
+            }
+
             // Append ORDER BY, LIMIT, OFFSET to the base query
-            $fullQuery = $baseQuery . " ORDER BY $sortColumn $sortOrder LIMIT ? OFFSET ?";
+            $fullQuery = $baseQuery . " " . $orderByClause . " LIMIT ? OFFSET ?";
 
             // Add limit and offset parameters and types
             $finalParams = $params; // Copy original params
@@ -656,7 +694,7 @@ class DatabaseAPI {
                 'data' => $data,
                 'total' => $totalRecords,
                 'pagination' => $this->getPaginationInfo($page, $limit, $totalRecords),
-                'sorting' => ['column' => $sortColumnInput, 'order' => $sortOrder] // Report original requested column
+                'sorting' => ['column' => $primarySortColumnInput, 'order' => $sortOrder] // Report original requested column
             ]);
         } catch (Exception $e) {
              // Ensure statements are closed even on error
