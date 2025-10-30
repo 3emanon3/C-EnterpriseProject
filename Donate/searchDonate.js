@@ -856,17 +856,29 @@ if (resetColumnWidthBtn) {
         const exportStartAmount = document.getElementById('exportStartAmount').value;
         const exportEndAmount = document.getElementById('exportEndAmount').value;
 
+        let isExportFiltering = false; // Flag to check if any filter is active
+
         // Get search term from main page input, as that's not in the modal
         const searchTerm = searchInput.value.trim();
-        if (searchTerm) params.append("search", searchTerm);
+        if (searchTerm) {
+            params.append("search", searchTerm);
+            isExportFiltering = true;
+        }
 
         // Apply filters from the modal
-        if (exportBank) params.append("Bank", exportBank);
-        if (exportType) params.append("donationTypes", exportType);
+        if (exportBank) {
+            params.append("Bank", exportBank);
+            isExportFiltering = true;
+        }
+        if (exportType) {
+            params.append("donationTypes", exportType);
+            isExportFiltering = true;
+        }
         if (exportStartDate || exportEndDate) {
             params.append("dateRange", "true");
             if (exportStartDate) params.append("startDate", exportStartDate);
             if (exportEndDate) params.append("endDate", exportEndDate);
+            isExportFiltering = true;
         }
         const startPrice = exportStartAmount ? parseFloat(exportStartAmount) : null;
         const endPrice = exportEndAmount ? parseFloat(exportEndAmount) : null;
@@ -874,6 +886,12 @@ if (resetColumnWidthBtn) {
             params.append("priceRange", "true");
             if (startPrice !== null) params.append("startPrice", startPrice.toString());
             if (endPrice !== null) params.append("endPrice", endPrice.toString());
+            isExportFiltering = true;
+        }
+
+        // we must still send a 'search' parameter to tell the API to filter.
+        if (isExportFiltering && !searchTerm) {
+            params.append("search", "true");
         }
 
         // Sorting should still come from the main page's state
