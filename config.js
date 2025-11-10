@@ -1,1 +1,0 @@
-export const API_BASE_URL = 'http://localhost/projects/C-EnterpriseProject/recervingAPI.php';
