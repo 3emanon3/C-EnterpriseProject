@@ -789,3 +789,46 @@ th i {
         margin-bottom: 2px;
     }
 }
+
+/* Wider modal for more filters */
+#exportModal .modal-content {
+    width: 700px;
+}
+
+/* Grid layout for export filters */
+#exportModal .modal-form-grid {
+    grid-template-columns: 1fr 1fr; /* Two columns for a cleaner layout */
+    gap: 15px 25px;
+}
+
+/* Style for radio buttons */
+.transaction-type-options {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    padding: 10px 0;
+}
+
+.transaction-type-options label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+}
+
+/* Make some filter groups span both columns */
+#exportModal .modal-form-grid .date-range-group:nth-child(1), /* Book Filter */
+#exportModal .modal-form-grid .date-range-group:nth-child(2) /* Transaction Type */
+{
+    grid-column: 1 / -1; /* Span full width */
+}
+
+/* Responsive adjustments for the new modal */
+@media (max-width: 768px) {
+    #exportModal .modal-form-grid {
+        grid-template-columns: 1fr; /* Single column on mobile */
+    }
+    #exportModal .modal-content {
+        width: 95%;
+    }
+}

@@ -6,6 +6,7 @@
     <title>Stock Management System - Stock Records</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="soldRecord.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -17,6 +18,9 @@
                 </button>
                 <button id="searchDate" class="btn btn-search-date" onclick="openSearchDateModal()">
                     <i class="fas fa-calendar-alt"></i> 按日期搜索
+                </button>
+                <button id="exportDataBtn" class="btn btn-success" onclick="openExportModal()">
+                    <i class="fas fa-file-excel"></i> 导出到 Excel
                 </button>
                 <button class="btn btn-primary" onclick="location.href='searchStock.html'">
                     <i class="fas fa-undo"></i> 返回
@@ -67,7 +71,7 @@
                     <thead>
                         <tr>
                             <th data-column="Book">产品 <i class="fas fa-sort"></i><div class="resizer"></div></th>
-                            <th data-column="membership_display">名字 <i class="fas fa-sort"></i><div class="resizer"></div></th>
+                            <th data-column="membership_display">塾员编号 <i class="fas fa-sort"></i><div class="resizer"></div></th>
                             <th data-column="Name/Company Name">公司 <i class="fas fa-sort"></i><div class="resizer"></div></th>
                             <th data-column="quantity_in">进库数量 <i class="fas fa-sort"></i><div class="resizer"></div></th>
                             <th data-column="quantity_out">出库数量 <i class="fas fa-sort"></i><div class="resizer"></div></th>
@@ -179,6 +183,91 @@
         <div id="notification-content">
             <i id="notification-icon" class="fas"></i>
             <span id="notification-message"></span>
+        </div>
+    </div>
+
+    <div id="exportModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>导出销售记录到 Excel</h2>
+                <span class="close-modal" id="closeExportModalBtn">×</span>
+            </div>
+            <div class="modal-body">
+                <p>请选择筛选条件以导出数据。</p>
+                <div class="modal-form modal-form-grid">
+
+                    <!-- Book Filter -->
+                    <fieldset class="date-range-group">
+                        <legend>产品筛选</legend>
+                        <div class="date-inputs">
+                            <label for="exportBookFilter">选择产品:</label>
+                            <select id="exportBookFilter">
+                                <option value="">全部产品</option>
+                                <!-- Options will be populated by JavaScript -->
+                            </select>
+                        </div>
+                    </fieldset>
+
+                    <!-- Transaction Type Filter -->
+                    <fieldset class="date-range-group">
+                        <legend>交易类型</legend>
+                        <div class="transaction-type-options">
+                            <label><input type="radio" name="transactionType" value="both" checked> 全部</label>
+                            <label><input type="radio" name="transactionType" value="in"> 仅进库</label>
+                            <label><input type="radio" name="transactionType" value="out"> 仅出库</label>
+                        </div>
+                    </fieldset>
+
+                    <!-- Date Range Filter -->
+                    <fieldset class="date-range-group">
+                        <legend>开始日期 (可选)</legend>
+                        <div class="date-inputs">
+                            <label for="exportStartDateYear">年:</label>
+                            <input type="number" id="exportStartDateYear" placeholder="YYYY" min="1900" max="2100">
+                            <label for="exportStartDateMonth">月:</label>
+                            <select id="exportStartDateMonth">
+                                <!-- Month options will be populated by JS -->
+                            </select>
+                            <label for="exportStartDateDay">日:</label>
+                            <input type="number" id="exportStartDateDay" placeholder="DD" min="1" max="31">
+                        </div>
+                    </fieldset>
+                    <fieldset class="date-range-group">
+                        <legend>结束日期 (可选)</legend>
+                        <div class="date-inputs">
+                            <label for="exportEndDateYear">年:</label>
+                            <input type="number" id="exportEndDateYear" placeholder="YYYY" min="1900" max="2100">
+                            <label for="exportEndDateMonth">月:</label>
+                            <select id="exportEndDateMonth">
+                                <!-- Month options will be populated by JS -->
+                            </select>
+                            <label for="exportEndDateDay">日:</label>
+                            <input type="number" id="exportEndDateDay" placeholder="DD" min="1" max="31">
+                        </div>
+                    </fieldset>
+
+                    <!-- Record Limit Filter -->
+                    <fieldset class="date-range-group">
+                        <legend>记录数量限制</legend>
+                        <div class="date-inputs">
+                            <label for="exportRecordLimit">最大记录数:</label>
+                            <select id="exportRecordLimit">
+                                <option value="1000">1000</option>
+                                <option value="5000">5000</option>
+                                <option value="10000">10000</option>
+                                <option value="20000">20000</option>
+                            </select>
+                        </div>
+                    </fieldset>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="cancelExport" class="btn btn-secondary">取消</button>
+                <button id="confirmExportBtn" class="btn btn-success">
+                    <i class="fas fa-download"></i> 开始导出
+                </button>
+            </div>
         </div>
     </div>
     

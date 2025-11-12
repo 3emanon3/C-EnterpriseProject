@@ -26,6 +26,19 @@ document.addEventListener("DOMContentLoaded", function () {
     const confirmSearchDateButton = document.getElementById('confirmSearchDate');
     const cancelSearchDateButton = document.getElementById('cancelSearchDate');
     const closeSearchDateModalBtn = document.getElementById('closeSearchDateModalBtn');
+
+    const exportModal = document.getElementById('exportModal');
+    const closeExportModalBtn = document.getElementById('closeExportModalBtn');
+    const cancelExportBtn = document.getElementById('cancelExport');
+    const confirmExportBtn = document.getElementById('confirmExportBtn');
+    const exportBookFilter = document.getElementById('exportBookFilter');
+    const exportRecordLimit = document.getElementById('exportRecordLimit');
+    const exportStartDateYear = document.getElementById('exportStartDateYear');
+    const exportStartDateMonth = document.getElementById('exportStartDateMonth');
+    const exportStartDateDay = document.getElementById('exportStartDateDay');
+    const exportEndDateYear = document.getElementById('exportEndDateYear');
+    const exportEndDateMonth = document.getElementById('exportEndDateMonth');
+    const exportEndDateDay = document.getElementById('exportEndDateDay');
     
     let recordsData = [];
     let itemsPerPage = parseInt(itemsPerPageSelect.value);
@@ -501,4 +514,206 @@ document.addEventListener("DOMContentLoaded", function () {
 
     fetchBookOptions();
     fetchRecords();
+
+    // Populates month dropdowns in the export modal
+    function populateExportMonthSelects() {
+        const monthSelects = [exportStartDateMonth, exportEndDateMonth];
+        let optionsHTML = '<option value="">--月--</option>';
+        for (let i = 1; i <= 12; i++) {
+            optionsHTML += `<option value="${i}">${i}</option>`;
+        }
+        monthSelects.forEach(select => {
+            if (select) select.innerHTML = optionsHTML;
+        });
+    }
+
+    // Opens the export modal and prepares the filters
+    window.openExportModal = async function() {
+        if (exportModal) {
+            // --- START: Clear previous inputs ---
+            exportBookFilter.value = '';
+            exportRecordLimit.value = '1000';
+            document.querySelector('input[name="transactionType"][value="both"]').checked = true;
+            // --- END: Clear previous inputs ---
+
+            // --- START: New code to set default dates ---
+            const now = new Date();
+            // Calculate the first day of the current month
+            const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+            // Calculate the last day of the current month
+            const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+            // Set the start date fields to the first day of the month
+            exportStartDateYear.value = firstDayOfMonth.getFullYear();
+            exportStartDateMonth.value = firstDayOfMonth.getMonth() + 1; // getMonth() is 0-indexed, so add 1
+            exportStartDateDay.value = firstDayOfMonth.getDate();
+
+            // Set the end date fields to the last day of the month
+            exportEndDateYear.value = lastDayOfMonth.getFullYear();
+            exportEndDateMonth.value = lastDayOfMonth.getMonth() + 1; // getMonth() is 0-indexed, so add 1
+            exportEndDateDay.value = lastDayOfMonth.getDate();
+            // --- END: New code to set default dates ---
+
+            // Populate book filter options (this part remains the same)
+            try {
+                const response = await fetch(`${API_BASE_URL}?table=stock&limit=10000`);
+                const data = await response.json();
+                if (data && data.data) {
+                    // Clear existing options except the first "All Books"
+                    while (exportBookFilter.options.length > 1) {
+                        exportBookFilter.remove(1);
+                    }
+                    data.data.forEach(item => {
+                        const option = document.createElement("option");
+                        option.value = item.ID;
+                        option.textContent = `${item.Name} (RM${item.Price})`;
+                        exportBookFilter.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error("Error fetching book options for export:", error);
+                showNotification(false, "加载产品列表失败。");
+            }
+
+            exportModal.style.display = 'flex';
+        }
+    }
+
+    // Closes the export modal
+    function closeExportModal() {
+        if (exportModal) {
+            exportModal.style.display = 'none';
+        }
+    }
+
+    // Main function to handle the export process
+    async function handleConfirmExport() {
+        showNotification(true, "正在准备数据，请稍候...");
+        confirmExportBtn.disabled = true;
+        confirmExportBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 正在导出...';
+
+        // 1. Gather filter values
+        const bookId = exportBookFilter.value;
+        const limit = exportRecordLimit.value;
+        const transactionType = document.querySelector('input[name="transactionType"]:checked').value;
+
+        const startYear = exportStartDateYear.value.trim();
+        const startMonth = exportStartDateMonth.value;
+        const startDay = exportStartDateDay.value.trim();
+        const endYear = exportEndDateYear.value.trim();
+        const endMonth = exportEndDateMonth.value;
+        const endDay = exportEndDateDay.value.trim();
+
+        let startDate = null, endDate = null;
+
+        // 2. Validate date range (if provided)
+        if (startYear && startMonth && startDay) {
+            startDate = `${startYear}-${padStart(startMonth)}-${padStart(startDay)}`;
+            if (!isValidDateString(startDate)) {
+                showNotification(false, `开始日期无效: ${startDate}`);
+                confirmExportBtn.disabled = false;
+                confirmExportBtn.innerHTML = '<i class="fas fa-download"></i> 开始导出';
+                return;
+            }
+        }
+        if (endYear && endMonth && endDay) {
+            endDate = `${endYear}-${padStart(endMonth)}-${padStart(endDay)}`;
+            if (!isValidDateString(endDate)) {
+                showNotification(false, `结束日期无效: ${endDate}`);
+                confirmExportBtn.disabled = false;
+                confirmExportBtn.innerHTML = '<i class="fas fa-download"></i> 开始导出';
+                return;
+            }
+        }
+
+        // 3. Construct API URL
+        const params = new URLSearchParams();
+        params.append("table", "vsoldrecord");
+        params.append("limit", limit);
+        params.append("search", "true"); 
+
+        if (bookId) {
+            params.append("BookID", bookId);
+            params.append("direct", "true");
+        }
+
+
+        if (transactionType === 'in') {
+            params.append("transactionTypeIn", "true");
+        } else if (transactionType === 'out') {
+            params.append("transactionTypeOut", "true");
+        }
+
+        if (startDate && endDate) {
+            params.append("dateRange", "true");
+            params.append("startDate", startDate);
+            params.append("endDate", endDate);
+        }
+
+        const url = `${API_BASE_URL}?${params.toString()}`;
+        console.log("Exporting with URL:", url);
+
+        try {
+            // 4. Fetch data from API
+            const response = await fetch(url);
+            const result = await response.json();
+
+            if (!response.ok || !result.data) {
+                throw new Error(result.message || "无法获取导出数据。");
+            }
+
+            if (result.data.length === 0) {
+                showNotification(false, "根据您的筛选条件，没有找到可导出的数据。");
+                return;
+            }
+
+            // 5. Generate .xlsx file
+            const dataToExport = result.data.map(record => ({
+                '产品': record.Book,
+                '塾员编号': record.membership_display,
+                '公司': record["Name/Company_Name"] || record["Name_Company_Name"],
+                '进库数量': record.quantity_in,
+                '出库数量': record.quantity_out,
+                '发票号码': record.InvoiceNo,
+                '日期': record.Date,
+                '价格': record.price,
+                '备注': record.Remarks
+            }));
+
+            const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "销售记录");
+
+            const filename = `销售记录_${new Date().toISOString().slice(0, 10)}.xlsx`;
+            XLSX.writeFile(workbook, filename);
+
+            showNotification(true, "导出成功！");
+            closeExportModal();
+
+        } catch (error) {
+            console.error("Export failed:", error);
+            showNotification(false, `导出失败: ${error.message}`);
+        } finally {
+            // Reset button state
+            confirmExportBtn.disabled = false;
+            confirmExportBtn.innerHTML = '<i class="fas fa-download"></i> 开始导出';
+        }
+    }
+
+    // Add Event Listeners for Export Modal
+    if (closeExportModalBtn) closeExportModalBtn.addEventListener('click', closeExportModal);
+    if (cancelExportBtn) cancelExportBtn.addEventListener('click', closeExportModal);
+    if (confirmExportBtn) confirmExportBtn.addEventListener('click', handleConfirmExport);
+
+    // Initialize month dropdowns for the new modal
+    populateExportMonthSelects();
+
+    // Add to general click listener for closing modals
+    window.addEventListener('click', (event) => {
+        // ... existing code inside this listener
+        if (event.target === exportModal) {
+            closeExportModal();
+        }
+    });
 });
+

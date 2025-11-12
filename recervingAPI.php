@@ -167,6 +167,16 @@ class DatabaseAPI {
                 'param' => ['startDate', 'endDate'],
                 'paramTypes' => 'ss'
             ],
+            'transactionTypeIn' => [
+            'conditions' => ['quantity_in IS NOT NULL AND quantity_in != 0'],
+            'param' => [], 
+            'paramTypes' => ''
+        ],
+        'transactionTypeOut' => [
+            'conditions' => ['quantity_out IS NOT NULL AND quantity_out != 0'],
+            'param' => [],
+            'paramTypes' => ''
+        ],
         ],
     ];
 
